@@ -1,34 +1,53 @@
 package com.eos.streamus;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
+import com.eos.streamus.exceptions.NoResultException;
+import com.eos.streamus.models.Song;
+import com.eos.streamus.utils.DatabaseConnection;
 import org.junit.jupiter.api.Test;
-import org.postgresql.ds.PGSimpleDataSource;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Date;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class StreamUsApplicationTests {
-    @Value("${jdbc.url}")
-    String driver;
-    @Value("${database.user}")
-    String user;
-    @Value("${database.password}")
-    String password;
+    @Autowired
+    protected DatabaseConnection databaseConnection = null;
 
     @Test
-    void contextLoads() {
+    void connectToDatabase() {
+        assertDoesNotThrow(() -> {
+            try (Connection ignored = databaseConnection.getConnection()) {
+            }
+        });
     }
 
     @Test
-    void connectToDatabase() throws SQLException {
-        PGSimpleDataSource ds = new PGSimpleDataSource();  // Empty instance.
-        ds.setURL(driver);
-        ds.setUser(user);
-        ds.setPassword(password);
-        ds.getConnection();
-    }
+    void testSongCRUD() throws SQLException, NoResultException, ClassNotFoundException {
+        // Create
+        try (Connection connection = databaseConnection.getConnection()) {
+            Song song = new Song(String.format("test%d.mp3", new Date().getTime()), "Test song", 100);
+            song.save(connection);
 
+            // Read
+            Song song2 = Song.findById(song.getId(), connection);
+            assertEquals(song.getId(), song2.getId());
+
+            // Update
+            song.setName("Changed name");
+            song.save(connection);
+
+            song2 = Song.findById(song.getId(), connection);
+            assertEquals(song.getName(), song2.getName());
+
+            // Delete
+            song.delete(connection);
+            assertThrows(NoResultException.class, () -> Song.findById(song.getId(), connection));
+        }
+
+    }
 }
