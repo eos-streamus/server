@@ -1,6 +1,7 @@
 package com.eos.streamus;
 
 import com.eos.streamus.exceptions.NoResultException;
+import com.eos.streamus.models.Film;
 import com.eos.streamus.models.Song;
 import com.eos.streamus.utils.DatabaseConnection;
 import org.junit.jupiter.api.Test;
@@ -47,6 +48,30 @@ class StreamUsApplicationTests {
             // Delete
             song.delete(connection);
             assertThrows(NoResultException.class, () -> Song.findById(song.getId(), connection));
+        }
+    }
+
+    @Test
+    void testFilmCRUD() throws SQLException, NoResultException {
+        try (Connection connection = databaseConnection.getConnection()) {
+            // Create
+            Film film = new Film(String.format("test%d.mp4", new Date().getTime()), "Test film", 100);
+            film.save(connection);
+
+            // Read
+            Film film2 = Film.findById(film.getId(), connection);
+            assertEquals(film.getId(), film2.getId());
+
+            // Update
+            film.setName("Changed film name");
+            film.save(connection);
+
+            film2 = Film.findById(film.getId(), connection);
+            assertEquals(film.getName(), film2.getName());
+
+            // Delete
+            film.delete(connection);
+            assertThrows(NoResultException.class, () -> Film.findById(film.getId(), connection));
         }
     }
 }
