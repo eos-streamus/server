@@ -35,15 +35,18 @@ class StreamUsApplicationTests {
             song.save(connection);
 
             // Read
-            Song song2 = Song.findById(song.getId(), connection);
-            assertEquals(song.getId(), song2.getId());
+            Song retrievedSong = Song.findById(song.getId(), connection);
+            assertEquals(song, retrievedSong);
 
             // Update
-            song.setName("Changed name");
+            song.setName("Changed song name");
+            song.setPath(String.format("test%d.mp3", new Date().getTime()));
+            song.setDuration(101);
+            song.save(connection);
             song.save(connection);
 
-            song2 = Song.findById(song.getId(), connection);
-            assertEquals(song.getName(), song2.getName());
+            retrievedSong = Song.findById(song.getId(), connection);
+            assertEquals(song, retrievedSong);
 
             // Delete
             song.delete(connection);
@@ -59,15 +62,17 @@ class StreamUsApplicationTests {
             film.save(connection);
 
             // Read
-            Film film2 = Film.findById(film.getId(), connection);
-            assertEquals(film.getId(), film2.getId());
+            Film retrievedFilm = Film.findById(film.getId(), connection);
+            assertEquals(film, retrievedFilm);
 
             // Update
             film.setName("Changed film name");
+            film.setPath(String.format("test%d.mp4", new Date().getTime()));
+            film.setDuration(101);
             film.save(connection);
 
-            film2 = Film.findById(film.getId(), connection);
-            assertEquals(film.getName(), film2.getName());
+            retrievedFilm = Film.findById(film.getId(), connection);
+            assertEquals(film, retrievedFilm);
 
             // Delete
             film.delete(connection);

@@ -1,5 +1,7 @@
 package com.eos.streamus.models;
 
+import com.eos.streamus.exceptions.NotPersistedException;
+
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -45,6 +47,10 @@ abstract class Resource implements Entity, SavableEntity {
         return path;
     }
 
+    public void setPath(String path) {
+      this.path = path;
+    }
+
     public String getName() {
         return name;
     }
@@ -63,6 +69,10 @@ abstract class Resource implements Entity, SavableEntity {
 
     public Integer getDuration() {
         return duration;
+    }
+
+    public void setDuration(Integer duration) {
+      this.duration = duration;
     }
 
     @Override
@@ -95,5 +105,24 @@ abstract class Resource implements Entity, SavableEntity {
     public String toString() {
         DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z");
         return String.format("{id: %d, path: %s, name: %s, duration: %s, createdAt: %s}", id, path, name, duration, dateFormat.format(createdAt));
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || o.getClass() != getClass()) {
+          return false;
+        }
+        Resource oResource = (Resource) o;
+        return
+                oResource.id.equals(id) &&
+                        oResource.path.equals(path) &&
+                        oResource.name.equals(name) &&
+                        oResource.createdAt.equals(createdAt) &&
+                        oResource.duration.equals(duration);
     }
 }
