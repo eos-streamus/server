@@ -12,27 +12,27 @@ import org.springframework.stereotype.Service;
 @Service
 @Scope(value = "singleton")
 public class DatabaseConnection {
-    @Value("${jdbc.url}")
-    private String url;
+  @Value("${jdbc.url}")
+  private String url;
 
-    @Value("${jdbc.host}")
-    private String host;
+  @Value("${jdbc.host}")
+  private String host;
 
-    @Value("${jdbc.port}")
-    private int port;
+  @Value("${jdbc.port}")
+  private int port;
 
-    @Value("${jdbc.databaseName}")
-    private String databaseName;
+  @Value("${jdbc.databaseName}")
+  private String databaseName;
 
-    @Value("${database.user}")
-    private String user;
+  @Value("${database.user}")
+  private String user;
 
-    @Value("${database.password}")
-    private String password;
+  @Value("${database.password}")
+  private String password;
 
-    public Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(String.format("%s%s:%d/%s", url, host, port, databaseName), user, password);
-    }
+  public Connection getConnection() throws SQLException {
+    return DriverManager.getConnection(String.format("%s%s:%d/%s", url, host, port, databaseName), user, password);
+  }
 }
 
 
