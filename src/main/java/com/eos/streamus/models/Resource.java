@@ -4,7 +4,7 @@ import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-class Resource implements Entity, SavableEntity {
+abstract class Resource implements Entity, SavableEntity {
     private Integer id;
     private String path;
     private String name;
@@ -67,12 +67,27 @@ class Resource implements Entity, SavableEntity {
 
     @Override
     public void save(Connection connection) throws SQLException {
-        try (PreparedStatement preparedStatement = connection.prepareStatement("update resource set path = ?, name = ?, duration = ? where id = ?;")) {
-            preparedStatement.setString(1, path);
-            preparedStatement.setString(2, name);
-            preparedStatement.setLong(3, duration);
-            preparedStatement.setInt(4, id);
-            preparedStatement.execute();
+        if (this.id == null) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s(?::varchar(1041), ?::varchar(200), ?)", creationFunctionName()))) {
+                preparedStatement.setString(1, getPath());
+                preparedStatement.setString(2, getName());
+                preparedStatement.setInt(3, getDuration());
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (!resultSet.next()) {
+                        throw new SQLException("Could not execute statement");
+                    }
+                    this.setId(resultSet.getInt("id"));
+                    this.setCreatedAt(resultSet.getTimestamp("createdAt"));
+                }
+            }
+        } else {
+            try (PreparedStatement preparedStatement = connection.prepareStatement("update resource set path = ?, name = ?, duration = ? where id = ?;")) {
+                preparedStatement.setString(1, path);
+                preparedStatement.setString(2, name);
+                preparedStatement.setLong(3, duration);
+                preparedStatement.setInt(4, id);
+                preparedStatement.execute();
+            }
         }
     }
 

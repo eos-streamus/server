@@ -42,22 +42,7 @@ public class Song extends Resource implements SavableEntity {
     }
 
     @Override
-    public void save(Connection connection) throws SQLException {
-        if (this.getId() == null) {
-            try (PreparedStatement preparedStatement = connection.prepareStatement("select * from createSong(?::varchar(1041), ?::varchar(200), ?)")) {
-                preparedStatement.setString(1, getPath());
-                preparedStatement.setString(2, getName());
-                preparedStatement.setInt(3, getDuration());
-                try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                    if (!resultSet.next()) {
-                        throw new SQLException("Could not execute statement");
-                    }
-                    this.setId(resultSet.getInt("id"));
-                    this.setCreatedAt(resultSet.getTimestamp("createdAt"));
-                }
-            }
-        } else {
-            super.save(connection);
-        }
+    public String creationFunctionName() {
+        return "createSong";
     }
 }
