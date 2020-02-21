@@ -21,15 +21,15 @@ class StreamUsApplicationTests {
     @Test
     void connectToDatabase() {
         assertDoesNotThrow(() -> {
-            try (Connection ignored = databaseConnection.getConnection()) {
-            }
+            Connection connection = databaseConnection.getConnection();
+            connection.close();
         });
     }
 
     @Test
-    void testSongCRUD() throws SQLException, NoResultException, ClassNotFoundException {
-        // Create
+    void testSongCRUD() throws SQLException, NoResultException {
         try (Connection connection = databaseConnection.getConnection()) {
+            // Create
             Song song = new Song(String.format("test%d.mp3", new Date().getTime()), "Test song", 100);
             song.save(connection);
 
@@ -48,6 +48,5 @@ class StreamUsApplicationTests {
             song.delete(connection);
             assertThrows(NoResultException.class, () -> Song.findById(song.getId(), connection));
         }
-
     }
 }
