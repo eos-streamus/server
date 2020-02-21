@@ -1,7 +1,5 @@
 package com.eos.streamus.models;
 
-import com.eos.streamus.exceptions.NotPersistedException;
-
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
