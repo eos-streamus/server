@@ -7,12 +7,13 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 public class Person implements Entity, SavableEntity {
-  private static final String PERSON_ID = "id";
-  private static final String FIRST_NAME = "firstName";
-  private static final String LAST_NAME = "lastName";
-  private static final String DATE_OF_BIRTH = "dateOfBirth";
-  private static final String CREATED_AT = "createdAt";
-  private static final String UPDATED_AT = "updatedAt";
+  protected static final String TABLE_NAME = "Person";
+  protected static final String ID_COLUMN = "id";
+  protected static final String FIRST_NAME_COLUMN = "firstName";
+  protected static final String LAST_NAME_COLUMN = "lastName";
+  protected static final String DATE_OF_BIRTH_COLUMN = "dateOfBirth";
+  protected static final String CREATED_AT_COLUMN = "createdAt";
+  protected static final String UPDATED_AT_COLUMN = "updatedAt";
 
   private Integer id;
   private String firstName;
@@ -46,19 +47,19 @@ public class Person implements Entity, SavableEntity {
             throw new SQLException("Could not execute statement");
           }
           this.id = resultSet.getInt("id");
-          this.createdAt = resultSet.getTimestamp(CREATED_AT);
-          this.updatedAt = resultSet.getTimestamp(UPDATED_AT);
+          this.createdAt = resultSet.getTimestamp(CREATED_AT_COLUMN);
+          this.updatedAt = resultSet.getTimestamp(UPDATED_AT_COLUMN);
         }
       }
     } else {
-      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("update %s set firstname = ?, lastname = ?, dateOfBirth = ? where id = ? returning updatedAt;", tableName()))) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("update %s set firstname = ?, lastname = ?, dateOfBirth = ? where id = ? returning updatedAt;", TABLE_NAME))) {
         preparedStatement.setString(1, firstName);
         preparedStatement.setString(2, lastName);
         preparedStatement.setDate(3, dateOfBirth);
         preparedStatement.setInt(4, id);
         try (ResultSet resultSet = preparedStatement.executeQuery()) {
           resultSet.next();
-          this.updatedAt = resultSet.getTimestamp(UPDATED_AT);
+          this.updatedAt = resultSet.getTimestamp(UPDATED_AT_COLUMN);
         }
       }
     }
@@ -66,12 +67,12 @@ public class Person implements Entity, SavableEntity {
 
   @Override
   public String tableName() {
-    return "Person";
+    return TABLE_NAME;
   }
 
   @Override
   public String primaryKeyName() {
-    return PERSON_ID;
+    return ID_COLUMN;
   }
 
   @Override
@@ -117,8 +118,16 @@ public class Person implements Entity, SavableEntity {
     return createdAt;
   }
 
+  protected void setCreatedAt(Timestamp createdAt) {
+    this.createdAt = createdAt;
+  }
+
   public Timestamp getUpdatedAt() {
     return updatedAt;
+  }
+
+  protected void setUpdatedAt(Timestamp updatedAt) {
+    this.updatedAt = updatedAt;
   }
   //#endregion getters and setters
 
@@ -144,38 +153,42 @@ public class Person implements Entity, SavableEntity {
 
   @Override
   public String toString() {
+    return String.format("{%s}", getFieldNamesAndValuesString());
+  }
+
+  protected String getFieldNamesAndValuesString() {
     DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd");
     DateFormat timestampFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z");
     return String.format(
-      "{%s: %d, %s: %s, %s: %s, %s: %s, %s: %s, %s: %s}",
-      PERSON_ID,
+      "%s: %d, %s: %s, %s: %s, %s: %s, %s: %s, %s: %s",
+      ID_COLUMN,
       id,
-      FIRST_NAME,
+      FIRST_NAME_COLUMN,
       firstName,
-      LAST_NAME,
+      LAST_NAME_COLUMN,
       lastName,
-      DATE_OF_BIRTH,
+      DATE_OF_BIRTH_COLUMN,
       dateFormat.format(dateOfBirth.getTime()),
-      CREATED_AT,
+      CREATED_AT_COLUMN,
       timestampFormat.format(createdAt),
-      UPDATED_AT,
+      UPDATED_AT_COLUMN,
       timestampFormat.format(updatedAt));
   }
 
   public static Person findById(Integer id, Connection connection) throws SQLException, NoResultException {
-    try (PreparedStatement preparedStatement = connection.prepareStatement("select * from person where id = ?;")) {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s where id = ?;", TABLE_NAME))) {
       preparedStatement.setInt(1, id);
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
         if (!resultSet.next()) {
           throw new NoResultException();
         }
         return new Person(
-          resultSet.getInt(PERSON_ID),
-          resultSet.getString(FIRST_NAME),
-          resultSet.getString(LAST_NAME),
-          resultSet.getDate(DATE_OF_BIRTH),
-          resultSet.getTimestamp(CREATED_AT),
-          resultSet.getTimestamp(UPDATED_AT)
+          resultSet.getInt(ID_COLUMN),
+          resultSet.getString(FIRST_NAME_COLUMN),
+          resultSet.getString(LAST_NAME_COLUMN),
+          resultSet.getDate(DATE_OF_BIRTH_COLUMN),
+          resultSet.getTimestamp(CREATED_AT_COLUMN),
+          resultSet.getTimestamp(UPDATED_AT_COLUMN)
         );
       }
     }

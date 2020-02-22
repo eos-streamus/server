@@ -4,6 +4,7 @@ import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.Film;
 import com.eos.streamus.models.Person;
 import com.eos.streamus.models.Song;
+import com.eos.streamus.models.User;
 import com.eos.streamus.utils.DatabaseConnection;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -111,6 +113,38 @@ class StreamUsApplicationTests {
       // Delete
       person.delete(connection);
       assertThrows(NoResultException.class, () -> Person.findById(person.getId(), connection));
+    }
+  }
+
+  @Test
+  void testUserCRUD() throws SQLException, NoResultException, ParseException {
+    try (Connection connection = databaseConnection.getConnection()) {
+      DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+      java.sql.Date sqlDate = new java.sql.Date(dateFormat.parse("1970-08-01").getTime());
+
+      // Create
+      User user = new User("John", "Doe", sqlDate, String.format("john.doe%d@email.com", new Random().nextInt()), "johndoe");
+      user.save(connection);
+      System.out.println(user);
+
+      // Read
+      User retrievedUser = User.findById(user.getId(), connection);
+      assertEquals(user, retrievedUser);
+
+      // Update
+      user.setFirstName("Jane");
+      user.setLastName("Donut");
+      user.setDateOfBirth(new java.sql.Date(dateFormat.parse("1970-08-02").getTime()));
+      user.setEmail(String.format("jane.donut%d@email.com", new Random().nextInt()));
+      user.setUsername("janedonut");
+      user.save(connection);
+
+      retrievedUser = User.findById(user.getId(), connection);
+      assertEquals(user, retrievedUser);
+
+      // Delete
+      user.delete(connection);
+      assertThrows(NoResultException.class, () -> User.findById(user.getId(), connection));
     }
   }
 }
