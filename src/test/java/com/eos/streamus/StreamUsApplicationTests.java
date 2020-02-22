@@ -2,6 +2,7 @@ package com.eos.streamus;
 
 import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.Film;
+import com.eos.streamus.models.Person;
 import com.eos.streamus.models.Song;
 import com.eos.streamus.utils.DatabaseConnection;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -77,6 +81,36 @@ class StreamUsApplicationTests {
       // Delete
       film.delete(connection);
       assertThrows(NoResultException.class, () -> Film.findById(film.getId(), connection));
+    }
+  }
+
+  @Test
+  void testPersonCRUD() throws SQLException, NoResultException, ParseException {
+    try (Connection connection = databaseConnection.getConnection()) {
+      DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+      java.sql.Date sqlDate = new java.sql.Date(dateFormat.parse("1970-08-01").getTime());
+
+      // Create
+      Person person = new Person("John", "Doe", sqlDate);
+      person.save(connection);
+      System.out.println(person);
+
+      // Read
+      Person retrievedPerson = Person.findById(person.getId(), connection);
+      assertEquals(person, retrievedPerson);
+
+      // Update
+      person.setFirstName("Jane");
+      person.setLastName("Donut");
+      person.setDateOfBirth(new java.sql.Date(dateFormat.parse("1970-08-02").getTime()));
+      person.save(connection);
+
+      retrievedPerson = Person.findById(person.getId(), connection);
+      assertEquals(person, retrievedPerson);
+
+      // Delete
+      person.delete(connection);
+      assertThrows(NoResultException.class, () -> Person.findById(person.getId(), connection));
     }
   }
 }
