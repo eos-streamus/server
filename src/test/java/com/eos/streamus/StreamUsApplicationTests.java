@@ -254,4 +254,48 @@ class StreamUsApplicationTests {
       assertThrows(NoResultException.class, () -> VideoPlaylist.findById(videoPlaylist.getId(), connection));
     }
   }
+
+  @Test
+  void testPopulatedVideoPlaylistCRUD() throws SQLException, NoResultException, ParseException {
+    try (Connection connection = databaseConnection.getConnection()) {
+      DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+      java.sql.Date sqlDate = new java.sql.Date(dateFormat.parse("1980-01-01").getTime());
+      User user = new User("John", "Doe", sqlDate, String.format("john.doe%d@email.com", new Random().nextInt()), "johndoe");
+      user.save(connection);
+      VideoPlaylist videoPlaylist = new VideoPlaylist("Test video playlist", user);
+      videoPlaylist.save(connection);
+      List<Video> testVideos = new ArrayList<>();
+      for (int i = 0; i < 10; i++) {
+        Video video = new Film(String.format("test%d.mp3", new Date().getTime()), "Test video", 100);
+        video.save(connection);
+        testVideos.add(video);
+        videoPlaylist.addVideo(video);
+      }
+      videoPlaylist.save(connection);
+
+      VideoPlaylist retrievedVideoPlaylist = VideoPlaylist.findById(videoPlaylist.getId(), connection);
+      assertEquals(videoPlaylist, retrievedVideoPlaylist);
+
+      // Update
+      videoPlaylist.setName("Test playlist updated");
+      for (int i = 0; i < 10; i++) {
+        Video video = new Film(String.format("test%d.mp3", new Date().getTime()), "Test video", 100);
+        video.save(connection);
+        testVideos.add(video);
+        videoPlaylist.addVideo(video);
+      }
+      videoPlaylist.save(connection);
+
+      retrievedVideoPlaylist = VideoPlaylist.findById(videoPlaylist.getId(), connection);
+      assertEquals(videoPlaylist, retrievedVideoPlaylist);
+
+      // Delete
+      videoPlaylist.delete(connection);
+      assertThrows(NoResultException.class, () -> SongPlaylist.findById(videoPlaylist.getId(), connection));
+
+      for (Video video : testVideos) {
+        video.delete(connection);
+      }
+    }
+  }
 }

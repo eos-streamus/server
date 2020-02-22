@@ -38,9 +38,35 @@ public class VideoPlaylist extends VideoCollection {
         preparedStatement.setInt(2, VideoPlaylist.this.getId());
         try (ResultSet rs = preparedStatement.executeQuery()) {
           rs.next();
-          setKey(rs.getInt(1));
+          setKey(rs.getInt(NUMBER_COLUMN));
         }
       }
+    }
+
+    @Override
+    public String toString() {
+      return String.format("{%s: %d, %s: %d, %s: %d}",
+        ID_VIDEO_PLAYLIST_VIDEO_COLUMN,
+        VideoPlaylist.this.getId(),
+        ID_VIDEO_COLUMN,
+        this.getValue().getId(),
+        NUMBER_COLUMN,
+        getKey()
+      );
+    }
+
+    @Override
+    public int hashCode() {
+      return getKey() * 31 + getValue().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (o == null || o.getClass() != getClass()) {
+        return false;
+      }
+      VideoPlaylistVideo videoPlaylistVideo = (VideoPlaylistVideo) o;
+      return videoPlaylistVideo.getValue().equals(getValue()) && videoPlaylistVideo.getKey().equals(getKey());
     }
   }
 
@@ -85,6 +111,10 @@ public class VideoPlaylist extends VideoCollection {
 
   public void addVideo(VideoPlaylistVideo video) {
     videos.add(video);
+  }
+
+  public List<VideoPlaylistVideo> getVideos() {
+    return videos;
   }
 
   @Override
@@ -177,9 +207,9 @@ public class VideoPlaylist extends VideoCollection {
         );
 
         // Videos
-        int firstTrackNumber = resultSet.getInt(VideoPlaylistVideo.NUMBER_COLUMN);
+        int firstVideoNumber = resultSet.getInt(VideoPlaylistVideo.NUMBER_COLUMN);
         if (!resultSet.wasNull()) {
-          videoPlaylist.addVideo(videoPlaylist.new VideoPlaylistVideo(firstTrackNumber, VideoDAO.findById(resultSet.getInt(VideoPlaylistVideo.ID_VIDEO_COLUMN), connection)));
+          videoPlaylist.addVideo(videoPlaylist.new VideoPlaylistVideo(firstVideoNumber, VideoDAO.findById(resultSet.getInt(VideoPlaylistVideo.ID_VIDEO_COLUMN), connection)));
           while (resultSet.next()) {
             videoPlaylist.addVideo(videoPlaylist.new VideoPlaylistVideo(resultSet.getInt(VideoPlaylistVideo.NUMBER_COLUMN), VideoDAO.findById(resultSet.getInt(VideoPlaylistVideo.ID_VIDEO_COLUMN), connection)));
           }
