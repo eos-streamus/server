@@ -8,4 +8,6 @@ interface Entity {
   String getCreationFunctionName();
 
   Integer getId();
+
+  String getFieldNamesAndValuesString();
 }

@@ -9,6 +9,7 @@ public class Film extends Video {
   private static final String TABLE_NAME = "Film";
   private static final String VIEW_NAME = "vfilm";
   private static final String CREATION_FUNCTION_NAME = "createFilm";
+  private static final String PRIMARY_KEY_NAME = "idVideo";
   //#endregion Static attributes
 
   //#region Constructors
@@ -30,6 +31,11 @@ public class Film extends Video {
   @Override
   public String getTableName() {
     return TABLE_NAME;
+  }
+
+  @Override
+  public String getPrimaryKeyName() {
+    return PRIMARY_KEY_NAME;
   }
   //#endregion Getters and Setters
 

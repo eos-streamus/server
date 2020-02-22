@@ -1,8 +1,8 @@
 package com.eos.streamus.models;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 abstract class Collection implements SavableEntity, Entity {
   //#region Static attributes
@@ -28,10 +28,8 @@ abstract class Collection implements SavableEntity, Entity {
     this.updatedAt = updatedAt;
   }
 
-  protected Collection(String name, Timestamp createdAt, Timestamp updatedAt) {
+  protected Collection(String name) {
     this.name = name;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
   }
   //#endregion Constructors
 
@@ -45,12 +43,98 @@ abstract class Collection implements SavableEntity, Entity {
   public String getPrimaryKeyName() {
     return PRIMARY_KEY_NAME;
   }
+
+  @Override
+  public Integer getId() {
+    return id;
+  }
+
+  public void setId(Integer id) {
+    this.id = id;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public Timestamp getCreatedAt() {
+    return createdAt;
+  }
+
+  public void setCreatedAt(Timestamp createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public Timestamp getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public void setUpdatedAt(Timestamp updatedAt) {
+    this.updatedAt = updatedAt;
+  }
   //#endregion Getters and Setters
 
-  //#region Database operations
+
   @Override
   public void save(Connection connection) throws SQLException {
-    // TODO
+    if (this.id == null) {
+      throw new NullPointerException("Collection#save can only be called on update");
+    }
+    try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("update %s set %s = ? where %s = ? returning %s;", TABLE_NAME, NAME_COLUMN, PRIMARY_KEY_NAME, UPDATED_AT_COLUMN))) {
+      preparedStatement.setString(1, name);
+      preparedStatement.setInt(2, id);
+      try (ResultSet resultSet = preparedStatement.executeQuery()) {
+        resultSet.next();
+        this.updatedAt = resultSet.getTimestamp(1);
+      }
+    }
   }
-  //#endregion Database operations
+
+  @Override
+  public String toString() {
+    return String.format("{%s}", getFieldNamesAndValuesString());
+  }
+
+  @Override
+  public String getFieldNamesAndValuesString() {
+    DateFormat timestampFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z");
+    return String.format(
+      "%s: %d, %s: %s, %s: %s, %s, %s",
+      PRIMARY_KEY_NAME,
+      id,
+      NAME_COLUMN,
+      name,
+      CREATED_AT_COLUMN,
+      timestampFormat.format(createdAt),
+      UPDATED_AT_COLUMN,
+      timestampFormat.format(updatedAt)
+    );
+  }
+
+  @Override
+  public int hashCode() {
+    return id;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || o.getClass() != this.getClass()) {
+      System.out.println("Not same class");
+      return false;
+    }
+    Collection collection = (Collection) o;
+    System.out.println("collection.id.equals(id)" + collection.id.equals(id));
+    System.out.println("collection.name.equals(name) " + String.format("%s, %s ", name, collection.name) + collection.name.equals(name));
+    System.out.println("collection.createdAt.equals(createdAt)" + collection.createdAt.equals(createdAt));
+    System.out.println("collection.updatedAt.equals(updatedAt)" + collection.updatedAt.equals(updatedAt));
+    return
+      collection.id.equals(id) &&
+        collection.name.equals(name) &&
+        collection.createdAt.equals(createdAt) &&
+        collection.updatedAt.equals(updatedAt);
+  }
 }

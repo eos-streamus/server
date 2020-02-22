@@ -164,7 +164,8 @@ public class Person implements Entity, SavableEntity {
     return String.format("{%s}", getFieldNamesAndValuesString());
   }
 
-  protected String getFieldNamesAndValuesString() {
+  @Override
+  public String getFieldNamesAndValuesString() {
     DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd");
     DateFormat timestampFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z");
     return String.format(

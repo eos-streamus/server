@@ -118,8 +118,20 @@ public class User extends Person {
 
   //#region String representations
   @Override
+  public String getFieldNamesAndValuesString() {
+    return String.format(
+      "%s, %s: %s, %s: %s",
+      super.getFieldNamesAndValuesString(),
+      EMAIL_COLUMN,
+      email,
+      USERNAME_COLUMN,
+      username
+    );
+  }
+
+  @Override
   public String toString() {
-    return String.format("{%s, %s, %s}", getFieldNamesAndValuesString(), EMAIL_COLUMN, email);
+    return String.format("{%s}", getFieldNamesAndValuesString());
   }
   //#endregion String representations
 
