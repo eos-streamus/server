@@ -3,8 +3,6 @@ package com.eos.streamus.models;
 import com.eos.streamus.exceptions.NoResultException;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public final class SongPlaylist extends SongCollection {
   private static final String CREATION_FUNCTION_NAME = "createSongPlaylist";
@@ -69,24 +67,23 @@ public final class SongPlaylist extends SongCollection {
         Integer userId = resultSet.getInt(USER_ID_COLUMN);
         User user = User.findById(userId, connection);
 
-        // Songs
-        List<Track> songPlaylistTracks = new ArrayList<>();
-        int firstTrackNumber = resultSet.getInt("trackNumber");
-        if (!resultSet.wasNull()) {
-          songPlaylistTracks.add(new Track(firstTrackNumber, Song.findById(resultSet.getInt("idSong"), connection)));
-          while (resultSet.next()) {
-            songPlaylistTracks.add(new Track(resultSet.getInt("trackNumber"), Song.findById(resultSet.getInt("idSong"), connection)));
-          }
-        }
-
-        return new SongPlaylist(
+        SongPlaylist songPlaylist = new SongPlaylist(
           id,
           name,
           createdAt,
           updatedAt,
-          user,
-          songPlaylistTracks.toArray(new Track[]{})
+          user
         );
+
+        // Songs
+        int firstTrackNumber = resultSet.getInt("trackNumber");
+        if (!resultSet.wasNull()) {
+          songPlaylist.addTrack(songPlaylist.new Track(firstTrackNumber, Song.findById(resultSet.getInt("idSong"), connection)));
+          while (resultSet.next()) {
+            songPlaylist.addTrack(songPlaylist.new Track(resultSet.getInt("trackNumber"), Song.findById(resultSet.getInt("idSong"), connection)));
+          }
+        }
+        return songPlaylist;
       }
     }
   }
@@ -116,14 +113,6 @@ public final class SongPlaylist extends SongCollection {
     if (o == null) {
       return false;
     }
-    if (!super.equals(o)) {
-      System.out.println("SongCollection equals o not ok");
-      return false;
-    }
-    if (!(((SongPlaylist) o).user.equals(user))) {
-      System.out.println("users not equal");
-      return false;
-    }
-    return true;
+    return super.equals(o) && ((SongPlaylist) o).user.equals(user);
   }
 }

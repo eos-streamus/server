@@ -6,7 +6,7 @@ import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-public class Person implements Entity, SavableEntity {
+public class Person implements SavableDeletableEntity {
   //#region Static attributes
   protected static final String TABLE_NAME = "Person";
   protected static final String ID_COLUMN = "id";

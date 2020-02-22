@@ -4,7 +4,7 @@ import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-abstract class Collection implements SavableEntity, Entity {
+abstract class Collection implements SavableDeletableEntity {
   //#region Static attributes
   protected static final String TABLE_NAME = "Collection";
   protected static final String PRIMARY_KEY_NAME = "id";
@@ -78,7 +78,7 @@ abstract class Collection implements SavableEntity, Entity {
   }
   //#endregion Getters and Setters
 
-
+  //#region Database operations
   @Override
   public void save(Connection connection) throws SQLException {
     if (this.id == null) {
@@ -93,12 +93,9 @@ abstract class Collection implements SavableEntity, Entity {
       }
     }
   }
+  //#endregion Database operations
 
-  @Override
-  public String toString() {
-    return String.format("{%s}", getFieldNamesAndValuesString());
-  }
-
+  //#region String representations
   @Override
   public String getFieldNamesAndValuesString() {
     DateFormat timestampFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z");
@@ -116,6 +113,13 @@ abstract class Collection implements SavableEntity, Entity {
   }
 
   @Override
+  public String toString() {
+    return String.format("{%s}", getFieldNamesAndValuesString());
+  }
+  //#endregion String representations
+
+  //#region Equals
+  @Override
   public int hashCode() {
     return id;
   }
@@ -123,18 +127,14 @@ abstract class Collection implements SavableEntity, Entity {
   @Override
   public boolean equals(Object o) {
     if (o == null || o.getClass() != this.getClass()) {
-      System.out.println("Not same class");
       return false;
     }
     Collection collection = (Collection) o;
-    System.out.println("collection.id.equals(id)" + collection.id.equals(id));
-    System.out.println("collection.name.equals(name) " + String.format("%s, %s ", name, collection.name) + collection.name.equals(name));
-    System.out.println("collection.createdAt.equals(createdAt)" + collection.createdAt.equals(createdAt));
-    System.out.println("collection.updatedAt.equals(updatedAt)" + collection.updatedAt.equals(updatedAt));
     return
       collection.id.equals(id) &&
         collection.name.equals(name) &&
         collection.createdAt.equals(createdAt) &&
         collection.updatedAt.equals(updatedAt);
   }
+  //#endregion Equals
 }
