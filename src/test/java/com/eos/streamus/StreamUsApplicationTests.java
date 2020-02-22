@@ -225,4 +225,33 @@ class StreamUsApplicationTests {
       });
     }
   }
+
+  @Test
+  void testEmptyVideoPlaylistCRUD() throws SQLException, NoResultException, ParseException {
+    try (Connection connection = databaseConnection.getConnection()) {
+      DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+      java.sql.Date sqlDate = new java.sql.Date(dateFormat.parse("1970-08-01").getTime());
+      User user = new User("John", "Doe", sqlDate, String.format("john.doe%d@email.com", new Random().nextInt()), "johndoe");
+      user.save(connection);
+
+      // Create
+      VideoPlaylist videoPlaylist = new VideoPlaylist("Test playlist", user);
+      videoPlaylist.save(connection);
+
+      // Read
+      VideoPlaylist retrievedVideoPlaylist = VideoPlaylist.findById(videoPlaylist.getId(), connection);
+      assertEquals(videoPlaylist, retrievedVideoPlaylist);
+
+      // Update
+      videoPlaylist.setName("Test playlist updated");
+      videoPlaylist.save(connection);
+
+      retrievedVideoPlaylist = VideoPlaylist.findById(videoPlaylist.getId(), connection);
+      assertEquals(videoPlaylist, retrievedVideoPlaylist);
+
+      // Delete
+      videoPlaylist.delete(connection);
+      assertThrows(NoResultException.class, () -> VideoPlaylist.findById(videoPlaylist.getId(), connection));
+    }
+  }
 }

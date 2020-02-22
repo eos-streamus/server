@@ -76,11 +76,11 @@ public final class SongPlaylist extends SongCollection {
         );
 
         // Songs
-        int firstTrackNumber = resultSet.getInt("trackNumber");
+        int firstTrackNumber = resultSet.getInt(Track.TRACK_NUMBER_COLUMN);
         if (!resultSet.wasNull()) {
-          songPlaylist.addTrack(songPlaylist.new Track(firstTrackNumber, Song.findById(resultSet.getInt("idSong"), connection)));
+          songPlaylist.addTrack(songPlaylist.new Track(firstTrackNumber, Song.findById(resultSet.getInt(Track.ID_SONG_COLUMN), connection)));
           while (resultSet.next()) {
-            songPlaylist.addTrack(songPlaylist.new Track(resultSet.getInt("trackNumber"), Song.findById(resultSet.getInt("idSong"), connection)));
+            songPlaylist.addTrack(songPlaylist.new Track(resultSet.getInt(Track.TRACK_NUMBER_COLUMN), Song.findById(resultSet.getInt(Track.ID_SONG_COLUMN), connection)));
           }
         }
         return songPlaylist;
