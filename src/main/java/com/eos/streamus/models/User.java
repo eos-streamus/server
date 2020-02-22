@@ -5,13 +5,20 @@ import com.eos.streamus.exceptions.NoResultException;
 import java.sql.*;
 
 public class User extends Person {
+  //#region Static attributes
+  private static final String TABLE_NAME = "StreamUsUser";
   private static final String EMAIL_COLUMN = "email";
   private static final String USERNAME_COLUMN = "username";
+  private static final String VIEW_NAME = "vuser";
+  //#endregion Static attributes
 
+  //#region Instance attributes
   private String email;
   private String username;
+  //#endregion Instance attributes
 
-  protected User(Integer id, String firstName, String lastName, Date dateOfBirth, Timestamp createdAt, Timestamp updatedAt, String email, String username) {
+  //#region Constructors
+  protected User(Integer id, String firstName, String lastName, Date dateOfBirth, Timestamp createdAt, Timestamp updatedAt, String email, String username) { // NOSONAR
     super(id, firstName, lastName, dateOfBirth, createdAt, updatedAt);
     this.email = email;
     this.username = username;
@@ -22,7 +29,9 @@ public class User extends Person {
     this.email = email;
     this.username = username;
   }
+  //#endregion Constructors
 
+  //#region Getters and Setters
   public String getEmail() {
     return email;
   }
@@ -40,24 +49,26 @@ public class User extends Person {
   }
 
   @Override
-  public String tableName() {
-    return "StreamUsUser";
+  public String getTableName() {
+    return TABLE_NAME;
   }
 
   @Override
-  public String creationFunctionName() {
+  public String getCreationFunctionName() {
     return "createUser";
   }
 
   @Override
-  public String primaryKeyName() {
+  public String getPrimaryKeyName() {
     return "idPerson";
   }
+  //#endregion Getters and Setters
 
+  //#region Database operations
   @Override
   public void save(Connection connection) throws SQLException {
     if (this.getId() == null) {
-      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s(?::varchar(200), ?::varchar(200), ?, ?::varchar(255), ?::varchar(50));", creationFunctionName()))) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s(?::varchar(200), ?::varchar(200), ?, ?::varchar(255), ?::varchar(50));", getCreationFunctionName()))) {
         preparedStatement.setString(1, getFirstName());
         preparedStatement.setString(2, getLastName());
         preparedStatement.setDate(3, getDateOfBirth());
@@ -74,7 +85,7 @@ public class User extends Person {
       }
     } else {
       super.save(connection);
-      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("update %s set %s = ?, %s = ? where %s = ?;", tableName(), EMAIL_COLUMN, USERNAME_COLUMN, primaryKeyName()))) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("update %s set %s = ?, %s = ? where %s = ?;", getTableName(), EMAIL_COLUMN, USERNAME_COLUMN, getPrimaryKeyName()))) {
         preparedStatement.setString(1, email);
         preparedStatement.setString(2, username);
         preparedStatement.setInt(3, getId());
@@ -84,7 +95,7 @@ public class User extends Person {
   }
 
   public static User findById(Integer id, Connection connection) throws SQLException, NoResultException {
-    try (PreparedStatement preparedStatement = connection.prepareStatement("select * from vuser where id = ?")) {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s where id = ?", VIEW_NAME))) {
       preparedStatement.setInt(1, id);
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
         if (!resultSet.next()) {
@@ -103,7 +114,16 @@ public class User extends Person {
       }
     }
   }
+  //#endregion Database operations
 
+  //#region String representations
+  @Override
+  public String toString() {
+    return String.format("{%s, %s, %s}", getFieldNamesAndValuesString(), EMAIL_COLUMN, email);
+  }
+  //#endregion String representations
+
+  //#region Equals
   @Override
   public int hashCode() {
     return super.hashCode();
@@ -113,9 +133,5 @@ public class User extends Person {
   public boolean equals(Object o) {
     return super.equals(o) && ((User) o).email.equals(email);
   }
-
-  @Override
-  public String toString() {
-    return String.format("{%s, %s, %s}", getFieldNamesAndValuesString(), EMAIL_COLUMN, email);
-  }
+  //#endregion Equals
 }

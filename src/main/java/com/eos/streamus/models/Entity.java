@@ -1,11 +1,11 @@
 package com.eos.streamus.models;
 
 interface Entity {
-  String tableName();
+  String getTableName();
 
-  String primaryKeyName();
+  String getPrimaryKeyName();
 
-  String creationFunctionName();
+  String getCreationFunctionName();
 
   Integer getId();
 }

@@ -5,12 +5,24 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 abstract class Resource implements Entity, SavableEntity {
+  //#region Static attributes
+  protected static final String TABLE_NAME = "Resource";
+  protected static final String ID_COLUMN = "id";
+  protected static final String PATH_COLUMN = "path";
+  protected static final String NAME_COLUMN = "name";
+  protected static final String DURATION_COLUMN = "duration";
+  protected static final String CREATED_AT_COLUMN = "createdAt";
+  //#endregion Static attributes
+
+  //#region Instance attributes
   private Integer id;
   private String path;
   private String name;
   private Timestamp createdAt;
   private Integer duration;
+  //#endregion Instance attributes
 
+  //#region Constructors
   protected Resource(Integer id, String path, String name, Timestamp createdAt, Integer duration) {
     this(path, name, duration);
     this.createdAt = createdAt;
@@ -22,17 +34,9 @@ abstract class Resource implements Entity, SavableEntity {
     this.name = name;
     this.duration = duration;
   }
+  //#endregion Constructors
 
-  @Override
-  public String tableName() {
-    return "Resource";
-  }
-
-  @Override
-  public String primaryKeyName() {
-    return "id";
-  }
-
+  //#region Getters and Setters
   public Integer getId() {
     return this.id;
   }
@@ -74,9 +78,21 @@ abstract class Resource implements Entity, SavableEntity {
   }
 
   @Override
+  public String getPrimaryKeyName() {
+    return ID_COLUMN;
+  }
+
+  @Override
+  public String getTableName() {
+    return TABLE_NAME;
+  }
+  //#endregion Getters and Setters
+
+  //#region Database operations
+  @Override
   public void save(Connection connection) throws SQLException {
     if (this.id == null) {
-      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s(?::varchar(1041), ?::varchar(200), ?)", creationFunctionName()))) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s(?::varchar(1041), ?::varchar(200), ?)", getCreationFunctionName()))) {
         preparedStatement.setString(1, getPath());
         preparedStatement.setString(2, getName());
         preparedStatement.setInt(3, getDuration());
@@ -84,12 +100,12 @@ abstract class Resource implements Entity, SavableEntity {
           if (!resultSet.next()) {
             throw new SQLException("Could not execute statement");
           }
-          this.setId(resultSet.getInt("id"));
-          this.setCreatedAt(resultSet.getTimestamp("createdAt"));
+          this.setId(resultSet.getInt(ID_COLUMN));
+          this.setCreatedAt(resultSet.getTimestamp(CREATED_AT_COLUMN));
         }
       }
     } else {
-      try (PreparedStatement preparedStatement = connection.prepareStatement("update resource set path = ?, name = ?, duration = ? where id = ?;")) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("update %s set %s = ?, %s = ?, %s = ? where %s = ?;", TABLE_NAME, PATH_COLUMN, NAME_COLUMN, DURATION_COLUMN, ID_COLUMN))) {
         preparedStatement.setString(1, path);
         preparedStatement.setString(2, name);
         preparedStatement.setLong(3, duration);
@@ -98,13 +114,31 @@ abstract class Resource implements Entity, SavableEntity {
       }
     }
   }
+  //#endregion Database operations
 
+  //#region String representations
   @Override
   public String toString() {
-    DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z");
-    return String.format("{id: %d, path: %s, name: %s, duration: %s, createdAt: %s}", id, path, name, duration, dateFormat.format(createdAt));
+    return String.format("{%s}", getFieldNamesAndValuesString());
   }
 
+  public String getFieldNamesAndValuesString() {
+    DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z");
+    return String.format("%s: %d, %s: %s, %s: %s, %s: %s, %s: %s",
+      ID_COLUMN,
+      id,
+      PATH_COLUMN,
+      path,
+      NAME_COLUMN,
+      name,
+      DURATION_COLUMN,
+      duration,
+      CREATED_AT_COLUMN,
+      dateFormat.format(createdAt));
+  }
+  //#endregion String representations
+
+  //#region Equals
   @Override
   public int hashCode() {
     return id;
@@ -123,4 +157,5 @@ abstract class Resource implements Entity, SavableEntity {
         oResource.createdAt.equals(createdAt) &&
         oResource.duration.equals(duration);
   }
+  //#endregion Equals
 }
