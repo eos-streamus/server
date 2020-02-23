@@ -171,6 +171,8 @@ class StreamUsApplicationTests {
       // Delete
       songPlaylist.delete(connection);
       assertThrows(NoResultException.class, () -> SongPlaylist.findById(songPlaylist.getId(), connection));
+
+      user.delete(connection);
     }
   }
 
@@ -223,6 +225,7 @@ class StreamUsApplicationTests {
           fail(String.format("Song %s could not be deleted", song));
         }
       });
+      user.delete(connection);
     }
   }
 
@@ -252,6 +255,7 @@ class StreamUsApplicationTests {
       // Delete
       videoPlaylist.delete(connection);
       assertThrows(NoResultException.class, () -> VideoPlaylist.findById(videoPlaylist.getId(), connection));
+      user.delete(connection);
     }
   }
 
@@ -293,6 +297,7 @@ class StreamUsApplicationTests {
       videoPlaylist.delete(connection);
       assertThrows(NoResultException.class, () -> SongPlaylist.findById(videoPlaylist.getId(), connection));
 
+      user.delete(connection);
       for (Video video : testVideos) {
         video.delete(connection);
       }
