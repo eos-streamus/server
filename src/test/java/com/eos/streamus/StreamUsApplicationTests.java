@@ -303,4 +303,28 @@ class StreamUsApplicationTests {
       }
     }
   }
+
+  @Test
+  void testEmptySeriesCRUD() throws SQLException, NoResultException {
+    try (Connection connection = databaseConnection.getConnection()) {
+      // Create
+      Series series = new Series(String.format("Test series %d", new Date().getTime()));
+      series.save(connection);
+      assertNotNull(series.getId());
+
+      // Read
+      Series retrievedSeries = Series.findById(series.getId(), connection);
+      assertEquals(series, retrievedSeries);
+
+      // Update
+      series.setName(String.format("Test series updated %d", new Date().getTime()));
+      series.save(connection);
+      retrievedSeries = Series.findById(series.getId(), connection);
+      assertEquals(series, retrievedSeries);
+
+      // Delete
+      series.delete(connection);
+      assertThrows(NoResultException.class, () -> Series.findById(series.getId(), connection));
+    }
+  }
 }
