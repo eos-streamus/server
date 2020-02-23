@@ -4,6 +4,7 @@ import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.*;
 import com.eos.streamus.utils.DatabaseConnection;
 import org.junit.jupiter.api.Test;
+import org.postgresql.util.PSQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -325,6 +326,83 @@ class StreamUsApplicationTests {
       // Delete
       series.delete(connection);
       assertThrows(NoResultException.class, () -> Series.findById(series.getId(), connection));
+    }
+  }
+
+  @Test
+  void testEpisodeCRUD() throws SQLException, NoResultException {
+    try (Connection connection = databaseConnection.getConnection()) {
+      // Create
+      Series series = new Series(String.format("Test series %d", new Date().getTime()));
+      series.save(connection);
+      Series.Episode episode = series.new Episode(String.format("test_episode_%d.mp4", new Date().getTime()), "Test episode", 100, (short) 1, (short) 1);
+      episode.save(connection);
+      assertNotNull(episode.getId());
+
+      // Read
+      Series.Episode retrievedEpisode = (Series.Episode) VideoDAO.findById(episode.getId(), connection);
+      assertEquals(episode, retrievedEpisode);
+
+      // Update
+      episode.setName("Test episode updated");
+      episode.save(connection);
+      retrievedEpisode = (Series.Episode) VideoDAO.findById(episode.getId(), connection);
+      assertEquals(episode, retrievedEpisode);
+
+      // Delete
+      episode.delete(connection);
+      assertThrows(NoResultException.class, () -> VideoDAO.findById(episode.getId(), connection));
+    }
+  }
+
+  @Test
+  void testEpisodeDeleteCascade() throws SQLException, NoResultException {
+    try (Connection connection = databaseConnection.getConnection()) {
+      // Create
+      Series series = new Series(String.format("Test series %d", new Date().getTime()));
+      series.save(connection);
+      Series.Episode episode = series.new Episode(String.format("test_episode_%d.mp4", new Date().getTime()), "Test episode", 100, (short) 1, (short) 1);
+      episode.save(connection);
+      assertNotNull(episode.getId());
+
+      series.delete(connection);
+      assertThrows(NoResultException.class, () -> VideoDAO.findById(episode.getId(), connection));
+    }
+  }
+
+  @Test
+  void testEpisodeWithInvalidSeasonAndEpisodeValues() throws SQLException, NoResultException {
+    try (Connection connection = databaseConnection.getConnection()) {
+      // Create
+      Series series = new Series(String.format("Test series %d", new Date().getTime()));
+      series.save(connection);
+      Series.Episode episode = series.new Episode(String.format("test_episode_%d.mp4", new Date().getTime()), "Test episode", 100, (short) 2, (short) 2);
+      try {
+        episode.save(connection);
+      } catch (PSQLException e) {
+        if (!e.getMessage().contains("Invalid episode numbers")) {
+          fail();
+        }
+      }
+      series.delete(connection);
+    }
+  }
+
+  @Test
+  void testEpisodeWithAutomaticEpisodeNumber() throws SQLException {
+    try (Connection connection = databaseConnection.getConnection()) {
+      // Create
+      Series series = new Series(String.format("Test series %d", new Date().getTime()));
+      series.save(connection);
+      Series.Episode episode1 = series.new Episode(String.format("test_episode_%d.mp4", new Date().getTime()), "Test episode", 100, (short) 1);
+      assertEquals(1, episode1.getEpisodeNumber());
+      Series.Episode episode2 = series.new Episode(String.format("test_episode_%d.mp4", new Date().getTime()), "Test episode", 100, (short) 1);
+      assertEquals(2, episode2.getEpisodeNumber());
+
+      episode1.save(connection);
+      episode2.save(connection);
+
+      series.delete(connection);
     }
   }
 }

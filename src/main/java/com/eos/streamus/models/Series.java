@@ -1,10 +1,147 @@
 package com.eos.streamus.models;
 
 import com.eos.streamus.exceptions.NoResultException;
+import com.eos.streamus.exceptions.NotPersistedException;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Series extends VideoCollection {
+  public class Episode extends Video {
+    //#region Static attributes
+    public static final String TABLE_NAME = "Episode";
+    public static final String PRIMARY_KEY_NAME = "idVideo";
+    public static final String SEASON_NUMBER_COLUMN = "seasonNumber";
+    public static final String EPISODE_NUMBER_COLUMN = "episodeNumber";
+    public static final String CREATION_FUNCTION_NAME = "createEpisode";
+    public static final String VIEW_NAME = "vEpisode";
+    public static final String SERIES_ID_COLUMN = "idSeries";
+    //#endregion Static attributes
+
+    //#region Instance attributes
+    private final short seasonNumber;
+    private final short episodeNumber;
+    //#endregion Instance attributes
+
+    //#region Constructors
+    Episode(Integer id, String path, String name, Timestamp createdAt, Integer duration, final short seasonNumber, final short episodeNumber) {
+      super(id, path, name, createdAt, duration);
+      this.seasonNumber = seasonNumber;
+      this.episodeNumber = episodeNumber;
+      Series.this.episodes.add(this);
+    }
+
+    public Episode(String path, String name, Integer duration, final short seasonNumber, final short episodeNumber) {
+      super(path, name, duration);
+      this.seasonNumber = seasonNumber;
+      this.episodeNumber = episodeNumber;
+      Series.this.episodes.add(this);
+    }
+
+    public Episode(String path, String name, Integer duration, final short seasonNumber) {
+      this(path, name, duration, seasonNumber, (short) (Series.this.getNumberOfEpisodesInSeason(seasonNumber) + 1));
+    }
+    //#endregion Constructors
+
+    //#region Getters and Setters
+    public short getSeasonNumber() {
+      return seasonNumber;
+    }
+
+    public short getEpisodeNumber() {
+      return episodeNumber;
+    }
+
+    public Series getSeries() {
+      return Series.this;
+    }
+
+    @Override
+    public String getTableName() {
+      return TABLE_NAME;
+    }
+
+    @Override
+    public String getPrimaryKeyName() {
+      return PRIMARY_KEY_NAME;
+    }
+
+    @Override
+    public String getCreationFunctionName() {
+      return CREATION_FUNCTION_NAME;
+    }
+    //#endregion Getters and Setters
+
+    //#region Database operations
+    @Override
+    public void save(Connection connection) throws SQLException {
+      if (Series.this.getId() == null) {
+        throw new NotPersistedException("Episode series not persisted");
+      }
+      if (this.getId() == null) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s(?::varchar(1041), ?::varchar(200), ?, ?, ?::smallint, ?::smallint);", CREATION_FUNCTION_NAME))) {
+          preparedStatement.setString(1, getPath());
+          preparedStatement.setString(2, getName());
+          preparedStatement.setInt(3, getDuration());
+          preparedStatement.setInt(4, Series.this.getId());
+          preparedStatement.setShort(5, seasonNumber);
+          preparedStatement.setShort(6, episodeNumber);
+          try (ResultSet resultSet = preparedStatement.executeQuery()) {
+            resultSet.next();
+            setId(resultSet.getInt(Collection.PRIMARY_KEY_NAME));
+            setCreatedAt(resultSet.getTimestamp(Collection.CREATED_AT_COLUMN));
+          }
+        }
+      } else {
+        super.save(connection);
+      }
+    }
+    //#endregion Database operations
+
+    //#region String representations
+    @Override
+    public String toString() {
+      return String.format("{%s}", getFieldNamesAndValuesString());
+    }
+
+    @Override
+    public String getFieldNamesAndValuesString() {
+      return String.format(
+        "%s, %s: %d, %s: %d, %s: %d",
+        super.getFieldNamesAndValuesString(),
+        SERIES_ID_COLUMN,
+        Series.this.getId(),
+        SEASON_NUMBER_COLUMN,
+        seasonNumber,
+        EPISODE_NUMBER_COLUMN,
+        episodeNumber
+      );
+    }
+    //#endregion String representations
+
+    //#region Equals
+    @Override
+    public int hashCode() {
+      return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (!super.equals(o)) {
+        return false;
+      }
+      Episode episode = (Episode) o;
+      return
+        episode.getSeries().getId().equals(Series.this.getId()) && // Don't compare Series instances to avoid infinite recursion
+          episode.seasonNumber == seasonNumber &&
+          episode.episodeNumber == episodeNumber;
+    }
+    //#endregion Equals
+  }
+
   //#region Static attributes
   public static final String TABLE_NAME = "Series";
   public static final String PRIMARY_KEY_NAME = "idVideoCollection";
@@ -12,6 +149,11 @@ public class Series extends VideoCollection {
   public static final String CREATION_FUNCTION_NAME = "createSeries";
   //#endregion
 
+  //#region Instance attributes
+  List<Episode> episodes = new ArrayList<>();
+  //#endregion
+
+  //#region Constructors
   private Series(Integer id, String name, Timestamp createdAt, Timestamp updatedAt) {
     super(id, name, createdAt, updatedAt);
   }
@@ -19,7 +161,9 @@ public class Series extends VideoCollection {
   public Series(String name) {
     super(name);
   }
+  //#endregion Constructors
 
+  //#region Getters and Setters
   @Override
   public String getTableName() {
     return TABLE_NAME;
@@ -28,6 +172,29 @@ public class Series extends VideoCollection {
   @Override
   public String getPrimaryKeyName() {
     return PRIMARY_KEY_NAME;
+  }
+
+  public short getNumberOfSeasons() {
+    List<Short> distinctSeasonNumbers = new ArrayList<>();
+    for (Episode episode : episodes) {
+      if (!distinctSeasonNumbers.contains(episode.seasonNumber)) {
+        distinctSeasonNumbers.add(episode.seasonNumber);
+      }
+    }
+    return (short) distinctSeasonNumbers.size();
+  }
+
+  public short getNumberOfEpisodesInSeason(final short seasonNumber) {
+    return (short) episodes.stream().filter(e -> e.seasonNumber == seasonNumber).count();
+  }
+
+  public List<Episode> getSeason(short seasonNumber) {
+    return
+      episodes
+        .stream()
+        .filter(e -> e.seasonNumber == seasonNumber)
+        .sorted(Comparator.comparingInt(e -> e.episodeNumber))
+        .collect(Collectors.toList());
   }
 
   @Override
