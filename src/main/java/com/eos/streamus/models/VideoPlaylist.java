@@ -10,16 +10,21 @@ import java.util.List;
 
 public class VideoPlaylist extends VideoCollection {
   public class VideoPlaylistVideo extends Pair<Integer, Video> implements SavableDeletable {
+    //#region Static attributes
     public static final String TABLE_NAME = "VideoPlaylistVideo";
     public static final String ID_VIDEO_COLUMN = "idVideo";
     public static final String ID_VIDEO_PLAYLIST_VIDEO_COLUMN = "idVideoPlaylist";
     public static final String NUMBER_COLUMN = "number";
     public static final String CREATION_FUNCTION_NAME = "addVideoToPlaylist";
+    //#endregion Static attributes
 
+    //#region Constructors
     public VideoPlaylistVideo(Integer key, Video value) {
       super(key, value);
     }
+    //#endregion Constructors
 
+    //#region Database operations
     @Override
     public void delete(Connection connection) throws SQLException {
       try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("delete from %s where %s = ? and %s = ?;", TABLE_NAME, ID_VIDEO_COLUMN, ID_VIDEO_PLAYLIST_VIDEO_COLUMN))) {
@@ -42,7 +47,9 @@ public class VideoPlaylist extends VideoCollection {
         }
       }
     }
+    //#endregion Database operations
 
+    //#region String representations
     @Override
     public String toString() {
       return String.format("{%s: %d, %s: %d, %s: %d}",
@@ -54,7 +61,9 @@ public class VideoPlaylist extends VideoCollection {
         getKey()
       );
     }
+    //#endregion String representations
 
+    //#region Equals
     @Override
     public int hashCode() {
       return getKey() * 31 + getValue().hashCode();
@@ -68,17 +77,23 @@ public class VideoPlaylist extends VideoCollection {
       VideoPlaylistVideo videoPlaylistVideo = (VideoPlaylistVideo) o;
       return videoPlaylistVideo.getValue().equals(getValue()) && videoPlaylistVideo.getKey().equals(getKey());
     }
+    //#endregion Equals
   }
 
+  //#region Static attributs
   private static final String CREATION_FUNCTION_NAME = "createVideoPlaylist";
   private static final String TABLE_NAME = "VideoPlaylist";
   private static final String PRIMARY_KEY_NAME = "idVideoCollection";
   private static final String VIEW_NAME = "VVideoPlaylist";
   private static final String USER_ID_COLUMN = "idUser";
+  //#endregion Static attributes
 
+  //#region Instance attributes
   private final User user;
   private final List<VideoPlaylistVideo> videos = new ArrayList<>();
+  //#endregion Instance attributes
 
+  //#region Constructors
   VideoPlaylist(Integer id, String name, Timestamp createdAt, Timestamp updatedAt, User user) {
     super(id, name, createdAt, updatedAt);
     this.user = user;
@@ -88,7 +103,9 @@ public class VideoPlaylist extends VideoCollection {
     super(name);
     this.user = user;
   }
+  //#endregion Constructors
 
+  //#region Accessors
   @Override
   public String getTableName() {
     return TABLE_NAME;
@@ -97,6 +114,10 @@ public class VideoPlaylist extends VideoCollection {
   @Override
   public String getPrimaryKeyName() {
     return PRIMARY_KEY_NAME;
+  }
+
+  public List<VideoPlaylistVideo> getVideos() {
+    return videos;
   }
 
   public void addVideo(Video video) {
@@ -112,11 +133,9 @@ public class VideoPlaylist extends VideoCollection {
   public void addVideo(VideoPlaylistVideo video) {
     videos.add(video);
   }
+  //#endregion Accessors
 
-  public List<VideoPlaylistVideo> getVideos() {
-    return videos;
-  }
-
+  //#region Database operations
   @Override
   public void save(Connection connection) throws SQLException {
     if (this.getId() == null) {
@@ -218,7 +237,9 @@ public class VideoPlaylist extends VideoCollection {
       }
     }
   }
+  //#endregion Database operations
 
+  //#region String representations
   @Override
   public String getFieldNamesAndValuesString() {
     return super.getFieldNamesAndValuesString();
@@ -228,7 +249,9 @@ public class VideoPlaylist extends VideoCollection {
   public String toString() {
     return super.toString();
   }
+  //#endregion String representations
 
+  //#region Equals
   @Override
   public int hashCode() {
     return super.hashCode();
@@ -250,6 +273,7 @@ public class VideoPlaylist extends VideoCollection {
     }
     return true;
   }
+  //#endregion Equals
 
   @Override
   public String getCreationFunctionName() {

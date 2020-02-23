@@ -5,12 +5,17 @@ import com.eos.streamus.exceptions.NoResultException;
 import java.sql.*;
 
 public final class SongPlaylist extends SongCollection {
+  //#region Static attributes
   private static final String CREATION_FUNCTION_NAME = "createSongPlaylist";
   private static final String VIEW_NAME = "vSongPlaylist";
   private static final String USER_ID_COLUMN = "idUser";
+  //#endregion Static attributes
 
+  //#region Instance attributes
   private final User user;
+  //#endregion Instance attributes
 
+  //#region Constructors
   private SongPlaylist(Integer id, String name, Timestamp createdAt, Timestamp updatedAt, final User user, Track... tracks) {
     super(id, name, createdAt, updatedAt, tracks);
     this.user = user;
@@ -20,7 +25,9 @@ public final class SongPlaylist extends SongCollection {
     super(name, tracks);
     this.user = user;
   }
+  //#endregion Constructors
 
+  //#region Getters and Setters
   @Override
   public String getCreationFunctionName() {
     return CREATION_FUNCTION_NAME;
@@ -29,7 +36,9 @@ public final class SongPlaylist extends SongCollection {
   public final User getUser() {
     return user;
   }
+  //#endregion Getters and Setters
 
+  //#region Database operations
   @Override
   public void save(Connection connection) throws SQLException {
     if (this.getId() == null) {
@@ -87,7 +96,9 @@ public final class SongPlaylist extends SongCollection {
       }
     }
   }
+  //#endregion Database operations
 
+  //#region String representations
   @Override
   public String getFieldNamesAndValuesString() {
     return String.format(
@@ -102,7 +113,9 @@ public final class SongPlaylist extends SongCollection {
   public String toString() {
     return String.format("{%s}", getFieldNamesAndValuesString());
   }
+  //#endregion String representations
 
+  //#region Equals
   @Override
   public int hashCode() {
     return super.hashCode();
@@ -115,4 +128,5 @@ public final class SongPlaylist extends SongCollection {
     }
     return super.equals(o) && ((SongPlaylist) o).user.equals(user);
   }
+  //#endregion Equals
 }

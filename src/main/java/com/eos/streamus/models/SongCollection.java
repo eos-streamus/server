@@ -11,27 +11,21 @@ import java.util.List;
 
 public abstract class SongCollection extends Collection {
   public class Track extends Pair<Integer, Song> implements SavableDeletable {
+    //#region Static attributes
     public static final String TABLE_NAME = "SongCollectionSong";
     public static final String TRACK_NUMBER_COLUMN = "trackNumber";
     public static final String ID_SONG_COLUMN = "idSong";
     public static final String ID_SONG_COLLECTION_COLUMN = "idSongCollection";
     public static final String CREATION_FUNCTION_NAME = "addSongToSongCollection";
+    //#endregion Static attributes
+
+    //#region Constructors
     public Track(Integer trackNumber, Song song) {
       super(trackNumber, song);
     }
+    //#endregion Constructors
 
-    public String getFieldNamesAndValuesString() {
-      return String.format(
-        "%s: %s, %s: %s, %s: %s",
-        ID_SONG_COLLECTION_COLUMN,
-        SongCollection.this.getId(),
-        ID_SONG_COLUMN,
-        this.getValue(),
-        TRACK_NUMBER_COLUMN,
-        this.getKey()
-      );
-    }
-
+    //#region Database operations
     public void save(Connection connection) throws SQLException {
       try (PreparedStatement songPreparedStatement = connection.prepareStatement(String.format("select * from %s(?, ?);", CREATION_FUNCTION_NAME))) {
         songPreparedStatement.setInt(1, getValue().getId());
@@ -44,10 +38,37 @@ public abstract class SongCollection extends Collection {
     }
 
     @Override
+    public void delete(Connection connection) throws SQLException {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("delete from %s where %s = ?, %s = ?", TABLE_NAME, ID_SONG_COLLECTION_COLUMN, ID_SONG_COLUMN))) {
+        preparedStatement.setInt(1, SongCollection.this.getId());
+        preparedStatement.setInt(2, getValue().getId());
+        preparedStatement.execute();
+        this.setKey(null);
+        this.setValue(null);
+      }
+    }
+    //#endregion Database operations
+
+    //#region String representations
+    public String getFieldNamesAndValuesString() {
+      return String.format(
+        "%s: %s, %s: %s, %s: %s",
+        ID_SONG_COLLECTION_COLUMN,
+        SongCollection.this.getId(),
+        ID_SONG_COLUMN,
+        this.getValue(),
+        TRACK_NUMBER_COLUMN,
+        this.getKey()
+      );
+    }
+
+    @Override
     public String toString() {
       return String.format("{%s}", this.getFieldNamesAndValuesString());
     }
+    //#endregion String representations
 
+    //#region Equals
     @Override
     public int hashCode() {
       return getKey() * 31 + getValue().hashCode();
@@ -61,24 +82,19 @@ public abstract class SongCollection extends Collection {
       Track track = (Track) o;
       return track.getValue().equals(getValue()) && track.getKey().equals(getKey());
     }
-
-    @Override
-    public void delete(Connection connection) throws SQLException {
-      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("delete from %s where %s = ?, %s = ?", TABLE_NAME, ID_SONG_COLLECTION_COLUMN, ID_SONG_COLUMN))) {
-        preparedStatement.setInt(1, SongCollection.this.getId());
-        preparedStatement.setInt(2, getValue().getId());
-        preparedStatement.execute();
-        this.setKey(null);
-        this.setValue(null);
-      }
-    }
+    //#endregion Equals
   }
 
+  //#region Static attributes
   private static final String TABLE_NAME = "SongCollection";
   private static final String PRIMARY_KEY_NAME = "idCollection";
+  //#endregion Static attributes
 
+  //#region Instance attributes
   private List<Track> tracks = new ArrayList<>();
+  //#endregion Instance attributes
 
+  //#region Constructors
   protected SongCollection(Integer id, String name, Timestamp createdAt, Timestamp updatedAt, Track... tracks) {
     super(id, name, createdAt, updatedAt);
     initTracks(tracks);
@@ -92,7 +108,9 @@ public abstract class SongCollection extends Collection {
   private void initTracks(Track... tracks) {
     this.tracks.addAll(Arrays.asList(tracks));
   }
+  //#endregion Constructors
 
+  //#region Accessors
   public final List<Track> getTracks() {
     List<Track> tracksCopy = new ArrayList<>();
     for (Track track : this.tracks) {
@@ -116,7 +134,9 @@ public abstract class SongCollection extends Collection {
       this.tracks.add(track);
     }
   }
+  //#endregion Accessors
 
+  //#region Database operations
   @Override
   public void save(Connection connection) throws SQLException {
     super.save(connection);
@@ -165,7 +185,9 @@ public abstract class SongCollection extends Collection {
     }
     return loadedTracks;
   }
+  //#endregion Database operations
 
+  //#region String representations
   @Override
   public String toString() {
     return String.format("{%s}", getFieldNamesAndValuesString());
@@ -179,7 +201,9 @@ public abstract class SongCollection extends Collection {
       this.tracks.size()
     );
   }
+  //#endregion String representations
 
+  //#region Equals
   @Override
   public int hashCode() {
     return super.hashCode();
@@ -201,4 +225,5 @@ public abstract class SongCollection extends Collection {
     }
     return true;
   }
+  //#endregion Equals
 }
