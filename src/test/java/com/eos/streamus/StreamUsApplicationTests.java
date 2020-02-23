@@ -335,7 +335,7 @@ class StreamUsApplicationTests {
       // Create
       Series series = new Series(String.format("Test series %d", new Date().getTime()));
       series.save(connection);
-      Series.Episode episode = series.new Episode(String.format("test_episode_%d.mp4", new Date().getTime()), "Test episode", 100, (short) 1, (short) 1);
+      Series.Episode episode = series.new Episode(String.format("test_episode_%d_%d.mp4", new Date().getTime(), new Random().nextInt()), "Test episode", 100, (short) 1, (short) 1);
       episode.save(connection);
       assertNotNull(episode.getId());
 
@@ -361,7 +361,7 @@ class StreamUsApplicationTests {
       // Create
       Series series = new Series(String.format("Test series %d", new Date().getTime()));
       series.save(connection);
-      Series.Episode episode = series.new Episode(String.format("test_episode_%d.mp4", new Date().getTime()), "Test episode", 100, (short) 1, (short) 1);
+      Series.Episode episode = series.new Episode(String.format("test_episode_%d_%d.mp4", new Date().getTime(), new Random().nextInt()), "Test episode", 100, (short) 1, (short) 1);
       episode.save(connection);
       assertNotNull(episode.getId());
 
@@ -376,7 +376,7 @@ class StreamUsApplicationTests {
       // Create
       Series series = new Series(String.format("Test series %d", new Date().getTime()));
       series.save(connection);
-      Series.Episode episode = series.new Episode(String.format("test_episode_%d.mp4", new Date().getTime()), "Test episode", 100, (short) 2, (short) 2);
+      Series.Episode episode = series.new Episode(String.format("test_episode_%d_%d.mp4", new Date().getTime(), new Random().nextInt()), "Test episode", 100, (short) 2, (short) 2);
       try {
         episode.save(connection);
       } catch (PSQLException e) {
@@ -394,15 +394,46 @@ class StreamUsApplicationTests {
       // Create
       Series series = new Series(String.format("Test series %d", new Date().getTime()));
       series.save(connection);
-      Series.Episode episode1 = series.new Episode(String.format("test_episode_%d.mp4", new Date().getTime()), "Test episode", 100, (short) 1);
+      Series.Episode episode1 = series.new Episode(String.format("test_episode_%d_%d.mp4", new Date().getTime(), new Random().nextInt()), "Test episode", 100, (short) 1);
       assertEquals(1, episode1.getEpisodeNumber());
-      Series.Episode episode2 = series.new Episode(String.format("test_episode_%d.mp4", new Date().getTime()), "Test episode", 100, (short) 1);
+      Series.Episode episode2 = series.new Episode(String.format("test_episode_%d_%d.mp4", new Date().getTime(), new Random().nextInt()), "Test episode", 100, (short) 1);
       assertEquals(2, episode2.getEpisodeNumber());
 
       episode1.save(connection);
       episode2.save(connection);
 
       series.delete(connection);
+    }
+  }
+
+  @Test
+  void testPopulatedSeries() throws SQLException, NoResultException {
+    try (Connection connection = databaseConnection.getConnection()) {
+      Series series = new Series("Test series");
+      series.save(connection);
+      List<Series.Episode> episodes = new ArrayList<>();
+      for (short i = 1; i <= 5; i++) {
+        for (short j = 1; j <= 10; j++) {
+          episodes.add(
+            series.new Episode(
+              String.format(
+                "test_path_%d_%d", new Date().getTime(), new Random().nextInt()),
+              String.format("Episode %d",
+                j),
+              100,
+              i));
+        }
+      }
+      series.save(connection);
+
+      Series retrievedSeries = Series.findById(series.getId(), connection);
+      assertEquals(series, retrievedSeries);
+
+      retrievedSeries.delete(connection);
+      assertThrows(NoResultException.class, () -> Series.findById(series.getId(), connection));
+      for (Series.Episode episode : episodes) {
+        assertThrows(NoResultException.class, () -> VideoDAO.findById(episode.getId(), connection));
+      }
     }
   }
 }

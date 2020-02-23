@@ -147,6 +147,9 @@ public class Series extends VideoCollection {
   public static final String PRIMARY_KEY_NAME = "idVideoCollection";
   public static final String VIEW_NAME = "vSeries";
   public static final String CREATION_FUNCTION_NAME = "createSeries";
+  public static final String EPISODE_ID_VIEW_COLUMN = "idEpisode";
+  public static final String EPISODE_CREATED_AT_COLUMN = "episodeCreatedAt";
+  public static final String EPISODE_NAME_COLUMN = "episodeName";
   //#endregion
 
   //#region Instance attributes
@@ -167,6 +170,11 @@ public class Series extends VideoCollection {
   @Override
   public String getTableName() {
     return TABLE_NAME;
+  }
+
+  @Override
+  public String getCreationFunctionName() {
+    return CREATION_FUNCTION_NAME;
   }
 
   @Override
@@ -196,7 +204,9 @@ public class Series extends VideoCollection {
         .sorted(Comparator.comparingInt(e -> e.episodeNumber))
         .collect(Collectors.toList());
   }
+  //#endregion Getters and Setters
 
+  //#region Database operations
   @Override
   public void save(Connection connection) throws SQLException {
     if (this.getId() == null) {
@@ -210,6 +220,9 @@ public class Series extends VideoCollection {
         }
       }
     } else {
+      for (Episode episode : episodes) {
+        episode.save(connection);
+      }
       super.save(connection);
     }
   }
@@ -229,13 +242,53 @@ public class Series extends VideoCollection {
         );
 
         // Handle episodes
-        // TODO
-
+        int firstEpisodeNumber = resultSet.getInt(EPISODE_ID_VIEW_COLUMN);
+        if (!resultSet.wasNull()) {
+          series.new Episode(
+            firstEpisodeNumber,
+            resultSet.getString(Resource.PATH_COLUMN),
+            resultSet.getString(EPISODE_NAME_COLUMN),
+            resultSet.getTimestamp(EPISODE_CREATED_AT_COLUMN),
+            resultSet.getInt(Resource.DURATION_COLUMN),
+            resultSet.getShort(Episode.SEASON_NUMBER_COLUMN),
+            resultSet.getShort(Episode.EPISODE_NUMBER_COLUMN)
+          );
+          while (resultSet.next()) {
+            series.new Episode(
+              resultSet.getInt(EPISODE_ID_VIEW_COLUMN),
+              resultSet.getString(Resource.PATH_COLUMN),
+              resultSet.getString(EPISODE_NAME_COLUMN),
+              resultSet.getTimestamp(EPISODE_CREATED_AT_COLUMN),
+              resultSet.getInt(Resource.DURATION_COLUMN),
+              resultSet.getShort(Episode.SEASON_NUMBER_COLUMN),
+              resultSet.getShort(Episode.EPISODE_NUMBER_COLUMN)
+            );
+          }
+        }
         return series;
       }
     }
   }
+  //#endregion Database operations
 
+  //#region String representations
+  @Override
+  public String getFieldNamesAndValuesString() {
+    return String.format(
+      "%s, numerOfSeasons: %d, numberOfEpisodes: %d",
+      super.getFieldNamesAndValuesString(),
+      getNumberOfSeasons(),
+      episodes.size()
+    );
+  }
+
+  @Override
+  public String toString() {
+    return String.format("{%s}", getFieldNamesAndValuesString());
+  }
+  //#endregion String representations
+
+  //#region Equals
   @Override
   public int hashCode() {
     return super.hashCode();
@@ -243,11 +296,26 @@ public class Series extends VideoCollection {
 
   @Override
   public boolean equals(Object o) {
-    return super.equals(o);
-  }
+    if (!super.equals(o)){
+      return false;
+    }
 
-  @Override
-  public String getCreationFunctionName() {
-    return CREATION_FUNCTION_NAME;
+    Series series = (Series) o;
+
+    if (series.getNumberOfSeasons() != getNumberOfSeasons()) {
+      return false;
+    }
+
+    if (series.episodes.size() != episodes.size()) {
+      return false;
+    }
+
+    for (Episode episode : episodes) {
+      if (!series.episodes.contains(episode)) {
+        return false;
+      }
+    }
+    return true;
   }
+  //#endregion Equals
 }
