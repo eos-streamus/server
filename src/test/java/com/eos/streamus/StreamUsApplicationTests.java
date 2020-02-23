@@ -505,4 +505,23 @@ class StreamUsApplicationTests {
     assertThrows(IllegalArgumentException.class, () -> new Musician((String) null));
     assertThrows(IllegalArgumentException.class, () -> new Musician((Person) null));
   }
+
+  @Test
+  void testEmptyBandCRUD() throws SQLException, NoResultException {
+    try (Connection connection = databaseConnection.getConnection()) {
+      Band band = new Band("Test band");
+      band.save(connection);
+
+      Band retrievedBand = Band.findById(band.getId(), connection);
+      assertEquals(band, retrievedBand);
+
+      band.setName("Test band updated");
+      band.save(connection);
+      retrievedBand = Band.findById(band.getId(), connection);
+      assertEquals(band, retrievedBand);
+
+      band.delete(connection);
+      assertThrows(NoResultException.class, () -> Band.findById(band.getId(), connection));
+    }
+  }
 }
