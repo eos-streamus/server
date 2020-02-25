@@ -267,10 +267,7 @@ public class Band extends Artist {
         if (!resultSet.next()) {
           throw new NoResultException();
         }
-        Band band = new Band(
-          id,
-          resultSet.getString(VIEW_NAME_COLUMN)
-        );
+        Band band = new Band(id, resultSet.getString(VIEW_NAME_COLUMN));
         band.fetchMembers(connection);
         return band;
       }
@@ -285,13 +282,7 @@ public class Band extends Artist {
           Musician musician = Musician.findById(resultSet.getInt(Member.MUSICIAN_ID_COLUMN), connection);
           Date from = resultSet.getDate(Member.FROM_COLUMN);
           Date to = resultSet.getDate(Member.TO_COLUMN);
-          this.members.add(
-            new Member(
-              musician,
-              from,
-              to
-            )
-          );
+          this.members.add(new Member(musician, from, to));
         }
       }
     }
