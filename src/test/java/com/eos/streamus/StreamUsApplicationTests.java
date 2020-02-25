@@ -358,7 +358,7 @@ class StreamUsApplicationTests {
   }
 
   @Test
-  void testEpisodeDeleteCascade() throws SQLException, NoResultException {
+  void testEpisodeDeleteCascade() throws SQLException {
     try (Connection connection = databaseConnection.getConnection()) {
       // Create
       Series series = new Series(String.format("Test series %d", new Date().getTime()));
@@ -373,7 +373,7 @@ class StreamUsApplicationTests {
   }
 
   @Test
-  void testEpisodeWithInvalidSeasonAndEpisodeValues() throws SQLException, NoResultException {
+  void testEpisodeWithInvalidSeasonAndEpisodeValues() throws SQLException {
     try (Connection connection = databaseConnection.getConnection()) {
       // Create
       Series series = new Series(String.format("Test series %d", new Date().getTime()));
@@ -460,7 +460,7 @@ class StreamUsApplicationTests {
   }
 
   @Test
-  void testNotNamedMusicianWithPerson() throws SQLException, NoResultException, ParseException {
+  void testNotNamedMusicianWithPerson() throws SQLException, NoResultException {
     try (Connection connection = databaseConnection.getConnection()) {
       Person person = new Person("Test firstname", "Test lastname", java.sql.Date.valueOf("1980-01-01"));
       person.save(connection);
@@ -479,7 +479,7 @@ class StreamUsApplicationTests {
   }
 
   @Test
-  void testNamedMusicianWithPerson() throws SQLException, NoResultException, ParseException {
+  void testNamedMusicianWithPerson() throws SQLException, NoResultException {
     try (Connection connection = databaseConnection.getConnection()) {
       Person person = new Person("Test firstname", "Test lastname", java.sql.Date.valueOf("1980-01-01"));
       person.save(connection);
