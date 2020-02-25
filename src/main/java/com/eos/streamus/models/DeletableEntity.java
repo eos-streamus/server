@@ -8,6 +8,7 @@ public interface DeletableEntity extends Deletable, Entity {
   default void delete(Connection connection) throws SQLException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("delete from %s where %s = ?;", getTableName(), getPrimaryKeyName()))) {
       preparedStatement.setInt(1, getId());
+      System.out.println(preparedStatement);
       preparedStatement.execute();
     }
   }

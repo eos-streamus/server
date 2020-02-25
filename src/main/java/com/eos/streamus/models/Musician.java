@@ -88,6 +88,9 @@ public class Musician extends Artist {
       try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s(?::varchar(191)%s);", CREATION_FUNCTION_NAME, person != null ? ", ?" : ""))) {
         preparedStatement.setString(1, getName());
         if (person != null) {
+          if (person.getId() == null) {
+            person.save(connection);
+          }
           preparedStatement.setInt(2, person.getId());
         }
         try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -96,6 +99,11 @@ public class Musician extends Artist {
         }
       }
     } else {
+      if (person != null) {
+        if (person.getId() == null) {
+          person.save(connection);
+        }
+      }
       super.save(connection);
     }
   }
