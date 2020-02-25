@@ -578,8 +578,6 @@ class StreamUsApplicationTests {
 
       Musician musician = new Musician(new Person("Test", "Person", valueOf("1990-01-01")));
       musician.save(connection);
-      System.out.println(musician);
-      System.out.println(testBand);
 
       testBand.addMember(musician, valueOf("2000-01-01"), valueOf("2010-01-01"));
       testBand.addMember(musician, valueOf("2005-01-01"));
