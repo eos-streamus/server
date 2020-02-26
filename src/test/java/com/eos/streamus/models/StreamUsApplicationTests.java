@@ -1,7 +1,7 @@
-package com.eos.streamus;
+package com.eos.streamus.models;
 
+import com.eos.streamus.TestDatabaseConnection;
 import com.eos.streamus.exceptions.NoResultException;
-import com.eos.streamus.models.*;
 import com.eos.streamus.utils.DatabaseConnection;
 import org.junit.jupiter.api.Test;
 import org.postgresql.util.PSQLException;
@@ -25,7 +25,7 @@ import static java.sql.Date.valueOf;
 @SpringBootTest
 class StreamUsApplicationTests {
   @Autowired
-  protected DatabaseConnection databaseConnection = null;
+  protected TestDatabaseConnection databaseConnection = null;
 
   @Test
   void connectToDatabase() {
