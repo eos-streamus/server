@@ -7,8 +7,8 @@ import java.sql.*;
 public class User extends Person {
   //#region Static attributes
   private static final String TABLE_NAME = "StreamUsUser";
-  private static final String EMAIL_COLUMN = "email";
-  private static final String USERNAME_COLUMN = "username";
+  protected static final String EMAIL_COLUMN = "email";
+  protected static final String USERNAME_COLUMN = "username";
   private static final String VIEW_NAME = "vuser";
   //#endregion Static attributes
 
