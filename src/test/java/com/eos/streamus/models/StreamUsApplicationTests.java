@@ -592,4 +592,42 @@ class StreamUsApplicationTests {
       assertThrows(NoResultException.class, () -> Band.findById(testBand.getId(), connection));
     }
   }
+
+  @Test
+  void testResourceActivity() throws SQLException, NoResultException {
+    try (Connection connection = databaseConnection.getConnection()) {
+      Song song = new Song(randomString(), randomString(), 100);
+      song.save(connection);
+
+      User user = new User(randomString(), randomString(), randomDate(), randomString() + "@" + randomString(), randomString());
+      user.save(connection);
+
+      ResourceActivity resourceActivity = new ResourceActivity(song, user);
+      resourceActivity.save(connection);
+      assertEquals(resourceActivity, ResourceActivity.findById(resourceActivity.getId(), connection));
+
+      // Update
+      resourceActivity.start();
+      resourceActivity.save(connection);
+      assertEquals(resourceActivity, ResourceActivity.findById(resourceActivity.getId(), connection));
+
+      // Delete
+      resourceActivity.delete(connection);
+      assertThrows(NoResultException.class, () -> ResourceActivity.findById(resourceActivity.getId(), connection));
+
+      user.delete(connection);
+      song.delete(connection);
+    }
+  }
+
+  private String randomString() {
+    return "randomString" + new Random().nextDouble();
+  }
+
+  private java.sql.Date randomDate() {
+    Random random = new Random();
+    int year = random.nextInt() % 70 + 1940;
+    int month = Math.abs(random.nextInt()) % 12 + 1;
+    return valueOf(String.format("%d-%s-01", year, (month < 10 ? "0" + month : month)));
+  }
 }
