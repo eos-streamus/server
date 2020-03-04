@@ -147,12 +147,17 @@ public abstract class Activity implements SavableDeletableEntity {
     if (creator == null) {
       throw new NullPointerException("Creator cannot be null");
     }
+    if (creator.getId() == null) {
+      throw new NotPersistedException("Creator is not persisted");
+    }
     users.add(new UserActivity(creator, true));
   }
 
   protected Activity(Integer id) {
     this.id = id;
   }
+
+  protected Activity() {}
   //#endregion Constructors
 
   //#region Getters and Setters
@@ -196,12 +201,8 @@ public abstract class Activity implements SavableDeletableEntity {
     if (id == null) {
       throw new NotPersistedException("Activity#save cannot be called from non persisted Activity");
     }
-    if (users.isEmpty()) {
-      throw new IncompleteDataException("At least one UserActivity must be present");
-    }
     for (UserActivity userActivity : users) {
       if (userActivity.isNotPersisted(connection)) {
-        System.out.println("Saving " + userActivity);
         userActivity.save(connection);
       }
     }

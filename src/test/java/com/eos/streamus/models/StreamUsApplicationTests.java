@@ -620,6 +620,61 @@ class StreamUsApplicationTests {
     }
   }
 
+  @Test
+  void testCollectionActivity() throws SQLException, NoResultException {
+    try (Connection connection = databaseConnection.getConnection()) {
+      Series theExpanse = new Series("The Expanse");
+      short season1 = 1;
+      theExpanse.new Episode("dulcinea.mp4", "Dulcinea", 2700, season1);
+      theExpanse.new Episode("theBigEmpty.mp4", "The Big Empty", 2700, season1);
+      theExpanse.new Episode("rememberTheCant.mp4", "Remember the Cant", 2700, season1);
+      theExpanse.new Episode("CQB.mp4", "CQB (Close Quarter Battle)", 2700, season1);
+      theExpanse.new Episode("backToTheButcher.mp4", "Back to the Butcher", 2700, season1);
+      theExpanse.new Episode("rockBottom.mp4", "Rock Bottom", 2700, season1);
+      theExpanse.new Episode("windmills.mp4", "Windmills", 2700, season1);
+      theExpanse.new Episode("salvage.mp4", "Salvage", 2700, season1);
+      theExpanse.new Episode("criticalMass.mp4", "Critical Mass", 2700, season1);
+      theExpanse.new Episode("leviathanWakes.mp4", "Leviathan Wakes", 2700, season1);
+
+      short season2 = 2;
+      theExpanse.new Episode("safe.mp4", "Safe", 2700, season2);
+      theExpanse.new Episode("doorsAndCorners.mp4", "Doors & Corners", 2700, season2);
+      theExpanse.new Episode("static.mp4", "Static", 2700, season2);
+      theExpanse.new Episode("godspeed.mp4", "Godspeed", 2700, season2);
+      theExpanse.new Episode("home.mp4", "Home", 2700, season2);
+      theExpanse.new Episode("paradigmShift.mp4", "Paradigm Shift", 2700, season2);
+      theExpanse.new Episode("theSeventhMan.mp4", "The Seventh Man", 2700, season2);
+      theExpanse.new Episode("pyre.mp4", "Pyre", 2700, season2);
+      theExpanse.new Episode("theWeepingSomnambulist.mp4", "The Weeping Somnambulist", 2700, season2);
+      theExpanse.new Episode("cascade.mp4", "Cascade", 2700, season2);
+      theExpanse.new Episode("hereThereBeDragons.mp4", "Here There be Dragons", 2700, season2);
+      theExpanse.new Episode("theMonsterAndTheRocket.mp4", "The Monster and the Rocket", 2700, season2);
+      theExpanse.new Episode("calibansWar.mp4", "Caliban's War", 2700, season2);
+
+      theExpanse.save(connection);
+
+      assertEquals(theExpanse, Series.findById(theExpanse.getId(), connection));
+
+      User user = randomUser();
+      user.save(connection);
+      CollectionActivity collectionActivity = new CollectionActivity(user, theExpanse);
+      collectionActivity.save(connection);
+
+      int i = 0;
+      ResourceActivity resourceActivity = null;
+      do {
+        assertEquals(i, collectionActivity.getContent().stream().reduce(0, (subtotal, entry) -> subtotal + (entry.getValue().getValue() == null ? 0 : 1), Integer::sum));
+        resourceActivity = collectionActivity.continueOrNext(connection);
+        if (resourceActivity != null) {
+          resourceActivity.setPausedAt(resourceActivity.getResource().getDuration());
+          i++;
+        }
+      } while (resourceActivity != null);
+
+      theExpanse.delete(connection);
+    }
+  }
+
   private String randomString() {
     return "randomString" + new Random().nextDouble();
   }
@@ -629,5 +684,9 @@ class StreamUsApplicationTests {
     int year = random.nextInt() % 70 + 1940;
     int month = Math.abs(random.nextInt()) % 12 + 1;
     return valueOf(String.format("%d-%s-01", year, (month < 10 ? "0" + month : month)));
+  }
+
+  private User randomUser() {
+    return new User(randomString(), randomString(), randomDate(), randomString() + "@" + randomString(), randomString());
   }
 }
