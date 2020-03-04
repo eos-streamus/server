@@ -24,4 +24,15 @@ public class Pair<K, V> {
   public void setValue(V value) {
     this.value = value;
   }
+
+  public boolean equals(Object obj) {
+    if (obj == null || obj.getClass() != getClass()) {
+      return false;
+    }
+    Pair pair = (Pair) obj;
+    if (pair.key.getClass() != key.getClass() || pair.value.getClass() != value.getClass()) {
+      return false;
+    }
+    return key.equals(pair.key) && value.equals(pair.value);
+  }
 }
