@@ -116,6 +116,15 @@ public class VideoPlaylist extends VideoCollection {
     return PRIMARY_KEY_NAME;
   }
 
+  @Override
+  protected List<Pair<Integer, Resource>> getSpecificContent() {
+    List<Pair<Integer, Resource>> content = new ArrayList<>();
+    for (VideoPlaylistVideo video : videos) {
+      content.add(new Pair<>(video.getKey(), video.getValue()));
+    }
+    return content;
+  }
+
   public List<VideoPlaylistVideo> getVideos() {
     return videos;
   }
