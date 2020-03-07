@@ -354,6 +354,7 @@ class StreamUsApplicationTests {
       // Delete
       episode.delete(connection);
       assertThrows(NoResultException.class, () -> VideoDAO.findById(episode.getId(), connection));
+      series.delete(connection);
     }
   }
 
@@ -677,6 +678,7 @@ class StreamUsApplicationTests {
       assertEquals(collectionActivity, CollectionActivity.findById(collectionActivity.getId(), connection));
 
       theExpanse.delete(connection);
+      user.delete(connection);
     }
   }
 
