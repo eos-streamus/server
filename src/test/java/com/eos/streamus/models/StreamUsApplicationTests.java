@@ -610,10 +610,13 @@ class StreamUsApplicationTests {
       resourceActivity.start();
       resourceActivity.save(connection);
       assertEquals(resourceActivity, ResourceActivity.findById(resourceActivity.getId(), connection));
+      resourceActivity.setPausedAt(1);
+      resourceActivity.save(connection);
+      assertEquals(resourceActivity, ResourceActivity.findById(resourceActivity.getId(), connection));
 
       // Delete
       resourceActivity.delete(connection);
-      assertThrows(NoResultException.class, () -> ResourceActivity.findById(resourceActivity.getId(), connection));
+      assertNull(ResourceActivity.findById(resourceActivity.getId(), connection));
 
       user.delete(connection);
       song.delete(connection);
@@ -625,31 +628,31 @@ class StreamUsApplicationTests {
     try (Connection connection = databaseConnection.getConnection()) {
       Series theExpanse = new Series("The Expanse");
       short season1 = 1;
-      theExpanse.new Episode("dulcinea.mp4", "Dulcinea", 2700, season1);
-      theExpanse.new Episode("theBigEmpty.mp4", "The Big Empty", 2700, season1);
-      theExpanse.new Episode("rememberTheCant.mp4", "Remember the Cant", 2700, season1);
-      theExpanse.new Episode("CQB.mp4", "CQB (Close Quarter Battle)", 2700, season1);
-      theExpanse.new Episode("backToTheButcher.mp4", "Back to the Butcher", 2700, season1);
-      theExpanse.new Episode("rockBottom.mp4", "Rock Bottom", 2700, season1);
-      theExpanse.new Episode("windmills.mp4", "Windmills", 2700, season1);
-      theExpanse.new Episode("salvage.mp4", "Salvage", 2700, season1);
-      theExpanse.new Episode("criticalMass.mp4", "Critical Mass", 2700, season1);
-      theExpanse.new Episode("leviathanWakes.mp4", "Leviathan Wakes", 2700, season1);
+      theExpanse.new Episode(randomString(), "Dulcinea", 2700, season1);
+      theExpanse.new Episode(randomString(), "The Big Empty", 2700, season1);
+      theExpanse.new Episode(randomString(), "Remember the Cant", 2700, season1);
+      theExpanse.new Episode(randomString(), "CQB (Close Quarter Battle)", 2700, season1);
+      theExpanse.new Episode(randomString(), "Back to the Butcher", 2700, season1);
+      theExpanse.new Episode(randomString(), "Rock Bottom", 2700, season1);
+      theExpanse.new Episode(randomString(), "Windmills", 2700, season1);
+      theExpanse.new Episode(randomString(), "Salvage", 2700, season1);
+      theExpanse.new Episode(randomString(), "Critical Mass", 2700, season1);
+      theExpanse.new Episode(randomString(), "Leviathan Wakes", 2700, season1);
 
       short season2 = 2;
-      theExpanse.new Episode("safe.mp4", "Safe", 2700, season2);
-      theExpanse.new Episode("doorsAndCorners.mp4", "Doors & Corners", 2700, season2);
-      theExpanse.new Episode("static.mp4", "Static", 2700, season2);
-      theExpanse.new Episode("godspeed.mp4", "Godspeed", 2700, season2);
-      theExpanse.new Episode("home.mp4", "Home", 2700, season2);
-      theExpanse.new Episode("paradigmShift.mp4", "Paradigm Shift", 2700, season2);
-      theExpanse.new Episode("theSeventhMan.mp4", "The Seventh Man", 2700, season2);
-      theExpanse.new Episode("pyre.mp4", "Pyre", 2700, season2);
-      theExpanse.new Episode("theWeepingSomnambulist.mp4", "The Weeping Somnambulist", 2700, season2);
-      theExpanse.new Episode("cascade.mp4", "Cascade", 2700, season2);
-      theExpanse.new Episode("hereThereBeDragons.mp4", "Here There be Dragons", 2700, season2);
-      theExpanse.new Episode("theMonsterAndTheRocket.mp4", "The Monster and the Rocket", 2700, season2);
-      theExpanse.new Episode("calibansWar.mp4", "Caliban's War", 2700, season2);
+      theExpanse.new Episode(randomString(), "Safe", 2700, season2);
+      theExpanse.new Episode(randomString(), "Doors & Corners", 2700, season2);
+      theExpanse.new Episode(randomString(), "Static", 2700, season2);
+      theExpanse.new Episode(randomString(), "Godspeed", 2700, season2);
+      theExpanse.new Episode(randomString(), "Home", 2700, season2);
+      theExpanse.new Episode(randomString(), "Paradigm Shift", 2700, season2);
+      theExpanse.new Episode(randomString(), "The Seventh Man", 2700, season2);
+      theExpanse.new Episode(randomString(), "Pyre", 2700, season2);
+      theExpanse.new Episode(randomString(), "The Weeping Somnambulist", 2700, season2);
+      theExpanse.new Episode(randomString(), "Cascade", 2700, season2);
+      theExpanse.new Episode(randomString(), "Here There be Dragons", 2700, season2);
+      theExpanse.new Episode(randomString(), "The Monster and the Rocket", 2700, season2);
+      theExpanse.new Episode(randomString(), "Caliban's War", 2700, season2);
 
       theExpanse.save(connection);
 
@@ -659,17 +662,19 @@ class StreamUsApplicationTests {
       user.save(connection);
       CollectionActivity collectionActivity = new CollectionActivity(user, theExpanse);
       collectionActivity.save(connection);
-
+      assertEquals(collectionActivity, CollectionActivity.findById(collectionActivity.getId(), connection));
       int i = 0;
-      ResourceActivity resourceActivity = null;
+      ResourceActivity resourceActivity;
       do {
         assertEquals(i, collectionActivity.getContent().stream().reduce(0, (subtotal, entry) -> subtotal + (entry.getValue().getValue() == null ? 0 : 1), Integer::sum));
         resourceActivity = collectionActivity.continueOrNext(connection);
         if (resourceActivity != null) {
           resourceActivity.setPausedAt(resourceActivity.getResource().getDuration());
+          resourceActivity.save(connection);
           i++;
         }
       } while (resourceActivity != null);
+      assertEquals(collectionActivity, CollectionActivity.findById(collectionActivity.getId(), connection));
 
       theExpanse.delete(connection);
     }

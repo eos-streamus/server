@@ -1,5 +1,6 @@
 package com.eos.streamus.models;
 
+import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.exceptions.NotPersistedException;
 import com.eos.streamus.utils.Pair;
 
@@ -14,7 +15,13 @@ public class CollectionActivity extends Activity {
   //#region Static attributes
   public static final String TABLE_NAME = "CollectionActivity";
   public static final String PRIMARY_KEY_NAME = "idActivity";
+  public static final String COLLECTION_ID = "IdCollection";
   public static final String CREATION_FUNCTION_NAME = "createCollectionActivity";
+  public static final String VIEW_NAME = "vFullCollectionActivity";
+  public static final String VIEW_ID = "idCollectionActivity";
+  public static final String VIEW_RESOURCE_ACTIVITY_ID = "idResourceActivity";
+  public static final String VIEW_RESOURCE_ID = "idResource";
+  public static final String VIEW_NUMBER_ID = "num";
   //#endregion Static attributes
 
   //#region Instance attributes
@@ -22,6 +29,7 @@ public class CollectionActivity extends Activity {
   private Collection collection;
   //#endregion Instance attributes
 
+  //#region Constructors
   protected CollectionActivity(User creator, Collection collection) {
     super(creator);
     if (collection == null) {
@@ -40,8 +48,22 @@ public class CollectionActivity extends Activity {
       throw new NullPointerException("Collection cannot be null");
     }
     this.collection = collection;
+    this.resourceActivities = new ArrayList<>();
+  }
+  //#endregion Constructors
+
+  //#region Getters and Setters
+  @Override
+  public String getCreationFunctionName() {
+    return null;
   }
 
+  public List<Pair<Integer, Pair<Resource, ResourceActivity>>> getContent() {
+    return resourceActivities;
+  }
+  //#endregion Getters and Setters
+
+  //#region Database operations
   public ResourceActivity continueOrNext(Connection connection) throws SQLException {
     if (this.getId() == null) {
       throw new NotPersistedException("CollectionActivity must be saved before starting");
@@ -57,15 +79,6 @@ public class CollectionActivity extends Activity {
       }
     }
     return null;
-  }
-
-  @Override
-  public String getCreationFunctionName() {
-    return null;
-  }
-
-  public List<Pair<Integer, Pair<Resource, ResourceActivity>>> getContent() {
-    return resourceActivities;
   }
 
   @Override
@@ -86,6 +99,36 @@ public class CollectionActivity extends Activity {
       }
     }
   }
+
+  public static CollectionActivity findById(Integer id, Connection connection) throws SQLException, NoResultException {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s where %s = ?;", VIEW_NAME, VIEW_ID))) {
+      preparedStatement.setInt(1, id);
+      try (ResultSet resultSet = preparedStatement.executeQuery()) {
+        if (!resultSet.next()) {
+          throw new NoResultException();
+        }
+        CollectionActivity collectionActivity = new CollectionActivity(id, CollectionDAO.findById(resultSet.getInt(COLLECTION_ID), connection));
+        do {
+          collectionActivity.resourceActivities.add(
+            new Pair<>(
+              resultSet.getInt(VIEW_NUMBER_ID),
+              new Pair<>(
+                ResourceDAO.findById(resultSet.getInt(VIEW_RESOURCE_ID), connection),
+                ResourceActivity.findById(resultSet.getInt(VIEW_RESOURCE_ACTIVITY_ID), connection)
+              )
+            )
+          );
+        } while (resultSet.next());
+        collectionActivity.fetchUserActivities(connection);
+        return collectionActivity;
+      }
+    }
+  }
+  //#endregion Database operations
+
+  //#region String representations
+  
+  //#endregion String representations
 
   //#region Equals
   @Override

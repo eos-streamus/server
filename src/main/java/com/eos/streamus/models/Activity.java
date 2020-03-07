@@ -157,7 +157,8 @@ public abstract class Activity implements SavableDeletableEntity {
     this.id = id;
   }
 
-  protected Activity() {}
+  protected Activity() {
+  }
   //#endregion Constructors
 
   //#region Getters and Setters

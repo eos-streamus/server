@@ -94,10 +94,13 @@ public class ResourceActivity extends Activity {
       throw new IncompleteDataException("At least one UserActivity must be present");
     }
     if (this.getId() == null) {
-      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s(?%s);", CREATION_FUNCTION_NAME, getUsers().isEmpty() ? "" : ", ?"))) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s(?%s%s);", CREATION_FUNCTION_NAME, getUsers().isEmpty() ? ", null" : ", ?", collectionActivity == null ? "" : ", ?"))) {
         preparedStatement.setInt(1, resource.getId());
         if (!getUsers().isEmpty()) {
           preparedStatement.setInt(2, getUsers().get(0).getUser().getId());
+        }
+        if (collectionActivity != null) {
+          preparedStatement.setInt(getUsers().isEmpty() ? 2 : 3, collectionActivity.getId());
         }
         try (ResultSet resultSet = preparedStatement.executeQuery()) {
           resultSet.next();
@@ -105,27 +108,27 @@ public class ResourceActivity extends Activity {
         }
       }
     } else {
-      if (this.startedAt != null) {
-        try (
-          PreparedStatement preparedStatement = connection.prepareStatement(
-            String.format(
-              "update %s set %s = ?%s where %s = ?;",
-              TABLE_NAME,
-              STARTED_AT_COLUMN,
-              collectionActivity == null ? "" : String.format(",%s = ?", COLLECTION_ACTIVITY_ID_COLUMN),
-              PRIMARY_KEY_NAME
-            )
+      try (
+        PreparedStatement preparedStatement = connection.prepareStatement(
+          String.format(
+            "update %s set %s = ?, %s = ?%s where %s = ?;",
+            TABLE_NAME,
+            STARTED_AT_COLUMN,
+            PAUSED_AT_COLUMN,
+            collectionActivity == null ? "" : String.format(",%s = ?", COLLECTION_ACTIVITY_ID_COLUMN),
+            PRIMARY_KEY_NAME
           )
-        ) {
-          preparedStatement.setTimestamp(1, startedAt);
-          if (collectionActivity != null) {
-            preparedStatement.setInt(2, collectionActivity.getId());
-            preparedStatement.setInt(3, getId());
-          } else {
-            preparedStatement.setInt(2, getId());
-          }
-          preparedStatement.execute();
+        )
+      ) {
+        preparedStatement.setTimestamp(1, startedAt);
+        preparedStatement.setInt(2, pausedAt);
+        if (collectionActivity != null) {
+          preparedStatement.setInt(3, collectionActivity.getId());
+          preparedStatement.setInt(4, getId());
+        } else {
+          preparedStatement.setInt(3, getId());
         }
+        preparedStatement.execute();
       }
     }
     super.save(connection);
@@ -136,13 +139,14 @@ public class ResourceActivity extends Activity {
       preparedStatement.setInt(1, id);
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
         if (!resultSet.next()) {
-          throw new NoResultException();
+          return null;
         }
         ResourceActivity resourceActivity = new ResourceActivity(
           resultSet.getInt(PRIMARY_KEY_NAME),
           ResourceDAO.findById(resultSet.getInt(RESOURCE_ID_COLUMN), connection),
           resultSet.getTimestamp(STARTED_AT_COLUMN)
         );
+        resourceActivity.setPausedAt(resultSet.getInt(PAUSED_AT_COLUMN));
         resourceActivity.fetchUserActivities(connection);
         return resourceActivity;
       }

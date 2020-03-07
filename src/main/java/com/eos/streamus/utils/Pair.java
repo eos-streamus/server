@@ -25,14 +25,26 @@ public class Pair<K, V> {
     this.value = value;
   }
 
+  @Override
+  public int hashCode() {
+    return key.hashCode() * 31 + value.hashCode();
+  }
+
   public boolean equals(Object obj) {
     if (obj == null || obj.getClass() != getClass()) {
       return false;
     }
-    Pair pair = (Pair) obj;
-    if (pair.key.getClass() != key.getClass() || pair.value.getClass() != value.getClass()) {
+    Pair<?, ?> pair = (Pair<?, ?>) obj;
+    if (pair.value == null && value != null || pair.value != null && value == null) {
       return false;
     }
+    if (value == null) {
+      return key.equals(pair.key);
+    }
     return key.equals(pair.key) && value.equals(pair.value);
+  }
+
+  public String toString() {
+    return String.format("<%s, %s>", key, value);
   }
 }
