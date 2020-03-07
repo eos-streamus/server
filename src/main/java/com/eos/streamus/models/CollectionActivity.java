@@ -120,6 +120,7 @@ public class CollectionActivity extends Activity {
           );
         } while (resultSet.next());
         collectionActivity.fetchUserActivities(connection);
+        collectionActivity.fetchActivityMessages(connection);
         return collectionActivity;
       }
     }
@@ -127,7 +128,6 @@ public class CollectionActivity extends Activity {
   //#endregion Database operations
 
   //#region String representations
-
   @Override
   public String toString() {
     return String.format("{%s}", getFieldNamesAndValuesString());

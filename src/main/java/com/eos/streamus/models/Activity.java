@@ -131,6 +131,97 @@ public abstract class Activity implements SavableDeletableEntity {
     //#endregion Equals
   }
 
+  public class ActivityMessage implements SavableDeletableEntity {
+    private static final String TABLE_NAME = "ActivityMessage";
+    private static final String PRIMARY_KEY_NAME = "id";
+    private static final String ACTIVITY_ID_COLUMN = "idActivity";
+    private static final String USER_ID_COLUMN = "idUser";
+    private static final String POSTED_AT_COLUMN = "postedAt";
+    private static final String CONTENT_COLUMN = "content";
+
+    private Integer id;
+    private User user;
+    private String content;
+    private Timestamp postedAt;
+
+    public ActivityMessage(User user, String content) {
+      this.user = user;
+      this.content = content;
+      Activity.this.messages.add(this);
+    }
+
+    public ActivityMessage(Integer id, User user, String content, Timestamp postedAt) {
+      this(user, content);
+      this.id = id;
+      this.postedAt = postedAt;
+    }
+
+    @Override
+    public Integer getId() {
+      return id;
+    }
+
+    public User getUser() {
+      return user;
+    }
+
+    public String getContent() {
+      return content;
+    }
+
+    public Activity getActivity() {
+      return Activity.this;
+    }
+
+    public Timestamp getPostedAt() {
+      return postedAt;
+    }
+
+    @Override
+    public String getTableName() {
+      return TABLE_NAME;
+    }
+
+    @Override
+    public String getPrimaryKeyName() {
+      return PRIMARY_KEY_NAME;
+    }
+
+    @Override
+    public String getCreationFunctionName() {
+      return null;
+    }
+
+    @Override
+    public void save(Connection connection) throws SQLException {
+      if (this.id != null) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(
+          String.format(
+            "insert into %s(%s, %s) values (?, ?) returning %s, %s;",
+            TABLE_NAME,
+            ACTIVITY_ID_COLUMN,
+            USER_ID_COLUMN,
+            PRIMARY_KEY_NAME,
+            POSTED_AT_COLUMN
+          )
+        )) {
+          preparedStatement.setInt(1, Activity.this.id);
+          preparedStatement.setInt(2, user.getId());
+          try (ResultSet resultSet = preparedStatement.executeQuery()) {
+            resultSet.next();
+            this.id = resultSet.getInt(1);
+            this.postedAt = resultSet.getTimestamp(2);
+          }
+        }
+      }
+    }
+
+    @Override
+    public String getFieldNamesAndValuesString() {
+      return null;
+    }
+  }
+
   //#region Static Attributes
   protected static final String TABLE_NAME = "Activity";
   protected static final String PRIMARY_KEY_NAME = "id";
@@ -139,6 +230,7 @@ public abstract class Activity implements SavableDeletableEntity {
   //#region Instance Attributes
   private Integer id;
   private List<UserActivity> users = new ArrayList<>();
+  private List<ActivityMessage> messages = new ArrayList<>();
   //#endregion Instance Attributes
 
   //#region Constructors
@@ -162,6 +254,15 @@ public abstract class Activity implements SavableDeletableEntity {
 
   //#region Getters and Setters
   @Override
+  public Integer getId() {
+    return id;
+  }
+
+  protected void setId(Integer id) {
+    this.id = id;
+  }
+
+  @Override
   public String getTableName() {
     return TABLE_NAME;
   }
@@ -169,11 +270,6 @@ public abstract class Activity implements SavableDeletableEntity {
   @Override
   public String getPrimaryKeyName() {
     return PRIMARY_KEY_NAME;
-  }
-
-  @Override
-  public Integer getId() {
-    return id;
   }
 
   public void addUser(User user, boolean isManager) {
@@ -190,8 +286,8 @@ public abstract class Activity implements SavableDeletableEntity {
     return new ArrayList<>(users);
   }
 
-  protected void setId(Integer id) {
-    this.id = id;
+  public List<ActivityMessage> getMessages() {
+    return messages;
   }
   //#endregion Getters and Setters
 
@@ -219,6 +315,21 @@ public abstract class Activity implements SavableDeletableEntity {
     }
   }
 
+  public void fetchActivityMessages(Connection connection) throws SQLException, NoResultException {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s where %s = ?;", ActivityMessage.TABLE_NAME, ActivityMessage.ACTIVITY_ID_COLUMN))) {
+      preparedStatement.setInt(1, id);
+      try (ResultSet resultSet = preparedStatement.executeQuery()) {
+        while (resultSet.next()) {
+          new ActivityMessage(
+            resultSet.getInt(ActivityMessage.PRIMARY_KEY_NAME),
+            User.findById(resultSet.getInt(ActivityMessage.USER_ID_COLUMN), connection),
+            resultSet.getString(ActivityMessage.CONTENT_COLUMN),
+            resultSet.getTimestamp(ActivityMessage.POSTED_AT_COLUMN)
+          );
+        }
+      }
+    }
+  }
   //#endregion Database operations
 
   //#region String representations

@@ -148,6 +148,7 @@ public class ResourceActivity extends Activity {
         );
         resourceActivity.setPausedAt(resultSet.getInt(PAUSED_AT_COLUMN));
         resourceActivity.fetchUserActivities(connection);
+        resourceActivity.fetchActivityMessages(connection);
         return resourceActivity;
       }
     }

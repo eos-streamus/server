@@ -682,6 +682,27 @@ class StreamUsApplicationTests {
     }
   }
 
+  @Test
+  void testActivityMessages() throws SQLException, NoResultException {
+    try (Connection connection = databaseConnection.getConnection()) {
+      Film film = new Film(randomString(), randomString(), Math.abs(new Random().nextInt()));
+      film.save(connection);
+
+      User user = randomUser();
+      user.save(connection);
+
+      ResourceActivity activity = new ResourceActivity(film, user);
+      activity.save(connection);
+
+      Activity.ActivityMessage message = activity.new ActivityMessage(user, "Test message");
+      message.save(connection);
+
+      assertEquals(1, activity.getMessages().size());
+      assertEquals(activity, ResourceActivity.findById(activity.getId(), connection));
+
+    }
+  }
+
   private String randomString() {
     return "randomString" + new Random().nextDouble();
   }
