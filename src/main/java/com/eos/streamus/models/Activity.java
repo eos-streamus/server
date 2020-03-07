@@ -1,6 +1,5 @@
 package com.eos.streamus.models;
 
-import com.eos.streamus.exceptions.IncompleteDataException;
 import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.exceptions.NotPersistedException;
 import com.eos.streamus.utils.Pair;
@@ -230,7 +229,16 @@ public abstract class Activity implements SavableDeletableEntity {
 
   @Override
   public String getFieldNamesAndValuesString() {
-    return String.format("id: %d", id);
+    StringBuilder usersString = new StringBuilder();
+    usersString.append("[");
+    for (UserActivity userActivity : this.users) {
+      usersString
+        .append("{userId: ").append(userActivity.getUser().getId())
+        .append(", manages: ").append(userActivity.isManager())
+        .append("}");
+    }
+    usersString.append("]");
+    return String.format("id: %d, users: %s", id, usersString);
   }
   //#endregion String representations
 
