@@ -368,7 +368,29 @@ public abstract class Activity implements SavableDeletableEntity {
       return false;
     }
     Activity activity = (Activity) obj;
-    return activity.id.equals(id);
+    if (id == null && activity.id != null || id != null && activity.id == null) {
+      return false;
+    }
+    if (id != null && !activity.id.equals(id)) {
+      return false;
+    }
+    if (users.size() != activity.users.size()) {
+      return false;
+    }
+    for (UserActivity userActivity : users) {
+      if (!activity.users.contains(userActivity)) {
+        return false;
+      }
+    }
+    if (messages.size() != activity.messages.size()) {
+      return false;
+    }
+    for (ActivityMessage activityMessage : messages) {
+      if (!activity.messages.contains(activityMessage)) {
+        return false;
+      }
+    }
+    return true;
   }
   //#endregion Equals
 }
