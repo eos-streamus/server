@@ -126,7 +126,7 @@ public abstract class Activity implements SavableDeletableEntity {
       return
         userActivity.getUser().equals(getUser()) &&
           userActivity.isManager().equals(isManager()) &&
-          userActivity.getActivity().equals(Activity.this);
+          userActivity.getActivity().id.equals(Activity.this.id);
     }
     //#endregion Equals
   }
@@ -194,19 +194,21 @@ public abstract class Activity implements SavableDeletableEntity {
 
     @Override
     public void save(Connection connection) throws SQLException {
-      if (this.id != null) {
+      if (this.id == null) {
         try (PreparedStatement preparedStatement = connection.prepareStatement(
           String.format(
-            "insert into %s(%s, %s) values (?, ?) returning %s, %s;",
+            "insert into %s(%s, %s, %s) values (?, ?, ?) returning %s, %s;",
             TABLE_NAME,
             ACTIVITY_ID_COLUMN,
             USER_ID_COLUMN,
+            CONTENT_COLUMN,
             PRIMARY_KEY_NAME,
             POSTED_AT_COLUMN
           )
         )) {
           preparedStatement.setInt(1, Activity.this.id);
           preparedStatement.setInt(2, user.getId());
+          preparedStatement.setString(3, content);
           try (ResultSet resultSet = preparedStatement.executeQuery()) {
             resultSet.next();
             this.id = resultSet.getInt(1);
@@ -219,6 +221,26 @@ public abstract class Activity implements SavableDeletableEntity {
     @Override
     public String getFieldNamesAndValuesString() {
       return null;
+    }
+
+    @Override
+    public int hashCode() {
+      return Activity.this.hashCode() * 31 + user.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (obj == null) {
+        return false;
+      }
+      if (obj.getClass() != getClass()) {
+        return false;
+      }
+      ActivityMessage activityMessage = (ActivityMessage) obj;
+      return
+        activityMessage.id.equals(id) &&
+          activityMessage.user.getId().equals(user.getId()) &&
+          activityMessage.getActivity().id.equals(Activity.this.getId());
     }
   }
 
@@ -340,16 +362,24 @@ public abstract class Activity implements SavableDeletableEntity {
 
   @Override
   public String getFieldNamesAndValuesString() {
-    StringBuilder usersString = new StringBuilder();
-    usersString.append("[");
+    StringBuilder usersAndMessages = new StringBuilder();
+    usersAndMessages.append(", users: [");
     for (UserActivity userActivity : this.users) {
-      usersString
+      usersAndMessages
         .append("{userId: ").append(userActivity.getUser().getId())
         .append(", manages: ").append(userActivity.isManager())
         .append("}");
     }
-    usersString.append("]");
-    return String.format("id: %d, users: %s", id, usersString);
+    usersAndMessages.append("], messages: [");
+    for (ActivityMessage am : messages) {
+      usersAndMessages
+        .append("{userId: ").append(am.user.getId())
+        .append(", content: ").append(am.content)
+        .append(", postedAt: ").append(am.postedAt)
+        .append("}");
+    }
+    usersAndMessages.append("]");
+    return String.format("id: %d%s", id, usersAndMessages);
   }
   //#endregion String representations
 
@@ -377,20 +407,10 @@ public abstract class Activity implements SavableDeletableEntity {
     if (users.size() != activity.users.size()) {
       return false;
     }
-    for (UserActivity userActivity : users) {
-      if (!activity.users.contains(userActivity)) {
-        return false;
-      }
-    }
     if (messages.size() != activity.messages.size()) {
       return false;
     }
-    for (ActivityMessage activityMessage : messages) {
-      if (!activity.messages.contains(activityMessage)) {
-        return false;
-      }
-    }
-    return true;
+    return messages.containsAll(activity.messages) && users.containsAll(activity.users);
   }
   //#endregion Equals
 }

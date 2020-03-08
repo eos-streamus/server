@@ -700,6 +700,9 @@ class StreamUsApplicationTests {
       assertEquals(1, activity.getMessages().size());
       assertEquals(activity, ResourceActivity.findById(activity.getId(), connection));
 
+      film.delete(connection);
+      assertNull(ResourceActivity.findById(activity.getId(), connection));
+      user.delete(connection);
     }
   }
 
