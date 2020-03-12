@@ -700,6 +700,13 @@ class StreamUsApplicationTests {
       assertEquals(1, activity.getMessages().size());
       assertEquals(activity, ResourceActivity.findById(activity.getId(), connection));
 
+      for (int i = 0; i < 10; i++) {
+        message = activity.new ActivityMessage(user, randomString());
+        message.save(connection);
+      }
+      assertEquals(activity.getMessages().size(), ResourceActivity.findById(activity.getId(), connection).getMessages().size());
+      assertTrue(activity.getMessages().containsAll(ResourceActivity.findById(activity.getId(), connection).getMessages()));
+
       film.delete(connection);
       assertNull(ResourceActivity.findById(activity.getId(), connection));
       user.delete(connection);
