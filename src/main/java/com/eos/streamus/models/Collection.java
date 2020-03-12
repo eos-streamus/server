@@ -1,8 +1,12 @@
 package com.eos.streamus.models;
 
+import com.eos.streamus.utils.Pair;
+
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
+import java.util.List;
 
 abstract class Collection implements SavableDeletableEntity {
   //#region Static attributes
@@ -76,6 +80,15 @@ abstract class Collection implements SavableDeletableEntity {
   public void setUpdatedAt(Timestamp updatedAt) {
     this.updatedAt = updatedAt;
   }
+
+  public final List<Pair<Integer, Resource>> getContent() {
+    List<Pair<Integer, Resource>> content = getSpecificContent();
+    content.sort(Comparator.comparing(Pair::getKey));
+    return content;
+  }
+
+  protected abstract List<Pair<Integer, Resource>> getSpecificContent();
+
   //#endregion Getters and Setters
 
   //#region Database operations

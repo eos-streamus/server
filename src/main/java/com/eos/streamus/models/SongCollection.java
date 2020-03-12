@@ -119,6 +119,15 @@ public abstract class SongCollection extends Collection {
     return tracksCopy;
   }
 
+  @Override
+  protected List<Pair<Integer, Resource>> getSpecificContent() {
+    List<Pair<Integer, Resource>> content = new ArrayList<>();
+    for (Track track : tracks) {
+      content.add(new Pair<>(track.getKey(), track.getValue()));
+    }
+    return content;
+  }
+
   public void addSong(Song song) {
     Integer newTrackNumber = 0;
     for (Track track : tracks) {
