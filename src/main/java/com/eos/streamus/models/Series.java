@@ -2,6 +2,7 @@ package com.eos.streamus.models;
 
 import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.exceptions.NotPersistedException;
+import com.eos.streamus.utils.Pair;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -182,6 +183,19 @@ public class Series extends VideoCollection {
     return PRIMARY_KEY_NAME;
   }
 
+  @Override
+  protected List<Pair<Integer, Resource>> getSpecificContent() {
+    List<Pair<Integer, Resource>> content = new ArrayList<>();
+    for (Episode episode : episodes) {
+      int offset = 0;
+      for (short i = 0; i < episode.seasonNumber; i++) {
+        offset += getNumberOfEpisodesInSeason(i);
+      }
+      content.add(new Pair<>(offset + episode.episodeNumber, episode));
+    }
+    return content;
+  }
+
   public short getNumberOfSeasons() {
     List<Short> distinctSeasonNumbers = new ArrayList<>();
     for (Episode episode : episodes) {
@@ -220,10 +234,19 @@ public class Series extends VideoCollection {
         }
       }
     } else {
-      for (Episode episode : episodes) {
-        episode.save(connection);
-      }
       super.save(connection);
+    }
+    for (Episode episode : episodes) {
+      episode.save(connection);
+    }
+    if (!episodes.isEmpty()) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select %s from %s where %s = ?;", UPDATED_AT_COLUMN, VIEW_NAME, Collection.PRIMARY_KEY_NAME))) {
+        preparedStatement.setInt(1, getId());
+        try (ResultSet resultSet = preparedStatement.executeQuery()) {
+          resultSet.next();
+          setUpdatedAt(resultSet.getTimestamp(UPDATED_AT_COLUMN));
+        }
+      }
     }
   }
 
@@ -275,7 +298,7 @@ public class Series extends VideoCollection {
   @Override
   public String getFieldNamesAndValuesString() {
     return String.format(
-      "%s, numerOfSeasons: %d, numberOfEpisodes: %d",
+      "%s, numberOfSeasons: %d, numberOfEpisodes: %d",
       super.getFieldNamesAndValuesString(),
       getNumberOfSeasons(),
       episodes.size()
