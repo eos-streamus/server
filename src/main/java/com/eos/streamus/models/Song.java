@@ -12,7 +12,7 @@ public class Song extends Resource implements SavableDeletableEntity {
   //#endregion Static attributs
 
   //#region Constructors
-  private Song(Integer id, String path, String name, Timestamp createdAt, int duration) {
+  Song(Integer id, String path, String name, Timestamp createdAt, int duration) {
     super(id, path, name, createdAt, duration);
   }
 
