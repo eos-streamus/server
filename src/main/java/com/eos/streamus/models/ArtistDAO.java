@@ -10,7 +10,7 @@ public class ArtistDAO {
 
   public static Artist findById(Integer id, Connection connection) throws SQLException, NoResultException {
     try {
-      Musician.findById(id, connection);
+      return Musician.findById(id, connection);
     } catch (NoResultException e) {
       // Do nothing, could be Band
     }

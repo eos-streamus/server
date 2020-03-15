@@ -72,20 +72,7 @@ public class Album extends SongCollection {
   @Override
   public void save(Connection connection) throws SQLException {
     if (this.getId() == null) {
-      StringBuilder artistIds = new StringBuilder();
-      boolean first = true;
-      for (Artist artist : artists) {
-        if (artist.getId() == null) {
-          artist.save(connection);
-        }
-        if (first) {
-          first = false;
-        } else {
-          artistIds.append(", ");
-        }
-        artistIds.append(artist.getId());
-      }
-      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s(?, ?%s);", CREATION_FUNCTION_NAME, artistIds))) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s(?, ?);", CREATION_FUNCTION_NAME))) {
         preparedStatement.setString(1, getName());
         preparedStatement.setDate(2, releaseDate);
         try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -116,7 +103,7 @@ public class Album extends SongCollection {
   }
 
   public static Album findById(Integer id, Connection connection) throws SQLException, NoResultException {
-    Album album = null;
+    Album album;
     try (PreparedStatement preparedStatement = connection.prepareStatement(
       String.format(
         "select * from %s where %s = ?;",
