@@ -1,6 +1,6 @@
 package com.eos.streamus.models;
 
-import com.eos.streamus.TestDatabaseConnection;
+import com.eos.streamus.utils.TestDatabaseConnection;
 import com.eos.streamus.exceptions.NoResultException;
 import org.junit.jupiter.api.Test;
 import org.postgresql.util.PSQLException;

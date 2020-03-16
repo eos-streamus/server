@@ -49,17 +49,17 @@ public class User extends Person {
   }
 
   @Override
-  public String getTableName() {
+  public String tableName() {
     return TABLE_NAME;
   }
 
   @Override
-  public String getCreationFunctionName() {
+  public String creationFunctionName() {
     return "createUser";
   }
 
   @Override
-  public String getPrimaryKeyName() {
+  public String primaryKeyName() {
     return "idPerson";
   }
   //#endregion Getters and Setters
@@ -68,7 +68,7 @@ public class User extends Person {
   @Override
   public void save(Connection connection) throws SQLException {
     if (this.getId() == null) {
-      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s(?::varchar(200), ?::varchar(200), ?, ?::varchar(255), ?::varchar(50));", getCreationFunctionName()))) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s(?::varchar(200), ?::varchar(200), ?, ?::varchar(255), ?::varchar(50));", creationFunctionName()))) {
         preparedStatement.setString(1, getFirstName());
         preparedStatement.setString(2, getLastName());
         preparedStatement.setDate(3, getDateOfBirth());
@@ -85,7 +85,7 @@ public class User extends Person {
       }
     } else {
       super.save(connection);
-      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("update %s set %s = ?, %s = ? where %s = ?;", getTableName(), EMAIL_COLUMN, USERNAME_COLUMN, getPrimaryKeyName()))) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("update %s set %s = ?, %s = ? where %s = ?;", tableName(), EMAIL_COLUMN, USERNAME_COLUMN, primaryKeyName()))) {
         preparedStatement.setString(1, email);
         preparedStatement.setString(2, username);
         preparedStatement.setInt(3, getId());
@@ -118,10 +118,10 @@ public class User extends Person {
 
   //#region String representations
   @Override
-  public String getFieldNamesAndValuesString() {
+  public String fieldNamesAndValuesString() {
     return String.format(
       "%s, %s: %s, %s: %s",
-      super.getFieldNamesAndValuesString(),
+      super.fieldNamesAndValuesString(),
       EMAIL_COLUMN,
       email,
       USERNAME_COLUMN,
@@ -131,7 +131,7 @@ public class User extends Person {
 
   @Override
   public String toString() {
-    return String.format("{%s}", getFieldNamesAndValuesString());
+    return String.format("{%s}", fieldNamesAndValuesString());
   }
   //#endregion String representations
 

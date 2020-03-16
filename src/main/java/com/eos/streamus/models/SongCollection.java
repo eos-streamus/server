@@ -50,7 +50,7 @@ public abstract class SongCollection extends Collection {
     //#endregion Database operations
 
     //#region String representations
-    public String getFieldNamesAndValuesString() {
+    public String fieldNamesAndValuesString() {
       return String.format(
         "%s: %s, %s: %s, %s: %s",
         ID_SONG_COLLECTION_COLUMN,
@@ -64,7 +64,7 @@ public abstract class SongCollection extends Collection {
 
     @Override
     public String toString() {
-      return String.format("{%s}", this.getFieldNamesAndValuesString());
+      return String.format("{%s}", this.fieldNamesAndValuesString());
     }
     //#endregion String representations
 
@@ -84,11 +84,6 @@ public abstract class SongCollection extends Collection {
     }
     //#endregion Equals
   }
-
-  //#region Static attributes
-  private static final String TABLE_NAME = "SongCollection";
-  private static final String PRIMARY_KEY_NAME = "idCollection";
-  //#endregion Static attributes
 
   //#region Instance attributes
   private List<Track> tracks = new ArrayList<>();
@@ -153,7 +148,7 @@ public abstract class SongCollection extends Collection {
     for (Track track : this.getTracks()) {
       if (!databaseTracks.contains(track)) {
         if (track.getValue().getId() == null) {
-          throw new NotPersistedException(String.format("%s %s is not persisted", track.getValue().getTableName(), track.getValue()));
+          throw new NotPersistedException(String.format("%s %s is not persisted", track.getValue().tableName(), track.getValue()));
         }
         track.save(connection);
       }
@@ -199,14 +194,14 @@ public abstract class SongCollection extends Collection {
   //#region String representations
   @Override
   public String toString() {
-    return String.format("{%s}", getFieldNamesAndValuesString());
+    return String.format("{%s}", fieldNamesAndValuesString());
   }
 
   @Override
-  public String getFieldNamesAndValuesString() {
+  public String fieldNamesAndValuesString() {
     return String.format(
       "%s, numberOfTracks: %d",
-      super.getFieldNamesAndValuesString(),
+      super.fieldNamesAndValuesString(),
       this.tracks.size()
     );
   }

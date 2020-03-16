@@ -90,7 +90,7 @@ public abstract class Activity implements SavableDeletableEntity {
     //#endregion Database operations
 
     //#region String representations
-    public String getFieldNamesAndValuesString() {
+    public String fieldNamesAndValuesString() {
       return String.format(
         "%s: %s, %s: %d, %s: %s",
         USER_ID_COLUMN,
@@ -104,7 +104,7 @@ public abstract class Activity implements SavableDeletableEntity {
 
     @Override
     public String toString() {
-      return String.format("{%s}", getFieldNamesAndValuesString());
+      return String.format("{%s}", fieldNamesAndValuesString());
     }
     //#endregion String representations
 
@@ -178,17 +178,17 @@ public abstract class Activity implements SavableDeletableEntity {
     }
 
     @Override
-    public String getTableName() {
+    public String tableName() {
       return TABLE_NAME;
     }
 
     @Override
-    public String getPrimaryKeyName() {
+    public String primaryKeyName() {
       return PRIMARY_KEY_NAME;
     }
 
     @Override
-    public String getCreationFunctionName() {
+    public String creationFunctionName() {
       return null;
     }
 
@@ -219,7 +219,7 @@ public abstract class Activity implements SavableDeletableEntity {
     }
 
     @Override
-    public String getFieldNamesAndValuesString() {
+    public String fieldNamesAndValuesString() {
       return null;
     }
 
@@ -285,12 +285,12 @@ public abstract class Activity implements SavableDeletableEntity {
   }
 
   @Override
-  public String getTableName() {
+  public String tableName() {
     return TABLE_NAME;
   }
 
   @Override
-  public String getPrimaryKeyName() {
+  public String primaryKeyName() {
     return PRIMARY_KEY_NAME;
   }
 
@@ -357,11 +357,11 @@ public abstract class Activity implements SavableDeletableEntity {
   //#region String representations
   @Override
   public String toString() {
-    return String.format("{%s}", getFieldNamesAndValuesString());
+    return String.format("{%s}", fieldNamesAndValuesString());
   }
 
   @Override
-  public String getFieldNamesAndValuesString() {
+  public String fieldNamesAndValuesString() {
     StringBuilder usersAndMessages = new StringBuilder();
     usersAndMessages.append(", users: [");
     for (UserActivity userActivity : this.users) {

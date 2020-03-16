@@ -11,7 +11,7 @@ public class VideoDAO {
 
   private VideoDAO() {}
 
-  synchronized public static Video findById(Integer id, Connection connection) throws NoResultException, SQLException {
+  public static synchronized Video findById(Integer id, Connection connection) throws NoResultException, SQLException {
     // Ignore NoResultException later
     try {
       return Film.findById(id, connection);

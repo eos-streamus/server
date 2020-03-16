@@ -29,7 +29,7 @@ public final class SongPlaylist extends SongCollection {
 
   //#region Getters and Setters
   @Override
-  public String getCreationFunctionName() {
+  public String creationFunctionName() {
     return CREATION_FUNCTION_NAME;
   }
 
@@ -100,18 +100,18 @@ public final class SongPlaylist extends SongCollection {
 
   //#region String representations
   @Override
-  public String getFieldNamesAndValuesString() {
+  public String fieldNamesAndValuesString() {
     return String.format(
       "%s, %s: %s",
-      super.getFieldNamesAndValuesString(),
-      user.getTableName(),
+      super.fieldNamesAndValuesString(),
+      user.tableName(),
       user
     );
   }
 
   @Override
   public String toString() {
-    return String.format("{%s}", getFieldNamesAndValuesString());
+    return String.format("{%s}", fieldNamesAndValuesString());
   }
   //#endregion String representations
 

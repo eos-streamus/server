@@ -43,13 +43,13 @@ public class ResourceActivity extends Activity {
   }
   //#endregion Constructors
 
+  //#region Getters and Setters
   public CollectionActivity getCollectionActivity() {
-    //#region Getters and Setters
     return collectionActivity;
   }
 
   @Override
-  public String getCreationFunctionName() {
+  public String creationFunctionName() {
     return CREATION_FUNCTION_NAME;
   }
 
@@ -77,12 +77,12 @@ public class ResourceActivity extends Activity {
   }
 
   @Override
-  public String getTableName() {
+  public String tableName() {
     return TABLE_NAME;
   }
 
   @Override
-  public String getPrimaryKeyName() {
+  public String primaryKeyName() {
     return PRIMARY_KEY_NAME;
   }
   //#endregion Getters and Setters
@@ -94,48 +94,73 @@ public class ResourceActivity extends Activity {
       throw new IncompleteDataException("At least one UserActivity must be present");
     }
     if (this.getId() == null) {
-      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s(?%s%s);", CREATION_FUNCTION_NAME, getUsers().isEmpty() ? ", null" : ", ?", collectionActivity == null ? "" : ", ?"))) {
-        preparedStatement.setInt(1, resource.getId());
-        if (!getUsers().isEmpty()) {
-          preparedStatement.setInt(2, getUsers().get(0).getUser().getId());
-        }
-        if (collectionActivity != null) {
-          preparedStatement.setInt(getUsers().isEmpty() ? 2 : 3, collectionActivity.getId());
-        }
-        try (ResultSet resultSet = preparedStatement.executeQuery()) {
-          resultSet.next();
-          this.setId(resultSet.getInt(Activity.PRIMARY_KEY_NAME));
-        }
-      }
+      saveNew(connection);
     } else {
-      try (
-        PreparedStatement preparedStatement = connection.prepareStatement(
-          String.format(
-            "update %s set %s = ?, %s = ?%s where %s = ?;",
-            TABLE_NAME,
-            STARTED_AT_COLUMN,
-            PAUSED_AT_COLUMN,
-            collectionActivity == null ? "" : String.format(",%s = ?", COLLECTION_ACTIVITY_ID_COLUMN),
-            PRIMARY_KEY_NAME
-          )
-        )
-      ) {
-        preparedStatement.setTimestamp(1, startedAt);
-        preparedStatement.setInt(2, pausedAt);
-        if (collectionActivity != null) {
-          preparedStatement.setInt(3, collectionActivity.getId());
-          preparedStatement.setInt(4, getId());
-        } else {
-          preparedStatement.setInt(3, getId());
-        }
-        preparedStatement.execute();
-      }
+      update(connection);
     }
     super.save(connection);
   }
 
+  private void saveNew(Connection connection) throws SQLException {
+    try (PreparedStatement preparedStatement =
+           connection.prepareStatement(
+             String.format(
+               "select * from %s(?%s%s);",
+               CREATION_FUNCTION_NAME,
+               getUsers().isEmpty() ? ", null" : ", ?",
+               collectionActivity == null ? "" : ", ?"
+             )
+           )
+    ) {
+      preparedStatement.setInt(1, resource.getId());
+      if (!getUsers().isEmpty()) {
+        preparedStatement.setInt(2, getUsers().get(0).getUser().getId());
+      }
+      if (collectionActivity != null) {
+        preparedStatement.setInt(getUsers().isEmpty() ? 2 : 3, collectionActivity.getId());
+      }
+      try (ResultSet resultSet = preparedStatement.executeQuery()) {
+        resultSet.next();
+        this.setId(resultSet.getInt(Activity.PRIMARY_KEY_NAME));
+      }
+    }
+  }
+
+  private void update(Connection connection) throws SQLException {
+    try (
+      PreparedStatement preparedStatement = connection.prepareStatement(
+        String.format(
+          "update %s set %s = ?, %s = ?%s where %s = ?;",
+          TABLE_NAME,
+          STARTED_AT_COLUMN,
+          PAUSED_AT_COLUMN,
+          collectionActivity == null ? "" : String.format(",%s = ?", COLLECTION_ACTIVITY_ID_COLUMN),
+          PRIMARY_KEY_NAME
+        )
+      )
+    ) {
+      preparedStatement.setTimestamp(1, startedAt);
+      preparedStatement.setInt(2, pausedAt);
+      if (collectionActivity != null) {
+        preparedStatement.setInt(3, collectionActivity.getId());
+        preparedStatement.setInt(4, getId());
+      } else {
+        preparedStatement.setInt(3, getId());
+      }
+      preparedStatement.execute();
+    }
+  }
+
   public static ResourceActivity findById(Integer id, Connection connection) throws SQLException, NoResultException {
-    try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s where %s = ?", TABLE_NAME, PRIMARY_KEY_NAME))) {
+    try (PreparedStatement preparedStatement =
+           connection.prepareStatement(
+             String.format(
+               "select * from %s where %s = ?",
+               TABLE_NAME,
+               PRIMARY_KEY_NAME
+             )
+           )
+    ) {
       preparedStatement.setInt(1, id);
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
         if (!resultSet.next()) {
@@ -158,14 +183,14 @@ public class ResourceActivity extends Activity {
   //#region String representations
   @Override
   public String toString() {
-    return String.format("{%s}", getFieldNamesAndValuesString());
+    return String.format("{%s}", fieldNamesAndValuesString());
   }
 
   @Override
-  public String getFieldNamesAndValuesString() {
+  public String fieldNamesAndValuesString() {
     return String.format(
       "%s, %s: %s, %s: %d, %s: %s",
-      super.getFieldNamesAndValuesString(),
+      super.fieldNamesAndValuesString(),
       STARTED_AT_COLUMN,
       startedAt,
       PAUSED_AT_COLUMN,
@@ -188,7 +213,11 @@ public class ResourceActivity extends Activity {
       return false;
     }
     ResourceActivity resourceActivity = (ResourceActivity) obj;
-    if (startedAt == null && resourceActivity.startedAt != null || startedAt != null && resourceActivity.startedAt == null) {
+    if (
+      startedAt == null && resourceActivity.startedAt != null
+      ||
+      startedAt != null && resourceActivity.startedAt == null
+    ) {
       return false;
     }
     return

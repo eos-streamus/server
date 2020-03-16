@@ -13,7 +13,7 @@ public class Admin extends User {
   //#endregion Static Attributes
 
   //#region Constructors
-  private Admin(Integer id, String firstName, String lastName, Date dateOfBirth, Timestamp createdAt, Timestamp updatedAt, String email, String username) {
+  private Admin(Integer id, String firstName, String lastName, Date dateOfBirth, Timestamp createdAt, Timestamp updatedAt, String email, String username) { // NOSONAR
     super(id, firstName, lastName, dateOfBirth, createdAt, updatedAt, email, username);
   }
 
@@ -23,22 +23,23 @@ public class Admin extends User {
   //#endregion Constructors
 
   //#region Getters and Setters
-
   @Override
-  public String getTableName() {
+  public String tableName() {
     return TABLE_NAME;
   }
 
   @Override
-  public String getCreationFunctionName() {
+  public String creationFunctionName() {
     return CREATION_FUNCTION_NAME;
   }
 
   @Override
-  public String getPrimaryKeyName() {
+  public String primaryKeyName() {
     return PRIMARY_KEY_NAME;
   }
+  //#endregion Getters and Setters
 
+  //#region Database operations
   @Override
   public void save(Connection connection) throws SQLException {
     if (getId() == null) {
@@ -80,4 +81,5 @@ public class Admin extends User {
       }
     }
   }
+  //#endregion Database Operations
 }

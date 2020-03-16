@@ -1,6 +1,5 @@
-package com.eos.streamus;
+package com.eos.streamus.utils;
 
-import com.eos.streamus.utils.DatabaseConnection;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
