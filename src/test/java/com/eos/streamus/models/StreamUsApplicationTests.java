@@ -718,12 +718,74 @@ class StreamUsApplicationTests {
         message = activity.new ActivityMessage(user, randomString());
         message.save(connection);
       }
-      assertEquals(activity.getMessages().size(), ResourceActivity.findById(activity.getId(), connection).getMessages().size());
-      assertTrue(activity.getMessages().containsAll(ResourceActivity.findById(activity.getId(), connection).getMessages()));
+      ResourceActivity fetchedActivity = ResourceActivity.findById(activity.getId(), connection);
+      if (fetchedActivity == null) {
+        fail("Null fetchedActivity");
+      }
+      assertEquals(activity.getMessages().size(), fetchedActivity.getMessages().size());
+      assertTrue(activity.getMessages().containsAll(fetchedActivity.getMessages()));
 
       film.delete(connection);
       assertNull(ResourceActivity.findById(activity.getId(), connection));
       user.delete(connection);
+    }
+  }
+
+  @Test
+  void testAlbum() throws SQLException, NoResultException {
+    try (Connection connection = databaseConnection.getConnection()) {
+      Album album = new Album(randomString(), randomDate());
+
+      Song[] songs = new Song[10];
+      for (int i = 0; i < 10; i++) {
+        songs[i] = new Song(randomString(), randomString(), 100);
+        songs[i].save(connection);
+        album.addSong(songs[i]);
+      }
+      album.save(connection);
+      Album fetchedAlbum = Album.findById(album.getId(), connection);
+      assertEquals(album.getContent().size(), fetchedAlbum.getContent().size());
+      assertEquals(album, fetchedAlbum);
+
+      album.delete(connection);
+      for (Song song : songs) {
+        song.delete(connection);
+      }
+    }
+  }
+
+  @Test
+  void testAlbumWithArtists() throws SQLException, NoResultException {
+    try (Connection connection = databaseConnection.getConnection()) {
+      Band band = new Band("test band");
+      band.save(connection);
+
+      Musician musician = new Musician(randomPerson());
+      musician.save(connection);
+
+      Album album = new Album(randomString(), randomDate());
+
+      album.addArtist(band);
+      album.addArtist(musician);
+
+      Song[] songs = new Song[10];
+      for (int i = 0; i < 10; i++) {
+        songs[i] = new Song(randomString(), randomString(), 100);
+        songs[i].save(connection);
+        album.addSong(songs[i]);
+      }
+      album.save(connection);
+      Album fetchedAlbum = Album.findById(album.getId(), connection);
+      assertEquals(album.getContent().size(), fetchedAlbum.getContent().size());
+      assertEquals(album, fetchedAlbum);
+
+      album.delete(connection);
+      for (Song song : songs) {
+        song.delete(connection);
+      }
+      musician.getPerson().delete(connection);
+      musician.delete(connection);
+      band.delete(connection);
     }
   }
 
@@ -736,6 +798,10 @@ class StreamUsApplicationTests {
     int year = random.nextInt() % 70 + 1940;
     int month = Math.abs(random.nextInt()) % 12 + 1;
     return valueOf(String.format("%d-%s-01", year, (month < 10 ? "0" + month : month)));
+  }
+
+  private Person randomPerson() {
+    return new Person(randomString(), randomString(), randomDate());
   }
 
   private User randomUser() {
