@@ -179,11 +179,9 @@ class StreamUsApplicationTests {
   }
 
   @Test
-  void testPopulatedSongPlaylistCRUD() throws SQLException, NoResultException, ParseException {
+  void testPopulatedSongPlaylistCRUD() throws SQLException, NoResultException {
     try (Connection connection = databaseConnection.getConnection()) {
-      DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-      java.sql.Date sqlDate = new java.sql.Date(dateFormat.parse("1970-08-01").getTime());
-      User user = new User("John", "Doe", sqlDate, String.format("john.doe%d@email.com", new Random().nextInt()), "johndoe");
+      User user = randomUser();
       user.save(connection);
 
       // Create
@@ -191,7 +189,7 @@ class StreamUsApplicationTests {
       songPlaylist.save(connection);
       List<Song> testSongs = new ArrayList<>(); // Used to keep track of songs to delete
       for (int i = 0; i < 10; i++) {
-        Song song = new Song(String.format("test%d.mp3", new Date().getTime()), "Test song", 100);
+        Song song = new Song(String.format("test%d%d.mp3", new Date().getTime(), new Random().nextInt()), "Test song", 100);
         song.save(connection);
         testSongs.add(song);
         songPlaylist.addSong(song);
@@ -205,7 +203,7 @@ class StreamUsApplicationTests {
       // Update
       songPlaylist.setName("Test playlist updated");
       for (int i = 0; i < 10; i++) {
-        Song song = new Song(String.format("test%d.mp3", new Date().getTime()), "Test song", 100);
+        Song song = new Song(String.format("test%d%d.mp3", new Date().getTime(), new Random().nextInt()), "Test song", 100);
         song.save(connection);
         testSongs.add(song);
         songPlaylist.addSong(song);
@@ -262,17 +260,15 @@ class StreamUsApplicationTests {
   }
 
   @Test
-  void testPopulatedVideoPlaylistCRUD() throws SQLException, NoResultException, ParseException {
+  void testPopulatedVideoPlaylistCRUD() throws SQLException, NoResultException {
     try (Connection connection = databaseConnection.getConnection()) {
-      DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-      java.sql.Date sqlDate = new java.sql.Date(dateFormat.parse("1980-01-01").getTime());
-      User user = new User("John", "Doe", sqlDate, String.format("john.doe%d@email.com", new Random().nextInt()), "johndoe");
+      User user = randomUser();
       user.save(connection);
       VideoPlaylist videoPlaylist = new VideoPlaylist("Test video playlist", user);
       videoPlaylist.save(connection);
       List<Video> testVideos = new ArrayList<>();
       for (int i = 0; i < 10; i++) {
-        Video video = new Film(String.format("test%d.mp3", new Date().getTime()), "Test video", 100);
+        Video video = new Film(String.format("test%d%d.mp4", new Date().getTime(), new Random().nextInt()), "Test video", 100);
         video.save(connection);
         testVideos.add(video);
         videoPlaylist.addVideo(video);
@@ -285,7 +281,7 @@ class StreamUsApplicationTests {
       // Update
       videoPlaylist.setName("Test playlist updated");
       for (int i = 0; i < 10; i++) {
-        Video video = new Film(String.format("test%d.mp3", new Date().getTime()), "Test video", 100);
+        Video video = new Film(String.format("test%d%d.mp4", new Date().getTime(), new Random().nextInt()), "Test video", 100);
         video.save(connection);
         testVideos.add(video);
         videoPlaylist.addVideo(video);
