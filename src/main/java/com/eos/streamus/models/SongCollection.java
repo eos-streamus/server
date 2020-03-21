@@ -138,6 +138,17 @@ public abstract class SongCollection extends Collection {
       this.tracks.add(track);
     }
   }
+
+  @Override
+  public String getTableName() {
+    return TABLE_NAME;
+  }
+
+  @Override
+  public String getPrimaryKeyName() {
+    return PRIMARY_KEY_NAME;
+  }
+
   //#endregion Accessors
 
   //#region Database operations

@@ -6,7 +6,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class ResourceDAO {
-
   private ResourceDAO() {}
 
   public static Resource findById(Integer id, Connection connection) throws SQLException, NoResultException {
