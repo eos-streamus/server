@@ -26,6 +26,8 @@ class StreamUsApplicationTests {
   @Autowired
   protected TestDatabaseConnection databaseConnection = null;
 
+  private Random random = new Random();
+
   @Test
   void connectToDatabase() {
     assertDoesNotThrow(() -> {
@@ -38,7 +40,7 @@ class StreamUsApplicationTests {
   void testSongCRUD() throws SQLException, NoResultException {
     try (Connection connection = databaseConnection.getConnection()) {
       // Create
-      Song song = new Song(String.format("test%d.mp3", new Date().getTime()), "Test song", 100);
+      Song song = new Song(String.format("test%d.mp3", new Date().getTime()), randomString(), 100);
       song.save(connection);
 
       // Read
@@ -90,11 +92,8 @@ class StreamUsApplicationTests {
   @Test
   void testPersonCRUD() throws SQLException, NoResultException, ParseException {
     try (Connection connection = databaseConnection.getConnection()) {
-      DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-      java.sql.Date sqlDate = new java.sql.Date(dateFormat.parse("1970-08-01").getTime());
-
       // Create
-      Person person = new Person("John", "Doe", sqlDate);
+      Person person = new Person("John", "Doe", randomDate());
       person.save(connection);
 
       // Read
@@ -104,7 +103,7 @@ class StreamUsApplicationTests {
       // Update
       person.setFirstName("Jane");
       person.setLastName("Donut");
-      person.setDateOfBirth(new java.sql.Date(dateFormat.parse("1970-08-02").getTime()));
+      person.setDateOfBirth(randomDate());
       person.save(connection);
 
       retrievedPerson = Person.findById(person.getId(), connection);
@@ -119,11 +118,8 @@ class StreamUsApplicationTests {
   @Test
   void testUserCRUD() throws SQLException, NoResultException, ParseException {
     try (Connection connection = databaseConnection.getConnection()) {
-      DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-      java.sql.Date sqlDate = new java.sql.Date(dateFormat.parse("1970-08-01").getTime());
-
       // Create
-      User user = new User("John", "Doe", sqlDate, String.format("john.doe%d@email.com", new Random().nextInt()), "johndoe");
+      User user = randomUser();
       user.save(connection);
 
       // Read
@@ -133,7 +129,7 @@ class StreamUsApplicationTests {
       // Update
       user.setFirstName("Jane");
       user.setLastName("Donut");
-      user.setDateOfBirth(new java.sql.Date(dateFormat.parse("1970-08-02").getTime()));
+      user.setDateOfBirth(randomDate());
       user.setEmail(String.format("jane.donut%d@email.com", new Random().nextInt()));
       user.setUsername("janedonut");
       user.save(connection);
@@ -156,7 +152,7 @@ class StreamUsApplicationTests {
       user.save(connection);
 
       // Create
-      SongPlaylist songPlaylist = new SongPlaylist("Test playlist", user);
+      SongPlaylist songPlaylist = new SongPlaylist(randomString(), user);
       songPlaylist.save(connection);
 
       // Read
@@ -164,7 +160,7 @@ class StreamUsApplicationTests {
       assertEquals(songPlaylist, retrievedSongPlaylist);
 
       // Update
-      songPlaylist.setName("Test playlist updated");
+      songPlaylist.setName(randomString());
       songPlaylist.save(connection);
 
       retrievedSongPlaylist = SongPlaylist.findById(songPlaylist.getId(), connection);
@@ -189,7 +185,7 @@ class StreamUsApplicationTests {
       songPlaylist.save(connection);
       List<Song> testSongs = new ArrayList<>(); // Used to keep track of songs to delete
       for (int i = 0; i < 10; i++) {
-        Song song = new Song(String.format("test%d%d.mp3", new Date().getTime(), new Random().nextInt()), "Test song", 100);
+        Song song = new Song(String.format("test%d%d.mp3", new Date().getTime(), new Random().nextInt()), randomString(), 100);
         song.save(connection);
         testSongs.add(song);
         songPlaylist.addSong(song);
@@ -201,9 +197,9 @@ class StreamUsApplicationTests {
       assertEquals(songPlaylist, retrievedSongPlaylist);
 
       // Update
-      songPlaylist.setName("Test playlist updated");
+      songPlaylist.setName(randomString());
       for (int i = 0; i < 10; i++) {
-        Song song = new Song(String.format("test%d%d.mp3", new Date().getTime(), new Random().nextInt()), "Test song", 100);
+        Song song = new Song(String.format("test%d%d.mp3", new Date().getTime(), new Random().nextInt()), randomString(), 100);
         song.save(connection);
         testSongs.add(song);
         songPlaylist.addSong(song);
@@ -246,7 +242,7 @@ class StreamUsApplicationTests {
       assertEquals(videoPlaylist, retrievedVideoPlaylist);
 
       // Update
-      videoPlaylist.setName("Test playlist updated");
+      videoPlaylist.setName(randomString());
       videoPlaylist.save(connection);
 
       retrievedVideoPlaylist = VideoPlaylist.findById(videoPlaylist.getId(), connection);
@@ -279,7 +275,7 @@ class StreamUsApplicationTests {
       assertEquals(videoPlaylist, retrievedVideoPlaylist);
 
       // Update
-      videoPlaylist.setName("Test playlist updated");
+      videoPlaylist.setName(randomString());
       for (int i = 0; i < 10; i++) {
         Video video = new Film(String.format("test%d%d.mp4", new Date().getTime(), new Random().nextInt()), "Test video", 100);
         video.save(connection);
@@ -306,7 +302,7 @@ class StreamUsApplicationTests {
   void testEmptySeriesCRUD() throws SQLException, NoResultException {
     try (Connection connection = databaseConnection.getConnection()) {
       // Create
-      Series series = new Series(String.format("Test series %d", new Date().getTime()));
+      Series series = new Series(randomString());
       series.save(connection);
       assertNotNull(series.getId());
 
@@ -330,9 +326,9 @@ class StreamUsApplicationTests {
   void testEpisodeCRUD() throws SQLException, NoResultException {
     try (Connection connection = databaseConnection.getConnection()) {
       // Create
-      Series series = new Series(String.format("Test series %d", new Date().getTime()));
+      Series series = new Series(String.format(randomString(), new Date().getTime()));
       series.save(connection);
-      Series.Episode episode = series.new Episode(String.format("test_episode_%d_%d.mp4", new Date().getTime(), new Random().nextInt()), "Test episode", 100, (short) 1, (short) 1);
+      Series.Episode episode = series.new Episode(randomString(), randomString(), 100, (short) 1, (short) 1);
       episode.save(connection);
       assertNotNull(episode.getId());
 
@@ -357,9 +353,9 @@ class StreamUsApplicationTests {
   void testEpisodeDeleteCascade() throws SQLException {
     try (Connection connection = databaseConnection.getConnection()) {
       // Create
-      Series series = new Series(String.format("Test series %d", new Date().getTime()));
+      Series series = new Series(String.format(randomString(), new Date().getTime()));
       series.save(connection);
-      Series.Episode episode = series.new Episode(String.format("test_episode_%d_%d.mp4", new Date().getTime(), new Random().nextInt()), "Test episode", 100, (short) 1, (short) 1);
+      Series.Episode episode = series.new Episode(randomString(), randomString(), 100, (short) 1, (short) 1);
       episode.save(connection);
       assertNotNull(episode.getId());
 
@@ -372,9 +368,9 @@ class StreamUsApplicationTests {
   void testEpisodeWithInvalidSeasonAndEpisodeValues() throws SQLException {
     try (Connection connection = databaseConnection.getConnection()) {
       // Create
-      Series series = new Series(String.format("Test series %d", new Date().getTime()));
+      Series series = new Series(String.format(randomString(), new Date().getTime()));
       series.save(connection);
-      Series.Episode episode = series.new Episode(String.format("test_episode_%d_%d.mp4", new Date().getTime(), new Random().nextInt()), "Test episode", 100, (short) 2, (short) 2);
+      Series.Episode episode = series.new Episode(randomString(), randomString(), 100, (short) 2, (short) 2);
       try {
         episode.save(connection);
       } catch (PSQLException e) {
@@ -390,11 +386,11 @@ class StreamUsApplicationTests {
   void testEpisodeWithAutomaticEpisodeNumber() throws SQLException {
     try (Connection connection = databaseConnection.getConnection()) {
       // Create
-      Series series = new Series(String.format("Test series %d", new Date().getTime()));
+      Series series = new Series(String.format(randomString(), new Date().getTime()));
       series.save(connection);
-      Series.Episode episode1 = series.new Episode(String.format("test_episode_%d_%d.mp4", new Date().getTime(), new Random().nextInt()), "Test episode", 100, (short) 1);
+      Series.Episode episode1 = series.new Episode(randomString(), randomString(), 100, (short) 1);
       assertEquals(1, episode1.getEpisodeNumber());
-      Series.Episode episode2 = series.new Episode(String.format("test_episode_%d_%d.mp4", new Date().getTime(), new Random().nextInt()), "Test episode", 100, (short) 1);
+      Series.Episode episode2 = series.new Episode(randomString(), randomString(), 100, (short) 1);
       assertEquals(2, episode2.getEpisodeNumber());
 
       episode1.save(connection);
@@ -695,7 +691,7 @@ class StreamUsApplicationTests {
   @Test
   void testActivityMessages() throws SQLException, NoResultException {
     try (Connection connection = databaseConnection.getConnection()) {
-      Film film = new Film(randomString(), randomString(), Math.abs(new Random().nextInt()));
+      Film film = new Film(randomString(), randomString(), (new Random().nextInt() & Integer.MAX_VALUE));
       film.save(connection);
 
       User user = randomUser();
@@ -717,10 +713,10 @@ class StreamUsApplicationTests {
       ResourceActivity fetchedActivity = ResourceActivity.findById(activity.getId(), connection);
       if (fetchedActivity == null) {
         fail("Null fetchedActivity");
+      } else {
+        assertEquals(activity.getMessages().size(), fetchedActivity.getMessages().size());
+        assertTrue(activity.getMessages().containsAll(fetchedActivity.getMessages()));
       }
-      assertEquals(activity.getMessages().size(), fetchedActivity.getMessages().size());
-      assertTrue(activity.getMessages().containsAll(fetchedActivity.getMessages()));
-
       film.delete(connection);
       assertNull(ResourceActivity.findById(activity.getId(), connection));
       user.delete(connection);
@@ -790,9 +786,8 @@ class StreamUsApplicationTests {
   }
 
   private java.sql.Date randomDate() {
-    Random random = new Random();
     int year = random.nextInt() % 70 + 1940;
-    int month = Math.abs(random.nextInt()) % 12 + 1;
+    int month = (random.nextInt() & Integer.MAX_VALUE) % 12 + 1;
     return valueOf(String.format("%d-%s-01", year, (month < 10 ? "0" + month : month)));
   }
 
