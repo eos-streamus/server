@@ -13,7 +13,7 @@ public class Admin extends User {
   //#endregion Static Attributes
 
   //#region Constructors
-  private Admin(Integer id, String firstName, String lastName, Date dateOfBirth, Timestamp createdAt, Timestamp updatedAt, String email, String username) {
+  private Admin(Integer id, String firstName, String lastName, Date dateOfBirth, Timestamp createdAt, Timestamp updatedAt, String email, String username) { // NOSONAR
     super(id, firstName, lastName, dateOfBirth, createdAt, updatedAt, email, username);
   }
 
