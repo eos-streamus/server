@@ -251,12 +251,16 @@ public class VideoPlaylist extends VideoCollection {
   //#region String representations
   @Override
   public String getFieldNamesAndValuesString() {
-    return super.getFieldNamesAndValuesString();
+    return String.format(
+        "%s, numberOfTracks: %d",
+        super.getFieldNamesAndValuesString(),
+        videos.size()
+    );
   }
 
   @Override
   public String toString() {
-    return super.toString();
+    return String.format("{%s}", getFieldNamesAndValuesString());
   }
   //#endregion String representations
 

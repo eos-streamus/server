@@ -94,44 +94,52 @@ public class ResourceActivity extends Activity {
       throw new IncompleteDataException("At least one UserActivity must be present");
     }
     if (this.getId() == null) {
-      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s(?%s%s);", CREATION_FUNCTION_NAME, getUsers().isEmpty() ? ", null" : ", ?", collectionActivity == null ? "" : ", ?"))) {
-        preparedStatement.setInt(1, resource.getId());
-        if (!getUsers().isEmpty()) {
-          preparedStatement.setInt(2, getUsers().get(0).getUser().getId());
-        }
-        if (collectionActivity != null) {
-          preparedStatement.setInt(getUsers().isEmpty() ? 2 : 3, collectionActivity.getId());
-        }
-        try (ResultSet resultSet = preparedStatement.executeQuery()) {
-          resultSet.next();
-          this.setId(resultSet.getInt(Activity.PRIMARY_KEY_NAME));
-        }
-      }
+      saveNew(connection);
     } else {
-      try (
-        PreparedStatement preparedStatement = connection.prepareStatement(
-          String.format(
-            "update %s set %s = ?, %s = ?%s where %s = ?;",
-            TABLE_NAME,
-            STARTED_AT_COLUMN,
-            PAUSED_AT_COLUMN,
-            collectionActivity == null ? "" : String.format(",%s = ?", COLLECTION_ACTIVITY_ID_COLUMN),
-            PRIMARY_KEY_NAME
-          )
-        )
-      ) {
-        preparedStatement.setTimestamp(1, startedAt);
-        preparedStatement.setInt(2, pausedAt);
-        if (collectionActivity != null) {
-          preparedStatement.setInt(3, collectionActivity.getId());
-          preparedStatement.setInt(4, getId());
-        } else {
-          preparedStatement.setInt(3, getId());
-        }
-        preparedStatement.execute();
-      }
+      update(connection);
     }
     super.save(connection);
+  }
+
+  private void saveNew(Connection connection) throws SQLException {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s(?%s%s);", CREATION_FUNCTION_NAME, getUsers().isEmpty() ? ", null" : ", ?", collectionActivity == null ? "" : ", ?"))) {
+      preparedStatement.setInt(1, resource.getId());
+      if (!getUsers().isEmpty()) {
+        preparedStatement.setInt(2, getUsers().get(0).getUser().getId());
+      }
+      if (collectionActivity != null) {
+        preparedStatement.setInt(getUsers().isEmpty() ? 2 : 3, collectionActivity.getId());
+      }
+      try (ResultSet resultSet = preparedStatement.executeQuery()) {
+        resultSet.next();
+        this.setId(resultSet.getInt(Activity.PRIMARY_KEY_NAME));
+      }
+    }
+  }
+
+  private void update(Connection connection) throws SQLException {
+    try (
+        PreparedStatement preparedStatement = connection.prepareStatement(
+            String.format(
+                "update %s set %s = ?, %s = ?%s where %s = ?;",
+                TABLE_NAME,
+                STARTED_AT_COLUMN,
+                PAUSED_AT_COLUMN,
+                collectionActivity == null ? "" : String.format(",%s = ?", COLLECTION_ACTIVITY_ID_COLUMN),
+                PRIMARY_KEY_NAME
+            )
+        )
+    ) {
+      preparedStatement.setTimestamp(1, startedAt);
+      preparedStatement.setInt(2, pausedAt);
+      if (collectionActivity != null) {
+        preparedStatement.setInt(3, collectionActivity.getId());
+        preparedStatement.setInt(4, getId());
+      } else {
+        preparedStatement.setInt(3, getId());
+      }
+      preparedStatement.execute();
+    }
   }
 
   public static ResourceActivity findById(Integer id, Connection connection) throws SQLException, NoResultException {
