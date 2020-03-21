@@ -12,6 +12,5 @@ interface Entity {
 
   Integer getId();
 
-
   String fieldNamesAndValuesString();
 }

@@ -140,12 +140,12 @@ public abstract class SongCollection extends Collection {
   }
 
   @Override
-  public String getTableName() {
+  public String tableName() {
     return TABLE_NAME;
   }
 
   @Override
-  public String getPrimaryKeyName() {
+  public String primaryKeyName() {
     return PRIMARY_KEY_NAME;
   }
 
