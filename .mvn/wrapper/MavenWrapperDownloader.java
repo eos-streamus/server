@@ -55,9 +55,7 @@ public class MavenWrapperDownloader {
         File mavenWrapperPropertyFile = new File(baseDirectory, MAVEN_WRAPPER_PROPERTIES_PATH);
         String url = DEFAULT_DOWNLOAD_URL;
         if(mavenWrapperPropertyFile.exists()) {
-            FileInputStream mavenWrapperPropertyFileInputStream = null;
-            try {
-                mavenWrapperPropertyFileInputStream = new FileInputStream(mavenWrapperPropertyFile);
+            try (FileInputStream mavenWrapperPropertyFileInputStream = new FileInputStream(mavenWrapperPropertyFile)) {
                 Properties mavenWrapperProperties = new Properties();
                 mavenWrapperProperties.load(mavenWrapperPropertyFileInputStream);
                 url = mavenWrapperProperties.getProperty(PROPERTY_NAME_WRAPPER_URL, url);
@@ -85,16 +83,16 @@ public class MavenWrapperDownloader {
         System.out.println("- Downloading to: " + outputFile.getAbsolutePath());
         try {
             downloadFileFromURL(url, outputFile);
-            System.out.println("Done");
+            Logger.getGlobal().log(Level.INFO, "Done");
             System.exit(0);
-        } catch (Throwable e) {
-            System.out.println("- Error downloading");
-            e.printStackTrace();
+        } catch (Exception e) {
+            Logger.getGlobal().log(Level.SEVERE, "- Error downloading");
+            Logger.getGlobal().log(Level.SEVERE, e.getMessage());
             System.exit(1);
         }
     }
 
-    private static void downloadFileFromURL(String urlString, File destination) throws Exception {
+    private static void downloadFileFromURL(String urlString, File destination) {
         if (System.getenv("MVNW_USERNAME") != null && System.getenv("MVNW_PASSWORD") != null) {
             String username = System.getenv("MVNW_USERNAME");
             char[] password = System.getenv("MVNW_PASSWORD").toCharArray();
@@ -106,12 +104,11 @@ public class MavenWrapperDownloader {
             });
         }
         URL website = new URL(urlString);
-        ReadableByteChannel rbc;
-        rbc = Channels.newChannel(website.openStream());
-        FileOutputStream fos = new FileOutputStream(destination);
-        fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-        fos.close();
-        rbc.close();
+        try (ReadableByteChannel rbc = Channels.newChannel(website.openStream())) {
+          try (FileOutputStream fos = new FileOutputStream(destination)) {
+            fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+          }
+        }
     }
 
 }
