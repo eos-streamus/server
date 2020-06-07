@@ -86,7 +86,7 @@ public abstract class SongCollection extends Collection {
   }
 
   //#region Instance attributes
-  private List<Track> tracks = new ArrayList<>();
+  private final List<Track> tracks = new ArrayList<>();
   //#endregion Instance attributes
 
   //#region Constructors
