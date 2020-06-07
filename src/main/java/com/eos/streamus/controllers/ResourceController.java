@@ -37,6 +37,7 @@ import java.util.UUID;
 
 class ErrorObjectNodeFactory extends JsonNodeFactory {
   private static final long serialVersionUID = -5301230341871379657L;
+
 }
 
 @RestController
@@ -83,8 +84,11 @@ public class ResourceController {
 
   @PostMapping("/song")
   public ResponseEntity<Object> postSong(@RequestParam("file") MultipartFile file,
-                                           @RequestParam("name") String name) throws IOException, SQLException {
+                                         @RequestParam("name") String name) throws IOException {
 
+    if (file.getContentType() == null) {
+      return error("No specified mime type");
+    }
     boolean acceptableMimeType = false;
     for (String type : AUDIO_MIME_TYPES) {
       if (file.getContentType().equals(type)) {
@@ -93,9 +97,7 @@ public class ResourceController {
       }
     }
     if (!acceptableMimeType) {
-      ObjectNode errorResponse = new ObjectNode(new ErrorObjectNodeFactory());
-      errorResponse.put("reason", String.format("Invalid mime type : %s", file.getContentType()));
-      return ResponseEntity.badRequest().body(errorResponse);
+      return error(String.format("Invalid mime type : %s", file.getContentType()));
     }
 
     String path = String.format(
@@ -143,7 +145,10 @@ public class ResourceController {
 
   @PostMapping("/film")
   public ResponseEntity<Object> postFilm(@RequestParam("file") MultipartFile file,
-                                       @RequestParam("name") String name) throws IOException, SQLException {
+                                         @RequestParam("name") String name) throws IOException {
+    if (file.getContentType() == null) {
+      return error("No specified mime type");
+    }
     boolean acceptableMimeType = false;
     for (String type : VIDEO_MIME_TYPES) {
       if (file.getContentType().equals(type)) {
@@ -152,9 +157,7 @@ public class ResourceController {
       }
     }
     if (!acceptableMimeType) {
-      ObjectNode errorResponse = new ObjectNode(new ErrorObjectNodeFactory());
-      errorResponse.put("reason", String.format("Invalid mime type : %s", file.getContentType()));
-      return ResponseEntity.badRequest().body(errorResponse);
+      return error(String.format("Invalid mime type : %s", file.getContentType()));
     }
 
     String path = String.format(
@@ -204,6 +207,12 @@ public class ResourceController {
                 .orElse(MediaType.APPLICATION_OCTET_STREAM)
         )
         .body(region);
+  }
+
+  private ResponseEntity<Object> error(final String reason) {
+    ObjectNode errorResponse = new ObjectNode(new ErrorObjectNodeFactory());
+    errorResponse.put("reason", reason);
+    return ResponseEntity.badRequest().body(errorResponse);
   }
 
 }
