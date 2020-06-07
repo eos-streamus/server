@@ -183,6 +183,7 @@ public class ResourceController {
   }
   //#endregion Films
 
+  //#region Private methods
   private ResponseEntity<ResourceRegion> streamResource(final Resource resource, final List<HttpRange> range,
                                                         final long maxChunkSize) throws IOException {
     UrlResource urlResource = new UrlResource(String.format("file:%s", resource.getPath()));
@@ -214,5 +215,5 @@ public class ResourceController {
     errorResponse.put("reason", reason);
     return ResponseEntity.badRequest().body(errorResponse);
   }
-
+  //#endregion Private methods
 }
