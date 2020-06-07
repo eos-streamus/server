@@ -8,6 +8,8 @@ import com.eos.streamus.utils.FileInfo;
 import com.eos.streamus.utils.ResourcePathResolver;
 import com.eos.streamus.utils.ShellUtils;
 import com.eos.streamus.utils.TestDatabaseConnection;
+import com.eos.streamus.writers.JsonFilmListWriter;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.io.FilenameUtils;
@@ -125,9 +127,9 @@ public class ResourceController {
 
   //#region Films
   @GetMapping("/films")
-  public List<Film> getResources() throws SQLException {
+  public JsonNode allFilms() throws SQLException {
     try (Connection connection = databaseConnection.getConnection()) {
-      return Film.all(connection);
+      return new JsonFilmListWriter(Film.all(connection)).getJson();
     }
   }
 
