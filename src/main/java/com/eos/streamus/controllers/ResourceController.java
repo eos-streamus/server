@@ -104,7 +104,8 @@ public class ResourceController {
   }
 
   @PostMapping("/film")
-  public ResponseEntity<String> postFilm(@RequestParam("file") MultipartFile file) throws IOException, SQLException {
+  public ResponseEntity<String> postFilm(@RequestParam("file") MultipartFile file,
+                                         @RequestParam("name") String name) throws IOException, SQLException {
 
     String path = String.format(
         "%s%s.%s",
@@ -118,7 +119,7 @@ public class ResourceController {
 
     FileInfo fileInfo = ShellUtils.getResourceInfo(storedFile.getPath());
 
-    Film film = new Film(path, "Test film", fileInfo.getDuration());
+    Film film = new Film(path, name, fileInfo.getDuration());
     try (Connection connection = databaseConnection.getConnection()) {
       film.save(connection);
     } catch (Exception e) {
