@@ -2,6 +2,7 @@ package com.eos.streamus.controllers;
 
 import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.Film;
+import com.eos.streamus.models.Resource;
 import com.eos.streamus.utils.FileInfo;
 import com.eos.streamus.utils.ResourcePathResolver;
 import com.eos.streamus.utils.ShellUtils;
@@ -53,23 +54,28 @@ public class ResourceController {
   public ResponseEntity<ResourceRegion> getAudio(@RequestHeader HttpHeaders headers) throws IOException {
     UrlResource urlResource = new UrlResource(
         String.format("file:%s%s", resourcePathResolver.getAudioDir(), "audio.mp3"));
-    var contentLength = urlResource.contentLength();
-    var range = headers.getRange();
+    long contentLength = urlResource.contentLength();
+    List<HttpRange> range = headers.getRange();
     ResourceRegion region;
+    long start;
     long rangeLength;
     if (!range.isEmpty()) {
-      var start = range.get(0).getRangeStart(contentLength);
-      var end = range.get(0).getRangeEnd(contentLength);
+      start = range.get(0).getRangeStart(contentLength);
+      long end = range.get(0).getRangeEnd(contentLength);
       rangeLength = Math.min(MAX_AUDIO_CHUNK_SIZE, end - start + 1);
-      region = new ResourceRegion(urlResource, start, rangeLength);
     } else {
+      start = 0;
       rangeLength = Math.min(MAX_AUDIO_CHUNK_SIZE, contentLength);
-      region = new ResourceRegion(urlResource, 0, rangeLength);
     }
-    return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
-                         .contentType(MediaTypeFactory
-                                          .getMediaType(urlResource)
-                                          .orElse(MediaType.APPLICATION_OCTET_STREAM)).body(region);
+    region = new ResourceRegion(urlResource, start, rangeLength);
+    return ResponseEntity
+        .status(HttpStatus.PARTIAL_CONTENT)
+        .contentType(
+            MediaTypeFactory
+                .getMediaType(urlResource)
+                .orElse(MediaType.APPLICATION_OCTET_STREAM)
+        )
+        .body(region);
 
   }
 
@@ -82,25 +88,32 @@ public class ResourceController {
     } catch (NoResultException e) {
       return ResponseEntity.notFound().build();
     }
+    return streamResource(film, headers.getRange());
+  }
 
-    UrlResource urlResource = new UrlResource(String.format("file:%s", film.getPath()));
+  private ResponseEntity<ResourceRegion> streamResource(Resource resource, List<HttpRange> range) throws IOException {
+    UrlResource urlResource = new UrlResource(String.format("file:%s", resource.getPath()));
     long contentLength = urlResource.contentLength();
-    List<HttpRange> range = headers.getRange();
     ResourceRegion region;
+    long start;
     long rangeLength;
     if (!range.isEmpty()) {
-      long start = range.get(0).getRangeStart(contentLength);
+      start = range.get(0).getRangeStart(contentLength);
       long end = range.get(0).getRangeEnd(contentLength);
       rangeLength = Math.min(MAX_VIDEO_CHUNK_SIZE, end - start + 1);
-      region = new ResourceRegion(urlResource, start, rangeLength);
     } else {
+      start = 0;
       rangeLength = Math.min(MAX_VIDEO_CHUNK_SIZE, contentLength);
-      region = new ResourceRegion(urlResource, 0, rangeLength);
     }
-    return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
-                         .contentType(MediaTypeFactory
-                                          .getMediaType(urlResource)
-                                          .orElse(MediaType.APPLICATION_OCTET_STREAM)).body(region);
+    region = new ResourceRegion(urlResource, start, rangeLength);
+    return ResponseEntity
+        .status(HttpStatus.PARTIAL_CONTENT)
+        .contentType(
+            MediaTypeFactory
+                .getMediaType(urlResource)
+                .orElse(MediaType.APPLICATION_OCTET_STREAM)
+        )
+        .body(region);
   }
 
   @PostMapping("/film")

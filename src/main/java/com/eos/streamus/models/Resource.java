@@ -4,7 +4,7 @@ import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-abstract class Resource implements SavableDeletableEntity {
+public abstract class Resource implements SavableDeletableEntity {
   //#region Static attributes
   protected static final String TABLE_NAME = "Resource";
   protected static final String ID_COLUMN = "id";
