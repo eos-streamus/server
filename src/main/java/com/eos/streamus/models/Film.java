@@ -3,6 +3,8 @@ package com.eos.streamus.models;
 import com.eos.streamus.exceptions.NoResultException;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Film extends Video {
   //#region Static attributes
@@ -24,17 +26,17 @@ public class Film extends Video {
 
   //#region Getters and Setters
   @Override
-  public String getCreationFunctionName() {
+  public String creationFunctionName() {
     return CREATION_FUNCTION_NAME;
   }
 
   @Override
-  public String getTableName() {
+  public String tableName() {
     return TABLE_NAME;
   }
 
   @Override
-  public String getPrimaryKeyName() {
+  public String primaryKeyName() {
     return PRIMARY_KEY_NAME;
   }
   //#endregion Getters and Setters
@@ -56,6 +58,28 @@ public class Film extends Video {
         );
       }
     }
+  }
+
+  public static List<Film> all(Connection connection) throws SQLException {
+    List<Film> allFilms = new ArrayList<>();
+    try (PreparedStatement preparedStatement = connection.prepareStatement(
+      String.format("select * from %s", VIEW_NAME)
+    )) {
+      try (ResultSet resultSet = preparedStatement.executeQuery()) {
+        while (resultSet.next()) {
+          allFilms.add(
+            new Film(
+              resultSet.getInt(Resource.ID_COLUMN),
+              resultSet.getString(Resource.PATH_COLUMN),
+              resultSet.getString(Resource.NAME_COLUMN),
+              resultSet.getTimestamp(Resource.CREATED_AT_COLUMN),
+              resultSet.getInt(Resource.DURATION_COLUMN)
+            )
+          );
+        }
+      }
+    }
+    return allFilms;
   }
   //#endregion Database operations
 }

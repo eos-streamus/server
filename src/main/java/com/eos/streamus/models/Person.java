@@ -43,17 +43,17 @@ public class Person implements SavableDeletableEntity {
 
   //#region getters and setters
   @Override
-  public String getTableName() {
+  public String tableName() {
     return TABLE_NAME;
   }
 
   @Override
-  public String getPrimaryKeyName() {
+  public String primaryKeyName() {
     return ID_COLUMN;
   }
 
   @Override
-  public String getCreationFunctionName() {
+  public String creationFunctionName() {
     return "createPerson";
   }
 
@@ -111,7 +111,7 @@ public class Person implements SavableDeletableEntity {
   @Override
   public void save(Connection connection) throws SQLException {
     if (this.id == null) {
-      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s(?::varchar(200), ?::varchar(200), ?)", getCreationFunctionName()))) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s(?::varchar(200), ?::varchar(200), ?)", creationFunctionName()))) {
         preparedStatement.setString(1, firstName);
         preparedStatement.setString(2, lastName);
         preparedStatement.setDate(3, dateOfBirth);
@@ -161,11 +161,11 @@ public class Person implements SavableDeletableEntity {
   //#region String representations
   @Override
   public String toString() {
-    return String.format("{%s}", getFieldNamesAndValuesString());
+    return String.format("{%s}", fieldNamesAndValuesString());
   }
 
   @Override
-  public String getFieldNamesAndValuesString() {
+  public String fieldNamesAndValuesString() {
     DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd");
     DateFormat timestampFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z");
     return String.format(

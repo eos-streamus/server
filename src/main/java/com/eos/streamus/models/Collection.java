@@ -39,12 +39,12 @@ abstract class Collection implements SavableDeletableEntity {
 
   //#region Getters and Setters
   @Override
-  public String getTableName() {
+  public String tableName() {
     return TABLE_NAME;
   }
 
   @Override
-  public String getPrimaryKeyName() {
+  public String primaryKeyName() {
     return PRIMARY_KEY_NAME;
   }
 
@@ -110,7 +110,7 @@ abstract class Collection implements SavableDeletableEntity {
 
   //#region String representations
   @Override
-  public String getFieldNamesAndValuesString() {
+  public String fieldNamesAndValuesString() {
     DateFormat timestampFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z");
     return String.format(
       "%s: %d, %s: %s, %s: %s, %s, %s",
@@ -127,7 +127,7 @@ abstract class Collection implements SavableDeletableEntity {
 
   @Override
   public String toString() {
-    return String.format("{%s}", getFieldNamesAndValuesString());
+    return String.format("{%s}", fieldNamesAndValuesString());
   }
   //#endregion String representations
 

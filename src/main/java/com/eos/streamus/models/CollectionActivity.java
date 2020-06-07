@@ -54,7 +54,7 @@ public class CollectionActivity extends Activity {
 
   //#region Getters and Setters
   @Override
-  public String getCreationFunctionName() {
+  public String creationFunctionName() {
     return null;
   }
 
@@ -130,11 +130,11 @@ public class CollectionActivity extends Activity {
   //#region String representations
   @Override
   public String toString() {
-    return String.format("{%s}", getFieldNamesAndValuesString());
+    return String.format("{%s}", fieldNamesAndValuesString());
   }
 
   @Override
-  public String getFieldNamesAndValuesString() {
+  public String fieldNamesAndValuesString() {
     StringBuilder resourceActivitiesString = new StringBuilder();
     resourceActivitiesString.append("[");
     resourceActivities.forEach(entry -> resourceActivitiesString
@@ -144,7 +144,7 @@ public class CollectionActivity extends Activity {
     resourceActivitiesString.append("]");
     return String.format(
       "%s, %s: %d, %s",
-      super.getFieldNamesAndValuesString(),
+      super.fieldNamesAndValuesString(),
       COLLECTION_ID,
       collection.getId(),
       resourceActivitiesString

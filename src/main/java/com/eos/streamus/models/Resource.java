@@ -78,12 +78,12 @@ abstract class Resource implements SavableDeletableEntity {
   }
 
   @Override
-  public String getPrimaryKeyName() {
+  public String primaryKeyName() {
     return ID_COLUMN;
   }
 
   @Override
-  public String getTableName() {
+  public String tableName() {
     return TABLE_NAME;
   }
   //#endregion Getters and Setters
@@ -92,7 +92,7 @@ abstract class Resource implements SavableDeletableEntity {
   @Override
   public void save(Connection connection) throws SQLException {
     if (this.id == null) {
-      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s(?::varchar(1041), ?::varchar(200), ?)", getCreationFunctionName()))) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s(?::varchar(1041), ?::varchar(200), ?)", creationFunctionName()))) {
         preparedStatement.setString(1, getPath());
         preparedStatement.setString(2, getName());
         preparedStatement.setInt(3, getDuration());
@@ -119,10 +119,11 @@ abstract class Resource implements SavableDeletableEntity {
   //#region String representations
   @Override
   public String toString() {
-    return String.format("{%s}", getFieldNamesAndValuesString());
+    return String.format("{%s}", fieldNamesAndValuesString());
   }
 
-  public String getFieldNamesAndValuesString() {
+
+  public String fieldNamesAndValuesString() {
     DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z");
     return String.format("%s: %d, %s: %s, %s: %s, %s: %s, %s: %s",
       ID_COLUMN,

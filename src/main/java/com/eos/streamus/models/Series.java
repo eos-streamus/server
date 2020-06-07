@@ -61,17 +61,17 @@ public class Series extends VideoCollection {
     }
 
     @Override
-    public String getTableName() {
+    public String tableName() {
       return TABLE_NAME;
     }
 
     @Override
-    public String getPrimaryKeyName() {
+    public String primaryKeyName() {
       return PRIMARY_KEY_NAME;
     }
 
     @Override
-    public String getCreationFunctionName() {
+    public String creationFunctionName() {
       return CREATION_FUNCTION_NAME;
     }
     //#endregion Getters and Setters
@@ -105,14 +105,14 @@ public class Series extends VideoCollection {
     //#region String representations
     @Override
     public String toString() {
-      return String.format("{%s}", getFieldNamesAndValuesString());
+      return String.format("{%s}", fieldNamesAndValuesString());
     }
 
     @Override
-    public String getFieldNamesAndValuesString() {
+    public String fieldNamesAndValuesString() {
       return String.format(
         "%s, %s: %d, %s: %d, %s: %d",
-        super.getFieldNamesAndValuesString(),
+        super.fieldNamesAndValuesString(),
         SERIES_ID_COLUMN,
         Series.this.getId(),
         SEASON_NUMBER_COLUMN,
@@ -169,17 +169,17 @@ public class Series extends VideoCollection {
 
   //#region Getters and Setters
   @Override
-  public String getTableName() {
+  public String tableName() {
     return TABLE_NAME;
   }
 
   @Override
-  public String getCreationFunctionName() {
+  public String creationFunctionName() {
     return CREATION_FUNCTION_NAME;
   }
 
   @Override
-  public String getPrimaryKeyName() {
+  public String primaryKeyName() {
     return PRIMARY_KEY_NAME;
   }
 
@@ -296,10 +296,10 @@ public class Series extends VideoCollection {
 
   //#region String representations
   @Override
-  public String getFieldNamesAndValuesString() {
+  public String fieldNamesAndValuesString() {
     return String.format(
       "%s, numberOfSeasons: %d, numberOfEpisodes: %d",
-      super.getFieldNamesAndValuesString(),
+      super.fieldNamesAndValuesString(),
       getNumberOfSeasons(),
       episodes.size()
     );
@@ -307,7 +307,7 @@ public class Series extends VideoCollection {
 
   @Override
   public String toString() {
-    return String.format("{%s}", getFieldNamesAndValuesString());
+    return String.format("{%s}", fieldNamesAndValuesString());
   }
   //#endregion String representations
 

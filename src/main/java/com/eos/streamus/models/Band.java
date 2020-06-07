@@ -196,17 +196,17 @@ public class Band extends Artist {
 
   //#region Getters and Setters
   @Override
-  public String getTableName() {
+  public String tableName() {
     return TABLE_NAME;
   }
 
   @Override
-  public String getPrimaryKeyName() {
+  public String primaryKeyName() {
     return PRIMARY_KEY_NAME;
   }
 
   @Override
-  public String getCreationFunctionName() {
+  public String creationFunctionName() {
     return CREATION_FUNCTION_NAME;
   }
 

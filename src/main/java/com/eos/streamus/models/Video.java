@@ -2,7 +2,7 @@ package com.eos.streamus.models;
 
 import java.sql.Timestamp;
 
-abstract public class Video extends Resource {
+public abstract class Video extends Resource {
   //#region Static attributes
   private static final String TABLE_NAME = "Video";
   private static final String PRIMARY_KEY_NAME = "idResource";
@@ -20,12 +20,12 @@ abstract public class Video extends Resource {
 
   //#region Getters and Setters
   @Override
-  public String getTableName() {
+  public String tableName() {
     return TABLE_NAME;
   }
 
   @Override
-  public String getPrimaryKeyName() {
+  public String primaryKeyName() {
     return PRIMARY_KEY_NAME;
   }
   //#endregion Getters and Setters

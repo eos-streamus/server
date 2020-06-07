@@ -62,7 +62,7 @@ public class Musician extends Artist {
 
   //#region Getters and Setters
   @Override
-  public String getCreationFunctionName() {
+  public String creationFunctionName() {
     return CREATION_FUNCTION_NAME;
   }
 
@@ -71,12 +71,12 @@ public class Musician extends Artist {
   }
 
   @Override
-  public String getTableName() {
+  public String tableName() {
     return TABLE_NAME;
   }
 
   @Override
-  public String getPrimaryKeyName() {
+  public String primaryKeyName() {
     return PRIMARY_KEY_NAME;
   }
   //#endregion Getters and Setters
@@ -99,10 +99,8 @@ public class Musician extends Artist {
         }
       }
     } else {
-      if (person != null) {
-        if (person.getId() == null) {
-          person.save(connection);
-        }
+      if (person != null && person.getId() == null) {
+        person.save(connection);
       }
       super.save(connection);
     }
@@ -132,10 +130,10 @@ public class Musician extends Artist {
 
   //#region String representations
   @Override
-  public String getFieldNamesAndValuesString() {
+  public String fieldNamesAndValuesString() {
     return String.format(
       "%s, %s: %d",
-      super.getFieldNamesAndValuesString(),
+      super.fieldNamesAndValuesString(),
       PERSON_ID_COLUMN,
       person == null ? null : person.getId()
     );
@@ -143,7 +141,7 @@ public class Musician extends Artist {
 
   @Override
   public String toString() {
-    return String.format("{%s}", getFieldNamesAndValuesString());
+    return String.format("{%s}", fieldNamesAndValuesString());
   }
   //#endregion String representations
 

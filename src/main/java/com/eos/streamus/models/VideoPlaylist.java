@@ -107,12 +107,12 @@ public class VideoPlaylist extends VideoCollection {
 
   //#region Accessors
   @Override
-  public String getTableName() {
+  public String tableName() {
     return TABLE_NAME;
   }
 
   @Override
-  public String getPrimaryKeyName() {
+  public String primaryKeyName() {
     return PRIMARY_KEY_NAME;
   }
 
@@ -167,7 +167,7 @@ public class VideoPlaylist extends VideoCollection {
       for (VideoPlaylistVideo videoPlaylistVideo : videos) {
         if (!databaseVideos.contains(videoPlaylistVideo)) {
           if (videoPlaylistVideo.getValue().getId() == null) {
-            throw new NotPersistedException(String.format("%s %s is not persisted", videoPlaylistVideo.getValue().getTableName(), videoPlaylistVideo.getValue()));
+            throw new NotPersistedException(String.format("%s %s is not persisted", videoPlaylistVideo.getValue().tableName(), videoPlaylistVideo.getValue()));
           }
           videoPlaylistVideo.save(connection);
         }
@@ -250,17 +250,23 @@ public class VideoPlaylist extends VideoCollection {
 
   //#region String representations
   @Override
-  public String getFieldNamesAndValuesString() {
-    return String.format(
-        "%s, numberOfTracks: %d",
-        super.getFieldNamesAndValuesString(),
-        videos.size()
-    );
+  public String fieldNamesAndValuesString() {
+    StringBuilder videosStringBuilder = new StringBuilder();
+    boolean first = true;
+    for (VideoPlaylistVideo video : videos) {
+      if (first) {
+        first = false;
+      } else {
+        videosStringBuilder.append(", ");
+      }
+      videosStringBuilder.append(video);
+    }
+    return String.format("%s, user: %s, videos: %s", super.fieldNamesAndValuesString(), user, videosStringBuilder);
   }
 
   @Override
   public String toString() {
-    return String.format("{%s}", getFieldNamesAndValuesString());
+    return String.format("{%s}", fieldNamesAndValuesString());
   }
   //#endregion String representations
 
@@ -289,7 +295,7 @@ public class VideoPlaylist extends VideoCollection {
   //#endregion Equals
 
   @Override
-  public String getCreationFunctionName() {
+  public String creationFunctionName() {
     return CREATION_FUNCTION_NAME;
   }
 }

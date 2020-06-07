@@ -1,4 +1,4 @@
-package com.eos.streamus;
+package com.eos.streamus.utils;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;

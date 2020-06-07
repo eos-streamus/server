@@ -40,12 +40,12 @@ public class Album extends SongCollection {
   }
 
   @Override
-  public String getCreationFunctionName() {
+  public String creationFunctionName() {
     return CREATION_FUNCTION_NAME;
   }
 
   @Override
-  public String getTableName() {
+  public String tableName() {
     return TABLE_NAME;
   }
   //#endregion Constructors
@@ -63,7 +63,7 @@ public class Album extends SongCollection {
   }
 
   @Override
-  public String getPrimaryKeyName() {
+  public String primaryKeyName() {
     return PRIMARY_KEY_NAME;
   }
   //#endregion Accessors
@@ -154,14 +154,14 @@ public class Album extends SongCollection {
   //#region String representations
   @Override
   public String toString() {
-    return String.format("{%s}", getFieldNamesAndValuesString());
+    return String.format("{%s}", fieldNamesAndValuesString());
   }
 
   @Override
-  public String getFieldNamesAndValuesString() {
+  public String fieldNamesAndValuesString() {
     return String.format(
       "%s, %s : %s",
-      super.getFieldNamesAndValuesString(),
+      super.fieldNamesAndValuesString(),
       RELEASE_DATE_COLUMN,
       releaseDate
     );
