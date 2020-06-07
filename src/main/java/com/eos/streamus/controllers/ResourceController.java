@@ -104,8 +104,8 @@ public class ResourceController {
   }
 
   @PostMapping("/film")
-  public ResponseEntity<String> postFilm(@RequestParam("file") MultipartFile file,
-                                         @RequestParam("name") String name) throws IOException, SQLException {
+  public ResponseEntity<Film> postFilm(@RequestParam("file") MultipartFile file,
+                                       @RequestParam("name") String name) throws IOException, SQLException {
 
     String path = String.format(
         "%s%s.%s",
@@ -124,10 +124,9 @@ public class ResourceController {
       film.save(connection);
     } catch (Exception e) {
       java.nio.file.Files.delete(storedFile.toPath());
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                           .body("Could not persist new resource, could delete");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
     }
-    return ResponseEntity.ok(film.toString());
+    return ResponseEntity.ok(film);
   }
 
 }
