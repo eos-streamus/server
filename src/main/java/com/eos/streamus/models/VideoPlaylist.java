@@ -112,6 +112,11 @@ public class VideoPlaylist extends VideoCollection {
   }
 
   @Override
+  public String creationFunctionName() {
+    return CREATION_FUNCTION_NAME;
+  }
+
+  @Override
   public String primaryKeyName() {
     return PRIMARY_KEY_NAME;
   }
@@ -293,9 +298,4 @@ public class VideoPlaylist extends VideoCollection {
     return true;
   }
   //#endregion Equals
-
-  @Override
-  public String creationFunctionName() {
-    return CREATION_FUNCTION_NAME;
-  }
 }
