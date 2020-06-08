@@ -1,19 +1,28 @@
 package com.eos.streamus.models;
 
+import com.eos.streamus.exceptions.NoResultException;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Artist implements SavableDeletableEntity {
   //#region Static attributes
   public static final String TABLE_NAME = "Artist";
   public static final String PRIMARY_KEY_NAME = "id";
   public static final String NAME_COLUMN = "name";
+  public static final String ALBUM_ARTIST_TABLE_NAME = "AlbumArtist";
+  public static final String ALBUM_ARTIST_ALBUM_ID = "idAlbum";
+  public static final String ALBUM_ARTIST_ARTIST_ID = "idArtist";
   //#endregion Static attributes
 
   //#region Instance attributes
   private Integer id;
   private String name;
+  private final List<Album> albums = new ArrayList<>();
   //#endregion Instance attributes
 
   //#region Constructors
@@ -54,6 +63,10 @@ public abstract class Artist implements SavableDeletableEntity {
   public String primaryKeyName() {
     return PRIMARY_KEY_NAME;
   }
+
+  public final List<Album> getAlbums() {
+    return albums;
+  }
   //#endregion Getters and Setters
 
   //#region Database operations
@@ -66,6 +79,21 @@ public abstract class Artist implements SavableDeletableEntity {
       preparedStatement.setString(1, name);
       preparedStatement.setInt(2, id);
       preparedStatement.execute();
+    }
+  }
+
+  public void fetchAlbums(Connection connection) throws SQLException {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s where %s = ?", ALBUM_ARTIST_TABLE_NAME, ALBUM_ARTIST_ARTIST_ID))) {
+      preparedStatement.setInt(1, id);
+      try (ResultSet resultSet = preparedStatement.executeQuery()) {
+        while (resultSet.next()) {
+          try {
+            albums.add(Album.findById(resultSet.getInt(ALBUM_ARTIST_ALBUM_ID), connection));
+          } catch (NoResultException e) {
+            e.printStackTrace();
+          }
+        }
+      }
     }
   }
   //#endregion Database operations

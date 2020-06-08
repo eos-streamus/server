@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.List;
 
-abstract class Collection implements SavableDeletableEntity {
+public abstract class Collection implements SavableDeletableEntity {
   //#region Static attributes
   protected static final String TABLE_NAME = "Collection";
   protected static final String PRIMARY_KEY_NAME = "id";
