@@ -1,12 +1,10 @@
 package com.eos.streamus.controllers;
 
 import com.eos.streamus.exceptions.NoResultException;
-import com.eos.streamus.models.Album;
 import com.eos.streamus.models.Artist;
 import com.eos.streamus.models.ArtistDAO;
 import com.eos.streamus.models.Band;
 import com.eos.streamus.models.Musician;
-import com.eos.streamus.models.SongPlaylist;
 import com.eos.streamus.utils.TestDatabaseConnection;
 import com.eos.streamus.writers.JsonArtistListWriter;
 import com.eos.streamus.writers.JsonBandWriter;
