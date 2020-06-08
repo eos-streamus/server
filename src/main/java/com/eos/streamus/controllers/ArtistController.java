@@ -1,14 +1,17 @@
 package com.eos.streamus.controllers;
 
 import com.eos.streamus.exceptions.NoResultException;
+import com.eos.streamus.models.Album;
 import com.eos.streamus.models.Artist;
 import com.eos.streamus.models.ArtistDAO;
 import com.eos.streamus.models.Band;
 import com.eos.streamus.models.Musician;
+import com.eos.streamus.models.SongPlaylist;
 import com.eos.streamus.utils.TestDatabaseConnection;
 import com.eos.streamus.writers.JsonArtistListWriter;
 import com.eos.streamus.writers.JsonBandWriter;
 import com.eos.streamus.writers.JsonMusicianWriter;
+import com.eos.streamus.writers.JsonSongCollectionListWriter;
 import com.eos.streamus.writers.JsonWriter;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +48,18 @@ public class ArtistController {
       JsonWriter writer = artist instanceof Band ?
           new JsonBandWriter((Band) artist) :
           new JsonMusicianWriter((Musician) artist);
+      return ResponseEntity.ok().body(writer.getJson());
+    } catch (NoResultException e) {
+      return ResponseEntity.notFound().build();
+    }
+  }
+
+  @GetMapping("/artist/{artistId}/discography")
+  public ResponseEntity<JsonNode> discography(@PathVariable int artistId) throws SQLException {
+    try (Connection connection = databaseConnection.getConnection()) {
+      Artist artist = ArtistDAO.findById(artistId, connection);
+      artist.fetchAlbums(connection);
+      JsonWriter writer = new JsonSongCollectionListWriter(artist.getAlbums());
       return ResponseEntity.ok().body(writer.getJson());
     } catch (NoResultException e) {
       return ResponseEntity.notFound().build();
