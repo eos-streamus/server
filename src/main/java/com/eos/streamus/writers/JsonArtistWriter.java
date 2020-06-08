@@ -1,7 +1,9 @@
 package com.eos.streamus.writers;
 
+import com.eos.streamus.models.Album;
 import com.eos.streamus.models.Artist;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 abstract class JsonArtistWriter extends JsonObjectWriter {
@@ -16,6 +18,10 @@ abstract class JsonArtistWriter extends JsonObjectWriter {
     objectNode.put("id", artist.getId());
     if (artist.getName() != null) {
       objectNode.put("name", artist.getName());
+    }
+    ArrayNode albums = objectNode.putArray("albums");
+    for (Album album: artist.getAlbums()) {
+      albums.add(new JsonSongCollectionWriter(album).getJson());
     }
     return addSpecificArtistJson(objectNode);
   }
