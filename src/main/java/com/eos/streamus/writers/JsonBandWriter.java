@@ -7,17 +7,21 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class JsonBandWriter extends JsonArtistWriter {
   private static class JsonBandMemberWriter extends JsonMusicianWriter {
-    private Band.Member member;
+    private final Band.Member member;
 
     public JsonBandMemberWriter(final Band.Member member) {
       super(member.getMusician());
+      this.member = member;
     }
 
     @Override
     protected JsonNode getSpecificJson(final ObjectNode objectNode) {
       super.getSpecificJson(objectNode);
-      return objectNode.put("from", member.getFrom().getTime())
-                       .put("to", member.getTo() == null ? null : member.getTo().getTime());
+      objectNode.put("from", member.getFrom().getTime());
+      if (member.getTo() != null) {
+        objectNode.put("to", member.getTo().getTime());
+      }
+      return objectNode;
     }
 
   }
