@@ -101,14 +101,15 @@ public class SongController {
 
   @GetMapping("/song/{id}")
   public ResponseEntity<ResourceRegion> getAudio(@RequestHeader HttpHeaders headers,
-                                                 @PathVariable("id") int id) throws IOException, SQLException {
-    Song song;
+                                                 @PathVariable("id") int id) {
     try (Connection connection = databaseConnection.getConnection()) {
-      song = Song.findById(id, connection);
-    } catch (NoResultException e) {
+      return streamResource(Song.findById(id, connection), headers.getRange(), MAX_AUDIO_CHUNK_SIZE);
+    } catch (NoResultException noResultException) {
       return ResponseEntity.notFound().build();
+    } catch (SQLException | IOException exception) {
+      Logger.getLogger(getClass().getName()).severe(exception.getMessage());
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
-    return streamResource(song, headers.getRange(), MAX_AUDIO_CHUNK_SIZE);
   }
 
 }
