@@ -202,22 +202,6 @@ public abstract class SongCollection extends Collection {
   }
   //#endregion Database operations
 
-  //#region String representations
-  @Override
-  public String toString() {
-    return String.format("{%s}", fieldNamesAndValuesString());
-  }
-
-  @Override
-  public String fieldNamesAndValuesString() {
-    return String.format(
-      "%s, numberOfTracks: %d",
-      super.fieldNamesAndValuesString(),
-      this.tracks.size()
-    );
-  }
-  //#endregion String representations
-
   //#region Equals
   @Override
   public int hashCode() {

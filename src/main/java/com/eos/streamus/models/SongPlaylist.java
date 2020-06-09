@@ -98,23 +98,6 @@ public final class SongPlaylist extends SongCollection {
   }
   //#endregion Database operations
 
-  //#region String representations
-  @Override
-  public String fieldNamesAndValuesString() {
-    return String.format(
-      "%s, %s: %s",
-      super.fieldNamesAndValuesString(),
-      user.tableName(),
-      user
-    );
-  }
-
-  @Override
-  public String toString() {
-    return String.format("{%s}", fieldNamesAndValuesString());
-  }
-  //#endregion String representations
-
   //#region Equals
   @Override
   public int hashCode() {

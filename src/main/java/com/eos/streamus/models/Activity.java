@@ -45,7 +45,8 @@ public abstract class Activity implements SavableDeletableEntity {
       if (Activity.this.id == null) {
         throw new NotPersistedException("Activity is not persisted");
       }
-      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select 1 from %s where %s = ? and %s = ?", TABLE_NAME, USER_ID_COLUMN, ACTTIVITY_ID_COLUMN))) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(
+          String.format("select 1 from %s where %s = ? and %s = ?", TABLE_NAME, USER_ID_COLUMN, ACTTIVITY_ID_COLUMN))) {
         preparedStatement.setInt(1, getUser().getId());
         preparedStatement.setInt(2, Activity.this.id);
         try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -59,7 +60,8 @@ public abstract class Activity implements SavableDeletableEntity {
       if (isNotPersisted(connection)) {
         throw new NotPersistedException("UserActivity is not persisted");
       }
-      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("delete from %s where %s = ? and %s = ?;", TABLE_NAME, USER_ID_COLUMN, ACTTIVITY_ID_COLUMN))) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(
+          String.format("delete from %s where %s = ? and %s = ?;", TABLE_NAME, USER_ID_COLUMN, ACTTIVITY_ID_COLUMN))) {
         preparedStatement.setInt(1, getUser().getId());
         preparedStatement.setInt(2, Activity.this.id);
         preparedStatement.execute();
@@ -75,7 +77,9 @@ public abstract class Activity implements SavableDeletableEntity {
         throw new NotPersistedException("User not persisted");
       }
       if (isNotPersisted(connection)) {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("insert into %s(%s, %s, %s) values (?, ?, ?);", TABLE_NAME, USER_ID_COLUMN, ACTTIVITY_ID_COLUMN, MANAGES_COLUMN))) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(String.format(
+            "insert into %s(%s, %s, %s) values (?, ?, ?);", TABLE_NAME, USER_ID_COLUMN, ACTTIVITY_ID_COLUMN,
+            MANAGES_COLUMN))) {
           preparedStatement.setInt(1, getUser().getId());
           preparedStatement.setInt(2, Activity.this.id);
           preparedStatement.setBoolean(3, isManager());
@@ -88,25 +92,6 @@ public abstract class Activity implements SavableDeletableEntity {
       }
     }
     //#endregion Database operations
-
-    //#region String representations
-    public String fieldNamesAndValuesString() {
-      return String.format(
-        "%s: %s, %s: %d, %s: %s",
-        USER_ID_COLUMN,
-        (getUser() == null ? "null" : getUser().getId()),
-        ACTTIVITY_ID_COLUMN,
-        Activity.this.id,
-        MANAGES_COLUMN,
-        isManager()
-      );
-    }
-
-    @Override
-    public String toString() {
-      return String.format("{%s}", fieldNamesAndValuesString());
-    }
-    //#endregion String representations
 
     //#region Equals
     @Override
@@ -124,7 +109,7 @@ public abstract class Activity implements SavableDeletableEntity {
       }
       UserActivity userActivity = (UserActivity) obj;
       return
-        userActivity.getUser().equals(getUser()) &&
+          userActivity.getUser().equals(getUser()) &&
           userActivity.isManager().equals(isManager()) &&
           userActivity.getActivity().id.equals(Activity.this.id);
     }
@@ -205,15 +190,15 @@ public abstract class Activity implements SavableDeletableEntity {
     public void save(Connection connection) throws SQLException {
       if (this.id == null) {
         try (PreparedStatement preparedStatement = connection.prepareStatement(
-          String.format(
-            "insert into %s(%s, %s, %s) values (?, ?, ?) returning %s, %s;",
-            TABLE_NAME,
-            ACTIVITY_ID_COLUMN,
-            USER_ID_COLUMN,
-            CONTENT_COLUMN,
-            PRIMARY_KEY_NAME,
-            POSTED_AT_COLUMN
-          )
+            String.format(
+                "insert into %s(%s, %s, %s) values (?, ?, ?) returning %s, %s;",
+                TABLE_NAME,
+                ACTIVITY_ID_COLUMN,
+                USER_ID_COLUMN,
+                CONTENT_COLUMN,
+                PRIMARY_KEY_NAME,
+                POSTED_AT_COLUMN
+            )
         )) {
           preparedStatement.setInt(1, Activity.this.id);
           preparedStatement.setInt(2, user.getId());
@@ -227,13 +212,6 @@ public abstract class Activity implements SavableDeletableEntity {
       }
     }
     //#endregion Database operations
-
-    //#region String representations
-    @Override
-    public String fieldNamesAndValuesString() {
-      return null;
-    }
-    //#endregion String representations
 
     //#region Equals
     @Override
@@ -251,7 +229,7 @@ public abstract class Activity implements SavableDeletableEntity {
       }
       ActivityMessage activityMessage = (ActivityMessage) obj;
       return
-        activityMessage.id.equals(id) &&
+          activityMessage.id.equals(id) &&
           activityMessage.user.getId().equals(user.getId()) &&
           activityMessage.getActivity().id.equals(Activity.this.getId());
     }
@@ -341,26 +319,31 @@ public abstract class Activity implements SavableDeletableEntity {
   }
 
   protected void fetchUserActivities(Connection connection) throws SQLException, NoResultException {
-    try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s where %s = ?;", UserActivity.TABLE_NAME, UserActivity.ACTTIVITY_ID_COLUMN))) {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(
+        String.format("select * from %s where %s = ?;", UserActivity.TABLE_NAME, UserActivity.ACTTIVITY_ID_COLUMN))) {
       preparedStatement.setInt(1, this.getId());
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
         while (resultSet.next()) {
-          this.users.add(this.new UserActivity(User.findById(resultSet.getInt(UserActivity.USER_ID_COLUMN), connection), resultSet.getBoolean(UserActivity.MANAGES_COLUMN)));
+          this.users.add(this.new UserActivity(User.findById(resultSet.getInt(UserActivity.USER_ID_COLUMN), connection),
+                                               resultSet.getBoolean(UserActivity.MANAGES_COLUMN)));
         }
       }
     }
   }
 
   public void fetchActivityMessages(Connection connection) throws SQLException, NoResultException {
-    try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s where %s = ?;", ActivityMessage.TABLE_NAME, ActivityMessage.ACTIVITY_ID_COLUMN))) {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(String
+                                                                               .format("select * from %s where %s = ?;",
+                                                                                       ActivityMessage.TABLE_NAME,
+                                                                                       ActivityMessage.ACTIVITY_ID_COLUMN))) {
       preparedStatement.setInt(1, id);
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
         while (resultSet.next()) {
           new ActivityMessage(
-            resultSet.getInt(ActivityMessage.PRIMARY_KEY_NAME),
-            User.findById(resultSet.getInt(ActivityMessage.USER_ID_COLUMN), connection),
-            resultSet.getString(ActivityMessage.CONTENT_COLUMN),
-            resultSet.getTimestamp(ActivityMessage.POSTED_AT_COLUMN)
+              resultSet.getInt(ActivityMessage.PRIMARY_KEY_NAME),
+              User.findById(resultSet.getInt(ActivityMessage.USER_ID_COLUMN), connection),
+              resultSet.getString(ActivityMessage.CONTENT_COLUMN),
+              resultSet.getTimestamp(ActivityMessage.POSTED_AT_COLUMN)
           );
         }
       }
@@ -371,29 +354,7 @@ public abstract class Activity implements SavableDeletableEntity {
   //#region String representations
   @Override
   public String toString() {
-    return String.format("{%s}", fieldNamesAndValuesString());
-  }
-
-  @Override
-  public String fieldNamesAndValuesString() {
-    StringBuilder usersAndMessages = new StringBuilder();
-    usersAndMessages.append(", users: [");
-    for (UserActivity userActivity : this.users) {
-      usersAndMessages
-        .append("{userId: ").append(userActivity.getUser().getId())
-        .append(", manages: ").append(userActivity.isManager())
-        .append("}");
-    }
-    usersAndMessages.append("], messages: [");
-    for (ActivityMessage am : messages) {
-      usersAndMessages
-        .append("{userId: ").append(am.user.getId())
-        .append(", content: ").append(am.content)
-        .append(", postedAt: ").append(am.postedAt)
-        .append("}");
-    }
-    usersAndMessages.append("]");
-    return String.format("id: %d%s", id, usersAndMessages);
+    return defaultToString();
   }
   //#endregion String representations
 

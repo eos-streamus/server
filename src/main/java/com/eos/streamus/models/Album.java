@@ -151,23 +151,6 @@ public class Album extends SongCollection {
   }
   //#endregion Database operations
 
-  //#region String representations
-  @Override
-  public String toString() {
-    return String.format("{%s}", fieldNamesAndValuesString());
-  }
-
-  @Override
-  public String fieldNamesAndValuesString() {
-    return String.format(
-      "%s, %s : %s",
-      super.fieldNamesAndValuesString(),
-      RELEASE_DATE_COLUMN,
-      releaseDate
-    );
-  }
-  //#endregion String representations
-
   //#region Equals
   @Override
   public int hashCode() {
