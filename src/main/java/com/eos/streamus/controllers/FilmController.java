@@ -7,6 +7,7 @@ import com.eos.streamus.utils.FileInfo;
 import com.eos.streamus.utils.ResourcePathResolver;
 import com.eos.streamus.utils.ShellUtils;
 import com.eos.streamus.writers.JsonFilmListWriter;
+import com.eos.streamus.writers.JsonFilmWriter;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +30,7 @@ import java.sql.SQLException;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-import static com.eos.streamus.controllers.CommonResponses.badRequest;
-import static com.eos.streamus.controllers.CommonResponses.streamResource;
+import static com.eos.streamus.controllers.CommonResponses.*;
 
 @RestController
 public class FilmController {
@@ -42,8 +42,9 @@ public class FilmController {
   private final ResourcePathResolver resourcePathResolver;
   private final DatabaseConnection databaseConnection;
 
-  public FilmController(@Autowired final ResourcePathResolver resourcePathResolver,
-                        @Autowired final DatabaseConnection databaseConnection) {
+  @Autowired
+  public FilmController(final ResourcePathResolver resourcePathResolver,
+                        final DatabaseConnection databaseConnection) {
     this.resourcePathResolver = resourcePathResolver;
     this.databaseConnection = databaseConnection;
   }
@@ -56,8 +57,8 @@ public class FilmController {
   }
 
   @PostMapping("/film")
-  public ResponseEntity<Object> postFilm(@RequestParam("file") MultipartFile file,
-                                         @RequestParam("name") String name) throws IOException {
+  public ResponseEntity<JsonNode> postFilm(@RequestParam("file") MultipartFile file,
+                                           @RequestParam("name") String name) {
     if (file.getContentType() == null) {
       return badRequest("No specified mime type");
     }
@@ -80,23 +81,26 @@ public class FilmController {
     );
 
     File storedFile = new File(path);
-    file.transferTo(storedFile);
 
-    FileInfo fileInfo = ShellUtils.getResourceInfo(storedFile.getPath());
-
-    Film film = new Film(path, name, fileInfo.getDuration());
     try (Connection connection = databaseConnection.getConnection()) {
+      file.transferTo(storedFile);
+      FileInfo fileInfo = ShellUtils.getResourceInfo(storedFile.getPath());
+      Film film = new Film(path, name, fileInfo.getDuration());
       film.save(connection);
-    } catch (Exception e) {
-      java.nio.file.Files.delete(storedFile.toPath());
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+      return ResponseEntity.ok(new JsonFilmWriter(film).getJson());
+    } catch (IOException | SQLException e) {
+      Logger.getLogger(getClass().getName()).severe(e.getMessage());
+      try {
+        java.nio.file.Files.delete(storedFile.toPath());
+      } catch (IOException ioException) {
+        Logger.getLogger(getClass().getName()).severe(e.getMessage());
+      }
+      return internalServerError();
     }
-    return ResponseEntity.ok(film);
   }
 
   @GetMapping("/film/{id}")
-  public ResponseEntity<ResourceRegion> getFilm(@RequestHeader HttpHeaders headers,
-                                                 @PathVariable("id") int id) {
+  public ResponseEntity<ResourceRegion> getFilm(@RequestHeader HttpHeaders headers, @PathVariable("id") int id) {
     try (Connection connection = databaseConnection.getConnection()) {
       return streamResource(Film.findById(id, connection), headers.getRange(), MAX_VIDEO_CHUNK_SIZE);
     } catch (NoResultException noResultException) {

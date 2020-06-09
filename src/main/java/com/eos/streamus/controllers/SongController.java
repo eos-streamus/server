@@ -6,6 +6,8 @@ import com.eos.streamus.utils.DatabaseConnection;
 import com.eos.streamus.utils.FileInfo;
 import com.eos.streamus.utils.ResourcePathResolver;
 import com.eos.streamus.utils.ShellUtils;
+import com.eos.streamus.writers.JsonSongWriter;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.support.ResourceRegion;
@@ -56,8 +58,8 @@ public class SongController {
    * @return response (bad request, ok, internal server error).
    */
   @PostMapping("/song")
-  public ResponseEntity<Object> postSong(@RequestParam("file") MultipartFile multipartFile,
-                                         @RequestParam("name") String name) {
+  public ResponseEntity<JsonNode> postSong(@RequestParam("file") MultipartFile multipartFile,
+                                           @RequestParam("name") String name) {
 
     if (multipartFile.getContentType() == null) {
       return badRequest("No specified mime type");
@@ -86,15 +88,16 @@ public class SongController {
       multipartFile.transferTo(storedFile);
       FileInfo fileInfo = ShellUtils.getResourceInfo(storedFile.getPath());
       Song song = new Song(path, name, fileInfo.getDuration());
-      try {
-        song.save(connection);
-      } catch (SQLException e) {
-        java.nio.file.Files.delete(storedFile.toPath());
-      }
-      return ResponseEntity.ok(song);
+      song.save(connection);
+      return ResponseEntity.ok(new JsonSongWriter(song).getJson());
     } catch (IOException | SQLException e) {
       Logger.getLogger(getClass().getName()).severe(e.getMessage());
-      return internalServerError("Something went wrong");
+      try {
+        java.nio.file.Files.delete(storedFile.toPath());
+      } catch (IOException ioException) {
+        Logger.getLogger(getClass().getName()).severe(ioException.getMessage());
+      }
+      return internalServerError();
     }
 
   }

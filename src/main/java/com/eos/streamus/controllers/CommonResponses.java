@@ -1,6 +1,7 @@
 package com.eos.streamus.controllers;
 
 import com.eos.streamus.models.Resource;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.core.io.UrlResource;
 import org.springframework.core.io.support.ResourceRegion;
@@ -16,15 +17,15 @@ import java.util.List;
 class CommonResponses {
   private CommonResponses() {}
 
-  static ResponseEntity<Object> badRequest(final String reason) {
+  static ResponseEntity<JsonNode> badRequest(final String reason) {
     ObjectNode errorResponse = new ObjectNode(new ErrorObjectNodeFactory());
     errorResponse.put("reason", reason);
     return ResponseEntity.badRequest().body(errorResponse);
   }
 
-  static ResponseEntity<Object> internalServerError(final String reason) {
+  static ResponseEntity<JsonNode> internalServerError() {
     ObjectNode errorResponse = new ObjectNode(new ErrorObjectNodeFactory());
-    errorResponse.put("reason", reason);
+    errorResponse.put("reason", "Something went wrong");
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
   }
 
