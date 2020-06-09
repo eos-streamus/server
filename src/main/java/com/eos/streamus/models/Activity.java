@@ -132,18 +132,23 @@ public abstract class Activity implements SavableDeletableEntity {
   }
 
   public class ActivityMessage implements SavableDeletableEntity {
+    //#region Static attributes
     private static final String TABLE_NAME = "ActivityMessage";
     private static final String PRIMARY_KEY_NAME = "id";
     private static final String ACTIVITY_ID_COLUMN = "idActivity";
     private static final String USER_ID_COLUMN = "idUser";
     private static final String POSTED_AT_COLUMN = "postedAt";
     private static final String CONTENT_COLUMN = "content";
+    //#endregion Static attributes
 
+    //#region Instance attributes
     private Integer id;
-    private User user;
-    private String content;
+    private final User user;
+    private final String content;
     private Timestamp postedAt;
+    //#endregion Instance attributes
 
+    //#region Constructors
     public ActivityMessage(User user, String content) {
       this.user = user;
       this.content = content;
@@ -155,7 +160,9 @@ public abstract class Activity implements SavableDeletableEntity {
       this.id = id;
       this.postedAt = postedAt;
     }
+    //#endregion Constructors
 
+    //#region Getters and Setters
     @Override
     public Integer getId() {
       return id;
@@ -191,7 +198,9 @@ public abstract class Activity implements SavableDeletableEntity {
     public String creationFunctionName() {
       return null;
     }
+    //#endregion Getters and Setters
 
+    //#region Database operations
     @Override
     public void save(Connection connection) throws SQLException {
       if (this.id == null) {
@@ -217,12 +226,16 @@ public abstract class Activity implements SavableDeletableEntity {
         }
       }
     }
+    //#endregion Database operations
 
+    //#region String representations
     @Override
     public String fieldNamesAndValuesString() {
       return null;
     }
+    //#endregion String representations
 
+    //#region Equals
     @Override
     public int hashCode() {
       return Activity.this.hashCode() * 31 + user.hashCode();
@@ -242,6 +255,7 @@ public abstract class Activity implements SavableDeletableEntity {
           activityMessage.user.getId().equals(user.getId()) &&
           activityMessage.getActivity().id.equals(Activity.this.getId());
     }
+    //#endregion Equals
   }
 
   //#region Static Attributes
@@ -251,8 +265,8 @@ public abstract class Activity implements SavableDeletableEntity {
 
   //#region Instance Attributes
   private Integer id;
-  private List<UserActivity> users = new ArrayList<>();
-  private List<ActivityMessage> messages = new ArrayList<>();
+  private final List<UserActivity> users = new ArrayList<>();
+  private final List<ActivityMessage> messages = new ArrayList<>();
   //#endregion Instance Attributes
 
   //#region Constructors

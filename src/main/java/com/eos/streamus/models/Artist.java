@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public abstract class Artist implements SavableDeletableEntity {
   //#region Static attributes
@@ -90,7 +91,8 @@ public abstract class Artist implements SavableDeletableEntity {
           try {
             albums.add(Album.findById(resultSet.getInt(ALBUM_ARTIST_ALBUM_ID), connection));
           } catch (NoResultException e) {
-            e.printStackTrace();
+            // Should never happen
+            Logger.getLogger(Artist.class.getName()).severe(e.getMessage());
           }
         }
       }

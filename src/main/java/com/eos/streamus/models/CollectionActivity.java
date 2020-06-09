@@ -25,8 +25,8 @@ public class CollectionActivity extends Activity {
   //#endregion Static attributes
 
   //#region Instance attributes
-  private List<Pair<Integer, Pair<Resource, ResourceActivity>>> resourceActivities;
-  private Collection collection;
+  private final List<Pair<Integer, Pair<Resource, ResourceActivity>>> resourceActivities;
+  private final Collection collection;
   //#endregion Instance attributes
 
   //#region Constructors

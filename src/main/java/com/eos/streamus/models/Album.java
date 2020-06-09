@@ -24,8 +24,8 @@ public class Album extends SongCollection {
   //#endregion Static attributes
 
   //#region Instance attributes
-  private List<Artist> artists = new ArrayList<>();
-  private Date releaseDate;
+  private final List<Artist> artists = new ArrayList<>();
+  private final Date releaseDate;
   //#endregion Instance attributes
 
   //#region Constructors
