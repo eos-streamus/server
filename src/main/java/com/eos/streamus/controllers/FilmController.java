@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import static com.eos.streamus.controllers.CommonResponses.badRequest;
 import static com.eos.streamus.controllers.CommonResponses.streamResource;
@@ -93,16 +94,17 @@ public class FilmController {
     return ResponseEntity.ok(film);
   }
 
-  @GetMapping("/video/{id}")
-  public ResponseEntity<ResourceRegion> getVideo(@RequestHeader HttpHeaders headers,
-                                                 @PathVariable("id") int id) throws IOException, SQLException {
-    Film film;
+  @GetMapping("/film/{id}")
+  public ResponseEntity<ResourceRegion> getFilm(@RequestHeader HttpHeaders headers,
+                                                 @PathVariable("id") int id) {
     try (Connection connection = databaseConnection.getConnection()) {
-      film = Film.findById(id, connection);
-    } catch (NoResultException e) {
+      return streamResource(Film.findById(id, connection), headers.getRange(), MAX_VIDEO_CHUNK_SIZE);
+    } catch (NoResultException noResultException) {
       return ResponseEntity.notFound().build();
+    } catch (SQLException | IOException exception) {
+      Logger.getLogger(getClass().getName()).severe(exception.getMessage());
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
-    return streamResource(film, headers.getRange(), MAX_VIDEO_CHUNK_SIZE);
   }
 
 }
