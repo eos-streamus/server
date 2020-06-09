@@ -9,7 +9,7 @@ import java.io.File;
 @Service
 @Scope(value = "singleton")
 public class ResourcePathResolver {
-  @Value("${resourcepath}")
+  @Value("${resourcePath}")
   private String resourcePath;
 
   public String getVideoDir() {
