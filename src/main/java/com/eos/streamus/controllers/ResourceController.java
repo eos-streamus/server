@@ -4,10 +4,10 @@ import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.Film;
 import com.eos.streamus.models.Resource;
 import com.eos.streamus.models.Song;
+import com.eos.streamus.utils.DatabaseConnection;
 import com.eos.streamus.utils.FileInfo;
 import com.eos.streamus.utils.ResourcePathResolver;
 import com.eos.streamus.utils.ShellUtils;
-import com.eos.streamus.utils.TestDatabaseConnection;
 import com.eos.streamus.writers.JsonFilmListWriter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -60,7 +60,7 @@ public class ResourceController {
 
   //#region Attributes
   @Autowired
-  protected TestDatabaseConnection databaseConnection = null;
+  protected DatabaseConnection databaseConnection = null;
 
   private final ResourcePathResolver resourcePathResolver;
   //#endregion Attributes

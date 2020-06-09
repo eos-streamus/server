@@ -5,7 +5,7 @@ import com.eos.streamus.models.Artist;
 import com.eos.streamus.models.ArtistDAO;
 import com.eos.streamus.models.Band;
 import com.eos.streamus.models.Musician;
-import com.eos.streamus.utils.TestDatabaseConnection;
+import com.eos.streamus.utils.DatabaseConnection;
 import com.eos.streamus.writers.JsonArtistListWriter;
 import com.eos.streamus.writers.JsonBandWriter;
 import com.eos.streamus.writers.JsonMusicianWriter;
@@ -24,9 +24,9 @@ import java.util.List;
 
 @RestController
 public class ArtistController {
-  private final TestDatabaseConnection databaseConnection;
+  private final DatabaseConnection databaseConnection;
 
-  public ArtistController(@Autowired TestDatabaseConnection databaseConnection) {
+  public ArtistController(@Autowired DatabaseConnection databaseConnection) {
     this.databaseConnection = databaseConnection;
   }
 
