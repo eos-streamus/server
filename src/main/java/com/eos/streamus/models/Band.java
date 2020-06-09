@@ -119,7 +119,8 @@ public class Band extends Artist {
     @Override
     public String toString() {
       return String.format(
-        "{%s: %d, %s: %d, %s: %s, %s: %s}",
+        "%s[%s= %d, %s= %d, %s= %s, %s= %s]",
+        getClass().getName(),
         BAND_ID_COLUMN,
         Band.this.getId(),
         MUSICIAN_ID_COLUMN,

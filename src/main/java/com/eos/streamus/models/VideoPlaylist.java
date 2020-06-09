@@ -52,7 +52,8 @@ public class VideoPlaylist extends VideoCollection {
     //#region String representations
     @Override
     public String toString() {
-      return String.format("{%s: %d, %s: %d, %s: %d}",
+      return String.format("%s[%s= %d, %s= %d, %s= %d]",
+        getClass().getName(),
         ID_VIDEO_PLAYLIST_VIDEO_COLUMN,
         VideoPlaylist.this.getId(),
         ID_VIDEO_COLUMN,
