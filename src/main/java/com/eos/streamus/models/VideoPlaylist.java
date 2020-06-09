@@ -253,28 +253,6 @@ public class VideoPlaylist extends VideoCollection {
   }
   //#endregion Database operations
 
-  //#region String representations
-  @Override
-  public String fieldNamesAndValuesString() {
-    StringBuilder videosStringBuilder = new StringBuilder();
-    boolean first = true;
-    for (VideoPlaylistVideo video : videos) {
-      if (first) {
-        first = false;
-      } else {
-        videosStringBuilder.append(", ");
-      }
-      videosStringBuilder.append(video);
-    }
-    return String.format("%s, user: %s, videos: %s", super.fieldNamesAndValuesString(), user, videosStringBuilder);
-  }
-
-  @Override
-  public String toString() {
-    return String.format("{%s}", fieldNamesAndValuesString());
-  }
-  //#endregion String representations
-
   //#region Equals
   @Override
   public int hashCode() {

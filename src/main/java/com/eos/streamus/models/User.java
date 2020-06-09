@@ -116,25 +116,6 @@ public class User extends Person {
   }
   //#endregion Database operations
 
-  //#region String representations
-  @Override
-  public String fieldNamesAndValuesString() {
-    return String.format(
-      "%s, %s: %s, %s: %s",
-      super.fieldNamesAndValuesString(),
-      EMAIL_COLUMN,
-      email,
-      USERNAME_COLUMN,
-      username
-    );
-  }
-
-  @Override
-  public String toString() {
-    return String.format("{%s}", fieldNamesAndValuesString());
-  }
-  //#endregion String representations
-
   //#region Equals
   @Override
   public int hashCode() {

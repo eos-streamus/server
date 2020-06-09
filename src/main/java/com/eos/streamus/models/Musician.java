@@ -128,23 +128,6 @@ public class Musician extends Artist {
   }
   //#endregion Database operations
 
-  //#region String representations
-  @Override
-  public String fieldNamesAndValuesString() {
-    return String.format(
-      "%s, %s: %d",
-      super.fieldNamesAndValuesString(),
-      PERSON_ID_COLUMN,
-      person == null ? null : person.getId()
-    );
-  }
-
-  @Override
-  public String toString() {
-    return String.format("{%s}", fieldNamesAndValuesString());
-  }
-  //#endregion String representations
-
   //#region Equals
   @Override
   public int hashCode() {

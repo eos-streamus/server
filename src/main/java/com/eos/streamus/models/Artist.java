@@ -103,17 +103,11 @@ public abstract class Artist implements SavableDeletableEntity {
   //#region String representations
   @Override
   public String toString() {
-    return String.format("{%s}", fieldNamesAndValuesString());
-  }
-
-  @Override
-  public String fieldNamesAndValuesString() {
     return String.format(
-      "%s: %d, %s: %s",
-      PRIMARY_KEY_NAME,
-      id,
-      NAME_COLUMN,
-      name
+        "%s[%s=%d]",
+        getClass().getName(),
+        primaryKeyName(),
+        id
     );
   }
   //#endregion

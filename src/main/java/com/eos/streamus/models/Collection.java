@@ -3,8 +3,6 @@ package com.eos.streamus.models;
 import com.eos.streamus.utils.Pair;
 
 import java.sql.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.List;
 
@@ -110,24 +108,8 @@ public abstract class Collection implements SavableDeletableEntity {
 
   //#region String representations
   @Override
-  public String fieldNamesAndValuesString() {
-    DateFormat timestampFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z");
-    return String.format(
-      "%s: %d, %s: %s, %s: %s, %s, %s",
-      PRIMARY_KEY_NAME,
-      id,
-      NAME_COLUMN,
-      name,
-      CREATED_AT_COLUMN,
-      timestampFormat.format(createdAt),
-      UPDATED_AT_COLUMN,
-      timestampFormat.format(updatedAt)
-    );
-  }
-
-  @Override
   public String toString() {
-    return String.format("{%s}", fieldNamesAndValuesString());
+    return defaultToString();
   }
   //#endregion String representations
 

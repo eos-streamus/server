@@ -7,10 +7,16 @@ interface Entity {
 
   String primaryKeyName();
 
-
   String creationFunctionName();
 
   Integer getId();
 
-  String fieldNamesAndValuesString();
+  default String defaultToString() {
+    return String.format(
+        "%s[%s=%d]",
+        getClass().getName(),
+        primaryKeyName(),
+        getId()
+    );
+  }
 }
