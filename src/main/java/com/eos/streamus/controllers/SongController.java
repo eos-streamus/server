@@ -25,9 +25,9 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.UUID;
+import java.util.logging.Logger;
 
-import static com.eos.streamus.controllers.CommonResponses.badRequest;
-import static com.eos.streamus.controllers.CommonResponses.streamResource;
+import static com.eos.streamus.controllers.CommonResponses.*;
 
 @RestController
 public class SongController {
@@ -47,44 +47,56 @@ public class SongController {
     this.databaseConnection = databaseConnection;
   }
 
+  /**
+   * Save a new {@link Song}.
+   *
+   * @param multipartFile Audio file of song to create.
+   * @param name Name of the song.
+   *
+   * @return response (bad request, ok, internal server error).
+   */
   @PostMapping("/song")
-  public ResponseEntity<Object> postSong(@RequestParam("file") MultipartFile file,
-                                         @RequestParam("name") String name) throws IOException {
+  public ResponseEntity<Object> postSong(@RequestParam("file") MultipartFile multipartFile,
+                                         @RequestParam("name") String name) {
 
-    if (file.getContentType() == null) {
+    if (multipartFile.getContentType() == null) {
       return badRequest("No specified mime type");
     }
+
     boolean acceptableMimeType = false;
     for (String type : AUDIO_MIME_TYPES) {
-      if (file.getContentType().equals(type)) {
+      if (multipartFile.getContentType().equals(type)) {
         acceptableMimeType = true;
         break;
       }
     }
     if (!acceptableMimeType) {
-      return badRequest(String.format("Invalid mime type : %s", file.getContentType()));
+      return badRequest(String.format("Invalid mime type : %s", multipartFile.getContentType()));
     }
 
     String path = String.format(
         "%s%s.%s",
         resourcePathResolver.getAudioDir(),
         UUID.randomUUID().toString(),
-        FilenameUtils.getExtension(file.getOriginalFilename())
+        FilenameUtils.getExtension(multipartFile.getOriginalFilename())
     );
 
     File storedFile = new File(path);
-    file.transferTo(storedFile);
-
-    FileInfo fileInfo = ShellUtils.getResourceInfo(storedFile.getPath());
-
-    Song song = new Song(path, name, fileInfo.getDuration());
     try (Connection connection = databaseConnection.getConnection()) {
-      song.save(connection);
-    } catch (Exception e) {
-      java.nio.file.Files.delete(storedFile.toPath());
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+      multipartFile.transferTo(storedFile);
+      FileInfo fileInfo = ShellUtils.getResourceInfo(storedFile.getPath());
+      Song song = new Song(path, name, fileInfo.getDuration());
+      try {
+        song.save(connection);
+      } catch (SQLException e) {
+        java.nio.file.Files.delete(storedFile.toPath());
+      }
+      return ResponseEntity.ok(song);
+    } catch (IOException | SQLException e) {
+      Logger.getLogger(getClass().getName()).severe(e.getMessage());
+      return internalServerError("Something went wrong");
     }
-    return ResponseEntity.ok(song);
+
   }
 
   @GetMapping("/song/{id}")
