@@ -2,7 +2,6 @@ package com.eos.streamus.controllers;
 
 import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.Film;
-import com.eos.streamus.models.Resource;
 import com.eos.streamus.models.Song;
 import com.eos.streamus.utils.DatabaseConnection;
 import com.eos.streamus.utils.FileInfo;
@@ -10,17 +9,11 @@ import com.eos.streamus.utils.ResourcePathResolver;
 import com.eos.streamus.utils.ShellUtils;
 import com.eos.streamus.writers.JsonFilmListWriter;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.UrlResource;
 import org.springframework.core.io.support.ResourceRegion;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpRange;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.MediaTypeFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,13 +27,10 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.UUID;
 
-class ErrorObjectNodeFactory extends JsonNodeFactory {
-  private static final long serialVersionUID = -5301230341871379657L;
-
-}
+import static com.eos.streamus.controllers.CommonResponses.badRequest;
+import static com.eos.streamus.controllers.CommonResponses.streamResource;
 
 @RestController
 public class ResourceController {
@@ -59,15 +49,16 @@ public class ResourceController {
   //#endregion Static attributes
 
   //#region Attributes
-  @Autowired
-  protected DatabaseConnection databaseConnection = null;
+  private final DatabaseConnection databaseConnection;
 
   private final ResourcePathResolver resourcePathResolver;
   //#endregion Attributes
 
   //#region Constructor
-  public ResourceController(@Autowired final ResourcePathResolver resourcePathResolver) {
+  public ResourceController(@Autowired final ResourcePathResolver resourcePathResolver,
+                            @Autowired DatabaseConnection databaseConnection) {
     this.resourcePathResolver = resourcePathResolver;
+    this.databaseConnection = databaseConnection;
   }
   //#endregion Constructor
 
@@ -89,7 +80,7 @@ public class ResourceController {
                                          @RequestParam("name") String name) throws IOException {
 
     if (file.getContentType() == null) {
-      return error("No specified mime type");
+      return badRequest("No specified mime type");
     }
     boolean acceptableMimeType = false;
     for (String type : AUDIO_MIME_TYPES) {
@@ -99,7 +90,7 @@ public class ResourceController {
       }
     }
     if (!acceptableMimeType) {
-      return error(String.format("Invalid mime type : %s", file.getContentType()));
+      return badRequest(String.format("Invalid mime type : %s", file.getContentType()));
     }
 
     String path = String.format(
@@ -149,7 +140,7 @@ public class ResourceController {
   public ResponseEntity<Object> postFilm(@RequestParam("file") MultipartFile file,
                                          @RequestParam("name") String name) throws IOException {
     if (file.getContentType() == null) {
-      return error("No specified mime type");
+      return badRequest("No specified mime type");
     }
     boolean acceptableMimeType = false;
     for (String type : VIDEO_MIME_TYPES) {
@@ -159,7 +150,7 @@ public class ResourceController {
       }
     }
     if (!acceptableMimeType) {
-      return error(String.format("Invalid mime type : %s", file.getContentType()));
+      return badRequest(String.format("Invalid mime type : %s", file.getContentType()));
     }
 
     String path = String.format(
@@ -185,37 +176,4 @@ public class ResourceController {
   }
   //#endregion Films
 
-  //#region Private methods
-  private ResponseEntity<ResourceRegion> streamResource(final Resource resource, final List<HttpRange> range,
-                                                        final long maxChunkSize) throws IOException {
-    UrlResource urlResource = new UrlResource(String.format("file:%s", resource.getPath()));
-    long contentLength = urlResource.contentLength();
-    ResourceRegion region;
-    long start;
-    long rangeLength;
-    if (!range.isEmpty()) {
-      start = range.get(0).getRangeStart(contentLength);
-      long end = range.get(0).getRangeEnd(contentLength);
-      rangeLength = Math.min(maxChunkSize, end - start + 1);
-    } else {
-      start = 0;
-      rangeLength = Math.min(maxChunkSize, contentLength);
-    }
-    region = new ResourceRegion(urlResource, start, rangeLength);
-    return ResponseEntity
-        .status(HttpStatus.PARTIAL_CONTENT)
-        .contentType(
-            MediaTypeFactory
-                .getMediaType(urlResource)
-                .orElse(MediaType.APPLICATION_OCTET_STREAM)
-        )
-        .body(region);
-  }
-
-  private ResponseEntity<Object> error(final String reason) {
-    ObjectNode errorResponse = new ObjectNode(new ErrorObjectNodeFactory());
-    errorResponse.put("reason", reason);
-    return ResponseEntity.badRequest().body(errorResponse);
-  }
-  //#endregion Private methods
 }
