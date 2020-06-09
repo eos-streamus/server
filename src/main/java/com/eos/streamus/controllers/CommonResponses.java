@@ -22,6 +22,12 @@ class CommonResponses {
     return ResponseEntity.badRequest().body(errorResponse);
   }
 
+  static ResponseEntity<Object> internalServerError(final String reason) {
+    ObjectNode errorResponse = new ObjectNode(new ErrorObjectNodeFactory());
+    errorResponse.put("reason", reason);
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+  }
+
   static ResponseEntity<ResourceRegion> streamResource(final Resource resource,
                                                        final List<HttpRange> range,
                                                        final long maxChunkSize) throws IOException {
