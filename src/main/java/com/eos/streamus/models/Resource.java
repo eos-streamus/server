@@ -1,8 +1,6 @@
 package com.eos.streamus.models;
 
 import java.sql.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 
 public abstract class Resource implements SavableDeletableEntity {
   //#region Static attributes
@@ -119,23 +117,7 @@ public abstract class Resource implements SavableDeletableEntity {
   //#region String representations
   @Override
   public String toString() {
-    return String.format("{%s}", fieldNamesAndValuesString());
-  }
-
-
-  public String fieldNamesAndValuesString() {
-    DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z");
-    return String.format("%s: %d, %s: %s, %s: %s, %s: %s, %s: %s",
-      ID_COLUMN,
-      id,
-      PATH_COLUMN,
-      path,
-      NAME_COLUMN,
-      name,
-      DURATION_COLUMN,
-      duration,
-      CREATED_AT_COLUMN,
-      dateFormat.format(createdAt));
+    return defaultToString();
   }
   //#endregion String representations
 

@@ -180,27 +180,6 @@ public class ResourceActivity extends Activity {
   }
   //#endregion Database operations
 
-  //#region String representations
-  @Override
-  public String toString() {
-    return String.format("{%s}", fieldNamesAndValuesString());
-  }
-
-  @Override
-  public String fieldNamesAndValuesString() {
-    return String.format(
-      "%s, %s: %s, %s: %d, %s: %s",
-      super.fieldNamesAndValuesString(),
-      STARTED_AT_COLUMN,
-      startedAt,
-      PAUSED_AT_COLUMN,
-      pausedAt,
-      RESOURCE_ID_COLUMN,
-      resource.getId()
-    );
-  }
-  //#endregion String representations
-
   //#region Equals
   @Override
   public int hashCode() {

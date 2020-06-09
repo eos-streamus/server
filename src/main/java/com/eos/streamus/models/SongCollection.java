@@ -50,21 +50,18 @@ public abstract class SongCollection extends Collection {
     //#endregion Database operations
 
     //#region String representations
-    public String fieldNamesAndValuesString() {
-      return String.format(
-        "%s: %s, %s: %s, %s: %s",
-        ID_SONG_COLLECTION_COLUMN,
-        SongCollection.this.getId(),
-        ID_SONG_COLUMN,
-        this.getValue(),
-        TRACK_NUMBER_COLUMN,
-        this.getKey()
-      );
-    }
-
     @Override
     public String toString() {
-      return String.format("{%s}", this.fieldNamesAndValuesString());
+      return String.format(
+          "%s[%s= %s, %s= %s, %s= %s]",
+          getClass().getName(),
+          ID_SONG_COLLECTION_COLUMN,
+          SongCollection.this.getId(),
+          ID_SONG_COLUMN,
+          this.getValue(),
+          TRACK_NUMBER_COLUMN,
+          this.getKey()
+      );
     }
     //#endregion String representations
 
@@ -201,22 +198,6 @@ public abstract class SongCollection extends Collection {
     return loadedTracks;
   }
   //#endregion Database operations
-
-  //#region String representations
-  @Override
-  public String toString() {
-    return String.format("{%s}", fieldNamesAndValuesString());
-  }
-
-  @Override
-  public String fieldNamesAndValuesString() {
-    return String.format(
-      "%s, numberOfTracks: %d",
-      super.fieldNamesAndValuesString(),
-      this.tracks.size()
-    );
-  }
-  //#endregion String representations
 
   //#region Equals
   @Override

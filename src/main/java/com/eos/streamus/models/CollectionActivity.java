@@ -127,33 +127,6 @@ public class CollectionActivity extends Activity {
   }
   //#endregion Database operations
 
-  //#region String representations
-  @Override
-  public String toString() {
-    return String.format("{%s}", fieldNamesAndValuesString());
-  }
-
-  @Override
-  public String fieldNamesAndValuesString() {
-    StringBuilder resourceActivitiesString = new StringBuilder();
-    resourceActivitiesString.append("[");
-    resourceActivities.forEach(entry -> resourceActivitiesString
-      .append("{num: ").append(entry.getKey())
-      .append(", resourceId: ").append(entry.getValue().getKey())
-      .append(", resourceActivityId: ").append(entry.getValue().getValue()).append("}"));
-    resourceActivitiesString.append("]");
-    return String.format(
-      "%s, %s: %d, %s",
-      super.fieldNamesAndValuesString(),
-      COLLECTION_ID,
-      collection.getId(),
-      resourceActivitiesString
-    );
-  }
-
-
-  //#endregion String representations
-
   //#region Equals
   @Override
   public int hashCode() {

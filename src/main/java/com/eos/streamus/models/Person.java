@@ -3,8 +3,6 @@ package com.eos.streamus.models;
 import com.eos.streamus.exceptions.NoResultException;
 
 import java.sql.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 
 public class Person implements SavableDeletableEntity {
   //#region Static attributes
@@ -161,27 +159,7 @@ public class Person implements SavableDeletableEntity {
   //#region String representations
   @Override
   public String toString() {
-    return String.format("{%s}", fieldNamesAndValuesString());
-  }
-
-  @Override
-  public String fieldNamesAndValuesString() {
-    DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd");
-    DateFormat timestampFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z");
-    return String.format(
-      "%s: %d, %s: %s, %s: %s, %s: %s, %s: %s, %s: %s",
-      ID_COLUMN,
-      id,
-      FIRST_NAME_COLUMN,
-      firstName,
-      LAST_NAME_COLUMN,
-      lastName,
-      DATE_OF_BIRTH_COLUMN,
-      dateFormat.format(dateOfBirth.getTime()),
-      CREATED_AT_COLUMN,
-      timestampFormat.format(createdAt),
-      UPDATED_AT_COLUMN,
-      timestampFormat.format(updatedAt));
+    return defaultToString();
   }
   //#endregion String representations
 
