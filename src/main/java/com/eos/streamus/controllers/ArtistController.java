@@ -6,6 +6,8 @@ import com.eos.streamus.models.ArtistDAO;
 import com.eos.streamus.models.Band;
 import com.eos.streamus.models.Musician;
 import com.eos.streamus.models.Person;
+import com.eos.streamus.payloadmodels.BandMember;
+import com.eos.streamus.payloadmodels.BandMemberValidator;
 import com.eos.streamus.payloadmodels.MusicianValidator;
 import com.eos.streamus.utils.DatabaseConnection;
 import com.eos.streamus.writers.JsonArtistListWriter;
@@ -32,11 +34,14 @@ import java.util.List;
 public class ArtistController implements CommonResponses {
   private final DatabaseConnection databaseConnection;
   private final MusicianValidator musicianValidator;
+  private final BandMemberValidator bandMemberValidator;
 
   public ArtistController(@Autowired DatabaseConnection databaseConnection,
-                          @Autowired MusicianValidator musicianValidator) {
+                          @Autowired MusicianValidator musicianValidator,
+                          @Autowired BandMemberValidator bandMemberValidator) {
     this.databaseConnection = databaseConnection;
     this.musicianValidator = musicianValidator;
+    this.bandMemberValidator = bandMemberValidator;
   }
 
   @GetMapping("/artists")
@@ -113,6 +118,61 @@ public class ArtistController implements CommonResponses {
       logException(sqlException);
       return internalServerError();
     }
+  }
+
+  @PostMapping("/band/{bandId}/members")
+  public ResponseEntity<JsonNode> addMemberToBand(@PathVariable int bandId,
+                                                  @Valid @RequestBody BandMember member,
+                                                  BindingResult result) {
+    if (member.getFrom() == null) {
+      member.setFrom(new java.util.Date().getTime());
+    }
+    bandMemberValidator.validate(member, result);
+    if (result.hasErrors()) {
+      return badRequest(result.toString());
+    }
+    try (Connection connection = databaseConnection.getConnection()) {
+      connection.setAutoCommit(false);
+      Band band = Band.findById(bandId, connection);
+      Musician musician;
+      if (member.getMusicianId() != null) {
+        musician = Musician.findById(member.getMusicianId(), connection);
+      } else if (member.getMusician().getId() != null) {
+        musician = Musician.findById(member.getMusician().getId(), connection);
+      } else {
+        if (member.getMusician().getPerson().getId() != null) {
+          musician = member.getMusician().getName() == null ?
+              new Musician(Person.findById(member.getMusician().getPerson().getId(), connection))
+              :
+              new Musician(
+                  member.getMusician().getName(),
+                  Person.findById(member.getMusician().getPerson().getId(), connection)
+              );
+        } else {
+          com.eos.streamus.payloadmodels.Person payloadPerson = member.getMusician().getPerson();
+          Person person = new Person(
+              payloadPerson.getFirstName(),
+              payloadPerson.getLastName(),
+              new Date(payloadPerson.getDateOfBirth())
+          );
+          musician = member.getMusician().getName() == null ?
+              new Musician(person)
+              :
+              new Musician(member.getMusician().getName(), person);
+        }
+        musician.save(connection);
+      }
+      band.addMember(musician, new Date(member.getFrom()), member.getTo() == null ? null : new Date(member.getTo()));
+      band.save(connection);
+      connection.commit();
+      return ResponseEntity.ok(new JsonBandWriter(band).getJson());
+    } catch (NoResultException noResultException) {
+      return badRequest("Invalid band id");
+    } catch (SQLException sqlException) {
+      logException(sqlException);
+      return internalServerError();
+    }
+
   }
 
 }
