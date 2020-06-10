@@ -100,7 +100,19 @@ public class FilmController {
   }
 
   @GetMapping("/film/{id}")
-  public ResponseEntity<ResourceRegion> getFilm(@RequestHeader HttpHeaders headers, @PathVariable("id") int id) {
+  public ResponseEntity<JsonNode> getFilm(@PathVariable("id") int id) {
+    try (Connection connection = databaseConnection.getConnection()) {
+      return ResponseEntity.ok().body(new JsonFilmWriter(Film.findById(id, connection)).getJson());
+    } catch (SQLException sqlException) {
+      Logger.getLogger(getClass().getName()).severe(sqlException.getMessage());
+      return internalServerError();
+    } catch (NoResultException noResultException) {
+      return ResponseEntity.notFound().build();
+    }
+  }
+
+  @GetMapping("/film/{id}/stream")
+  public ResponseEntity<ResourceRegion> streamFilm(@RequestHeader HttpHeaders headers, @PathVariable("id") int id) {
     try (Connection connection = databaseConnection.getConnection()) {
       return streamResource(Film.findById(id, connection), headers.getRange(), MAX_VIDEO_CHUNK_SIZE);
     } catch (NoResultException noResultException) {
