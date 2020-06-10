@@ -35,29 +35,21 @@ public class ArtistController {
     List<Artist> allArtists;
     try (Connection connection = databaseConnection.getConnection()) {
       allArtists = ArtistDAO.all(connection);
+      for (Artist artist : allArtists) {
+        artist.fetchAlbums(connection);
+      }
     }
     return new JsonArtistListWriter(allArtists).getJson();
   }
 
   @GetMapping("/artist/{id}")
-  public ResponseEntity<JsonNode> artist(@PathVariable int id) throws SQLException {
+  public ResponseEntity<JsonNode> getArtist(@PathVariable int id) throws SQLException {
     try (Connection connection = databaseConnection.getConnection()) {
       Artist artist = ArtistDAO.findById(id, connection);
+      artist.fetchAlbums(connection);
       JsonWriter writer = artist instanceof Band ?
           new JsonBandWriter((Band) artist) :
           new JsonMusicianWriter((Musician) artist);
-      return ResponseEntity.ok().body(writer.getJson());
-    } catch (NoResultException e) {
-      return ResponseEntity.notFound().build();
-    }
-  }
-
-  @GetMapping("/artist/{artistId}/discography")
-  public ResponseEntity<JsonNode> discography(@PathVariable int artistId) throws SQLException {
-    try (Connection connection = databaseConnection.getConnection()) {
-      Artist artist = ArtistDAO.findById(artistId, connection);
-      artist.fetchAlbums(connection);
-      JsonWriter writer = new JsonSongCollectionListWriter(artist.getAlbums());
       return ResponseEntity.ok().body(writer.getJson());
     } catch (NoResultException e) {
       return ResponseEntity.notFound().build();
