@@ -9,7 +9,6 @@ import com.eos.streamus.utils.DatabaseConnection;
 import com.eos.streamus.writers.JsonArtistListWriter;
 import com.eos.streamus.writers.JsonBandWriter;
 import com.eos.streamus.writers.JsonMusicianWriter;
-import com.eos.streamus.writers.JsonSongCollectionListWriter;
 import com.eos.streamus.writers.JsonWriter;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
