@@ -574,7 +574,14 @@ class StreamUsApplicationTests {
       testBand.addMember(musician, valueOf("2000-01-01"), valueOf("2010-01-01"));
       testBand.addMember(musician, valueOf("2005-01-01"));
       testBand.setName("Test updated");
-      assertThrows(SQLTransactionRollbackException.class, () -> testBand.save(connection));
+      connection.setAutoCommit(false);
+      try {
+        testBand.save(connection);
+        connection.commit();
+      } catch (SQLException e) {
+        connection.rollback();
+      }
+      connection.setAutoCommit(true);
       assertNotEquals(testBand.getName(), Band.findById(testBand.getId(), connection).getName());
       musician.getPerson().delete(connection);
       assertThrows(NoResultException.class, () -> Person.findById(musician.getPerson().getId(), connection));
