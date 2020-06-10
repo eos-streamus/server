@@ -28,12 +28,9 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.UUID;
-import java.util.logging.Logger;
-
-import static com.eos.streamus.controllers.CommonResponses.*;
 
 @RestController
-public class FilmController {
+public class FilmController implements CommonResponses {
   private static final long MAX_VIDEO_CHUNK_SIZE = (long) 1024 * 1024;
   private static final String[] VIDEO_MIME_TYPES = {
       "video/x-flv", "video/mp4", "video/MP2T", "video/3gpp", "video/quicktime", "video/x-msvideo", "video/x-ms-wmv"
@@ -89,11 +86,11 @@ public class FilmController {
       film.save(connection);
       return ResponseEntity.ok(new JsonFilmWriter(film).getJson());
     } catch (IOException | SQLException e) {
-      Logger.getLogger(getClass().getName()).severe(e.getMessage());
+      logException(e);
       try {
         java.nio.file.Files.delete(storedFile.toPath());
       } catch (IOException ioException) {
-        Logger.getLogger(getClass().getName()).severe(e.getMessage());
+        logException(e);
       }
       return internalServerError();
     }
@@ -104,7 +101,7 @@ public class FilmController {
     try (Connection connection = databaseConnection.getConnection()) {
       return ResponseEntity.ok().body(new JsonFilmWriter(Film.findById(id, connection)).getJson());
     } catch (SQLException sqlException) {
-      Logger.getLogger(getClass().getName()).severe(sqlException.getMessage());
+      logException(sqlException);
       return internalServerError();
     } catch (NoResultException noResultException) {
       return ResponseEntity.notFound().build();
@@ -118,7 +115,7 @@ public class FilmController {
     } catch (NoResultException noResultException) {
       return ResponseEntity.notFound().build();
     } catch (SQLException | IOException exception) {
-      Logger.getLogger(getClass().getName()).severe(exception.getMessage());
+      logException(exception);
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
   }

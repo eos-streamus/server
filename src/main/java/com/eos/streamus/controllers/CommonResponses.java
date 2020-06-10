@@ -13,23 +13,23 @@ import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Logger;
 
-class CommonResponses {
-  private CommonResponses() {}
+interface CommonResponses {
 
-  static ResponseEntity<JsonNode> badRequest(final String reason) {
+  default ResponseEntity<JsonNode> badRequest(final String reason) {
     ObjectNode errorResponse = new ObjectNode(new ErrorObjectNodeFactory());
     errorResponse.put("reason", reason);
     return ResponseEntity.badRequest().body(errorResponse);
   }
 
-  static ResponseEntity<JsonNode> internalServerError() {
+  default ResponseEntity<JsonNode> internalServerError() {
     ObjectNode errorResponse = new ObjectNode(new ErrorObjectNodeFactory());
     errorResponse.put("reason", "Something went wrong");
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
   }
 
-  static ResponseEntity<ResourceRegion> streamResource(final Resource resource,
+  default ResponseEntity<ResourceRegion> streamResource(final Resource resource,
                                                        final List<HttpRange> range,
                                                        final long maxChunkSize) throws IOException {
     UrlResource urlResource = new UrlResource(String.format("file:%s", resource.getPath()));
@@ -54,6 +54,10 @@ class CommonResponses {
                 .orElse(MediaType.APPLICATION_OCTET_STREAM)
         )
         .body(region);
+  }
+
+  default void logException(final Exception exception) {
+    Logger.getLogger(getClass().getName()).severe(exception.getMessage());
   }
 
 }

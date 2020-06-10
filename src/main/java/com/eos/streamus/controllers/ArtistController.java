@@ -23,12 +23,9 @@ import javax.validation.Valid;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.logging.Logger;
-
-import static com.eos.streamus.controllers.CommonResponses.internalServerError;
 
 @RestController
-public class ArtistController {
+public class ArtistController implements CommonResponses {
   private final DatabaseConnection databaseConnection;
 
   public ArtistController(@Autowired DatabaseConnection databaseConnection) {
@@ -68,7 +65,7 @@ public class ArtistController {
       band.save(connection);
       return ResponseEntity.ok(new JsonBandWriter(band).getJson());
     } catch (SQLException sqlException) {
-      Logger.getLogger(getClass().getName()).severe(sqlException.getMessage());
+      logException(sqlException);
       return internalServerError();
     }
   }

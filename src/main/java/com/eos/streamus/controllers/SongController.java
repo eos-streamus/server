@@ -27,12 +27,9 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.UUID;
-import java.util.logging.Logger;
-
-import static com.eos.streamus.controllers.CommonResponses.*;
 
 @RestController
-public class SongController {
+public class SongController implements CommonResponses {
   private static final long MAX_AUDIO_CHUNK_SIZE = (long) 1024 * 1024;
 
   private static final String[] AUDIO_MIME_TYPES = {
@@ -91,11 +88,11 @@ public class SongController {
       song.save(connection);
       return ResponseEntity.ok(new JsonSongWriter(song).getJson());
     } catch (IOException | SQLException e) {
-      Logger.getLogger(getClass().getName()).severe(e.getMessage());
+      logException(e);
       try {
         java.nio.file.Files.delete(storedFile.toPath());
       } catch (IOException ioException) {
-        Logger.getLogger(getClass().getName()).severe(ioException.getMessage());
+        logException(ioException);
       }
       return internalServerError();
     }
@@ -110,7 +107,7 @@ public class SongController {
     } catch (NoResultException noResultException) {
       return ResponseEntity.notFound().build();
     } catch (SQLException | IOException exception) {
-      Logger.getLogger(getClass().getName()).severe(exception.getMessage());
+      logException(exception);
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
   }
