@@ -15,11 +15,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Logger;
+
+import static com.eos.streamus.controllers.CommonResponses.internalServerError;
 
 @RestController
 public class ArtistController {
@@ -52,6 +58,18 @@ public class ArtistController {
       return ResponseEntity.ok().body(writer.getJson());
     } catch (NoResultException e) {
       return ResponseEntity.notFound().build();
+    }
+  }
+
+  @PostMapping("/band")
+  public ResponseEntity<JsonNode> createBand(@Valid @RequestBody com.eos.streamus.payloadmodels.Band bandData) {
+    try (Connection connection = databaseConnection.getConnection()) {
+      Band band = new Band(bandData.getName());
+      band.save(connection);
+      return ResponseEntity.ok(new JsonBandWriter(band).getJson());
+    } catch (SQLException sqlException) {
+      Logger.getLogger(getClass().getName()).severe(sqlException.getMessage());
+      return internalServerError();
     }
   }
 
