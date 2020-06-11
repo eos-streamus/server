@@ -125,7 +125,7 @@ public class ArtistController implements CommonResponses {
                                                   @Valid @RequestBody BandMember member,
                                                   BindingResult result) {
     if (member.getFrom() == null) {
-      member.setFrom(new java.util.Date().getTime());
+      member.setFrom(new java.sql.Date(new java.util.Date().getTime()));
     }
     bandMemberValidator.validate(member, result);
     if (result.hasErrors()) {
@@ -162,15 +162,19 @@ public class ArtistController implements CommonResponses {
         }
         musician.save(connection);
       }
-      band.addMember(musician, new Date(member.getFrom()), member.getTo() == null ? null : new Date(member.getTo()));
+      band.addMember(musician, member.getFrom(), member.getTo());
       band.save(connection);
       connection.commit();
       return ResponseEntity.ok(new JsonBandWriter(band).getJson());
     } catch (NoResultException noResultException) {
       return badRequest("Invalid band id");
     } catch (SQLException sqlException) {
-      logException(sqlException);
-      return internalServerError();
+      if (sqlException.getSQLState().equals("40002")) {
+        return badRequest("Overlapping band memberships for musician");
+      } else {
+        logException(sqlException);
+        return internalServerError();
+      }
     }
 
   }

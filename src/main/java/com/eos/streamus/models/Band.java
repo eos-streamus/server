@@ -260,7 +260,11 @@ public class Band extends Artist {
       try {
         member.save(connection);
       } catch (SQLException e) {
-        throw new SQLException("Save/Update of Band and members could not be committed. Invalid member dates");
+        if (!e.getSQLState().isEmpty() && e.getSQLState().equals("40002")) {
+          throw new SQLException("Save/Update of Band and members could not be committed. Invalid member dates", "40002");
+        } else {
+          throw e;
+        }
       }
     }
   }

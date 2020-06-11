@@ -1,6 +1,7 @@
 package com.eos.streamus.payloadmodels;
 
 import javax.validation.constraints.NotNull;
+import java.sql.Date;
 
 public class BandMember {
   private Integer musicianId;
@@ -8,19 +9,19 @@ public class BandMember {
   private Musician musician;
 
   @NotNull
-  private Long from;
+  private Date from;
 
-  private Long to;
+  private Date to;
 
-  public Long getFrom() {
+  public Date getFrom() {
     return from;
   }
 
-  public void setFrom(Long from) {
+  public void setFrom(Date from) {
     this.from = from;
   }
 
-  public Long getTo() {
+  public Date getTo() {
     return to;
   }
 
