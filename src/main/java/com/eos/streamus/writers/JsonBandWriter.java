@@ -5,6 +5,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 public class JsonBandWriter extends JsonArtistWriter {
   private static class JsonBandMemberWriter extends JsonMusicianWriter {
     private final Band.Member member;
@@ -17,9 +20,10 @@ public class JsonBandWriter extends JsonArtistWriter {
     @Override
     protected JsonNode getSpecificJson(final ObjectNode objectNode) {
       super.getSpecificJson(objectNode);
-      objectNode.put("from", member.getFrom().getTime());
+      DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+      objectNode.put("from", dateFormat.format(member.getFrom()));
       if (member.getTo() != null) {
-        objectNode.put("to", member.getTo().getTime());
+        objectNode.put("to", dateFormat.format(member.getTo()));
       }
       return objectNode;
     }
