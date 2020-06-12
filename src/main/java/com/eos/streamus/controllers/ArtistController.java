@@ -57,7 +57,7 @@ public class ArtistController implements CommonResponses {
   }
 
   @GetMapping("/artist/{id}")
-  public ResponseEntity<JsonNode> getArtist(@PathVariable int id) throws SQLException {
+  public ResponseEntity<JsonNode> getArtist(@PathVariable int id) {
     try (Connection connection = databaseConnection.getConnection()) {
       Artist artist = ArtistDAO.findById(id, connection);
       artist.fetchAlbums(connection);
@@ -67,6 +67,9 @@ public class ArtistController implements CommonResponses {
       return ResponseEntity.ok().body(writer.getJson());
     } catch (NoResultException e) {
       return ResponseEntity.notFound().build();
+    } catch (SQLException sqlException) {
+      logException(sqlException);
+      return internalServerError();
     }
   }
 
