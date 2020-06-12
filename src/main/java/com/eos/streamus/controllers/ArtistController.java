@@ -124,9 +124,6 @@ public class ArtistController implements CommonResponses {
   public ResponseEntity<JsonNode> addMemberToBand(@PathVariable int bandId,
                                                   @Valid @RequestBody BandMember member,
                                                   BindingResult result) {
-    if (member.getFrom() == null) {
-      member.setFrom(new java.sql.Date(new java.util.Date().getTime()));
-    }
     bandMemberValidator.validate(member, result);
     if (result.hasErrors()) {
       return badRequest(result.toString());
@@ -134,40 +131,13 @@ public class ArtistController implements CommonResponses {
     try (Connection connection = databaseConnection.getConnection()) {
       connection.setAutoCommit(false);
       Band band = Band.findById(bandId, connection);
-      Musician musician;
-      if (member.getMusicianId() != null) {
-        musician = Musician.findById(member.getMusicianId(), connection);
-      } else if (member.getMusician().getId() != null) {
-        musician = Musician.findById(member.getMusician().getId(), connection);
-      } else {
-        if (member.getMusician().getPerson().getId() != null) {
-          musician = member.getMusician().getName() == null ?
-              new Musician(Person.findById(member.getMusician().getPerson().getId(), connection))
-              :
-              new Musician(
-                  member.getMusician().getName(),
-                  Person.findById(member.getMusician().getPerson().getId(), connection)
-              );
-        } else {
-          com.eos.streamus.payloadmodels.Person payloadPerson = member.getMusician().getPerson();
-          Person person = new Person(
-              payloadPerson.getFirstName(),
-              payloadPerson.getLastName(),
-              new Date(payloadPerson.getDateOfBirth())
-          );
-          musician = member.getMusician().getName() == null ?
-              new Musician(person)
-              :
-              new Musician(member.getMusician().getName(), person);
-        }
-        musician.save(connection);
-      }
+      Musician musician = getMusicianFromBandMemberData(member, connection);
       band.addMember(musician, member.getFrom(), member.getTo());
       band.save(connection);
       connection.commit();
       return ResponseEntity.ok(new JsonBandWriter(band).getJson());
     } catch (NoResultException noResultException) {
-      return badRequest("Invalid band id");
+      return badRequest("Invalid data");
     } catch (SQLException sqlException) {
       if (sqlException.getSQLState().equals("40002")) {
         return badRequest("Overlapping band memberships for musician");
@@ -177,6 +147,38 @@ public class ArtistController implements CommonResponses {
       }
     }
 
+  }
+
+  private Musician getMusicianFromBandMemberData(BandMember member, Connection connection) throws SQLException, NoResultException {
+    Musician musician;
+    if (member.getMusicianId() != null) {
+      musician = Musician.findById(member.getMusicianId(), connection);
+    } else if (member.getMusician().getId() != null) {
+      musician = Musician.findById(member.getMusician().getId(), connection);
+    } else {
+      if (member.getMusician().getPerson().getId() != null) {
+        musician = member.getMusician().getName() == null ?
+            new Musician(Person.findById(member.getMusician().getPerson().getId(), connection))
+            :
+            new Musician(
+                member.getMusician().getName(),
+                Person.findById(member.getMusician().getPerson().getId(), connection)
+            );
+      } else {
+        com.eos.streamus.payloadmodels.Person payloadPerson = member.getMusician().getPerson();
+        Person person = new Person(
+            payloadPerson.getFirstName(),
+            payloadPerson.getLastName(),
+            new Date(payloadPerson.getDateOfBirth())
+        );
+        musician = member.getMusician().getName() == null ?
+            new Musician(person)
+            :
+            new Musician(member.getMusician().getName(), person);
+      }
+      musician.save(connection);
+    }
+    return musician;
   }
 
 }
