@@ -4,7 +4,6 @@ interface Entity {
 
   String tableName();
 
-
   String primaryKeyName();
 
   String creationFunctionName();
@@ -19,4 +18,5 @@ interface Entity {
         getId()
     );
   }
+
 }
