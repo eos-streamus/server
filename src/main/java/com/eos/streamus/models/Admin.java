@@ -13,7 +13,8 @@ public class Admin extends User {
   //#endregion Static Attributes
 
   //#region Constructors
-  private Admin(Integer id, String firstName, String lastName, Date dateOfBirth, Timestamp createdAt, Timestamp updatedAt, String email, String username) { // NOSONAR
+  private Admin(Integer id, String firstName, String lastName, Date dateOfBirth, Timestamp createdAt, // NOSONAR
+                Timestamp updatedAt, String email, String username) {
     super(id, firstName, lastName, dateOfBirth, createdAt, updatedAt, email, username);
   }
 
@@ -43,7 +44,12 @@ public class Admin extends User {
   @Override
   public void save(Connection connection) throws SQLException {
     if (getId() == null) {
-      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s(?::varchar(200), ?::varchar(200), ?, ?::varchar(255), ?::varchar(50));", CREATION_FUNCTION_NAME))) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(
+          String.format(
+              "select * from %s(?::varchar(200), ?::varchar(200), ?, ?::varchar(255), ?::varchar(50));",
+              CREATION_FUNCTION_NAME
+          )
+      )) {
         preparedStatement.setString(1, getFirstName());
         preparedStatement.setString(2, getLastName());
         preparedStatement.setDate(3, getDateOfBirth());
@@ -62,21 +68,25 @@ public class Admin extends User {
   }
 
   public static Admin findById(Integer id, Connection connection) throws SQLException, NoResultException {
-    try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s where %s = ?;", VIEW_NAME, Person.ID_COLUMN))) {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(
+        String.format(
+            "select * from %s where %s = ?;", VIEW_NAME, Person.ID_COLUMN
+        )
+    )) {
       preparedStatement.setInt(1, id);
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
         if (!resultSet.next()) {
           throw new NoResultException();
         }
         return new Admin(
-          id,
-          resultSet.getString(Person.FIRST_NAME_COLUMN),
-          resultSet.getString(Person.LAST_NAME_COLUMN),
-          resultSet.getDate(Person.DATE_OF_BIRTH_COLUMN),
-          resultSet.getTimestamp(Person.CREATED_AT_COLUMN),
-          resultSet.getTimestamp(Person.UPDATED_AT_COLUMN),
-          resultSet.getString(User.EMAIL_COLUMN),
-          resultSet.getString(User.USERNAME_COLUMN)
+            id,
+            resultSet.getString(Person.FIRST_NAME_COLUMN),
+            resultSet.getString(Person.LAST_NAME_COLUMN),
+            resultSet.getDate(Person.DATE_OF_BIRTH_COLUMN),
+            resultSet.getTimestamp(Person.CREATED_AT_COLUMN),
+            resultSet.getTimestamp(Person.UPDATED_AT_COLUMN),
+            resultSet.getString(User.EMAIL_COLUMN),
+            resultSet.getString(User.USERNAME_COLUMN)
         );
       }
     }
