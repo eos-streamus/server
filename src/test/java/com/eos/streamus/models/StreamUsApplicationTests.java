@@ -29,32 +29,6 @@ class StreamUsApplicationTests {
   private final Random random = new Random();
 
   @Test
-  void testFilmCRUD() throws SQLException, NoResultException {
-    try (Connection connection = databaseConnection.getConnection()) {
-      // Create
-      Film film = new Film(randomString(), randomString(), 100);
-      film.save(connection);
-
-      // Read
-      Film retrievedFilm = Film.findById(film.getId(), connection);
-      assertEquals(film, retrievedFilm);
-
-      // Update
-      film.setName(randomString());
-      film.setPath(randomString());
-      film.setDuration(101);
-      film.save(connection);
-
-      retrievedFilm = Film.findById(film.getId(), connection);
-      assertEquals(film, retrievedFilm);
-
-      // Delete
-      film.delete(connection);
-      assertThrows(NoResultException.class, () -> Film.findById(film.getId(), connection));
-    }
-  }
-
-  @Test
   void testPersonCRUD() throws SQLException, NoResultException {
     try (Connection connection = databaseConnection.getConnection()) {
       // Create
