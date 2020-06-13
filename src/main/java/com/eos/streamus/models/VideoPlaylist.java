@@ -27,7 +27,14 @@ public class VideoPlaylist extends VideoCollection {
     //#region Database operations
     @Override
     public void delete(Connection connection) throws SQLException {
-      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("delete from %s where %s = ? and %s = ?;", TABLE_NAME, ID_VIDEO_COLUMN, ID_VIDEO_PLAYLIST_VIDEO_COLUMN))) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(
+          String.format(
+              "delete from %s where %s = ? and %s = ?;",
+              TABLE_NAME,
+              ID_VIDEO_COLUMN,
+              ID_VIDEO_PLAYLIST_VIDEO_COLUMN
+          )
+      )) {
         preparedStatement.setInt(1, getValue().getId());
         preparedStatement.setInt(2, VideoPlaylist.this.getId());
         preparedStatement.execute();
@@ -38,7 +45,12 @@ public class VideoPlaylist extends VideoCollection {
 
     @Override
     public void save(Connection connection) throws SQLException {
-      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s(?, ?);", CREATION_FUNCTION_NAME))) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(
+          String.format(
+              "select * from %s(?, ?);",
+              CREATION_FUNCTION_NAME
+          )
+      )) {
         preparedStatement.setInt(1, getValue().getId());
         preparedStatement.setInt(2, VideoPlaylist.this.getId());
         try (ResultSet rs = preparedStatement.executeQuery()) {
@@ -53,13 +65,13 @@ public class VideoPlaylist extends VideoCollection {
     @Override
     public String toString() {
       return String.format("%s[%s= %d, %s= %d, %s= %d]",
-        getClass().getName(),
-        ID_VIDEO_PLAYLIST_VIDEO_COLUMN,
-        VideoPlaylist.this.getId(),
-        ID_VIDEO_COLUMN,
-        this.getValue().getId(),
-        NUMBER_COLUMN,
-        getKey()
+                           getClass().getName(),
+                           ID_VIDEO_PLAYLIST_VIDEO_COLUMN,
+                           VideoPlaylist.this.getId(),
+                           ID_VIDEO_COLUMN,
+                           this.getValue().getId(),
+                           NUMBER_COLUMN,
+                           getKey()
       );
     }
     //#endregion String representations
@@ -154,7 +166,12 @@ public class VideoPlaylist extends VideoCollection {
   @Override
   public void save(Connection connection) throws SQLException {
     if (this.getId() == null) {
-      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s(?::varchar(200), ?);", CREATION_FUNCTION_NAME))) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(
+          String.format(
+              "select * from %s(?::varchar(200), ?);",
+              CREATION_FUNCTION_NAME
+          )
+      )) {
         preparedStatement.setString(1, getName());
         preparedStatement.setInt(2, user.getId());
         try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -173,12 +190,25 @@ public class VideoPlaylist extends VideoCollection {
       for (VideoPlaylistVideo videoPlaylistVideo : videos) {
         if (!databaseVideos.contains(videoPlaylistVideo)) {
           if (videoPlaylistVideo.getValue().getId() == null) {
-            throw new NotPersistedException(String.format("%s %s is not persisted", videoPlaylistVideo.getValue().tableName(), videoPlaylistVideo.getValue()));
+            throw new NotPersistedException(
+                String.format(
+                    "%s %s is not persisted",
+                    videoPlaylistVideo.getValue().tableName(),
+                    videoPlaylistVideo.getValue()
+                )
+            );
           }
           videoPlaylistVideo.save(connection);
         }
       }
-      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select %s from %s where %s = ?", UPDATED_AT_COLUMN, Collection.TABLE_NAME, Collection.PRIMARY_KEY_NAME))) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(
+          String.format(
+              "select %s from %s where %s = ?",
+              UPDATED_AT_COLUMN,
+              Collection.TABLE_NAME,
+              Collection.PRIMARY_KEY_NAME
+          )
+      )) {
         preparedStatement.setInt(1, getId());
         try (ResultSet resultSet = preparedStatement.executeQuery()) {
           resultSet.next();
@@ -190,24 +220,35 @@ public class VideoPlaylist extends VideoCollection {
 
   private List<VideoPlaylistVideo> getVideosFromDatabase(Connection connection) throws SQLException {
     List<VideoPlaylistVideo> loadedVideos = new ArrayList<>();
-    try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s where %s = ?;", VideoPlaylistVideo.TABLE_NAME, VideoPlaylistVideo.ID_VIDEO_PLAYLIST_VIDEO_COLUMN))) {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(
+        String.format(
+            "select * from %s where %s = ?;",
+            VideoPlaylistVideo.TABLE_NAME,
+            VideoPlaylistVideo.ID_VIDEO_PLAYLIST_VIDEO_COLUMN
+        )
+    )) {
       preparedStatement.setInt(1, this.getId());
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
         while (resultSet.next()) {
           try {
-            loadedVideos.add(new VideoPlaylistVideo(resultSet.getInt(VideoPlaylistVideo.NUMBER_COLUMN), VideoDAO.findById(resultSet.getInt(VideoPlaylistVideo.ID_VIDEO_COLUMN), connection)));
+            loadedVideos.add(
+                new VideoPlaylistVideo(
+                    resultSet.getInt(VideoPlaylistVideo.NUMBER_COLUMN),
+                    VideoDAO.findById(resultSet.getInt(VideoPlaylistVideo.ID_VIDEO_COLUMN), connection)
+                )
+            );
           } catch (NoResultException e) {
             throw new SQLException(
-              String.format(
-                "%s {%s: %d, %s: %d, %s: %d} references non existing Video",
-                VideoPlaylistVideo.TABLE_NAME,
-                VideoPlaylistVideo.ID_VIDEO_PLAYLIST_VIDEO_COLUMN,
-                getId(),
-                VideoPlaylistVideo.ID_VIDEO_COLUMN,
-                resultSet.getInt(VideoPlaylistVideo.ID_VIDEO_COLUMN),
-                VideoPlaylistVideo.NUMBER_COLUMN,
-                resultSet.getInt(VideoPlaylistVideo.NUMBER_COLUMN)
-              )
+                String.format(
+                    "%s {%s: %d, %s: %d, %s: %d} references non existing Video",
+                    VideoPlaylistVideo.TABLE_NAME,
+                    VideoPlaylistVideo.ID_VIDEO_PLAYLIST_VIDEO_COLUMN,
+                    getId(),
+                    VideoPlaylistVideo.ID_VIDEO_COLUMN,
+                    resultSet.getInt(VideoPlaylistVideo.ID_VIDEO_COLUMN),
+                    VideoPlaylistVideo.NUMBER_COLUMN,
+                    resultSet.getInt(VideoPlaylistVideo.NUMBER_COLUMN)
+                )
             );
           }
         }
@@ -217,7 +258,13 @@ public class VideoPlaylist extends VideoCollection {
   }
 
   public static VideoPlaylist findById(Integer id, Connection connection) throws SQLException, NoResultException {
-    try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s where %s = ?;", VIEW_NAME, Collection.PRIMARY_KEY_NAME))) {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(
+        String.format(
+            "select * from %s where %s = ?;",
+            VIEW_NAME,
+            Collection.PRIMARY_KEY_NAME
+        )
+    )) {
       preparedStatement.setInt(1, id);
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
         if (!resultSet.next()) {
@@ -233,19 +280,29 @@ public class VideoPlaylist extends VideoCollection {
         User user = User.findById(userId, connection);
 
         VideoPlaylist videoPlaylist = new VideoPlaylist(
-          id,
-          name,
-          createdAt,
-          updatedAt,
-          user
+            id,
+            name,
+            createdAt,
+            updatedAt,
+            user
         );
 
         // Videos
         int firstVideoNumber = resultSet.getInt(VideoPlaylistVideo.NUMBER_COLUMN);
         if (!resultSet.wasNull()) {
-          videoPlaylist.addVideo(videoPlaylist.new VideoPlaylistVideo(firstVideoNumber, VideoDAO.findById(resultSet.getInt(VideoPlaylistVideo.ID_VIDEO_COLUMN), connection)));
+          videoPlaylist.addVideo(
+              videoPlaylist.new VideoPlaylistVideo(
+                  firstVideoNumber,
+                  VideoDAO.findById(resultSet.getInt(VideoPlaylistVideo.ID_VIDEO_COLUMN), connection)
+              )
+          );
           while (resultSet.next()) {
-            videoPlaylist.addVideo(videoPlaylist.new VideoPlaylistVideo(resultSet.getInt(VideoPlaylistVideo.NUMBER_COLUMN), VideoDAO.findById(resultSet.getInt(VideoPlaylistVideo.ID_VIDEO_COLUMN), connection)));
+            videoPlaylist.addVideo(
+                videoPlaylist.new VideoPlaylistVideo(
+                    resultSet.getInt(VideoPlaylistVideo.NUMBER_COLUMN),
+                    VideoDAO.findById(resultSet.getInt(VideoPlaylistVideo.ID_VIDEO_COLUMN), connection)
+                )
+            );
           }
         }
         return videoPlaylist;
