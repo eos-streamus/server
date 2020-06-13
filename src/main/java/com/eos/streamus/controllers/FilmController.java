@@ -104,7 +104,7 @@ public class FilmController implements CommonResponses {
       logException(sqlException);
       return internalServerError();
     } catch (NoResultException noResultException) {
-      return ResponseEntity.notFound().build();
+      return notFound();
     }
   }
 
@@ -113,7 +113,7 @@ public class FilmController implements CommonResponses {
     try (Connection connection = databaseConnection.getConnection()) {
       return streamResource(Film.findById(id, connection), headers.getRange(), MAX_VIDEO_CHUNK_SIZE);
     } catch (NoResultException noResultException) {
-      return ResponseEntity.notFound().build();
+      return notFound();
     } catch (SQLException | IOException exception) {
       logException(exception);
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

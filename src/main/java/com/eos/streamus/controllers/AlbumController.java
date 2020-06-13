@@ -39,7 +39,7 @@ public class AlbumController implements CommonResponses {
       Album album = Album.findById(id, connection);
       return ResponseEntity.ok(new JsonAlbumWriter(album).getJson());
     } catch (NoResultException noResultException) {
-      return ResponseEntity.notFound().build();
+      return notFound();
     } catch (SQLException sqlException) {
       logException(sqlException);
       return internalServerError();

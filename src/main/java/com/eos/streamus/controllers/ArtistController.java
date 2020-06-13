@@ -67,7 +67,7 @@ public class ArtistController implements CommonResponses {
           new JsonMusicianWriter((Musician) artist);
       return ResponseEntity.ok().body(writer.getJson());
     } catch (NoResultException e) {
-      return ResponseEntity.notFound().build();
+      return notFound();
     } catch (SQLException sqlException) {
       logException(sqlException);
       return internalServerError();
@@ -81,7 +81,7 @@ public class ArtistController implements CommonResponses {
       artist.fetchAlbums(connection);
       return ResponseEntity.ok(new JsonAlbumListWriter(artist.getAlbums()).getJson());
     } catch (NoResultException noResultException) {
-      return ResponseEntity.notFound().build();
+      return notFound();
     } catch (SQLException sqlException) {
       logException(sqlException);
       return internalServerError();
