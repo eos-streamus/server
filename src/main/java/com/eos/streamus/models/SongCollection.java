@@ -27,7 +27,8 @@ public abstract class SongCollection extends Collection {
 
     //#region Database operations
     public void save(Connection connection) throws SQLException {
-      try (PreparedStatement songPreparedStatement = connection.prepareStatement(String.format("select * from %s(?, ?);", CREATION_FUNCTION_NAME))) {
+      try (PreparedStatement songPreparedStatement = connection
+          .prepareStatement(String.format("select * from %s(?, ?);", CREATION_FUNCTION_NAME))) {
         songPreparedStatement.setInt(1, getValue().getId());
         songPreparedStatement.setInt(2, SongCollection.this.getId());
         try (ResultSet rs = songPreparedStatement.executeQuery()) {
@@ -39,7 +40,8 @@ public abstract class SongCollection extends Collection {
 
     @Override
     public void delete(Connection connection) throws SQLException {
-      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("delete from %s where %s = ?, %s = ?", TABLE_NAME, ID_SONG_COLLECTION_COLUMN, ID_SONG_COLUMN))) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format(
+          "delete from %s where %s = ?, %s = ?", TABLE_NAME, ID_SONG_COLLECTION_COLUMN, ID_SONG_COLUMN))) {
         preparedStatement.setInt(1, SongCollection.this.getId());
         preparedStatement.setInt(2, getValue().getId());
         preparedStatement.execute();
@@ -156,12 +158,20 @@ public abstract class SongCollection extends Collection {
     for (Track track : this.getTracks()) {
       if (!databaseTracks.contains(track)) {
         if (track.getValue().getId() == null) {
-          throw new NotPersistedException(String.format("%s %s is not persisted", track.getValue().tableName(), track.getValue()));
+          throw new NotPersistedException(
+              String.format("%s %s is not persisted", track.getValue().tableName(), track.getValue()));
         }
         track.save(connection);
       }
     }
-    try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select %s from %s where %s = ?", UPDATED_AT_COLUMN, Collection.TABLE_NAME, Collection.PRIMARY_KEY_NAME))) {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(
+        String.format(
+            "select %s from %s where %s = ?",
+            UPDATED_AT_COLUMN,
+            Collection.TABLE_NAME,
+            Collection.PRIMARY_KEY_NAME
+        )
+    )) {
       preparedStatement.setInt(1, getId());
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
         resultSet.next();
@@ -172,24 +182,35 @@ public abstract class SongCollection extends Collection {
 
   private List<Track> getTracksFromDatabase(Connection connection) throws SQLException {
     List<Track> loadedTracks = new ArrayList<>();
-    try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s where %s = ?;", Track.TABLE_NAME, Track.ID_SONG_COLLECTION_COLUMN))) {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(
+        String.format(
+            "select * from %s where %s = ?;",
+            Track.TABLE_NAME,
+            Track.ID_SONG_COLLECTION_COLUMN
+        )
+    )) {
       preparedStatement.setInt(1, this.getId());
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
         while (resultSet.next()) {
           try {
-            loadedTracks.add(new Track(resultSet.getInt(Track.TRACK_NUMBER_COLUMN), Song.findById(resultSet.getInt(Track.ID_SONG_COLUMN), connection)));
+            loadedTracks.add(
+                new Track(
+                    resultSet.getInt(Track.TRACK_NUMBER_COLUMN),
+                    Song.findById(resultSet.getInt(Track.ID_SONG_COLUMN), connection)
+                )
+            );
           } catch (NoResultException e) {
             throw new SQLException(
-              String.format(
-                "%s {%s: %d, %s: %d, %s: %d} references non existing song",
-                Track.TABLE_NAME,
-                Track.ID_SONG_COLLECTION_COLUMN,
-                getId(),
-                Track.ID_SONG_COLUMN,
-                resultSet.getInt(Track.ID_SONG_COLUMN),
-                Track.TRACK_NUMBER_COLUMN,
-                resultSet.getInt(Track.TRACK_NUMBER_COLUMN)
-              )
+                String.format(
+                    "%s {%s: %d, %s: %d, %s: %d} references non existing song",
+                    Track.TABLE_NAME,
+                    Track.ID_SONG_COLLECTION_COLUMN,
+                    getId(),
+                    Track.ID_SONG_COLUMN,
+                    resultSet.getInt(Track.ID_SONG_COLUMN),
+                    Track.TRACK_NUMBER_COLUMN,
+                    resultSet.getInt(Track.TRACK_NUMBER_COLUMN)
+                )
             );
           }
         }
