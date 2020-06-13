@@ -1,5 +1,6 @@
-package com.eos.streamus.payloadmodels;
+package com.eos.streamus.payloadmodels.validators;
 
+import com.eos.streamus.payloadmodels.Musician;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
