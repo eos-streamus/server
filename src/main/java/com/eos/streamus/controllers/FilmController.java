@@ -47,9 +47,12 @@ public class FilmController implements CommonResponses {
   }
 
   @GetMapping("/films")
-  public JsonNode allFilms() throws SQLException {
+  public ResponseEntity<JsonNode> allFilms() {
     try (Connection connection = databaseConnection.getConnection()) {
-      return new JsonFilmListWriter(Film.all(connection)).getJson();
+      return ResponseEntity.ok(new JsonFilmListWriter(Film.all(connection)).getJson());
+    } catch (SQLException sqlException) {
+      logException(sqlException);
+      return internalServerError();
     }
   }
 
