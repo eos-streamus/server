@@ -42,7 +42,8 @@ public class AlbumValidator implements Validator {
           errors.reject("Invalid track number, must be >= 1");
         }
         Song.findById(album.getTracks().get(i).getSongId(), connection);
-        if (i > 0 && album.getTracks().get(i - 1).getTrackNumber() != album.getTracks().get(i).getTrackNumber() - 1) {
+        if ((i == 0 && album.getTracks().get(i).getTrackNumber() != 1) ||
+            (i > 0 && album.getTracks().get(i - 1).getTrackNumber() != album.getTracks().get(i).getTrackNumber() - 1)) {
           errors.reject("Invalid track numbers");
         }
       }
