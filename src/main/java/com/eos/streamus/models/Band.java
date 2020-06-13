@@ -91,9 +91,15 @@ public class Band extends Artist {
         throw new NotPersistedException("Band not persisted");
       }
       boolean exists;
-      try (PreparedStatement existsStatement = connection.prepareStatement(String.format(
-          "select 1 from %s where %s = ? and %s = ? and %s = ?", TABLE_NAME, BAND_ID_COLUMN, MUSICIAN_ID_COLUMN,
-          FROM_COLUMN))) {
+      try (PreparedStatement existsStatement = connection.prepareStatement(
+          String.format(
+              "select 1 from %s where %s = ? and %s = ? and %s = ?",
+              TABLE_NAME,
+              BAND_ID_COLUMN,
+              MUSICIAN_ID_COLUMN,
+              FROM_COLUMN
+          )
+      )) {
         existsStatement.setInt(1, Band.this.getId());
         existsStatement.setInt(2, musician.getId());
         existsStatement.setDate(3, from);
@@ -102,9 +108,16 @@ public class Band extends Artist {
         }
       }
       if (!exists) {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(String.format(
-            "insert into %s(%s, %s, %s, %s) values (?, ?, ?, ?);", TABLE_NAME, BAND_ID_COLUMN, MUSICIAN_ID_COLUMN,
-            FROM_COLUMN, TO_COLUMN))) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(
+            String.format(
+                "insert into %s(%s, %s, %s, %s) values (?, ?, ?, ?);",
+                TABLE_NAME,
+                BAND_ID_COLUMN,
+                MUSICIAN_ID_COLUMN,
+                FROM_COLUMN,
+                TO_COLUMN
+            )
+        )) {
           preparedStatement.setInt(1, Band.this.getId());
           preparedStatement.setInt(2, musician.getId());
           preparedStatement.setDate(3, from);
@@ -112,9 +125,16 @@ public class Band extends Artist {
           preparedStatement.execute();
         }
       } else {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(String.format(
-            "update %s set %s = ? where %s = ? and %s = ? and %s = ?", TABLE_NAME, TO_COLUMN, BAND_ID_COLUMN,
-            MUSICIAN_ID_COLUMN, FROM_COLUMN))) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(
+            String.format(
+                "update %s set %s = ? where %s = ? and %s = ? and %s = ?",
+                TABLE_NAME,
+                TO_COLUMN,
+                BAND_ID_COLUMN,
+                MUSICIAN_ID_COLUMN,
+                FROM_COLUMN
+            )
+        )) {
           preparedStatement.setDate(1, to);
           preparedStatement.setInt(2, Band.this.getId());
           preparedStatement.setInt(3, musician.getId());
@@ -245,8 +265,12 @@ public class Band extends Artist {
   @Override
   public void save(Connection connection) throws SQLException {
     if (this.getId() == null) {
-      try (PreparedStatement preparedStatement = connection
-          .prepareStatement(String.format("select * from %s(?);", CREATION_FUNCTION_NAME))) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(
+          String.format(
+              "select * from %s(?);",
+              CREATION_FUNCTION_NAME
+          )
+      )) {
         preparedStatement.setString(1, getName());
         try (ResultSet resultSet = preparedStatement.executeQuery()) {
           resultSet.next();
@@ -261,7 +285,10 @@ public class Band extends Artist {
         member.save(connection);
       } catch (SQLException e) {
         if (!e.getSQLState().isEmpty() && e.getSQLState().equals("40002")) {
-          throw new SQLException("Save/Update of Band and members could not be committed. Invalid member dates", "40002");
+          throw new SQLException(
+              "Save/Update of Band and members could not be committed. Invalid member dates",
+              "40002"
+          );
         } else {
           throw e;
         }
@@ -270,8 +297,13 @@ public class Band extends Artist {
   }
 
   public static Band findById(Integer id, Connection connection) throws SQLException, NoResultException {
-    try (PreparedStatement preparedStatement = connection
-        .prepareStatement(String.format("select * from %s where %s = ?", VIEW_NAME, VIEW_ID_COLUMN))) {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(
+        String.format(
+            "select * from %s where %s = ?",
+            VIEW_NAME,
+            VIEW_ID_COLUMN
+        )
+    )) {
       preparedStatement.setInt(1, id);
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
         if (!resultSet.next()) {
@@ -285,8 +317,13 @@ public class Band extends Artist {
   }
 
   private void fetchMembers(Connection connection) throws SQLException, NoResultException {
-    try (PreparedStatement preparedStatement = connection
-        .prepareStatement(String.format("select * from %s where %s = ?", Member.TABLE_NAME, Member.BAND_ID_COLUMN))) {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(
+        String.format(
+            "select * from %s where %s = ?",
+            Member.TABLE_NAME,
+            Member.BAND_ID_COLUMN
+        )
+    )) {
       preparedStatement.setInt(1, getId());
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
         while (resultSet.next()) {
