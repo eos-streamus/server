@@ -118,8 +118,10 @@ public class CollectionActivity extends Activity {
         if (!resultSet.next()) {
           throw new NoResultException();
         }
-        CollectionActivity collectionActivity = new CollectionActivity(id, CollectionDAO
-            .findById(resultSet.getInt(COLLECTION_ID), connection));
+        CollectionActivity collectionActivity = new CollectionActivity(
+            id,
+            CollectionDAO.findById(resultSet.getInt(COLLECTION_ID), connection)
+        );
         do {
           collectionActivity.resourceActivities.add(
               new Pair<>(
