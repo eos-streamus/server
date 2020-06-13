@@ -103,14 +103,14 @@ public class ResourceActivity extends Activity {
 
   private void saveNew(Connection connection) throws SQLException {
     try (PreparedStatement preparedStatement =
-           connection.prepareStatement(
-             String.format(
-               "select * from %s(?%s%s);",
-               CREATION_FUNCTION_NAME,
-               getUsers().isEmpty() ? ", null" : ", ?",
-               collectionActivity == null ? "" : ", ?"
+             connection.prepareStatement(
+                 String.format(
+                     "select * from %s(?%s%s);",
+                     CREATION_FUNCTION_NAME,
+                     getUsers().isEmpty() ? ", null" : ", ?",
+                     collectionActivity == null ? "" : ", ?"
+                 )
              )
-           )
     ) {
       preparedStatement.setInt(1, resource.getId());
       if (!getUsers().isEmpty()) {
@@ -128,16 +128,16 @@ public class ResourceActivity extends Activity {
 
   private void update(Connection connection) throws SQLException {
     try (
-      PreparedStatement preparedStatement = connection.prepareStatement(
-        String.format(
-          "update %s set %s = ?, %s = ?%s where %s = ?;",
-          TABLE_NAME,
-          STARTED_AT_COLUMN,
-          PAUSED_AT_COLUMN,
-          collectionActivity == null ? "" : String.format(",%s = ?", COLLECTION_ACTIVITY_ID_COLUMN),
-          PRIMARY_KEY_NAME
+        PreparedStatement preparedStatement = connection.prepareStatement(
+            String.format(
+                "update %s set %s = ?, %s = ?%s where %s = ?;",
+                TABLE_NAME,
+                STARTED_AT_COLUMN,
+                PAUSED_AT_COLUMN,
+                collectionActivity == null ? "" : String.format(",%s = ?", COLLECTION_ACTIVITY_ID_COLUMN),
+                PRIMARY_KEY_NAME
+            )
         )
-      )
     ) {
       preparedStatement.setTimestamp(1, startedAt);
       preparedStatement.setInt(2, pausedAt);
@@ -152,24 +152,22 @@ public class ResourceActivity extends Activity {
   }
 
   public static ResourceActivity findById(Integer id, Connection connection) throws SQLException, NoResultException {
-    try (PreparedStatement preparedStatement =
-           connection.prepareStatement(
-             String.format(
-               "select * from %s where %s = ?",
-               TABLE_NAME,
-               PRIMARY_KEY_NAME
-             )
-           )
-    ) {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(
+        String.format(
+            "select * from %s where %s = ?",
+            TABLE_NAME,
+            PRIMARY_KEY_NAME
+        )
+    )) {
       preparedStatement.setInt(1, id);
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
         if (!resultSet.next()) {
           return null;
         }
         ResourceActivity resourceActivity = new ResourceActivity(
-          resultSet.getInt(PRIMARY_KEY_NAME),
-          ResourceDAO.findById(resultSet.getInt(RESOURCE_ID_COLUMN), connection),
-          resultSet.getTimestamp(STARTED_AT_COLUMN)
+            resultSet.getInt(PRIMARY_KEY_NAME),
+            ResourceDAO.findById(resultSet.getInt(RESOURCE_ID_COLUMN), connection),
+            resultSet.getTimestamp(STARTED_AT_COLUMN)
         );
         resourceActivity.setPausedAt(resultSet.getInt(PAUSED_AT_COLUMN));
         resourceActivity.fetchUserActivities(connection);
@@ -193,16 +191,14 @@ public class ResourceActivity extends Activity {
     }
     ResourceActivity resourceActivity = (ResourceActivity) obj;
     if (
-      startedAt == null && resourceActivity.startedAt != null
-      ||
-      startedAt != null && resourceActivity.startedAt == null
+        startedAt == null && resourceActivity.startedAt != null ||
+        startedAt != null && resourceActivity.startedAt == null
     ) {
       return false;
     }
-    return
-      resourceActivity.resource.equals(resource) &&
-        (resourceActivity.startedAt == null || resourceActivity.startedAt.equals(startedAt)) &&
-        resourceActivity.pausedAt == pausedAt;
+    return resourceActivity.resource.equals(resource) &&
+           (resourceActivity.startedAt == null || resourceActivity.startedAt.equals(startedAt)) &&
+           resourceActivity.pausedAt == pausedAt;
   }
   //#endregion Equals
 }
