@@ -85,7 +85,13 @@ public class Musician extends Artist {
   @Override
   public void save(Connection connection) throws SQLException {
     if (this.getId() == null) {
-      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s(?::varchar(191)%s);", CREATION_FUNCTION_NAME, person != null ? ", ?" : ""))) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(
+          String.format(
+              "select * from %s(?::varchar(191)%s);",
+              CREATION_FUNCTION_NAME,
+              person != null ? ", ?" : ""
+          )
+      )) {
         preparedStatement.setString(1, getName());
         if (person != null) {
           if (person.getId() == null) {
@@ -107,7 +113,13 @@ public class Musician extends Artist {
   }
 
   public static Musician findById(Integer id, Connection connection) throws SQLException, NoResultException {
-    try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s where %s = ?;", VIEW_NAME, VIEW_ID_COLUMN))) {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(
+        String.format(
+            "select * from %s where %s = ?;",
+            VIEW_NAME,
+            VIEW_ID_COLUMN
+        )
+    )) {
       preparedStatement.setInt(1, id);
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
         if (!resultSet.next()) {
