@@ -5,4 +5,5 @@ import java.sql.SQLException;
 
 public interface Savable {
   void save(Connection connection) throws SQLException;
+
 }
