@@ -46,15 +46,18 @@ public class ArtistController implements CommonResponses {
   }
 
   @GetMapping("/artists")
-  public JsonNode allArtists() throws SQLException {
+  public ResponseEntity<JsonNode> allArtists() {
     List<Artist> allArtists;
     try (Connection connection = databaseConnection.getConnection()) {
       allArtists = ArtistDAO.all(connection);
       for (Artist artist : allArtists) {
         artist.fetchAlbums(connection);
       }
+    } catch (SQLException sqlException) {
+      logException(sqlException);
+      return internalServerError();
     }
-    return new JsonArtistListWriter(allArtists).getJson();
+    return ResponseEntity.ok(new JsonArtistListWriter(allArtists).getJson());
   }
 
   @GetMapping("/artist/{id}")
