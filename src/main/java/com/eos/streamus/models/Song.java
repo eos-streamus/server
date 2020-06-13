@@ -47,11 +47,11 @@ public class Song extends Resource implements SavableDeletableEntity {
           throw new NoResultException();
         }
         return new Song(
-          rs.getInt("id"),
-          rs.getString("path"),
-          rs.getString("name"),
-          rs.getTimestamp("createdAt"),
-          rs.getInt("duration")
+            rs.getInt("id"),
+            rs.getString("path"),
+            rs.getString("name"),
+            rs.getTimestamp("createdAt"),
+            rs.getInt("duration")
         );
       }
     }
