@@ -72,7 +72,11 @@ public class Album extends SongCollection {
   @Override
   public void save(Connection connection) throws SQLException {
     if (this.getId() == null) {
-      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s(?, ?);", CREATION_FUNCTION_NAME))) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(
+          String.format(
+              "select * from %s(?, ?);", CREATION_FUNCTION_NAME
+          )
+      )) {
         preparedStatement.setString(1, getName());
         preparedStatement.setDate(2, releaseDate);
         try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -85,14 +89,14 @@ public class Album extends SongCollection {
     }
     for (Artist artist : artists) {
       try (PreparedStatement preparedStatement = connection.prepareStatement(
-        String.format(
-          "insert into %s(%s, %s) values (?, ?) on conflict (%s, %s) do nothing;",
-          ALBUM_ARTIST_TABLE_NAME,
-          ALBUM_ARTIST_ALBUM_ID_COLUMN,
-          ALBUM_ARTIST_ARTIST_ID_COLUMN,
-          ALBUM_ARTIST_ALBUM_ID_COLUMN,
-          ALBUM_ARTIST_ARTIST_ID_COLUMN
-        )
+          String.format(
+              "insert into %s(%s, %s) values (?, ?) on conflict (%s, %s) do nothing;",
+              ALBUM_ARTIST_TABLE_NAME,
+              ALBUM_ARTIST_ALBUM_ID_COLUMN,
+              ALBUM_ARTIST_ARTIST_ID_COLUMN,
+              ALBUM_ARTIST_ALBUM_ID_COLUMN,
+              ALBUM_ARTIST_ARTIST_ID_COLUMN
+          )
       )) {
         preparedStatement.setInt(1, getId());
         preparedStatement.setInt(2, artist.getId());
@@ -105,11 +109,11 @@ public class Album extends SongCollection {
   public static Album findById(Integer id, Connection connection) throws SQLException, NoResultException {
     Album album;
     try (PreparedStatement preparedStatement = connection.prepareStatement(
-      String.format(
-        "select * from %s where %s = ?;",
-        VIEW_NAME,
-        VIEW_ID
-      )
+        String.format(
+            "select * from %s where %s = ?;",
+            VIEW_NAME,
+            VIEW_ID
+        )
     )) {
       preparedStatement.setInt(1, id);
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -117,29 +121,33 @@ public class Album extends SongCollection {
           throw new NoResultException();
         }
         album = new Album(
-          id,
-          resultSet.getString(Collection.NAME_COLUMN),
-          resultSet.getDate(RELEASE_DATE_COLUMN),
-          resultSet.getTimestamp(Collection.CREATED_AT_COLUMN),
-          resultSet.getTimestamp(Collection.UPDATED_AT_COLUMN)
+            id,
+            resultSet.getString(Collection.NAME_COLUMN),
+            resultSet.getDate(RELEASE_DATE_COLUMN),
+            resultSet.getTimestamp(Collection.CREATED_AT_COLUMN),
+            resultSet.getTimestamp(Collection.UPDATED_AT_COLUMN)
         );
         do {
           if (resultSet.getInt(VIEW_SONG_ID) != 0) {
             album.addTrack(album.new Track(
-              resultSet.getInt(TRACK_NUMBER_COLUMN),
-              new Song(
-                resultSet.getInt(VIEW_SONG_ID),
-                resultSet.getString(Resource.PATH_COLUMN),
-                resultSet.getString(VIEW_SONG_NAME_COLUMN),
-                resultSet.getTimestamp(SONG_CREATED_AT_COLUMN),
-                resultSet.getInt(Resource.DURATION_COLUMN)
-              )
+                resultSet.getInt(TRACK_NUMBER_COLUMN),
+                new Song(
+                    resultSet.getInt(VIEW_SONG_ID),
+                    resultSet.getString(Resource.PATH_COLUMN),
+                    resultSet.getString(VIEW_SONG_NAME_COLUMN),
+                    resultSet.getTimestamp(SONG_CREATED_AT_COLUMN),
+                    resultSet.getInt(Resource.DURATION_COLUMN)
+                )
             ));
           }
         } while (resultSet.next());
       }
     }
-    try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s where %s = ?;", ALBUM_ARTIST_TABLE_NAME, ALBUM_ARTIST_ALBUM_ID_COLUMN))) {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(
+        String.format(
+            "select * from %s where %s = ?;", ALBUM_ARTIST_TABLE_NAME, ALBUM_ARTIST_ALBUM_ID_COLUMN
+        )
+    )) {
       preparedStatement.setInt(1, id);
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
         while (resultSet.next()) {
