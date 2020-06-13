@@ -21,7 +21,7 @@ abstract class JsonArtistWriter extends JsonObjectWriter {
     }
     ArrayNode albums = objectNode.putArray("albums");
     for (Album album: artist.getAlbums()) {
-      albums.add(new JsonSongCollectionWriter(album).getJson());
+      albums.add(album.getId());
     }
     return addSpecificArtistJson(objectNode);
   }

@@ -10,6 +10,7 @@ import com.eos.streamus.payloadmodels.BandMember;
 import com.eos.streamus.payloadmodels.BandMemberValidator;
 import com.eos.streamus.payloadmodels.MusicianValidator;
 import com.eos.streamus.utils.DatabaseConnection;
+import com.eos.streamus.writers.JsonAlbumListWriter;
 import com.eos.streamus.writers.JsonArtistListWriter;
 import com.eos.streamus.writers.JsonBandWriter;
 import com.eos.streamus.writers.JsonMusicianWriter;
@@ -57,7 +58,7 @@ public class ArtistController implements CommonResponses {
   }
 
   @GetMapping("/artist/{id}")
-  public ResponseEntity<JsonNode> getArtist(@PathVariable int id) throws SQLException {
+  public ResponseEntity<JsonNode> getArtist(@PathVariable int id) {
     try (Connection connection = databaseConnection.getConnection()) {
       Artist artist = ArtistDAO.findById(id, connection);
       artist.fetchAlbums(connection);
@@ -67,6 +68,23 @@ public class ArtistController implements CommonResponses {
       return ResponseEntity.ok().body(writer.getJson());
     } catch (NoResultException e) {
       return ResponseEntity.notFound().build();
+    } catch (SQLException sqlException) {
+      logException(sqlException);
+      return internalServerError();
+    }
+  }
+
+  @GetMapping("/artist/{id}/discography")
+  public ResponseEntity<JsonNode> getArtistDiscography(@PathVariable int id) {
+    try (Connection connection = databaseConnection.getConnection()) {
+      Artist artist = ArtistDAO.findById(id, connection);
+      artist.fetchAlbums(connection);
+      return ResponseEntity.ok(new JsonAlbumListWriter(artist.getAlbums()).getJson());
+    } catch (NoResultException noResultException) {
+      return ResponseEntity.notFound().build();
+    } catch (SQLException sqlException) {
+      logException(sqlException);
+      return internalServerError();
     }
   }
 
