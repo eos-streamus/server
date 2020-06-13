@@ -29,34 +29,6 @@ class StreamUsApplicationTests {
   private final Random random = new Random();
 
   @Test
-  void testUserCRUD() throws SQLException, NoResultException {
-    try (Connection connection = databaseConnection.getConnection()) {
-      // Create
-      User user = randomUser();
-      user.save(connection);
-
-      // Read
-      User retrievedUser = User.findById(user.getId(), connection);
-      assertEquals(user, retrievedUser);
-
-      // Update
-      user.setFirstName("Jane");
-      user.setLastName("Donut");
-      user.setDateOfBirth(randomDate());
-      user.setEmail(String.format("jane.donut%d@email.com", random.nextInt()));
-      user.setUsername("janedonut");
-      user.save(connection);
-
-      retrievedUser = User.findById(user.getId(), connection);
-      assertEquals(user, retrievedUser);
-
-      // Delete
-      user.delete(connection);
-      assertThrows(NoResultException.class, () -> User.findById(user.getId(), connection));
-    }
-  }
-
-  @Test
   void testEmptySongPlaylistCRUD() throws SQLException, NoResultException, ParseException {
     try (Connection connection = databaseConnection.getConnection()) {
       DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");

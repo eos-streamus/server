@@ -45,6 +45,10 @@ public abstract class DatabaseTests {
                     randomString());
   }
 
+  protected Random getRandom() {
+    return random;
+  }
+
   @Test
   void connectToDatabase() {
     assertDoesNotThrow(() -> {
