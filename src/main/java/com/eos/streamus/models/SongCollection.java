@@ -130,7 +130,7 @@ public abstract class SongCollection extends Collection {
     tracks.add(new Track(newTrackNumber + 1, song));
   }
 
-  protected void addTrack(Track track) {
+  public void addTrack(Track track) {
     if (!this.tracks.contains(track)) {
       this.tracks.add(track);
     }
