@@ -5,4 +5,5 @@ import java.sql.SQLException;
 
 public interface Deletable {
   void delete(Connection connection) throws SQLException;
+
 }

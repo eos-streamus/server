@@ -47,9 +47,12 @@ public class FilmController implements CommonResponses {
   }
 
   @GetMapping("/films")
-  public JsonNode allFilms() throws SQLException {
+  public ResponseEntity<JsonNode> allFilms() {
     try (Connection connection = databaseConnection.getConnection()) {
-      return new JsonFilmListWriter(Film.all(connection)).getJson();
+      return ResponseEntity.ok(new JsonFilmListWriter(Film.all(connection)).getJson());
+    } catch (SQLException sqlException) {
+      logException(sqlException);
+      return internalServerError();
     }
   }
 
@@ -104,7 +107,7 @@ public class FilmController implements CommonResponses {
       logException(sqlException);
       return internalServerError();
     } catch (NoResultException noResultException) {
-      return ResponseEntity.notFound().build();
+      return notFound();
     }
   }
 
@@ -113,7 +116,7 @@ public class FilmController implements CommonResponses {
     try (Connection connection = databaseConnection.getConnection()) {
       return streamResource(Film.findById(id, connection), headers.getRange(), MAX_VIDEO_CHUNK_SIZE);
     } catch (NoResultException noResultException) {
-      return ResponseEntity.notFound().build();
+      return notFound();
     } catch (SQLException | IOException exception) {
       logException(exception);
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

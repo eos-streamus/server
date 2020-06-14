@@ -95,7 +95,15 @@ public abstract class Collection implements SavableDeletableEntity {
     if (this.id == null) {
       throw new NullPointerException("Collection#save can only be called on update");
     }
-    try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("update %s set %s = ? where %s = ? returning %s;", TABLE_NAME, NAME_COLUMN, PRIMARY_KEY_NAME, UPDATED_AT_COLUMN))) {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(
+        String.format(
+            "update %s set %s = ? where %s = ? returning %s;",
+            TABLE_NAME,
+            NAME_COLUMN,
+            PRIMARY_KEY_NAME,
+            UPDATED_AT_COLUMN
+        )
+    )) {
       preparedStatement.setString(1, name);
       preparedStatement.setInt(2, id);
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -126,7 +134,7 @@ public abstract class Collection implements SavableDeletableEntity {
     }
     Collection collection = (Collection) o;
     return
-      collection.id.equals(id) &&
+        collection.id.equals(id) &&
         collection.name.equals(name) &&
         collection.createdAt.equals(createdAt) &&
         collection.updatedAt.equals(updatedAt);

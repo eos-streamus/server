@@ -76,7 +76,11 @@ public abstract class Artist implements SavableDeletableEntity {
     if (this.getId() == null) {
       throw new NullPointerException("Artist#save can only be called on update");
     }
-    try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("update %s set %s = ? where %s = ?", TABLE_NAME, NAME_COLUMN, PRIMARY_KEY_NAME))) {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(
+        String.format(
+            "update %s set %s = ? where %s = ?", TABLE_NAME, NAME_COLUMN, PRIMARY_KEY_NAME
+        )
+    )) {
       preparedStatement.setString(1, name);
       preparedStatement.setInt(2, id);
       preparedStatement.execute();
@@ -84,7 +88,11 @@ public abstract class Artist implements SavableDeletableEntity {
   }
 
   public void fetchAlbums(Connection connection) throws SQLException {
-    try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s where %s = ?", ALBUM_ARTIST_TABLE_NAME, ALBUM_ARTIST_ARTIST_ID))) {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(
+        String.format(
+            "select * from %s where %s = ?", ALBUM_ARTIST_TABLE_NAME, ALBUM_ARTIST_ARTIST_ID
+        )
+    )) {
       preparedStatement.setInt(1, id);
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
         while (resultSet.next()) {

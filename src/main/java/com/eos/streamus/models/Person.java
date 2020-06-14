@@ -25,7 +25,8 @@ public class Person implements SavableDeletableEntity {
   //#endregion Instance attributes
 
   //#region Constructors
-  protected Person(Integer id, String firstName, String lastName, Date dateOfBirth, Timestamp createdAt, Timestamp updatedAt) {
+  protected Person(Integer id, String firstName, String lastName,
+                   Date dateOfBirth, Timestamp createdAt, Timestamp updatedAt) {
     this(firstName, lastName, dateOfBirth);
     this.id = id;
     this.createdAt = createdAt;
@@ -109,7 +110,12 @@ public class Person implements SavableDeletableEntity {
   @Override
   public void save(Connection connection) throws SQLException {
     if (this.id == null) {
-      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s(?::varchar(200), ?::varchar(200), ?)", creationFunctionName()))) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(
+          String.format(
+              "select * from %s(?::varchar(200), ?::varchar(200), ?)",
+              creationFunctionName()
+          )
+      )) {
         preparedStatement.setString(1, firstName);
         preparedStatement.setString(2, lastName);
         preparedStatement.setDate(3, dateOfBirth);
@@ -123,7 +129,12 @@ public class Person implements SavableDeletableEntity {
         }
       }
     } else {
-      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("update %s set firstname = ?, lastname = ?, dateOfBirth = ? where id = ? returning updatedAt;", TABLE_NAME))) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(
+          String.format(
+              "update %s set firstname = ?, lastname = ?, dateOfBirth = ? where id = ? returning updatedAt;",
+              TABLE_NAME
+          )
+      )) {
         preparedStatement.setString(1, firstName);
         preparedStatement.setString(2, lastName);
         preparedStatement.setDate(3, dateOfBirth);
@@ -137,19 +148,24 @@ public class Person implements SavableDeletableEntity {
   }
 
   public static Person findById(Integer id, Connection connection) throws SQLException, NoResultException {
-    try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s where id = ?;", TABLE_NAME))) {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(
+        String.format(
+            "select * from %s where id = ?;",
+            TABLE_NAME
+        )
+    )) {
       preparedStatement.setInt(1, id);
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
         if (!resultSet.next()) {
           throw new NoResultException();
         }
         return new Person(
-          resultSet.getInt(ID_COLUMN),
-          resultSet.getString(FIRST_NAME_COLUMN),
-          resultSet.getString(LAST_NAME_COLUMN),
-          resultSet.getDate(DATE_OF_BIRTH_COLUMN),
-          resultSet.getTimestamp(CREATED_AT_COLUMN),
-          resultSet.getTimestamp(UPDATED_AT_COLUMN)
+            resultSet.getInt(ID_COLUMN),
+            resultSet.getString(FIRST_NAME_COLUMN),
+            resultSet.getString(LAST_NAME_COLUMN),
+            resultSet.getDate(DATE_OF_BIRTH_COLUMN),
+            resultSet.getTimestamp(CREATED_AT_COLUMN),
+            resultSet.getTimestamp(UPDATED_AT_COLUMN)
         );
       }
     }
@@ -176,7 +192,7 @@ public class Person implements SavableDeletableEntity {
     }
     Person p = (Person) o;
     return
-      p.id.equals(id) &&
+        p.id.equals(id) &&
         p.firstName.equals(firstName) &&
         p.lastName.equals(lastName) &&
         (p.dateOfBirth.compareTo(dateOfBirth) == 0) &&

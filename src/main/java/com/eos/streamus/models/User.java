@@ -18,7 +18,8 @@ public class User extends Person {
   //#endregion Instance attributes
 
   //#region Constructors
-  protected User(Integer id, String firstName, String lastName, Date dateOfBirth, Timestamp createdAt, Timestamp updatedAt, String email, String username) { // NOSONAR
+  protected User(Integer id, String firstName, String lastName, Date dateOfBirth, // NOSONAR
+                 Timestamp createdAt, Timestamp updatedAt, String email, String username) {
     super(id, firstName, lastName, dateOfBirth, createdAt, updatedAt);
     this.email = email;
     this.username = username;
@@ -68,7 +69,12 @@ public class User extends Person {
   @Override
   public void save(Connection connection) throws SQLException {
     if (this.getId() == null) {
-      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s(?::varchar(200), ?::varchar(200), ?, ?::varchar(255), ?::varchar(50));", creationFunctionName()))) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(
+          String.format(
+              "select * from %s(?::varchar(200), ?::varchar(200), ?, ?::varchar(255), ?::varchar(50));",
+              creationFunctionName()
+          )
+      )) {
         preparedStatement.setString(1, getFirstName());
         preparedStatement.setString(2, getLastName());
         preparedStatement.setDate(3, getDateOfBirth());
@@ -85,7 +91,12 @@ public class User extends Person {
       }
     } else {
       super.save(connection);
-      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("update %s set %s = ?, %s = ? where %s = ?;", tableName(), EMAIL_COLUMN, USERNAME_COLUMN, primaryKeyName()))) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(
+          String.format(
+              "update %s set %s = ?, %s = ? where %s = ?;", tableName(), EMAIL_COLUMN, USERNAME_COLUMN,
+              primaryKeyName()
+          )
+      )) {
         preparedStatement.setString(1, email);
         preparedStatement.setString(2, username);
         preparedStatement.setInt(3, getId());
@@ -95,21 +106,26 @@ public class User extends Person {
   }
 
   public static User findById(Integer id, Connection connection) throws SQLException, NoResultException {
-    try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s where id = ?", VIEW_NAME))) {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(
+        String.format(
+            "select * from %s where id = ?",
+            VIEW_NAME
+        )
+    )) {
       preparedStatement.setInt(1, id);
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
         if (!resultSet.next()) {
           throw new NoResultException();
         }
         return new User(
-          resultSet.getInt(ID_COLUMN),
-          resultSet.getString(FIRST_NAME_COLUMN),
-          resultSet.getString(LAST_NAME_COLUMN),
-          resultSet.getDate(DATE_OF_BIRTH_COLUMN),
-          resultSet.getTimestamp(CREATED_AT_COLUMN),
-          resultSet.getTimestamp(UPDATED_AT_COLUMN),
-          resultSet.getString(EMAIL_COLUMN),
-          resultSet.getString(USERNAME_COLUMN)
+            resultSet.getInt(ID_COLUMN),
+            resultSet.getString(FIRST_NAME_COLUMN),
+            resultSet.getString(LAST_NAME_COLUMN),
+            resultSet.getDate(DATE_OF_BIRTH_COLUMN),
+            resultSet.getTimestamp(CREATED_AT_COLUMN),
+            resultSet.getTimestamp(UPDATED_AT_COLUMN),
+            resultSet.getString(EMAIL_COLUMN),
+            resultSet.getString(USERNAME_COLUMN)
         );
       }
     }

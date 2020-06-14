@@ -90,7 +90,12 @@ public abstract class Resource implements SavableDeletableEntity {
   @Override
   public void save(Connection connection) throws SQLException {
     if (this.id == null) {
-      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s(?::varchar(1041), ?::varchar(200), ?)", creationFunctionName()))) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(
+          String.format(
+              "select * from %s(?::varchar(1041), ?::varchar(200), ?)",
+              creationFunctionName()
+          )
+      )) {
         preparedStatement.setString(1, getPath());
         preparedStatement.setString(2, getName());
         preparedStatement.setInt(3, getDuration());
@@ -103,7 +108,16 @@ public abstract class Resource implements SavableDeletableEntity {
         }
       }
     } else {
-      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("update %s set %s = ?, %s = ?, %s = ? where %s = ?;", TABLE_NAME, PATH_COLUMN, NAME_COLUMN, DURATION_COLUMN, ID_COLUMN))) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(
+          String.format(
+              "update %s set %s = ?, %s = ?, %s = ? where %s = ?;",
+              TABLE_NAME,
+              PATH_COLUMN,
+              NAME_COLUMN,
+              DURATION_COLUMN,
+              ID_COLUMN
+          )
+      )) {
         preparedStatement.setString(1, path);
         preparedStatement.setString(2, name);
         preparedStatement.setLong(3, duration);
@@ -134,7 +148,7 @@ public abstract class Resource implements SavableDeletableEntity {
     }
     Resource oResource = (Resource) o;
     return
-      oResource.id.equals(id) &&
+        oResource.id.equals(id) &&
         oResource.path.equals(path) &&
         oResource.name.equals(name) &&
         oResource.createdAt.equals(createdAt) &&

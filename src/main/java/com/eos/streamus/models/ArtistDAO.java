@@ -24,7 +24,12 @@ public class ArtistDAO {
 
   public static List<Artist> all(Connection connection) throws SQLException {
     List<Artist> artists = new ArrayList<>();
-    try (PreparedStatement preparedStatement = connection.prepareStatement("select distinct id from " + Artist.TABLE_NAME)) {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(
+        String.format(
+            "select distinct id from %s",
+            Artist.TABLE_NAME
+        )
+    )) {
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
         while (resultSet.next()) {
           try {
@@ -37,4 +42,5 @@ public class ArtistDAO {
     }
     return artists;
   }
+
 }

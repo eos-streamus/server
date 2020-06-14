@@ -1,4 +1,6 @@
-package com.eos.streamus.payloadmodels;
+package com.eos.streamus.payloadmodels.validators;
+
+import com.eos.streamus.payloadmodels.Musician;
 
 import javax.validation.constraints.NotNull;
 import java.sql.Date;

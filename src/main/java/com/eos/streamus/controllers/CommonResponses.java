@@ -60,4 +60,8 @@ interface CommonResponses {
     Logger.getLogger(getClass().getName()).severe(exception.getMessage());
   }
 
+  default<T> ResponseEntity<T> notFound() {
+    return ResponseEntity.notFound().build();
+  }
+
 }

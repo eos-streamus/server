@@ -43,18 +43,24 @@ public class Film extends Video {
 
   //#region Database operations
   public static Film findById(int id, Connection connection) throws SQLException, NoResultException {
-    try (PreparedStatement statement = connection.prepareStatement(String.format("select * from %s where %s = ?", VIEW_NAME, Resource.ID_COLUMN))) {
+    try (PreparedStatement statement = connection.prepareStatement(
+        String.format(
+            "select * from %s where %s = ?",
+            VIEW_NAME,
+            Resource.ID_COLUMN
+        )
+    )) {
       statement.setInt(1, id);
       try (ResultSet rs = statement.executeQuery()) {
         if (!rs.next()) {
           throw new NoResultException();
         }
         return new Film(
-          rs.getInt(Resource.ID_COLUMN),
-          rs.getString(Resource.PATH_COLUMN),
-          rs.getString(Resource.NAME_COLUMN),
-          rs.getTimestamp(Resource.CREATED_AT_COLUMN),
-          rs.getInt(Resource.DURATION_COLUMN)
+            rs.getInt(Resource.ID_COLUMN),
+            rs.getString(Resource.PATH_COLUMN),
+            rs.getString(Resource.NAME_COLUMN),
+            rs.getTimestamp(Resource.CREATED_AT_COLUMN),
+            rs.getInt(Resource.DURATION_COLUMN)
         );
       }
     }
@@ -63,18 +69,18 @@ public class Film extends Video {
   public static List<Film> all(Connection connection) throws SQLException {
     List<Film> allFilms = new ArrayList<>();
     try (PreparedStatement preparedStatement = connection.prepareStatement(
-      String.format("select * from %s", VIEW_NAME)
+        String.format("select * from %s", VIEW_NAME)
     )) {
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
         while (resultSet.next()) {
           allFilms.add(
-            new Film(
-              resultSet.getInt(Resource.ID_COLUMN),
-              resultSet.getString(Resource.PATH_COLUMN),
-              resultSet.getString(Resource.NAME_COLUMN),
-              resultSet.getTimestamp(Resource.CREATED_AT_COLUMN),
-              resultSet.getInt(Resource.DURATION_COLUMN)
-            )
+              new Film(
+                  resultSet.getInt(Resource.ID_COLUMN),
+                  resultSet.getString(Resource.PATH_COLUMN),
+                  resultSet.getString(Resource.NAME_COLUMN),
+                  resultSet.getTimestamp(Resource.CREATED_AT_COLUMN),
+                  resultSet.getInt(Resource.DURATION_COLUMN)
+              )
           );
         }
       }

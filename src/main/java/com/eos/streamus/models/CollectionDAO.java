@@ -7,6 +7,7 @@ import java.sql.SQLException;
 
 public class CollectionDAO {
   private CollectionDAO() {}
+
   public static Collection findById(Integer id, Connection connection) throws SQLException, NoResultException {
     Collection collection = null;
     try {
@@ -26,4 +27,5 @@ public class CollectionDAO {
     }
     return collection;
   }
+
 }

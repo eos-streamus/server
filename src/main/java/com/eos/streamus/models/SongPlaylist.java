@@ -16,7 +16,8 @@ public final class SongPlaylist extends SongCollection {
   //#endregion Instance attributes
 
   //#region Constructors
-  private SongPlaylist(Integer id, String name, Timestamp createdAt, Timestamp updatedAt, final User user, Track... tracks) {
+  private SongPlaylist(Integer id, String name, Timestamp createdAt,
+                       Timestamp updatedAt, final User user, Track... tracks) {
     super(id, name, createdAt, updatedAt, tracks);
     this.user = user;
   }
@@ -42,7 +43,12 @@ public final class SongPlaylist extends SongCollection {
   @Override
   public void save(Connection connection) throws SQLException {
     if (this.getId() == null) {
-      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s(?::varchar(200), ?);", CREATION_FUNCTION_NAME))) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(
+          String.format(
+              "select * from %s(?::varchar(200), ?);",
+              CREATION_FUNCTION_NAME
+          )
+      )) {
         preparedStatement.setString(1, getName());
         preparedStatement.setInt(2, user.getId());
         try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -61,7 +67,13 @@ public final class SongPlaylist extends SongCollection {
   }
 
   public static SongPlaylist findById(Integer id, Connection connection) throws SQLException, NoResultException {
-    try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s where %s = ?;", VIEW_NAME, Collection.PRIMARY_KEY_NAME))) {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(
+        String.format(
+            "select * from %s where %s = ?;",
+            VIEW_NAME,
+            Collection.PRIMARY_KEY_NAME
+        )
+    )) {
       preparedStatement.setInt(1, id);
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
         if (!resultSet.next()) {
@@ -77,19 +89,29 @@ public final class SongPlaylist extends SongCollection {
         User user = User.findById(userId, connection);
 
         SongPlaylist songPlaylist = new SongPlaylist(
-          id,
-          name,
-          createdAt,
-          updatedAt,
-          user
+            id,
+            name,
+            createdAt,
+            updatedAt,
+            user
         );
 
         // Songs
         int firstTrackNumber = resultSet.getInt(Track.TRACK_NUMBER_COLUMN);
         if (!resultSet.wasNull()) {
-          songPlaylist.addTrack(songPlaylist.new Track(firstTrackNumber, Song.findById(resultSet.getInt(Track.ID_SONG_COLUMN), connection)));
+          songPlaylist.addTrack(
+              songPlaylist.new Track(
+                  firstTrackNumber,
+                  Song.findById(resultSet.getInt(Track.ID_SONG_COLUMN), connection)
+              )
+          );
           while (resultSet.next()) {
-            songPlaylist.addTrack(songPlaylist.new Track(resultSet.getInt(Track.TRACK_NUMBER_COLUMN), Song.findById(resultSet.getInt(Track.ID_SONG_COLUMN), connection)));
+            songPlaylist.addTrack(
+                songPlaylist.new Track(
+                    resultSet.getInt(Track.TRACK_NUMBER_COLUMN),
+                    Song.findById(resultSet.getInt(Track.ID_SONG_COLUMN), connection)
+                )
+            );
           }
         }
         return songPlaylist;

@@ -1,8 +1,10 @@
-package com.eos.streamus.payloadmodels;
+package com.eos.streamus.payloadmodels.validators;
 
 import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.ArtistDAO;
 import com.eos.streamus.models.Song;
+import com.eos.streamus.payloadmodels.Album;
+import com.eos.streamus.payloadmodels.Track;
 import com.eos.streamus.utils.DatabaseConnection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

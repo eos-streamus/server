@@ -6,9 +6,9 @@ import com.eos.streamus.models.ArtistDAO;
 import com.eos.streamus.models.Band;
 import com.eos.streamus.models.Musician;
 import com.eos.streamus.models.Person;
-import com.eos.streamus.payloadmodels.BandMember;
-import com.eos.streamus.payloadmodels.BandMemberValidator;
-import com.eos.streamus.payloadmodels.MusicianValidator;
+import com.eos.streamus.payloadmodels.validators.BandMember;
+import com.eos.streamus.payloadmodels.validators.BandMemberValidator;
+import com.eos.streamus.payloadmodels.validators.MusicianValidator;
 import com.eos.streamus.utils.DatabaseConnection;
 import com.eos.streamus.writers.JsonAlbumListWriter;
 import com.eos.streamus.writers.JsonArtistListWriter;
@@ -46,15 +46,18 @@ public class ArtistController implements CommonResponses {
   }
 
   @GetMapping("/artists")
-  public JsonNode allArtists() throws SQLException {
+  public ResponseEntity<JsonNode> allArtists() {
     List<Artist> allArtists;
     try (Connection connection = databaseConnection.getConnection()) {
       allArtists = ArtistDAO.all(connection);
       for (Artist artist : allArtists) {
         artist.fetchAlbums(connection);
       }
+    } catch (SQLException sqlException) {
+      logException(sqlException);
+      return internalServerError();
     }
-    return new JsonArtistListWriter(allArtists).getJson();
+    return ResponseEntity.ok(new JsonArtistListWriter(allArtists).getJson());
   }
 
   @GetMapping("/artist/{id}")
@@ -67,7 +70,7 @@ public class ArtistController implements CommonResponses {
           new JsonMusicianWriter((Musician) artist);
       return ResponseEntity.ok().body(writer.getJson());
     } catch (NoResultException e) {
-      return ResponseEntity.notFound().build();
+      return notFound();
     } catch (SQLException sqlException) {
       logException(sqlException);
       return internalServerError();
@@ -81,7 +84,7 @@ public class ArtistController implements CommonResponses {
       artist.fetchAlbums(connection);
       return ResponseEntity.ok(new JsonAlbumListWriter(artist.getAlbums()).getJson());
     } catch (NoResultException noResultException) {
-      return ResponseEntity.notFound().build();
+      return notFound();
     } catch (SQLException sqlException) {
       logException(sqlException);
       return internalServerError();

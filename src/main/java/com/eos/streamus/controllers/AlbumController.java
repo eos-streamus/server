@@ -4,7 +4,7 @@ import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.Album;
 import com.eos.streamus.models.ArtistDAO;
 import com.eos.streamus.models.Song;
-import com.eos.streamus.payloadmodels.AlbumValidator;
+import com.eos.streamus.payloadmodels.validators.AlbumValidator;
 import com.eos.streamus.payloadmodels.Track;
 import com.eos.streamus.utils.DatabaseConnection;
 import com.eos.streamus.writers.JsonAlbumWriter;
@@ -39,7 +39,7 @@ public class AlbumController implements CommonResponses {
       Album album = Album.findById(id, connection);
       return ResponseEntity.ok(new JsonAlbumWriter(album).getJson());
     } catch (NoResultException noResultException) {
-      return ResponseEntity.notFound().build();
+      return notFound();
     } catch (SQLException sqlException) {
       logException(sqlException);
       return internalServerError();

@@ -105,7 +105,7 @@ public class SongController implements CommonResponses {
     try (Connection connection = databaseConnection.getConnection()) {
       return streamResource(Song.findById(id, connection), headers.getRange(), MAX_AUDIO_CHUNK_SIZE);
     } catch (NoResultException noResultException) {
-      return ResponseEntity.notFound().build();
+      return notFound();
     } catch (SQLException | IOException exception) {
       logException(exception);
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

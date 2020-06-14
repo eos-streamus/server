@@ -1,5 +1,6 @@
-package com.eos.streamus.payloadmodels;
+package com.eos.streamus.payloadmodels.validators;
 
+import com.eos.streamus.payloadmodels.Person;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;

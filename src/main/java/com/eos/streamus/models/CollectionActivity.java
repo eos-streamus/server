@@ -84,7 +84,12 @@ public class CollectionActivity extends Activity {
   @Override
   public void save(Connection connection) throws SQLException {
     if (getId() == null) {
-      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s(?, ?);", CREATION_FUNCTION_NAME))) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(
+          String.format(
+              "select * from %s(?, ?);",
+              CREATION_FUNCTION_NAME
+          )
+      )) {
         preparedStatement.setInt(1, collection.getId());
         preparedStatement.setInt(2, getUsers().get(0).getUser().getId());
         try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -101,22 +106,31 @@ public class CollectionActivity extends Activity {
   }
 
   public static CollectionActivity findById(Integer id, Connection connection) throws SQLException, NoResultException {
-    try (PreparedStatement preparedStatement = connection.prepareStatement(String.format("select * from %s where %s = ?;", VIEW_NAME, VIEW_ID))) {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(
+        String.format(
+            "select * from %s where %s = ?;",
+            VIEW_NAME,
+            VIEW_ID
+        )
+    )) {
       preparedStatement.setInt(1, id);
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
         if (!resultSet.next()) {
           throw new NoResultException();
         }
-        CollectionActivity collectionActivity = new CollectionActivity(id, CollectionDAO.findById(resultSet.getInt(COLLECTION_ID), connection));
+        CollectionActivity collectionActivity = new CollectionActivity(
+            id,
+            CollectionDAO.findById(resultSet.getInt(COLLECTION_ID), connection)
+        );
         do {
           collectionActivity.resourceActivities.add(
-            new Pair<>(
-              resultSet.getInt(VIEW_NUMBER_ID),
               new Pair<>(
-                ResourceDAO.findById(resultSet.getInt(VIEW_RESOURCE_ID), connection),
-                ResourceActivity.findById(resultSet.getInt(VIEW_RESOURCE_ACTIVITY_ID), connection)
+                  resultSet.getInt(VIEW_NUMBER_ID),
+                  new Pair<>(
+                      ResourceDAO.findById(resultSet.getInt(VIEW_RESOURCE_ID), connection),
+                      ResourceActivity.findById(resultSet.getInt(VIEW_RESOURCE_ACTIVITY_ID), connection)
+                  )
               )
-            )
           );
         } while (resultSet.next());
         collectionActivity.fetchUserActivities(connection);
