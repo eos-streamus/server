@@ -29,6 +29,10 @@ interface CommonResponses {
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
   }
 
+  default ResponseEntity<String> internalServerErrorString() {
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong");
+  }
+
   default ResponseEntity<ResourceRegion> streamResource(final Resource resource,
                                                        final List<HttpRange> range,
                                                        final long maxChunkSize) throws IOException {
