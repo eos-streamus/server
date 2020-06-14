@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -168,6 +169,19 @@ public class ArtistController implements CommonResponses {
       }
     }
 
+  }
+
+  @DeleteMapping("/artist/{id}")
+  public ResponseEntity<String> deleteArtist(@PathVariable final int id) {
+    try (Connection connection = databaseConnection.getConnection()) {
+      ArtistDAO.findById(id, connection).delete(connection);
+      return ResponseEntity.ok("Artist deleted");
+    } catch (SQLException sqlException) {
+      logException(sqlException);
+      return internalServerErrorString();
+    } catch (NoResultException noResultException) {
+      return notFound();
+    }
   }
 
   private Musician getMusicianFromBandMemberData(BandMember member, Connection connection) throws SQLException, NoResultException {

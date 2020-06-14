@@ -1,6 +1,7 @@
 package com.eos.streamus.controllers;
 
 import com.eos.streamus.exceptions.NoResultException;
+import com.eos.streamus.models.Album;
 import com.eos.streamus.models.Film;
 import com.eos.streamus.utils.DatabaseConnection;
 import com.eos.streamus.utils.FileInfo;
@@ -15,6 +16,7 @@ import org.springframework.core.io.support.ResourceRegion;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +27,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.UUID;
@@ -120,6 +124,18 @@ public class FilmController implements CommonResponses {
     } catch (SQLException | IOException exception) {
       logException(exception);
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+  }
+
+  @DeleteMapping("/film/{id}")
+  public ResponseEntity<String> deleteFilm(@PathVariable final int id) {
+    try (Connection connection = databaseConnection.getConnection()) {
+      return deleteFileAndResource(Film.findById(id, connection), connection);
+    } catch (SQLException sqlException) {
+      logException(sqlException);
+      return internalServerErrorString();
+    } catch (NoResultException noResultException) {
+      return notFound();
     }
   }
 
