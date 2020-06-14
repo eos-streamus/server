@@ -12,6 +12,10 @@ import org.springframework.http.MediaTypeFactory;
 import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -34,8 +38,8 @@ interface CommonResponses {
   }
 
   default ResponseEntity<ResourceRegion> streamResource(final Resource resource,
-                                                       final List<HttpRange> range,
-                                                       final long maxChunkSize) throws IOException {
+                                                        final List<HttpRange> range,
+                                                        final long maxChunkSize) throws IOException {
     UrlResource urlResource = new UrlResource(String.format("file:%s", resource.getPath()));
     long contentLength = urlResource.contentLength();
     ResourceRegion region;
@@ -64,8 +68,20 @@ interface CommonResponses {
     Logger.getLogger(getClass().getName()).severe(exception.getMessage());
   }
 
-  default<T> ResponseEntity<T> notFound() {
+  default <T> ResponseEntity<T> notFound() {
     return ResponseEntity.notFound().build();
+  }
+
+  default ResponseEntity<String> deleteFileAndResource(final Resource resource,
+                                                       final Connection connection) throws SQLException {
+    try {
+      Files.delete(FileSystems.getDefault().getPath(resource.getPath()));
+    } catch (IOException e) {
+      logException(e);
+      return internalServerErrorString();
+    }
+    resource.delete(connection);
+    return ResponseEntity.ok("Resource deleted");
   }
 
 }

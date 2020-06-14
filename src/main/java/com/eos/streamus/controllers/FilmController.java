@@ -130,15 +130,7 @@ public class FilmController implements CommonResponses {
   @DeleteMapping("/film/{id}")
   public ResponseEntity<String> deleteFilm(@PathVariable final int id) {
     try (Connection connection = databaseConnection.getConnection()) {
-      Film film = Film.findById(id, connection);
-      try {
-        Files.delete(FileSystems.getDefault().getPath(film.getPath()));
-      } catch (IOException e) {
-        logException(e);
-        return internalServerErrorString();
-      }
-      film.delete(connection);
-      return ResponseEntity.ok("Film deleted");
+      return deleteFileAndResource(Film.findById(id, connection), connection);
     } catch (SQLException sqlException) {
       logException(sqlException);
       return internalServerErrorString();
