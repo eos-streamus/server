@@ -29,21 +29,6 @@ class StreamUsApplicationTests {
   private final Random random = new Random();
 
   @Test
-  void testAdmin() throws SQLException, NoResultException {
-    try (Connection connection = databaseConnection.getConnection()) {
-      Admin admin = new Admin("Test", "Admin", valueOf("1990-01-01"), String.format("test%d@admin.com", random.nextInt()), "test_admin");
-      admin.save(connection);
-      assertNotNull(admin.getId());
-      assertNotNull(admin.getCreatedAt());
-      assertNotNull(admin.getUpdatedAt());
-
-      assertEquals(admin, Admin.findById(admin.getId(), connection));
-      admin.delete(connection);
-      assertThrows(NoResultException.class, () -> Admin.findById(admin.getId(), connection));
-    }
-  }
-
-  @Test
   void testResourceActivity() throws SQLException, NoResultException {
     try (Connection connection = databaseConnection.getConnection()) {
       Song song = new Song(randomString(), randomString(), 100);
