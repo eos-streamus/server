@@ -14,6 +14,7 @@ import org.springframework.core.io.support.ResourceRegion;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -109,6 +110,18 @@ public class SongController implements CommonResponses {
     } catch (SQLException | IOException exception) {
       logException(exception);
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+  }
+
+  @DeleteMapping("/song/{id}")
+  public ResponseEntity<String> deleteSong(@PathVariable("id") final int id) {
+    try (Connection connection = databaseConnection.getConnection()) {
+      return deleteFileAndResource(Song.findById(id, connection), connection);
+    } catch (SQLException sqlException) {
+      logException(sqlException);
+      return internalServerErrorString();
+    } catch (NoResultException noResultException) {
+      return notFound();
     }
   }
 
