@@ -1,20 +1,18 @@
 package com.eos.streamus.controllers;
 
 import com.eos.streamus.exceptions.NoResultException;
-import com.eos.streamus.models.Album;
-import com.eos.streamus.models.ArtistDAO;
 import com.eos.streamus.models.Song;
 import com.eos.streamus.models.SongPlaylist;
 import com.eos.streamus.models.User;
 import com.eos.streamus.payloadmodels.Track;
 import com.eos.streamus.payloadmodels.validators.SongPlaylistValidator;
 import com.eos.streamus.utils.DatabaseConnection;
-import com.eos.streamus.writers.JsonAlbumWriter;
 import com.eos.streamus.writers.JsonSongPlaylistWriter;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -78,6 +76,19 @@ public class SongPlaylistController implements CommonResponses {
     } catch (SQLException sqlException) {
       logException(sqlException);
       return internalServerError();
+    }
+  }
+
+  @DeleteMapping("/songplaylist/{id}")
+  public ResponseEntity<String> deleteSongPlaylist(@PathVariable final int id) {
+    try (Connection connection = databaseConnection.getConnection()) {
+      SongPlaylist.findById(id, connection).delete(connection);
+      return ResponseEntity.ok("SongPlaylist deleted");
+    } catch (NoResultException noResultException) {
+      return notFound();
+    } catch (SQLException sqlException) {
+      logException(sqlException);
+      return internalServerErrorString();
     }
   }
 
