@@ -65,7 +65,9 @@ public class SongPlaylistController implements CommonResponses {
           User.findById(songPlaylistData.getUserId(), connection)
       );
       for (Track track : songPlaylistData.getTracks()) {
-        songPlaylist.addTrack(songPlaylist.new Track(track.getTrackNumber(), Song.findById(track.getSongId(), connection)));
+        songPlaylist.addTrack(
+            songPlaylist.new Track(track.getTrackNumber(), Song.findById(track.getSongId(), connection))
+        );
       }
       songPlaylist.save(connection);
       connection.commit();
