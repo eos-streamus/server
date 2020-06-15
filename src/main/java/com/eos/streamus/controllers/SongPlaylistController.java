@@ -79,6 +79,22 @@ public class SongPlaylistController implements CommonResponses {
     }
   }
 
+  @PostMapping("/songplaylist/{songPlaylistId}/{songId}")
+  public ResponseEntity<JsonNode> addSongToPlaylist(@PathVariable final int songPlaylistId,
+                                                    @PathVariable final int songId) {
+    try (Connection connection = databaseConnection.getConnection()) {
+      SongPlaylist songPlaylist = SongPlaylist.findById(songPlaylistId, connection);
+      songPlaylist.addSong(Song.findById(songId, connection));
+      songPlaylist.save(connection);
+      return ResponseEntity.ok(new JsonSongPlaylistWriter(songPlaylist).getJson());
+    } catch (NoResultException noResultException) {
+      return notFound();
+    } catch (SQLException sqlException) {
+      logException(sqlException);
+      return internalServerError();
+    }
+  }
+
   @DeleteMapping("/songplaylist/{id}")
   public ResponseEntity<String> deleteSongPlaylist(@PathVariable final int id) {
     try (Connection connection = databaseConnection.getConnection()) {
