@@ -23,6 +23,8 @@ import javax.validation.Valid;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import static org.springframework.http.ResponseEntity.ok;
+
 @RestController
 public class SongPlaylistController implements CommonResponses {
 
@@ -38,7 +40,7 @@ public class SongPlaylistController implements CommonResponses {
   @GetMapping("/songplaylist/{id}")
   public ResponseEntity<JsonNode> getSongPlaylistById(@PathVariable final int id) {
     try (Connection connection = databaseConnection.getConnection()) {
-      return ResponseEntity.ok(new JsonSongPlaylistWriter(SongPlaylist.findById(id, connection)).getJson());
+      return ok(new JsonSongPlaylistWriter(SongPlaylist.findById(id, connection)).getJson());
     } catch (SQLException sqlException) {
       logException(sqlException);
       return internalServerError();
@@ -69,7 +71,7 @@ public class SongPlaylistController implements CommonResponses {
       }
       songPlaylist.save(connection);
       connection.commit();
-      return ResponseEntity.ok(new JsonSongPlaylistWriter(songPlaylist).getJson());
+      return ok(new JsonSongPlaylistWriter(songPlaylist).getJson());
     } catch (NoResultException noResultException) {
       // Should not happen
       return badRequest("Invalid ids");
@@ -86,7 +88,7 @@ public class SongPlaylistController implements CommonResponses {
       SongPlaylist songPlaylist = SongPlaylist.findById(songPlaylistId, connection);
       songPlaylist.addSong(Song.findById(songId, connection));
       songPlaylist.save(connection);
-      return ResponseEntity.ok(new JsonSongPlaylistWriter(songPlaylist).getJson());
+      return ok(new JsonSongPlaylistWriter(songPlaylist).getJson());
     } catch (NoResultException noResultException) {
       return notFound();
     } catch (SQLException sqlException) {
@@ -99,7 +101,7 @@ public class SongPlaylistController implements CommonResponses {
   public ResponseEntity<String> deleteSongPlaylist(@PathVariable final int id) {
     try (Connection connection = databaseConnection.getConnection()) {
       SongPlaylist.findById(id, connection).delete(connection);
-      return ResponseEntity.ok("SongPlaylist deleted");
+      return ok("SongPlaylist deleted");
     } catch (NoResultException noResultException) {
       return notFound();
     } catch (SQLException sqlException) {
