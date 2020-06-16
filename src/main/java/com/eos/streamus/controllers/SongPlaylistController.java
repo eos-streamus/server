@@ -2,6 +2,7 @@ package com.eos.streamus.controllers;
 
 import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.Song;
+import com.eos.streamus.models.SongCollection;
 import com.eos.streamus.models.SongPlaylist;
 import com.eos.streamus.models.User;
 import com.eos.streamus.payloadmodels.Track;
@@ -16,12 +17,15 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -89,6 +93,43 @@ public class SongPlaylistController implements CommonResponses {
       songPlaylist.addSong(Song.findById(songId, connection));
       songPlaylist.save(connection);
       return ok(new JsonSongPlaylistWriter(songPlaylist).getJson());
+    } catch (NoResultException noResultException) {
+      return notFound();
+    } catch (SQLException sqlException) {
+      logException(sqlException);
+      return internalServerError();
+    }
+  }
+
+  @PutMapping("/songplaylist/{id}")
+  public ResponseEntity<JsonNode> addTrackToPlaylist(@PathVariable final int id,
+                                                     @Valid @RequestBody final Track trackData) {
+    try (Connection connection = databaseConnection.getConnection()) {
+      SongPlaylist songPlaylist = SongPlaylist.findById(id, connection);
+      Song song = Song.findById(trackData.getSongId(), connection);
+
+      int maxTrackNumber = 0;
+      for (SongCollection.Track track : songPlaylist.getTracks()) {
+        if (track.getTrackNumber() > maxTrackNumber) {
+          maxTrackNumber = track.getTrackNumber();
+        }
+      }
+      if (maxTrackNumber < trackData.getTrackNumber() - 1 || maxTrackNumber == 0) {
+        songPlaylist.addSong(song);
+        songPlaylist.save(connection);
+        return ok(new JsonSongPlaylistWriter(songPlaylist).getJson());
+      }
+
+      for (SongCollection.Track track : songPlaylist.getTracks()) {
+        if (track.getTrackNumber() >= trackData.getTrackNumber()) {
+          track.setTrackNumber(track.getTrackNumber() + 1);
+          track.delete(connection);
+        }
+      }
+
+      songPlaylist.addTrack(songPlaylist.new Track(trackData.getTrackNumber(), song));
+      songPlaylist.save(connection);
+      return ok(new JsonSongPlaylistWriter(SongPlaylist.findById(id, connection)).getJson());
     } catch (NoResultException noResultException) {
       return notFound();
     } catch (SQLException sqlException) {

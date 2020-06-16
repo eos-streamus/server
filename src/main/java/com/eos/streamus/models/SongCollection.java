@@ -3,10 +3,12 @@ package com.eos.streamus.models;
 import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.exceptions.NotPersistedException;
 import com.eos.streamus.utils.Pair;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 public abstract class SongCollection extends Collection {
@@ -25,15 +27,47 @@ public abstract class SongCollection extends Collection {
     }
     //#endregion Constructors
 
+    //#region Getters and Setters
+    public Integer getTrackNumber() {
+      return getKey();
+    }
+
+    public void setTrackNumber(final int trackNumber) {
+      this.setKey(trackNumber);
+    }
+
+    public Song getSong() {
+      return getValue();
+    }
+    //#endregion Getters and Setters
+
     //#region Database operations
     public void save(Connection connection) throws SQLException {
-      try (PreparedStatement songPreparedStatement = connection
-          .prepareStatement(String.format("select * from %s(?, ?);", CREATION_FUNCTION_NAME))) {
-        songPreparedStatement.setInt(1, getValue().getId());
-        songPreparedStatement.setInt(2, SongCollection.this.getId());
-        try (ResultSet rs = songPreparedStatement.executeQuery()) {
-          rs.next();
-          setKey(rs.getInt(1));
+      if (this.getKey() == null) {
+        try (PreparedStatement songPreparedStatement = connection.prepareStatement(
+            String.format("select * from %s(?, ?);", CREATION_FUNCTION_NAME)
+        )) {
+          songPreparedStatement.setInt(1, getValue().getId());
+          songPreparedStatement.setInt(2, SongCollection.this.getId());
+          try (ResultSet rs = songPreparedStatement.executeQuery()) {
+            rs.next();
+            setKey(rs.getInt(1));
+          }
+        }
+      } else {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(
+            String.format(
+                "insert into %s(%s, %s, %s) values (?, ?, ?);",
+                TABLE_NAME,
+                ID_SONG_COLLECTION_COLUMN,
+                ID_SONG_COLUMN,
+                TRACK_NUMBER_COLUMN
+            )
+        )) {
+          preparedStatement.setInt(1, SongCollection.this.getId());
+          preparedStatement.setInt(2, getSong().getId());
+          preparedStatement.setInt(3, getTrackNumber());
+          preparedStatement.execute();
         }
       }
     }
@@ -41,12 +75,10 @@ public abstract class SongCollection extends Collection {
     @Override
     public void delete(Connection connection) throws SQLException {
       try (PreparedStatement preparedStatement = connection.prepareStatement(String.format(
-          "delete from %s where %s = ?, %s = ?", TABLE_NAME, ID_SONG_COLLECTION_COLUMN, ID_SONG_COLUMN))) {
+          "delete from %s where %s = ? and %s = ?", TABLE_NAME, ID_SONG_COLLECTION_COLUMN, ID_SONG_COLUMN))) {
         preparedStatement.setInt(1, SongCollection.this.getId());
         preparedStatement.setInt(2, getValue().getId());
         preparedStatement.execute();
-        this.setKey(null);
-        this.setValue(null);
       }
     }
     //#endregion Database operations
@@ -106,11 +138,7 @@ public abstract class SongCollection extends Collection {
 
   //#region Accessors
   public final List<Track> getTracks() {
-    List<Track> tracksCopy = new ArrayList<>();
-    for (Track track : this.tracks) {
-      tracksCopy.add(new Track(track.getKey(), track.getValue()));
-    }
-    return tracksCopy;
+    return tracks;
   }
 
   @Override
@@ -155,6 +183,7 @@ public abstract class SongCollection extends Collection {
   public void save(Connection connection) throws SQLException {
     super.save(connection);
     List<Track> databaseTracks = getTracksFromDatabase(connection);
+    sortTracks();
     for (Track track : this.getTracks()) {
       if (!databaseTracks.contains(track)) {
         if (track.getValue().getId() == null) {
@@ -219,6 +248,12 @@ public abstract class SongCollection extends Collection {
     return loadedTracks;
   }
   //#endregion Database operations
+
+  //#region Private methods
+  private void sortTracks() {
+    this.tracks.sort(Comparator.comparingInt(Track::getTrackNumber));
+  }
+  //#endregion
 
   //#region Equals
   @Override
