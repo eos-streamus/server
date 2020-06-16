@@ -24,8 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -110,12 +109,11 @@ public class SongPlaylistController implements CommonResponses {
       if (trackData.getTrackNumber() < 1) {
         return badRequest("Track number must be positive");
       }
-      int maxTrackNumber = 0;
-      for (SongCollection.Track track : songPlaylist.getTracks()) {
-        if (track.getTrackNumber() > maxTrackNumber) {
-          maxTrackNumber = track.getTrackNumber();
-        }
-      }
+      Optional<SongCollection.Track> maxTrack = songPlaylist.getTracks().stream().reduce(
+          (t1, t2) -> t1.getTrackNumber() > t2.getTrackNumber() ? t1 : t2
+      );
+      int maxTrackNumber = maxTrack.isPresent() ? maxTrack.get().getTrackNumber() : 0;
+
       if (maxTrackNumber < trackData.getTrackNumber() - 1 || maxTrackNumber == 0) {
         songPlaylist.addSong(song);
         songPlaylist.save(connection);
