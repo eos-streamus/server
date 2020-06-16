@@ -107,7 +107,9 @@ public class SongPlaylistController implements CommonResponses {
     try (Connection connection = databaseConnection.getConnection()) {
       SongPlaylist songPlaylist = SongPlaylist.findById(id, connection);
       Song song = Song.findById(trackData.getSongId(), connection);
-
+      if (trackData.getTrackNumber() < 1) {
+        return badRequest("Track number must be positive");
+      }
       int maxTrackNumber = 0;
       for (SongCollection.Track track : songPlaylist.getTracks()) {
         if (track.getTrackNumber() > maxTrackNumber) {
