@@ -3,7 +3,6 @@ package com.eos.streamus.models;
 import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.exceptions.NotPersistedException;
 import com.eos.streamus.utils.Pair;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -202,7 +201,6 @@ public abstract class SongCollection extends Collection {
   public String primaryKeyName() {
     return PRIMARY_KEY_NAME;
   }
-
   //#endregion Accessors
 
   //#region Database operations
