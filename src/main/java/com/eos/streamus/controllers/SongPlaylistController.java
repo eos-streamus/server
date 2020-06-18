@@ -101,7 +101,7 @@ public class SongPlaylistController implements CommonResponses {
   }
 
   @PutMapping("/songplaylist/{id}")
-  public ResponseEntity<JsonNode> addTrackToPlaylist(@PathVariable final int id,
+  public ResponseEntity<JsonNode> addOrMoveTrackInPlaylist(@PathVariable final int id,
                                                      @Valid @RequestBody final Track trackData) {
     try (Connection connection = databaseConnection.getConnection()) {
       SongPlaylist songPlaylist = SongPlaylist.findById(id, connection);
@@ -109,27 +109,19 @@ public class SongPlaylistController implements CommonResponses {
       if (trackData.getTrackNumber() < 1) {
         return badRequest("Track number must be positive");
       }
-      Optional<SongCollection.Track> maxTrack = songPlaylist.getTracks().stream().reduce(
-          (t1, t2) -> t1.getTrackNumber() > t2.getTrackNumber() ? t1 : t2
-      );
-      int maxTrackNumber = maxTrack.isPresent() ? maxTrack.get().getTrackNumber() : 0;
 
-      if (maxTrackNumber < trackData.getTrackNumber() - 1 || maxTrackNumber == 0) {
-        songPlaylist.addSong(song);
+      // If song is already in playlist
+      Optional<SongCollection.Track> existingTrack = songPlaylist.getTracks().stream().filter(
+          track -> track.getSong().getId() == trackData.getSongId()
+      ).findFirst();
+      if (existingTrack.isPresent()) {
+        songPlaylist.moveTrack(existingTrack.get(), trackData.getTrackNumber(), connection);
+      } else {
+        SongCollection.Track newTrack = songPlaylist.addSong(song);
         songPlaylist.save(connection);
-        return ok(new JsonSongPlaylistWriter(songPlaylist).getJson());
+        songPlaylist.moveTrack(newTrack, trackData.getTrackNumber(), connection);
       }
-
-      for (SongCollection.Track track : songPlaylist.getTracks()) {
-        if (track.getTrackNumber() >= trackData.getTrackNumber()) {
-          track.setTrackNumber(track.getTrackNumber() + 1);
-          track.delete(connection);
-        }
-      }
-
-      songPlaylist.addTrack(songPlaylist.new Track(trackData.getTrackNumber(), song));
-      songPlaylist.save(connection);
-      return ok(new JsonSongPlaylistWriter(SongPlaylist.findById(id, connection)).getJson());
+      return ok(new JsonSongPlaylistWriter(songPlaylist).getJson());
     } catch (NoResultException noResultException) {
       return notFound();
     } catch (SQLException sqlException) {
