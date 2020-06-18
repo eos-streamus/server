@@ -4,7 +4,11 @@ import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.exceptions.NotPersistedException;
 import com.eos.streamus.utils.Pair;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -41,6 +45,14 @@ public abstract class SongCollection extends Collection {
     //#endregion Getters and Setters
 
     //#region Database operations
+
+    /**
+     * Save instance to database.
+     *
+     * @param connection {@link Connection} to use.
+     *
+     * @throws SQLException if operation failed.
+     */
     public void save(Connection connection) throws SQLException {
       if (this.getKey() == null) {
         try (PreparedStatement songPreparedStatement = connection.prepareStatement(
@@ -91,7 +103,12 @@ public abstract class SongCollection extends Collection {
     @Override
     public void delete(Connection connection) throws SQLException {
       try (PreparedStatement preparedStatement = connection.prepareStatement(
-          String.format("delete from %s where %s = ? and %s = ?", TABLE_NAME, ID_SONG_COLLECTION_COLUMN, ID_SONG_COLUMN)
+          String.format(
+              "delete from %s where %s = ? and %s = ?",
+              TABLE_NAME,
+              ID_SONG_COLLECTION_COLUMN,
+              ID_SONG_COLUMN
+          )
       )) {
         preparedStatement.setInt(1, SongCollection.this.getId());
         preparedStatement.setInt(2, getValue().getId());
@@ -186,6 +203,11 @@ public abstract class SongCollection extends Collection {
     return track;
   }
 
+  /**
+   * Add track to playlist if song not already present.
+   *
+   * @param track Track to add.
+   */
   public void addTrack(Track track) {
     if (!this.tracks.contains(track)) {
       this.tracks.add(track);
@@ -213,7 +235,12 @@ public abstract class SongCollection extends Collection {
       if (!databaseTracks.contains(track)) {
         if (track.getValue().getId() == null) {
           throw new NotPersistedException(
-              String.format("%s %s is not persisted", track.getValue().tableName(), track.getValue()));
+              String.format(
+                  "%s %s is not persisted",
+                  track.getValue().tableName(),
+                  track.getValue()
+              )
+          );
         }
         track.save(connection);
       }
@@ -282,14 +309,17 @@ public abstract class SongCollection extends Collection {
    *
    * @throws SQLException If SQL statements fail or if integrity constraints are violated.
    */
-  public void moveTrack(Track trackToUpdate, int newTrackNumber, Connection connection) throws SQLException {
+  public void moveTrack(Track trackToUpdate, int newTrackNumber, Connection connection)
+      throws SQLException {
     final int oldTrackNumber = trackToUpdate.getTrackNumber();
     if (!tracks.contains(trackToUpdate)) {
       return;
     }
     final boolean upwards = newTrackNumber > oldTrackNumber;
     final int step = upwards ? 1 : -1;
-    for (int i = oldTrackNumber; upwards && i < newTrackNumber || !upwards && i > newTrackNumber; i += step) {
+    for (int i = oldTrackNumber;
+         upwards && i < newTrackNumber || !upwards && i > newTrackNumber;
+         i += step) {
       sortTracks();
       Track track1;
       Track track2;
@@ -314,7 +344,8 @@ public abstract class SongCollection extends Collection {
     tracks.remove(track);
   }
 
-  private void swapTrackNumbers(Track track1, Track track2, Connection connection) throws SQLException {
+  private void swapTrackNumbers(Track track1, Track track2, Connection connection)
+      throws SQLException {
     final int tmpTrackNumber = track1.getTrackNumber();
     track1.setTrackNumber(track2.getTrackNumber());
     track2.setTrackNumber(tmpTrackNumber);
