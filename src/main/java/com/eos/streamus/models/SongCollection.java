@@ -7,6 +7,7 @@ import com.eos.streamus.utils.Pair;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 public abstract class SongCollection extends Collection {
@@ -25,28 +26,76 @@ public abstract class SongCollection extends Collection {
     }
     //#endregion Constructors
 
+    //#region Getters and Setters
+    public Integer getTrackNumber() {
+      return getKey();
+    }
+
+    public void setTrackNumber(final int trackNumber) {
+      this.setKey(trackNumber);
+    }
+
+    public Song getSong() {
+      return getValue();
+    }
+    //#endregion Getters and Setters
+
     //#region Database operations
     public void save(Connection connection) throws SQLException {
-      try (PreparedStatement songPreparedStatement = connection
-          .prepareStatement(String.format("select * from %s(?, ?);", CREATION_FUNCTION_NAME))) {
-        songPreparedStatement.setInt(1, getValue().getId());
-        songPreparedStatement.setInt(2, SongCollection.this.getId());
-        try (ResultSet rs = songPreparedStatement.executeQuery()) {
-          rs.next();
-          setKey(rs.getInt(1));
+      if (this.getKey() == null) {
+        try (PreparedStatement songPreparedStatement = connection.prepareStatement(
+            String.format("select * from %s(?, ?);", CREATION_FUNCTION_NAME)
+        )) {
+          songPreparedStatement.setInt(1, getValue().getId());
+          songPreparedStatement.setInt(2, SongCollection.this.getId());
+          try (ResultSet rs = songPreparedStatement.executeQuery()) {
+            rs.next();
+            setKey(rs.getInt(1));
+          }
         }
+      } else {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(
+            String.format(
+                "insert into %s(%s, %s, %s) values (?, ?, ?);",
+                TABLE_NAME,
+                ID_SONG_COLLECTION_COLUMN,
+                ID_SONG_COLUMN,
+                TRACK_NUMBER_COLUMN
+            )
+        )) {
+          preparedStatement.setInt(1, SongCollection.this.getId());
+          preparedStatement.setInt(2, getSong().getId());
+          preparedStatement.setInt(3, getTrackNumber());
+          preparedStatement.execute();
+        }
+      }
+    }
+
+    private void updateTrackNumber(Connection connection) throws SQLException {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(
+          String.format(
+              "update %s set %s = ? where %s = ? and %s = ?",
+              TABLE_NAME,
+              TRACK_NUMBER_COLUMN,
+              ID_SONG_COLLECTION_COLUMN,
+              ID_SONG_COLUMN
+          )
+      )) {
+        preparedStatement.setInt(1, getTrackNumber());
+        preparedStatement.setInt(2, SongCollection.this.getId());
+        preparedStatement.setInt(3, getSong().getId());
+        preparedStatement.execute();
       }
     }
 
     @Override
     public void delete(Connection connection) throws SQLException {
-      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format(
-          "delete from %s where %s = ?, %s = ?", TABLE_NAME, ID_SONG_COLLECTION_COLUMN, ID_SONG_COLUMN))) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(
+          String.format("delete from %s where %s = ? and %s = ?", TABLE_NAME, ID_SONG_COLLECTION_COLUMN, ID_SONG_COLUMN)
+      )) {
         preparedStatement.setInt(1, SongCollection.this.getId());
         preparedStatement.setInt(2, getValue().getId());
         preparedStatement.execute();
-        this.setKey(null);
-        this.setValue(null);
       }
     }
     //#endregion Database operations
@@ -79,7 +128,7 @@ public abstract class SongCollection extends Collection {
         return false;
       }
       Track track = (Track) o;
-      return track.getValue().equals(getValue()) && track.getKey().equals(getKey());
+      return track.getValue().equals(getValue());
     }
     //#endregion Equals
   }
@@ -106,11 +155,7 @@ public abstract class SongCollection extends Collection {
 
   //#region Accessors
   public final List<Track> getTracks() {
-    List<Track> tracksCopy = new ArrayList<>();
-    for (Track track : this.tracks) {
-      tracksCopy.add(new Track(track.getKey(), track.getValue()));
-    }
-    return tracksCopy;
+    return tracks;
   }
 
   @Override
@@ -122,14 +167,23 @@ public abstract class SongCollection extends Collection {
     return content;
   }
 
-  public void addSong(Song song) {
+  /**
+   * Adds a song as a new Track at the end of the playlist. This track is <b>not saved to the database</b>.
+   *
+   * @param song Song to add.
+   *
+   * @return Newly created Track.
+   */
+  public Track addSong(Song song) {
     Integer newTrackNumber = 0;
     for (Track track : tracks) {
       if (track.getKey() > newTrackNumber) {
         newTrackNumber = track.getKey();
       }
     }
-    tracks.add(new Track(newTrackNumber + 1, song));
+    Track track = new Track(newTrackNumber + 1, song);
+    tracks.add(track);
+    return track;
   }
 
   public void addTrack(Track track) {
@@ -147,7 +201,6 @@ public abstract class SongCollection extends Collection {
   public String primaryKeyName() {
     return PRIMARY_KEY_NAME;
   }
-
   //#endregion Accessors
 
   //#region Database operations
@@ -155,6 +208,7 @@ public abstract class SongCollection extends Collection {
   public void save(Connection connection) throws SQLException {
     super.save(connection);
     List<Track> databaseTracks = getTracksFromDatabase(connection);
+    sortTracks();
     for (Track track : this.getTracks()) {
       if (!databaseTracks.contains(track)) {
         if (track.getValue().getId() == null) {
@@ -218,7 +272,62 @@ public abstract class SongCollection extends Collection {
     }
     return loadedTracks;
   }
+
+  /**
+   * Move an existing track in the playlist to a different track number.
+   *
+   * @param trackToUpdate Track whose track number should be changed.
+   * @param newTrackNumber New track number of track to update.
+   * @param connection SQLConnection to use for queries.
+   *
+   * @throws SQLException If SQL statements fail or if integrity constraints are violated.
+   */
+  public void moveTrack(Track trackToUpdate, int newTrackNumber, Connection connection) throws SQLException {
+    final int oldTrackNumber = trackToUpdate.getTrackNumber();
+    if (!tracks.contains(trackToUpdate)) {
+      return;
+    }
+    final boolean upwards = newTrackNumber > oldTrackNumber;
+    final int step = upwards ? 1 : -1;
+    for (int i = oldTrackNumber; upwards && i < newTrackNumber || !upwards && i > newTrackNumber; i += step) {
+      sortTracks();
+      Track track1;
+      Track track2;
+      if (upwards) {
+        track2 = tracks.get(i - 1);
+        track1 = tracks.get(i - 1 + step);
+      } else {
+        track1 = tracks.get(i - 1);
+        track2 = tracks.get(i - 1 + step);
+      }
+      swapTrackNumbers(track1, track2, connection);
+    }
+    save(connection);
+  }
+
+  /**
+   * Remove track from playlist if present.
+   *
+   * @param track Track to remove from SongPlaylist.
+   */
+  public void removeTrack(final Track track) {
+    tracks.remove(track);
+  }
+
+  private void swapTrackNumbers(Track track1, Track track2, Connection connection) throws SQLException {
+    final int tmpTrackNumber = track1.getTrackNumber();
+    track1.setTrackNumber(track2.getTrackNumber());
+    track2.setTrackNumber(tmpTrackNumber);
+    track1.updateTrackNumber(connection);
+    track2.updateTrackNumber(connection);
+  }
   //#endregion Database operations
+
+  //#region Private methods
+  private void sortTracks() {
+    this.tracks.sort(Comparator.comparingInt(Track::getTrackNumber));
+  }
+  //#endregion
 
   //#region Equals
   @Override
