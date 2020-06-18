@@ -72,10 +72,28 @@ public abstract class SongCollection extends Collection {
       }
     }
 
+    private void updateTrackNumber(Connection connection) throws SQLException {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(
+          String.format(
+              "update %s set %s = ? where %s = ? and %s = ?",
+              TABLE_NAME,
+              TRACK_NUMBER_COLUMN,
+              ID_SONG_COLLECTION_COLUMN,
+              ID_SONG_COLUMN
+          )
+      )) {
+        preparedStatement.setInt(1, getTrackNumber());
+        preparedStatement.setInt(2, SongCollection.this.getId());
+        preparedStatement.setInt(3, getSong().getId());
+        preparedStatement.execute();
+      }
+    }
+
     @Override
     public void delete(Connection connection) throws SQLException {
-      try (PreparedStatement preparedStatement = connection.prepareStatement(String.format(
-          "delete from %s where %s = ? and %s = ?", TABLE_NAME, ID_SONG_COLLECTION_COLUMN, ID_SONG_COLUMN))) {
+      try (PreparedStatement preparedStatement = connection.prepareStatement(
+          String.format("delete from %s where %s = ? and %s = ?", TABLE_NAME, ID_SONG_COLLECTION_COLUMN, ID_SONG_COLUMN)
+      )) {
         preparedStatement.setInt(1, SongCollection.this.getId());
         preparedStatement.setInt(2, getValue().getId());
         preparedStatement.execute();
@@ -111,7 +129,7 @@ public abstract class SongCollection extends Collection {
         return false;
       }
       Track track = (Track) o;
-      return track.getValue().equals(getValue()) && track.getKey().equals(getKey());
+      return track.getValue().equals(getValue());
     }
     //#endregion Equals
   }
@@ -150,14 +168,23 @@ public abstract class SongCollection extends Collection {
     return content;
   }
 
-  public void addSong(Song song) {
+  /**
+   * Adds a song as a new Track at the end of the playlist. This track is <b>not saved to the database</b>.
+   *
+   * @param song Song to add.
+   *
+   * @return Newly created Track.
+   */
+  public Track addSong(Song song) {
     Integer newTrackNumber = 0;
     for (Track track : tracks) {
       if (track.getKey() > newTrackNumber) {
         newTrackNumber = track.getKey();
       }
     }
-    tracks.add(new Track(newTrackNumber + 1, song));
+    Track track = new Track(newTrackNumber + 1, song);
+    tracks.add(track);
+    return track;
   }
 
   public void addTrack(Track track) {
@@ -246,6 +273,46 @@ public abstract class SongCollection extends Collection {
       }
     }
     return loadedTracks;
+  }
+
+  /**
+   * Move an existing track in the playlist to a different track number.
+   *
+   * @param trackToUpdate Track whose track number should be changed.
+   * @param newTrackNumber New track number of track to update.
+   * @param connection SQLConnection to use for queries.
+   *
+   * @throws SQLException If SQL statements fail or if integrity constraints are violated.
+   */
+  public void moveTrack(Track trackToUpdate, int newTrackNumber, Connection connection) throws SQLException {
+    final int oldTrackNumber = trackToUpdate.getTrackNumber();
+    if (!tracks.contains(trackToUpdate)) {
+      return;
+    }
+    final boolean upwards = newTrackNumber > oldTrackNumber;
+    final int step = upwards ? 1 : -1;
+    for (int i = oldTrackNumber; upwards && i < newTrackNumber || !upwards && i > newTrackNumber; i += step) {
+      sortTracks();
+      Track track1;
+      Track track2;
+      if (upwards) {
+        track2 = tracks.get(i - 1);
+        track1 = tracks.get(i - 1 + step);
+      } else {
+        track1 = tracks.get(i - 1);
+        track2 = tracks.get(i - 1 + step);
+      }
+      swapTrackNumbers(track1, track2, connection);
+    }
+    save(connection);
+  }
+
+  private void swapTrackNumbers(Track track1, Track track2, Connection connection) throws SQLException {
+    final int tmpTrackNumber = track1.getTrackNumber();
+    track1.setTrackNumber(track2.getTrackNumber());
+    track2.setTrackNumber(tmpTrackNumber);
+    track1.updateTrackNumber(connection);
+    track2.updateTrackNumber(connection);
   }
   //#endregion Database operations
 
