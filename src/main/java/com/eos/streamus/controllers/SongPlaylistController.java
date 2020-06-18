@@ -102,7 +102,7 @@ public class SongPlaylistController implements CommonResponses {
 
   @PutMapping("/songplaylist/{id}")
   public ResponseEntity<JsonNode> addOrMoveTrackInPlaylist(@PathVariable final int id,
-                                                     @Valid @RequestBody final Track trackData) {
+                                                           @Valid @RequestBody final Track trackData) {
     try (Connection connection = databaseConnection.getConnection()) {
       SongPlaylist songPlaylist = SongPlaylist.findById(id, connection);
       Song song = Song.findById(trackData.getSongId(), connection);
