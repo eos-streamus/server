@@ -143,4 +143,29 @@ public class SongPlaylistController implements CommonResponses {
     }
   }
 
+  @DeleteMapping("/songplaylist/{songPlaylistId}/{songId}")
+  public ResponseEntity<JsonNode> deleteSongFromSongPlaylist(@PathVariable final int songPlaylistId,
+                                                             @PathVariable final int songId) {
+    try (Connection connection = databaseConnection.getConnection()) {
+      SongPlaylist songPlaylist = SongPlaylist.findById(songPlaylistId, connection);
+      Optional<SongCollection.Track> existingTrack = songPlaylist.getTracks().stream().filter(
+          track -> track.getSong().getId() == songId
+      ).findFirst();
+      if (existingTrack.isEmpty()) {
+        return notFound();
+      } else {
+        SongCollection.Track track = existingTrack.get();
+        songPlaylist.moveTrack(track, songPlaylist.getTracks().size(), connection);
+        track.delete(connection);
+        songPlaylist.removeTrack(track);
+        return ok(new JsonSongPlaylistWriter(songPlaylist).getJson());
+      }
+    } catch (NoResultException noResultException) {
+      return notFound();
+    } catch (SQLException sqlException) {
+      logException(sqlException);
+      return internalServerError();
+    }
+  }
+
 }
