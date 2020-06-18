@@ -106,8 +106,8 @@ public class SongPlaylistController implements CommonResponses {
     try (Connection connection = databaseConnection.getConnection()) {
       SongPlaylist songPlaylist = SongPlaylist.findById(id, connection);
       Song song = Song.findById(trackData.getSongId(), connection);
-      if (trackData.getTrackNumber() < 1) {
-        return badRequest("Track number must be positive");
+      if (trackData.getTrackNumber() < 1 || trackData.getTrackNumber() > songPlaylist.getTracks().size()) {
+        return badRequest("Track number out of bounds");
       }
 
       // If song is already in playlist
