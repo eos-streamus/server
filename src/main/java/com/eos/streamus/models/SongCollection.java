@@ -307,6 +307,15 @@ public abstract class SongCollection extends Collection {
     save(connection);
   }
 
+  /**
+   * Remove track from playlist if present.
+   *
+   * @param track Track to remove from SongPlaylist.
+   */
+  public void removeTrack(final Track track) {
+    tracks.remove(track);
+  }
+
   private void swapTrackNumbers(Track track1, Track track2, Connection connection) throws SQLException {
     final int tmpTrackNumber = track1.getTrackNumber();
     track1.setTrackNumber(track2.getTrackNumber());
