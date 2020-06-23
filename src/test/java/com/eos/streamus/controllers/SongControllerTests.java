@@ -44,13 +44,14 @@ public class SongControllerTests {
 
   }
 
-  private static final String SAMPLE_AUDIO_PATH =
+  private static final Path SAMPLE_AUDIO_PATH = Paths.get(
       String.format(
           "src%stest%sresources%ssample-audio.mp3",
           File.separator,
           File.separator,
           File.separator
-      );
+      )
+  );
 
   @Autowired
   private MockMvc mockMvc;
@@ -70,9 +71,7 @@ public class SongControllerTests {
         "file",
         "sample-audio.mp3",
         "audio/mp4",
-        new FileInputStream(
-            String.format("src%stest%sresources%ssample-audio.mp3", File.separator, File.separator, File.separator)
-        )
+        new FileInputStream(SAMPLE_AUDIO_PATH.toFile())
     );
     requestBuilder
         .file(mockMultipartFile)
@@ -91,8 +90,7 @@ public class SongControllerTests {
   @Test
   void testGetSong() throws Exception {
     Path path = Files.copy(
-        Paths.get(
-            String.format("src%stest%sresources%ssample-audio.mp3", File.separator, File.separator, File.separator)),
+        SAMPLE_AUDIO_PATH,
         Paths.get(resourcePathResolver.getAudioDir() + "sample-audio-" + UUID.randomUUID() + ".mp3")
     );
 
@@ -118,7 +116,7 @@ public class SongControllerTests {
   @Test
   void testDeleteSong() throws Exception {
     Path path = Files.copy(
-        Paths.get(SAMPLE_AUDIO_PATH),
+        SAMPLE_AUDIO_PATH,
         Paths.get(resourcePathResolver.getAudioDir() + "sample-audio-" + UUID.randomUUID() + ".mp3")
     );
 
