@@ -1,7 +1,6 @@
 package com.eos.streamus.controllers;
 
 import com.eos.streamus.exceptions.NoResultException;
-import com.eos.streamus.models.Album;
 import com.eos.streamus.models.Film;
 import com.eos.streamus.utils.DatabaseConnection;
 import com.eos.streamus.utils.FileInfo;
@@ -27,8 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.UUID;
@@ -40,15 +37,10 @@ public class FilmController implements CommonResponses {
       "video/x-flv", "video/mp4", "video/MP2T", "video/3gpp", "video/quicktime", "video/x-msvideo", "video/x-ms-wmv"
   };
 
-  private final ResourcePathResolver resourcePathResolver;
-  private final DatabaseConnection databaseConnection;
-
   @Autowired
-  public FilmController(final ResourcePathResolver resourcePathResolver,
-                        final DatabaseConnection databaseConnection) {
-    this.resourcePathResolver = resourcePathResolver;
-    this.databaseConnection = databaseConnection;
-  }
+  private ResourcePathResolver resourcePathResolver;
+  @Autowired
+  private DatabaseConnection databaseConnection;
 
   @GetMapping("/films")
   public ResponseEntity<JsonNode> allFilms() {
