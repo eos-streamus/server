@@ -2,10 +2,11 @@ package com.eos.streamus;
 
 import com.eos.streamus.models.Person;
 import com.eos.streamus.models.User;
-import com.eos.streamus.utils.TestDatabaseConnection;
+import com.eos.streamus.utils.IDatabaseConnection;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -15,12 +16,13 @@ import static java.sql.Date.valueOf;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @SpringBootTest
+@ContextConfiguration(classes = StreamusTestConfiguration.class)
 public abstract class DatabaseTests {
 
   private final Random random = new Random();
 
   @Autowired
-  protected TestDatabaseConnection databaseConnection;
+  protected IDatabaseConnection databaseConnection;
 
   public Connection getConnection() throws SQLException {
     return databaseConnection.getConnection();
