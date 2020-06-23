@@ -1,6 +1,7 @@
 package com.eos.streamus.controllers;
 
 import com.eos.streamus.StreamusTestConfiguration;
+import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.Song;
 import com.eos.streamus.utils.IDatabaseConnection;
 import com.eos.streamus.utils.IResourcePathResolver;
@@ -24,18 +25,13 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Random;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -47,6 +43,14 @@ public class SongControllerTests {
     private static final long serialVersionUID = 6068382117192685166L;
 
   }
+
+  private static final String SAMPLE_AUDIO_PATH =
+      String.format(
+          "src%stest%sresources%ssample-audio.mp3",
+          File.separator,
+          File.separator,
+          File.separator
+      );
 
   @Autowired
   private MockMvc mockMvc;
@@ -113,45 +117,34 @@ public class SongControllerTests {
 
   @Test
   void testDeleteSong() throws Exception {
-
-    // Create Song
-    MockMultipartHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-        .multipart("/song");
-
-    MockMultipartFile mockMultipartFile = new MockMultipartFile(
-        "file",
-        "sample-audio.mp3",
-        "audio/mp4",
-        new FileInputStream(
-            String.format("src%stest%sresources%ssample-audio.mp3", File.separator, File.separator, File.separator)
-        )
+    Path path = Files.copy(
+        Paths.get(SAMPLE_AUDIO_PATH),
+        Paths.get(resourcePathResolver.getAudioDir() + "sample-audio-" + UUID.randomUUID() + ".mp3")
     );
-    requestBuilder
-        .file(mockMultipartFile)
-        .param("name", "sample-audio.mp3");
-    MockHttpServletResponse response = mockMvc
-        .perform(requestBuilder)
-        .andExpect(status().is(200)).andReturn()
-        .getResponse();
-    JsonNode json = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
-    assertNotNull(json.get("id"));
-    int createdSongId = json.get("id").asInt();
 
-    // Delete Song
-    RequestBuilder builder =
-        MockMvcRequestBuilders
-            .delete(String.format("/song/%d", createdSongId))
-            .contentType(MediaType.APPLICATION_JSON);
-    mockMvc
-        .perform(builder)
-        .andExpect(status().is(200));
+    Song song = new Song(path.toString(), "sample audio", 27);
+    try (Connection connection = databaseConnection.getConnection()) {
+      song.save(connection);
 
-    builder = MockMvcRequestBuilders
-        .get(String.format("/song/%d", createdSongId))
-        .contentType(MediaType.APPLICATION_JSON);
-    mockMvc
-        .perform(builder)
-        .andExpect(status().is(404));
+      // Delete Song
+      RequestBuilder builder =
+          MockMvcRequestBuilders
+              .delete(String.format("/song/%d", song.getId()))
+              .contentType(MediaType.APPLICATION_JSON);
+      mockMvc
+          .perform(builder)
+          .andExpect(status().is(200));
+
+      builder = MockMvcRequestBuilders
+          .get(String.format("/song/%d", song.getId()))
+          .contentType(MediaType.APPLICATION_JSON);
+      mockMvc
+          .perform(builder)
+          .andExpect(status().is(404));
+
+      assertThrows(NoResultException.class, () -> Song.findById(song.getId(), connection));
+      assertFalse(Files.exists(path));
+    }
   }
 
 }
