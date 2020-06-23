@@ -10,7 +10,7 @@ import java.sql.SQLException;
 
 @Service
 @Scope(value = "singleton")
-public class TestDatabaseConnection {
+public class TestDatabaseConnection implements IDatabaseConnection{
   @Value("${jdbc.url}")
   protected String url;
 
