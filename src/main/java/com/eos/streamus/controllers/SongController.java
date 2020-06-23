@@ -4,7 +4,7 @@ import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.Song;
 import com.eos.streamus.utils.FileInfo;
 import com.eos.streamus.utils.IDatabaseConnection;
-import com.eos.streamus.utils.ResourcePathResolver;
+import com.eos.streamus.utils.IResourcePathResolver;
 import com.eos.streamus.utils.ShellUtils;
 import com.eos.streamus.writers.JsonSongWriter;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -39,7 +39,7 @@ public class SongController implements CommonResponses {
   };
 
   @Autowired
-  private ResourcePathResolver resourcePathResolver;
+  private IResourcePathResolver resourcePathResolver;
 
   @Autowired
   private IDatabaseConnection databaseConnection;
