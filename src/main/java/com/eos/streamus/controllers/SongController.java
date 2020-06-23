@@ -2,8 +2,8 @@ package com.eos.streamus.controllers;
 
 import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.Song;
-import com.eos.streamus.utils.DatabaseConnection;
 import com.eos.streamus.utils.FileInfo;
+import com.eos.streamus.utils.IDatabaseConnection;
 import com.eos.streamus.utils.ResourcePathResolver;
 import com.eos.streamus.utils.ShellUtils;
 import com.eos.streamus.writers.JsonSongWriter;
@@ -38,14 +38,11 @@ public class SongController implements CommonResponses {
       "audio/webm", "audio/flac", "audio/og"
   };
 
-  private final ResourcePathResolver resourcePathResolver;
-  private final DatabaseConnection databaseConnection;
+  @Autowired
+  private ResourcePathResolver resourcePathResolver;
 
-  public SongController(@Autowired final ResourcePathResolver resourcePathResolver,
-                        @Autowired final DatabaseConnection databaseConnection) {
-    this.resourcePathResolver = resourcePathResolver;
-    this.databaseConnection = databaseConnection;
-  }
+  @Autowired
+  private IDatabaseConnection databaseConnection;
 
   /**
    * Save a new {@link Song}.
