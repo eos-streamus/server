@@ -2,8 +2,8 @@ package com.eos.streamus.controllers;
 
 import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.Film;
-import com.eos.streamus.utils.DatabaseConnection;
 import com.eos.streamus.utils.FileInfo;
+import com.eos.streamus.utils.IDatabaseConnection;
 import com.eos.streamus.utils.ResourcePathResolver;
 import com.eos.streamus.utils.ShellUtils;
 import com.eos.streamus.writers.JsonFilmListWriter;
@@ -40,7 +40,7 @@ public class FilmController implements CommonResponses {
   @Autowired
   private ResourcePathResolver resourcePathResolver;
   @Autowired
-  private DatabaseConnection databaseConnection;
+  private IDatabaseConnection databaseConnection;
 
   @GetMapping("/films")
   public ResponseEntity<JsonNode> allFilms() {
