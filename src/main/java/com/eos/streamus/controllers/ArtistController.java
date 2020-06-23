@@ -9,7 +9,7 @@ import com.eos.streamus.models.Person;
 import com.eos.streamus.payloadmodels.validators.BandMember;
 import com.eos.streamus.payloadmodels.validators.BandMemberValidator;
 import com.eos.streamus.payloadmodels.validators.MusicianValidator;
-import com.eos.streamus.utils.DatabaseConnection;
+import com.eos.streamus.utils.IDatabaseConnection;
 import com.eos.streamus.writers.JsonAlbumListWriter;
 import com.eos.streamus.writers.JsonArtistListWriter;
 import com.eos.streamus.writers.JsonBandWriter;
@@ -34,17 +34,12 @@ import java.util.List;
 
 @RestController
 public class ArtistController implements CommonResponses {
-  private final DatabaseConnection databaseConnection;
-  private final MusicianValidator musicianValidator;
-  private final BandMemberValidator bandMemberValidator;
-
-  public ArtistController(@Autowired DatabaseConnection databaseConnection,
-                          @Autowired MusicianValidator musicianValidator,
-                          @Autowired BandMemberValidator bandMemberValidator) {
-    this.databaseConnection = databaseConnection;
-    this.musicianValidator = musicianValidator;
-    this.bandMemberValidator = bandMemberValidator;
-  }
+  @Autowired
+  private IDatabaseConnection databaseConnection;
+  @Autowired
+  private MusicianValidator musicianValidator;
+  @Autowired
+  private BandMemberValidator bandMemberValidator;
 
   @GetMapping("/artists")
   public ResponseEntity<JsonNode> allArtists() {
