@@ -2,8 +2,9 @@ package com.eos.streamus;
 
 import com.eos.streamus.controllers.SongController;
 import com.eos.streamus.utils.IDatabaseConnection;
-import com.eos.streamus.utils.ResourcePathResolver;
+import com.eos.streamus.utils.IResourcePathResolver;
 import com.eos.streamus.utils.TestDatabaseConnection;
+import com.eos.streamus.utils.TestResourcePathResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,8 +16,8 @@ public class StreamusTestConfiguration {
   }
 
   @Bean
-  public ResourcePathResolver resourcePathResolver() {
-    return new ResourcePathResolver();
+  public IResourcePathResolver resourcePathResolver() {
+    return new TestResourcePathResolver();
   }
 
   @Bean
