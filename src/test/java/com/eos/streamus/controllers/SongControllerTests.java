@@ -21,6 +21,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -99,6 +101,49 @@ public class SongControllerTests {
     MvcResult result = mockMvc.perform(builder)
                               .andReturn();
     assertTrue("Result length > 0", result.getResponse().getContentAsByteArray().length > 0);
+  }
+
+  @Test
+  void testDeleteSong() throws Exception {
+
+    // Create Song
+    MockMultipartHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+        .multipart("/song");
+
+    MockMultipartFile mockMultipartFile = new MockMultipartFile(
+        "file",
+        "sample-audio.mp3",
+        "audio/mp4",
+        new FileInputStream(
+            String.format("src%stest%sresources%ssample-audio.mp3", File.separator, File.separator, File.separator)
+        )
+    );
+    requestBuilder
+        .file(mockMultipartFile)
+        .param("name", "sample-audio.mp3");
+    MockHttpServletResponse response = mockMvc
+        .perform(requestBuilder)
+        .andExpect(status().is(200)).andReturn()
+        .getResponse();
+    JsonNode json = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
+    assertNotNull(json.get("id"));
+    int createdSongId = json.get("id").asInt();
+
+    // Delete Song
+    RequestBuilder builder =
+        MockMvcRequestBuilders
+            .delete(String.format("/song/%d", createdSongId))
+            .contentType(MediaType.APPLICATION_JSON);
+    mockMvc
+        .perform(builder)
+        .andExpect(status().is(200));
+
+    builder = MockMvcRequestBuilders
+        .get(String.format("/song/%d", createdSongId))
+        .contentType(MediaType.APPLICATION_JSON);
+    mockMvc
+        .perform(builder)
+        .andExpect(status().is(404));
   }
 
 }
