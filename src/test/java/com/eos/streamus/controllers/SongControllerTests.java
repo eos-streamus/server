@@ -53,6 +53,15 @@ public class SongControllerTests {
       )
   );
 
+  private static final Path SAMPLE_VIDEO_PATH = Paths.get(
+      String.format(
+          "src%stest%sresources%ssample-video.mp4",
+          File.separator,
+          File.separator,
+          File.separator
+      )
+  );
+
   @Autowired
   private MockMvc mockMvc;
 
@@ -143,6 +152,89 @@ public class SongControllerTests {
       assertThrows(NoResultException.class, () -> Song.findById(song.getId(), connection));
       assertFalse(Files.exists(path));
     }
+  }
+
+  @Test
+  void postingASongWithNoFileShouldReturnBadRequest() throws Exception {
+    MockMultipartHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+        .multipart("/song");
+
+    requestBuilder
+        .param("name", "sample-audio.mp3");
+    mockMvc
+        .perform(requestBuilder)
+        .andExpect(status().is(400));
+  }
+
+  @Test
+  void postingASongWithNoNameShouldReturnBadRequest() throws Exception {
+    MockMultipartHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+        .multipart("/song");
+
+    MockMultipartFile mockMultipartFile = new MockMultipartFile(
+        "file",
+        "sample-audio.mp3",
+        "audio/mp4",
+        new FileInputStream(SAMPLE_AUDIO_PATH.toFile())
+    );
+    requestBuilder
+        .file(mockMultipartFile);
+
+    mockMvc
+        .perform(requestBuilder)
+        .andExpect(status().is(400));
+  }
+
+  @Test
+  void postingASongWithNoDataAtAllShouldReturnBadRequest() throws Exception {
+    MockMultipartHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+        .multipart("/song");
+    mockMvc
+        .perform(requestBuilder)
+        .andExpect(status().is(400));
+
+  }
+
+  @Test
+  void postingASongWithInvalidContentTypeShouldReturnBadRequest() throws Exception {
+
+    MockMultipartHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+        .multipart("/song");
+
+    MockMultipartFile mockMultipartFile = new MockMultipartFile(
+        "file",
+        "sample-audio.mp3",
+        "fail",
+        new FileInputStream(SAMPLE_AUDIO_PATH.toFile())
+    );
+    requestBuilder
+        .file(mockMultipartFile)
+        .param("name", "sample-audio.mp3");
+
+    mockMvc
+        .perform(requestBuilder)
+        .andExpect(status().is(400));
+  }
+
+  @Test
+  void postingASongWithVideoContentShouldReturnBadRequest() throws Exception {
+
+    MockMultipartHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+        .multipart("/song");
+
+    MockMultipartFile mockMultipartFile = new MockMultipartFile(
+        "file",
+        "sample-audio.mp3",
+        "audio/mp4",
+        new FileInputStream(SAMPLE_VIDEO_PATH.toFile())
+    );
+    requestBuilder
+        .file(mockMultipartFile)
+        .param("name", "sample-audio.mp3");
+
+    mockMvc
+        .perform(requestBuilder)
+        .andExpect(status().is(400));
   }
 
 }
