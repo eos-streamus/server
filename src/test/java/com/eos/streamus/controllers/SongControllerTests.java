@@ -1,29 +1,20 @@
 package com.eos.streamus.controllers;
 
-import com.eos.streamus.StreamusTestConfiguration;
 import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.Song;
-import com.eos.streamus.utils.IDatabaseConnection;
-import com.eos.streamus.utils.IResourcePathResolver;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,41 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest
-@ContextConfiguration(classes = StreamusTestConfiguration.class)
-@AutoConfigureMockMvc
-public class SongControllerTests {
-  static class JsonSongFactory extends JsonNodeFactory {
-    private static final long serialVersionUID = 6068382117192685166L;
-
-  }
-
-  private static final Path SAMPLE_AUDIO_PATH = Paths.get(
-      String.format(
-          "src%stest%sresources%ssample-audio.mp3",
-          File.separator,
-          File.separator,
-          File.separator
-      )
-  );
-
-  private static final Path SAMPLE_VIDEO_PATH = Paths.get(
-      String.format(
-          "src%stest%sresources%ssample-video.mp4",
-          File.separator,
-          File.separator,
-          File.separator
-      )
-  );
-
-  @Autowired
-  private MockMvc mockMvc;
-
-  @Autowired
-  private IResourcePathResolver resourcePathResolver;
-
-  @Autowired
-  private IDatabaseConnection databaseConnection;
+public class SongControllerTests extends ControllerTests {
 
   //#region Get song
   @Test
