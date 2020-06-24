@@ -1,5 +1,6 @@
 package com.eos.streamus;
 
+import com.eos.streamus.controllers.FilmController;
 import com.eos.streamus.controllers.SongController;
 import com.eos.streamus.utils.IDatabaseConnection;
 import com.eos.streamus.utils.IResourcePathResolver;
@@ -23,5 +24,10 @@ public class StreamusTestConfiguration {
   @Bean
   public SongController songController() {
     return new SongController();
+  }
+
+  @Bean
+  public FilmController filmController() {
+    return new FilmController();
   }
 }
