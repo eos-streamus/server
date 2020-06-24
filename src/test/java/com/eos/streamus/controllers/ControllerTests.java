@@ -13,15 +13,20 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 @WebMvcTest
 @ContextConfiguration(classes = StreamusTestConfiguration.class)
 @AutoConfigureMockMvc
 abstract class ControllerTests {
-  static class JsonSongFactory extends JsonNodeFactory {
+  static class TestJsonFactory extends JsonNodeFactory {
     private static final long serialVersionUID = 6068382117192685166L;
 
   }
+
+  protected final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 
   protected static final Path SAMPLE_AUDIO_PATH = Paths.get(
       String.format(
@@ -49,5 +54,9 @@ abstract class ControllerTests {
 
   @Autowired
   protected IDatabaseConnection databaseConnection;
+
+  protected final Date date(final String dateString) throws ParseException {
+    return new Date(dateFormatter.parse(dateString).getTime());
+  }
 
 }
