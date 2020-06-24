@@ -13,7 +13,7 @@ public class FileInfo {
 
   FileInfo(ObjectNode jsonData) {
     this.duration = jsonData.get("format").get("duration").asInt();
-    for (JsonNode stream : jsonData.get("streams")) {
+    for (final JsonNode stream : jsonData.get("streams")) {
       if (stream.get("codec_type").asText().equals("audio")) {
         this.isAudio = true;
       } else if (stream.get("codec_type").asText().equals("video")) {
