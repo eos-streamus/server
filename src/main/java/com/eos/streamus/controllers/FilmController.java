@@ -81,6 +81,9 @@ public class FilmController implements CommonResponses {
     try (Connection connection = databaseConnection.getConnection()) {
       file.transferTo(storedFile);
       FileInfo fileInfo = ShellUtils.getResourceInfo(storedFile.getPath());
+      if (!fileInfo.isVideo()) {
+        return badRequest("File is not video");
+      }
       Film film = new Film(path, name, fileInfo.getDuration());
       film.save(connection);
       return ResponseEntity.ok(new JsonFilmWriter(film).getJson());
