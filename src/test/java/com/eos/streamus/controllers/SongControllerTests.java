@@ -119,7 +119,7 @@ public class SongControllerTests {
 
   //#region Delete song
   @Test
-  void testDeleteSong() throws Exception {
+  void deletingAnExistingSongShouldBeSuccessful() throws Exception {
     Path path = Files.copy(
         SAMPLE_AUDIO_PATH,
         Paths.get(resourcePathResolver.getAudioDir() + "sample-audio-" + UUID.randomUUID() + ".mp3")
@@ -138,15 +138,24 @@ public class SongControllerTests {
           .perform(builder)
           .andExpect(status().is(200));
 
-      builder = MockMvcRequestBuilders
+      assertThrows(NoResultException.class, () -> Song.findById(song.getId(), connection));
+      assertFalse(Files.exists(path));
+    }
+  }
+
+  @Test
+  void aDeleteRequestShouldReturnNotFoundIfSongDoesNotExist() throws Exception {
+
+    try (Connection connection = databaseConnection.getConnection()) {
+      Song song = new Song("randomPath", "randomName", 27);
+      song.save(connection);
+      song.delete(connection);
+      RequestBuilder builder = MockMvcRequestBuilders
           .get(String.format("/song/%d", song.getId()))
           .contentType(MediaType.APPLICATION_JSON);
       mockMvc
           .perform(builder)
           .andExpect(status().is(404));
-
-      assertThrows(NoResultException.class, () -> Song.findById(song.getId(), connection));
-      assertFalse(Files.exists(path));
     }
   }
   //#endregion Delete song
