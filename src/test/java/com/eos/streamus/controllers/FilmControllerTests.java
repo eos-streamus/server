@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = FilmController.class)
+@WebMvcTest
 @ContextConfiguration(classes = StreamusTestConfiguration.class)
 @AutoConfigureMockMvc
 public class FilmControllerTests {
