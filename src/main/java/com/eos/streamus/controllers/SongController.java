@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.UUID;
@@ -82,6 +83,10 @@ public class SongController implements CommonResponses {
     try (Connection connection = databaseConnection.getConnection()) {
       multipartFile.transferTo(storedFile);
       FileInfo fileInfo = ShellUtils.getResourceInfo(storedFile.getPath());
+      if (!fileInfo.isAudioOnly()) {
+        Files.delete(storedFile.toPath());
+        return badRequest("file is not audio");
+      }
       Song song = new Song(path, name, fileInfo.getDuration());
       song.save(connection);
       return ResponseEntity.ok(new JsonSongWriter(song).getJson());
