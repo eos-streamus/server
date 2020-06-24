@@ -71,33 +71,9 @@ public class SongControllerTests {
   @Autowired
   private IDatabaseConnection databaseConnection;
 
+  //#region Get song
   @Test
-  void testPostSong() throws Exception {
-    MockMultipartHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-        .multipart("/song");
-
-    MockMultipartFile mockMultipartFile = new MockMultipartFile(
-        "file",
-        "sample-audio.mp3",
-        "audio/mp4",
-        new FileInputStream(SAMPLE_AUDIO_PATH.toFile())
-    );
-    requestBuilder
-        .file(mockMultipartFile)
-        .param("name", "sample-audio.mp3");
-    MockHttpServletResponse response = mockMvc
-        .perform(requestBuilder)
-        .andExpect(status().is(200)).andReturn()
-        .getResponse();
-    JsonNode json = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
-    assertNotNull(json.get("id"));
-    assertNotNull(json.get("name"));
-    assertEquals("sample-audio.mp3", json.get("name").asText());
-    assertNotNull(json.get("duration"));
-  }
-
-  @Test
-  void testGetSong() throws Exception {
+  void gettingAnExistingSongShouldReturnPartialContent() throws Exception {
     Path path = Files.copy(
         SAMPLE_AUDIO_PATH,
         Paths.get(resourcePathResolver.getAudioDir() + "sample-audio-" + UUID.randomUUID() + ".mp3")
@@ -122,6 +98,26 @@ public class SongControllerTests {
     }
   }
 
+  @Test
+  void gettingANonExistingSongShouldReturn404() throws Exception {
+    Song song = new Song(SAMPLE_AUDIO_PATH.toString(), "sample audio", 27);
+    try (Connection connection = databaseConnection.getConnection()) {
+      song.save(connection);
+      song.delete(connection);
+
+      // Get Song
+      RequestBuilder builder =
+          MockMvcRequestBuilders
+              .get(String.format("/song/%d", song.getId()))
+              .contentType(MediaType.APPLICATION_JSON);
+      mockMvc
+          .perform(builder)
+          .andExpect(status().is(404));
+    }
+  }
+  //#endregion Get song
+
+  //#region Delete song
   @Test
   void testDeleteSong() throws Exception {
     Path path = Files.copy(
@@ -152,6 +148,33 @@ public class SongControllerTests {
       assertThrows(NoResultException.class, () -> Song.findById(song.getId(), connection));
       assertFalse(Files.exists(path));
     }
+  }
+  //#endregion Delete song
+
+  //#region Post song
+  @Test
+  void postingASongWithCorrectDataShouldReturnOk() throws Exception {
+    MockMultipartHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+        .multipart("/song");
+
+    MockMultipartFile mockMultipartFile = new MockMultipartFile(
+        "file",
+        "sample-audio.mp3",
+        "audio/mp4",
+        new FileInputStream(SAMPLE_AUDIO_PATH.toFile())
+    );
+    requestBuilder
+        .file(mockMultipartFile)
+        .param("name", "sample-audio.mp3");
+    MockHttpServletResponse response = mockMvc
+        .perform(requestBuilder)
+        .andExpect(status().is(200)).andReturn()
+        .getResponse();
+    JsonNode json = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
+    assertNotNull(json.get("id"));
+    assertNotNull(json.get("name"));
+    assertEquals("sample-audio.mp3", json.get("name").asText());
+    assertNotNull(json.get("duration"));
   }
 
   @Test
@@ -236,5 +259,6 @@ public class SongControllerTests {
         .perform(requestBuilder)
         .andExpect(status().is(400));
   }
+  //#endregion Post song
 
 }
