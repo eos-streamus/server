@@ -1,8 +1,10 @@
 package com.eos.streamus;
 
+import com.eos.streamus.controllers.AlbumController;
 import com.eos.streamus.controllers.ArtistController;
 import com.eos.streamus.controllers.FilmController;
 import com.eos.streamus.controllers.SongController;
+import com.eos.streamus.payloadmodels.validators.AlbumValidator;
 import com.eos.streamus.payloadmodels.validators.BandMemberValidator;
 import com.eos.streamus.payloadmodels.validators.MusicianValidator;
 import com.eos.streamus.payloadmodels.validators.PersonValidator;
@@ -38,6 +40,16 @@ public class StreamusTestConfiguration {
   @Bean
   public ArtistController artistController() {
     return new ArtistController();
+  }
+
+  @Bean
+  public AlbumController albumController() {
+    return new AlbumController();
+  }
+
+  @Bean
+  public AlbumValidator albumValidator() {
+    return new AlbumValidator();
   }
 
   @Bean
