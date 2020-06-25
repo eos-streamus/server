@@ -15,8 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -57,19 +55,6 @@ public class AlbumController extends SongCollectionController {
     } catch (SQLException sqlException) {
       logException(sqlException);
       return internalServerError();
-    }
-  }
-
-  @DeleteMapping("/album/{id}")
-  public ResponseEntity<String> deleteAlbum(@PathVariable final int id) {
-    try (Connection connection = databaseConnector.getConnection()) {
-      Album.findById(id, connection).delete(connection);
-      return ResponseEntity.ok("Album deleted");
-    } catch (SQLException sqlException) {
-      logException(sqlException);
-      return internalServerErrorString();
-    } catch (NoResultException noResultException) {
-      return notFound();
     }
   }
 

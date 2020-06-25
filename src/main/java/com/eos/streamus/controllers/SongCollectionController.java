@@ -11,6 +11,7 @@ import com.eos.streamus.writers.JsonSongCollectionWriter;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -91,6 +92,44 @@ public abstract class SongCollectionController implements CommonResponses {
 
       return ok(jsonSongCollectionWriter(songCollection).getJson());
 
+    } catch (NoResultException noResultException) {
+      return notFound();
+    } catch (SQLException sqlException) {
+      logException(sqlException);
+      return internalServerError();
+    }
+  }
+
+  @DeleteMapping("/songcollection/{id}")
+  public ResponseEntity<String> deleteSongPlaylist(@PathVariable final int id) {
+    try (Connection connection = databaseConnector.getConnection()) {
+      SongCollectionDAO.findById(id, connection).delete(connection);
+      return ok("SongPlaylist deleted");
+    } catch (NoResultException noResultException) {
+      return notFound();
+    } catch (SQLException sqlException) {
+      logException(sqlException);
+      return internalServerErrorString();
+    }
+  }
+
+  @DeleteMapping("/songcollection/{songCollectionId}/{songId}")
+  public ResponseEntity<JsonNode> deleteSongFromSongPlaylist(@PathVariable final int songCollectionId,
+                                                             @PathVariable final int songId) {
+    try (Connection connection = databaseConnector.getConnection()) {
+      SongCollection songCollection = SongCollectionDAO.findById(songCollectionId, connection);
+      Optional<SongCollection.Track> existingTrack = songCollection.getTracks().stream().filter(
+          track -> track.getSong().getId() == songId
+      ).findFirst();
+      if (existingTrack.isEmpty()) {
+        return notFound();
+      } else {
+        SongCollection.Track track = existingTrack.get();
+        songCollection.moveTrack(track, songCollection.getTracks().size(), connection);
+        track.delete(connection);
+        songCollection.removeTrack(track);
+        return ok(jsonSongCollectionWriter(songCollection).getJson());
+      }
     } catch (NoResultException noResultException) {
       return notFound();
     } catch (SQLException sqlException) {
