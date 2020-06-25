@@ -4,9 +4,9 @@ import java.sql.*;
 
 public abstract class Resource implements SavableDeletableEntity {
   //#region Static attributes
-  protected static final String TABLE_NAME = "Resource";
+  public static final String TABLE_NAME = "Resource";
   protected static final String ID_COLUMN = "id";
-  protected static final String PATH_COLUMN = "path";
+  public static final String PATH_COLUMN = "path";
   protected static final String NAME_COLUMN = "name";
   protected static final String DURATION_COLUMN = "duration";
   protected static final String CREATED_AT_COLUMN = "createdAt";

@@ -6,7 +6,7 @@ import java.sql.*;
 
 public class Person implements SavableDeletableEntity {
   //#region Static attributes
-  protected static final String TABLE_NAME = "Person";
+  public static final String TABLE_NAME = "Person";
   protected static final String ID_COLUMN = "id";
   protected static final String FIRST_NAME_COLUMN = "firstName";
   protected static final String LAST_NAME_COLUMN = "lastName";

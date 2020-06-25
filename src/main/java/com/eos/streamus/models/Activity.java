@@ -237,7 +237,7 @@ public abstract class Activity implements SavableDeletableEntity {
   }
 
   //#region Static Attributes
-  protected static final String TABLE_NAME = "Activity";
+  public static final String TABLE_NAME = "Activity";
   protected static final String PRIMARY_KEY_NAME = "id";
   //#endregion Static Attributes
 

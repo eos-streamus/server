@@ -8,7 +8,7 @@ import java.util.List;
 
 public abstract class Collection implements SavableDeletableEntity {
   //#region Static attributes
-  protected static final String TABLE_NAME = "Collection";
+  public static final String TABLE_NAME = "Collection";
   protected static final String PRIMARY_KEY_NAME = "id";
   protected static final String NAME_COLUMN = "name";
   protected static final String CREATED_AT_COLUMN = "createdAt";
