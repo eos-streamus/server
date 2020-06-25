@@ -408,4 +408,17 @@ public class ArtistControllerTests extends ControllerTests {
     mockMvc.perform(builder)
            .andExpect(status().is(400));
   }
+
+  @Test
+  void creatingAMusicianWithNoPersonAndEmptyNameShouldReturnBadRequest() throws Exception {
+    ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
+    objectNode.put("name", "");
+
+    RequestBuilder builder = MockMvcRequestBuilders.post("/musician")
+                                                   .contentType(MediaType.APPLICATION_JSON)
+                                                   .content(objectNode.toPrettyString());
+
+    mockMvc.perform(builder)
+           .andExpect(status().is(400));
+  }
 }
