@@ -2,6 +2,7 @@ package com.eos.streamus.controllers;
 
 import com.eos.streamus.models.Band;
 import com.eos.streamus.models.Musician;
+import com.eos.streamus.models.Person;
 import com.eos.streamus.writers.JsonBandWriter;
 import com.eos.streamus.writers.JsonMusicianWriter;
 import com.fasterxml.jackson.core.JsonFactory;
@@ -14,6 +15,7 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.sql.Connection;
+import java.sql.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -76,6 +78,30 @@ public class ArtistControllerTests extends ControllerTests {
       JsonNode json = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
       assertEquals(new JsonMusicianWriter(musician).getJson(), json);
       musician.delete(connection);
+    }
+  }
+
+  @Test
+  void gettingAnExistingPersonMusicianShouldReturnOkWithCorrectJson() throws Exception {
+    try (Connection connection = databaseConnection.getConnection()) {
+      Musician musician = new Musician(
+          new Person("John", "Doe", new Date(dateFormatter.parse("2000-01-01").getTime())));
+      musician.save(connection);
+
+      RequestBuilder builder = MockMvcRequestBuilders.get(String.format("/artist/%d", musician.getId()))
+                                                     .contentType(MediaType.APPLICATION_JSON);
+
+      MockHttpServletResponse response =
+          mockMvc
+              .perform(builder)
+              .andExpect(status().is(200))
+              .andReturn()
+              .getResponse();
+
+      JsonNode json = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
+      assertEquals(new JsonMusicianWriter(musician).getJson(), json);
+      musician.delete(connection);
+      musician.getPerson().delete(connection);
     }
   }
 }
