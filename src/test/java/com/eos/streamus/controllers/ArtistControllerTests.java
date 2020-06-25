@@ -12,6 +12,7 @@ import com.eos.streamus.writers.JsonMusicianWriter;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -27,8 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class ArtistControllerTests extends ControllerTests {
@@ -274,6 +274,28 @@ public class ArtistControllerTests extends ControllerTests {
           .perform(builder)
           .andExpect(status().is(404))
           .andReturn();
+    }
+  }
+
+  @Test
+  void creatingABandWithCorrectDataShouldReturnCreatedBand() throws Exception {
+    ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
+    objectNode.put("name", "Test band");
+
+    RequestBuilder builder =
+        MockMvcRequestBuilders
+            .post("/band")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectNode.toPrettyString());
+
+    MockHttpServletResponse response = mockMvc.perform(builder).andExpect(status().is(200)).andReturn().getResponse();
+    JsonNode json = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
+    assertTrue(json.has("id"));
+
+    try (Connection connection = databaseConnection.getConnection()) {
+      Band band = Band.findById(json.get("id").asInt(), connection);
+      assertEquals(new JsonBandWriter(band).getJson(), json);
+      band.delete(connection);
     }
   }
 }
