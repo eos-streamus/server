@@ -6,7 +6,6 @@ import com.eos.streamus.models.Artist;
 import com.eos.streamus.models.Collection;
 import com.eos.streamus.models.Person;
 import com.eos.streamus.models.Resource;
-import com.eos.streamus.models.Song;
 import com.eos.streamus.utils.IDatabaseConnection;
 import com.eos.streamus.utils.IResourcePathResolver;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
