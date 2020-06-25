@@ -45,9 +45,8 @@ public class AlbumController implements CommonResponses {
   }
 
   @PostMapping("/albums")
-  public ResponseEntity<JsonNode> createAlbum(
-      @Valid @RequestBody final com.eos.streamus.payloadmodels.Album albumData,
-      BindingResult result) {
+  public ResponseEntity<JsonNode> createAlbum(@Valid @RequestBody final com.eos.streamus.payloadmodels.Album albumData,
+                                              BindingResult result) {
     albumValidator.validate(albumData, result);
     if (result.hasErrors()) {
       return badRequest(result.toString());
