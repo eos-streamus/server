@@ -345,4 +345,29 @@ public class ArtistControllerTests extends ControllerTests {
       musician.delete(connection);
     }
   }
+
+  @Test
+  void creatingAMusicianWithAPersonShouldReturnOkWithCorrectJson() throws Exception {
+    ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
+    ObjectNode personObjectNode = objectNode.putObject("person");
+    personObjectNode.put("firstName", "John");
+    personObjectNode.put("lastName", "Doe");
+    personObjectNode.put("dateOfBirth", date("2000-01-01").getTime());
+
+    RequestBuilder builder = MockMvcRequestBuilders.post("/musician")
+                                                   .contentType(MediaType.APPLICATION_JSON)
+                                                   .content(objectNode.toPrettyString());
+
+    MockHttpServletResponse response = mockMvc.perform(builder)
+                                              .andExpect(status().is(200))
+                                              .andReturn()
+                                              .getResponse();
+    JsonNode jsonNode = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
+    assertTrue(jsonNode.has("id"));
+    try (Connection connection = databaseConnection.getConnection()) {
+      Musician musician = Musician.findById(jsonNode.get("id").asInt(), connection);
+      assertEquals(new JsonMusicianWriter(musician).getJson(), jsonNode);
+      musician.delete(connection);
+    }
+  }
 }
