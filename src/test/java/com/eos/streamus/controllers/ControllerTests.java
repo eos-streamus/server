@@ -9,6 +9,7 @@ import com.eos.streamus.models.Resource;
 import com.eos.streamus.utils.IDatabaseConnector;
 import com.eos.streamus.utils.IResourcePathResolver;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,19 +80,8 @@ abstract class ControllerTests {
   void emptyDatabase() throws SQLException, IOException {
     try (Connection connection = databaseConnector.getConnection()) {
       // Delete all Resources
-      List<String> pathStrings = new ArrayList<>();
-      try (PreparedStatement preparedStatement = connection.prepareStatement(
-          String.format("select distinct %s from %s", Resource.PATH_COLUMN, Resource.TABLE_NAME)
-      )) {
-        try (ResultSet resultSet = preparedStatement.executeQuery()) {
-          while (resultSet.next()) {
-            pathStrings.add(resultSet.getString(1));
-          }
-        }
-      }
-      for (final String pathString : pathStrings) {
-        Files.delete(Paths.get(pathString));
-      }
+      FileUtils.cleanDirectory(new File(resourcePathResolver.getVideoDir()));
+      FileUtils.cleanDirectory(new File(resourcePathResolver.getAudioDir()));
 
       try (PreparedStatement preparedStatement = connection
           .prepareStatement("truncate table " + Resource.TABLE_NAME + " cascade")) {
