@@ -600,6 +600,76 @@ public class ArtistControllerTests extends ControllerTests {
     }
   }
 
+  @Test
+  void addingABandMemberWithFromGreaterThanToShouldReturnBadRequest() throws Exception {
+    try (Connection connection = databaseConnection.getConnection()) {
+      Band band = new Band("Test name");
+      band.save(connection);
+
+      ObjectNode bandMemberData = new ObjectNode(new TestJsonFactory());
+      ObjectNode musicianNode = bandMemberData.putObject("musician");
+      musicianNode.put("name", "Test name");
+      ObjectNode personNode = musicianNode.putObject("person");
+      personNode.put("firstName", "John");
+      personNode.put("lastName", "Doe");
+      personNode.put("dateOfBirth", date("2000-01-01").getTime());
+      bandMemberData.put("from", "2000-01-01");
+      bandMemberData.put("to", "1999-01-01");
+
+      RequestBuilder builder = MockMvcRequestBuilders.post(String.format("/band/%d/members", band.getId()))
+                                                     .contentType(MediaType.APPLICATION_JSON)
+                                                     .content(bandMemberData.toPrettyString());
+      mockMvc.perform(builder)
+             .andExpect(status().is(400))
+             .andReturn();
+    }
+  }
+
+  @Test
+  void addingABandMemberWithOverlappingMembershipsToSameBandShouldReturnBadRequest() throws Exception {
+    try (Connection connection = databaseConnection.getConnection()) {
+      Band band = new Band("Test name");
+      band.save(connection);
+
+      Musician musician = new Musician("Test musician");
+      musician.save(connection);
+      band.addMember(musician, date("2000-01-01"), date("2010-01-01"));
+      band.save(connection);
+
+      ObjectNode bandMemberData = new ObjectNode(new TestJsonFactory());
+      bandMemberData.put("musicianId", musician.getId());
+      bandMemberData.put("from", "2005-01-01");
+
+      RequestBuilder builder = MockMvcRequestBuilders.post(String.format("/band/%d/members", band.getId()))
+                                                     .contentType(MediaType.APPLICATION_JSON)
+                                                     .content(bandMemberData.toPrettyString());
+      mockMvc.perform(builder)
+             .andExpect(status().is(400))
+             .andReturn();
+    }
+  }
+
+  @Test
+  void addingABandMemberWithoutFromDateShouldReturnBadRequest() throws Exception {
+    try (Connection connection = databaseConnection.getConnection()) {
+      Band band = new Band("Test name");
+      band.save(connection);
+
+      Musician musician = new Musician("Test musician");
+      musician.save(connection);
+
+      ObjectNode bandMemberData = new ObjectNode(new TestJsonFactory());
+      bandMemberData.put("musicianId", musician.getId());
+
+      RequestBuilder builder = MockMvcRequestBuilders.post(String.format("/band/%d/members", band.getId()))
+                                                     .contentType(MediaType.APPLICATION_JSON)
+                                                     .content(bandMemberData.toPrettyString());
+      mockMvc.perform(builder)
+             .andExpect(status().is(400))
+             .andReturn();
+    }
+  }
+
   // Delete tests
 
 }

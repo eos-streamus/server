@@ -157,7 +157,7 @@ public class ArtistController implements CommonResponses {
       return badRequest("Invalid data");
     } catch (SQLException sqlException) {
       if (sqlException.getSQLState().equals("40002")) {
-        return badRequest("Overlapping band memberships for musician");
+        return badRequest(sqlException.getMessage());
       } else {
         logException(sqlException);
         return internalServerError();
