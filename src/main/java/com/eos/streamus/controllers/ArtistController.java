@@ -186,7 +186,9 @@ public class ArtistController implements CommonResponses {
     } else if (member.getMusician().getId() != null) {
       musician = Musician.findById(member.getMusician().getId(), connection);
     } else {
-      if (member.getMusician().getPerson().getId() != null) {
+      if (member.getMusician().getPerson() == null) {
+        musician = new Musician(member.getMusician().getName());
+      } else if (member.getMusician().getPerson().getId() != null) {
         musician = member.getMusician().getName() == null ?
             new Musician(Person.findById(member.getMusician().getPerson().getId(), connection))
             :
