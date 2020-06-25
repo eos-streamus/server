@@ -29,21 +29,23 @@ public abstract class SongCollectionValidator implements Validator {
     }
 
     try (Connection connection = databaseConnector.getConnection()) {
-      songCollection.getTracks().sort(Comparator.comparingInt(Track::getTrackNumber));
-      for (int i = 0; i < songCollection.getTracks().size(); i++) {
-        if (songCollection.getTracks().get(i).getTrackNumber() < 1) {
-          errors.reject("Invalid track number, must be >= 1");
-        }
-        Song.findById(songCollection.getTracks().get(i).getSongId(), connection);
-        if (
-            (i == 0 && songCollection.getTracks().get(i).getTrackNumber() != 1) ||
-            (
-                i > 0 &&
-                songCollection.getTracks().get(i - 1).getTrackNumber() !=
-                songCollection.getTracks().get(i).getTrackNumber() - 1
-            )
-        ) {
-          errors.reject("Invalid track numbers");
+      if (songCollection.getTracks() != null) {
+        songCollection.getTracks().sort(Comparator.comparingInt(Track::getTrackNumber));
+        for (int i = 0; i < songCollection.getTracks().size(); i++) {
+          if (songCollection.getTracks().get(i).getTrackNumber() < 1) {
+            errors.reject("Invalid track number, must be >= 1");
+          }
+          Song.findById(songCollection.getTracks().get(i).getSongId(), connection);
+          if (
+              (i == 0 && songCollection.getTracks().get(i).getTrackNumber() != 1) ||
+              (
+                  i > 0 &&
+                  songCollection.getTracks().get(i - 1).getTrackNumber() !=
+                  songCollection.getTracks().get(i).getTrackNumber() - 1
+              )
+          ) {
+            errors.reject("Invalid track numbers");
+          }
         }
       }
     } catch (SQLException sqlException) {
