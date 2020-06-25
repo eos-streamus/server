@@ -21,7 +21,7 @@ public abstract class SongCollectionValidator implements Validator {
   private IDatabaseConnector databaseConnector;
 
   @Override
-  public void validate(final Object o, final Errors errors) {
+  public final void validate(final Object o, final Errors errors) {
     SongCollection songCollection = (SongCollection) o;
 
     if (songCollection.getName().isBlank()) {
