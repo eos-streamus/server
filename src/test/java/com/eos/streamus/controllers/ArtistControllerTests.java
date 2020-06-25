@@ -298,4 +298,29 @@ public class ArtistControllerTests extends ControllerTests {
       band.delete(connection);
     }
   }
+
+  @Test
+  void creatingABandWithIncorrectDataShouldReturnBadRequest() throws Exception {
+    ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
+    objectNode.put("name", "");
+
+    RequestBuilder builder =
+        MockMvcRequestBuilders
+            .post("/band")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectNode.toPrettyString());
+
+    mockMvc.perform(builder).andExpect(status().is(400)).andReturn();
+
+    objectNode = new ObjectNode(new TestJsonFactory());
+    objectNode.put("fail", "failValue");
+
+    builder =
+        MockMvcRequestBuilders
+            .post("/band")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectNode.toPrettyString());
+
+    mockMvc.perform(builder).andExpect(status().is(400)).andReturn();
+  }
 }
