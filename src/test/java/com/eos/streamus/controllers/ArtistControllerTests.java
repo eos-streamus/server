@@ -1,6 +1,8 @@
 package com.eos.streamus.controllers;
 
+import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.Album;
+import com.eos.streamus.models.ArtistDAO;
 import com.eos.streamus.models.Band;
 import com.eos.streamus.models.Musician;
 import com.eos.streamus.models.Person;
@@ -671,5 +673,29 @@ public class ArtistControllerTests extends ControllerTests {
   }
 
   // Delete tests
+  @Test
+  void deletingAnArtistShouldBeSuccessful() throws Exception {
+    try (Connection connection = databaseConnection.getConnection()) {
+      Band band = new Band("Test band");
+      band.save(connection);
+
+      RequestBuilder builder = MockMvcRequestBuilders.delete(String.format("/artist/%d", band.getId()));
+      mockMvc.perform(builder).andExpect(status().is(200));
+
+      assertThrows(NoResultException.class, () -> ArtistDAO.findById(band.getId(), connection));
+    }
+  }
+
+  @Test
+  void deletingANonExistingArtistShouldReturnNotFound() throws Exception {
+    try (Connection connection = databaseConnection.getConnection()) {
+      Band band = new Band("Test band");
+      band.save(connection);
+      band.delete(connection);
+
+      RequestBuilder builder = MockMvcRequestBuilders.delete(String.format("/artist/%d", band.getId()));
+      mockMvc.perform(builder).andExpect(status().is(404));
+    }
+  }
 
 }
