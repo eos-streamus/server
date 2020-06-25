@@ -546,7 +546,32 @@ public class ArtistControllerTests extends ControllerTests {
       assertEquals(new JsonBandWriter(band).getJson(), result);
       band.delete(connection);
     }
+  }
 
+  @Test
+  void addingABandMemberWithANewPersonMusicianShouldReturnOkWithJson() throws Exception {
+    try (Connection connection = databaseConnection.getConnection()) {
+      Band band = new Band("Test name");
+      band.save(connection);
+
+      ObjectNode bandMemberData = new ObjectNode(new TestJsonFactory());
+      ObjectNode musicianNode = bandMemberData.putObject("musician");
+      ObjectNode personNode = musicianNode.putObject("person");
+      personNode.put("firstName", "John");
+      personNode.put("lastName", "Doe");
+      personNode.put("dateOfBirth", date("2000-01-01").getTime());
+      bandMemberData.put("from", "2000-01-01");
+
+      RequestBuilder builder = MockMvcRequestBuilders.post(String.format("/band/%d/members", band.getId()))
+                                                     .contentType(MediaType.APPLICATION_JSON)
+                                                     .content(bandMemberData.toPrettyString());
+      MockHttpServletResponse response = mockMvc.perform(builder).andExpect(status().is(200)).andReturn().getResponse();
+      JsonNode result = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
+      band.fetchMembers(connection);
+      System.out.println(new JsonBandWriter(band).getJson());
+      assertEquals(new JsonBandWriter(band).getJson(), result);
+      band.delete(connection);
+    }
   }
 
   // Delete tests
