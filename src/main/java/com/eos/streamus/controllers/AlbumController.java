@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
@@ -89,6 +90,12 @@ public class AlbumController extends SongCollectionController {
   public ResponseEntity<JsonNode> addSongToPlaylist(@PathVariable final int albumId,
                                                     @PathVariable final int songId) {
     return addSongToCollection(albumId, songId);
+  }
+
+  @PutMapping("/album/{id}")
+  public ResponseEntity<JsonNode> addOrMoveTrackInAlbum(@PathVariable final int id,
+                                                        @Valid @RequestBody final Track trackData) {
+    return addOrMoveTrackInSongCollection(id, trackData);
   }
 
   @Override

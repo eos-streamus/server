@@ -88,31 +88,7 @@ public class SongPlaylistController extends SongCollectionController {
   @PutMapping("/songplaylist/{id}")
   public ResponseEntity<JsonNode> addOrMoveTrackInPlaylist(@PathVariable final int id,
                                                            @Valid @RequestBody final Track trackData) {
-    try (Connection connection = databaseConnector.getConnection()) {
-      SongPlaylist songPlaylist = SongPlaylist.findById(id, connection);
-      Song song = Song.findById(trackData.getSongId(), connection);
-      if (trackData.getTrackNumber() < 1 || trackData.getTrackNumber() > songPlaylist.getTracks().size()) {
-        return badRequest("Track number out of bounds");
-      }
-
-      // If song is already in playlist
-      Optional<SongCollection.Track> existingTrack = songPlaylist.getTracks().stream().filter(
-          track -> track.getSong().getId() == trackData.getSongId()
-      ).findFirst();
-      if (existingTrack.isPresent()) {
-        songPlaylist.moveTrack(existingTrack.get(), trackData.getTrackNumber(), connection);
-      } else {
-        SongCollection.Track newTrack = songPlaylist.addSong(song);
-        songPlaylist.save(connection);
-        songPlaylist.moveTrack(newTrack, trackData.getTrackNumber(), connection);
-      }
-      return ok(new JsonSongPlaylistWriter(songPlaylist).getJson());
-    } catch (NoResultException noResultException) {
-      return notFound();
-    } catch (SQLException sqlException) {
-      logException(sqlException);
-      return internalServerError();
-    }
+    return addOrMoveTrackInSongCollection(id, trackData);
   }
 
   @DeleteMapping("/songplaylist/{id}")

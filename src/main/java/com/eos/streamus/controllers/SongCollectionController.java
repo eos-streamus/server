@@ -4,16 +4,17 @@ import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.Song;
 import com.eos.streamus.models.SongCollection;
 import com.eos.streamus.models.SongCollectionDAO;
+import com.eos.streamus.payloadmodels.Track;
 import com.eos.streamus.payloadmodels.validators.SongCollectionValidator;
 import com.eos.streamus.utils.IDatabaseConnector;
 import com.eos.streamus.writers.JsonSongCollectionWriter;
-import com.eos.streamus.writers.JsonSongPlaylistWriter;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Optional;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -32,6 +33,41 @@ public abstract class SongCollectionController implements CommonResponses {
       songCollection.addSong(Song.findById(songId, connection));
       songCollection.save(connection);
       return ok(jsonSongCollectionWriter(songCollection).getJson());
+    } catch (NoResultException noResultException) {
+      return notFound();
+    } catch (SQLException sqlException) {
+      logException(sqlException);
+      return internalServerError();
+    }
+  }
+
+
+  public ResponseEntity<JsonNode> addOrMoveTrackInSongCollection(final int id, final Track trackData) {
+    try (Connection connection = databaseConnector.getConnection()) {
+
+      SongCollection songCollection = SongCollectionDAO.findById(id, connection);
+
+      Song song = Song.findById(trackData.getSongId(), connection);
+
+      if (trackData.getTrackNumber() < 1 || trackData.getTrackNumber() > songCollection.getTracks().size()) {
+        return badRequest("Track number out of bounds");
+      }
+
+      // If song is already in collection
+      Optional<SongCollection.Track> existingTrack = songCollection.getTracks().stream().filter(
+          track -> track.getSong().getId() == trackData.getSongId()
+      ).findFirst();
+
+      if (existingTrack.isPresent()) {
+        songCollection.moveTrack(existingTrack.get(), trackData.getTrackNumber(), connection);
+      } else {
+        SongCollection.Track newTrack = songCollection.addSong(song);
+        songCollection.save(connection);
+        songCollection.moveTrack(newTrack, trackData.getTrackNumber(), connection);
+      }
+
+      return ok(jsonSongCollectionWriter(songCollection).getJson());
+
     } catch (NoResultException noResultException) {
       return notFound();
     } catch (SQLException sqlException) {
