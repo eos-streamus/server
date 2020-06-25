@@ -37,14 +37,7 @@ public class SongPlaylistController extends SongCollectionController {
 
   @GetMapping("/songplaylist/{id}")
   public ResponseEntity<JsonNode> getSongPlaylistById(@PathVariable final int id) {
-    try (Connection connection = databaseConnector.getConnection()) {
-      return ok(new JsonSongPlaylistWriter(SongPlaylist.findById(id, connection)).getJson());
-    } catch (SQLException sqlException) {
-      logException(sqlException);
-      return internalServerError();
-    } catch (NoResultException noResultException) {
-      return notFound();
-    }
+    return getSongCollectionById(id);
   }
 
   @PostMapping("/songplaylist")

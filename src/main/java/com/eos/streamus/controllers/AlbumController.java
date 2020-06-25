@@ -34,15 +34,7 @@ public class AlbumController extends SongCollectionController {
 
   @GetMapping("/album/{id}")
   public ResponseEntity<JsonNode> getAlbum(@PathVariable int id) {
-    try (Connection connection = databaseConnector.getConnection()) {
-      Album album = Album.findById(id, connection);
-      return ResponseEntity.ok(new JsonAlbumWriter(album).getJson());
-    } catch (NoResultException noResultException) {
-      return notFound();
-    } catch (SQLException sqlException) {
-      logException(sqlException);
-      return internalServerError();
-    }
+    return getSongCollectionById(id);
   }
 
   @PostMapping("/albums")
