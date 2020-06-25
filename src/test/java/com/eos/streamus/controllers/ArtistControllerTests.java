@@ -259,4 +259,21 @@ public class ArtistControllerTests extends ControllerTests {
           .andReturn();
     }
   }
+
+  @Test
+  void gettingANonExistentArtistsDiscographyShouldReturnNotFound() throws Exception {
+    try (Connection connection = databaseConnection.getConnection()) {
+      Band band = new Band("Test band");
+      band.save(connection);
+      band.delete(connection);
+
+      RequestBuilder builder = MockMvcRequestBuilders.get(String.format("/artist/%d/discography", band.getId()))
+                                                     .contentType(MediaType.APPLICATION_JSON);
+
+      mockMvc
+          .perform(builder)
+          .andExpect(status().is(404))
+          .andReturn();
+    }
+  }
 }
