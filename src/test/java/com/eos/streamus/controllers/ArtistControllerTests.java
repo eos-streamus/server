@@ -104,4 +104,38 @@ public class ArtistControllerTests extends ControllerTests {
       musician.getPerson().delete(connection);
     }
   }
+
+  @Test
+  void gettingAnExistingBandWithMembersShouldReturnOkWithCorrectJson() throws Exception {
+    try (Connection connection = databaseConnection.getConnection()) {
+      Band band = new Band("Test band");
+      band.save(connection);
+
+      Musician musician = new Musician("Test musician");
+      musician.save(connection);
+
+      band.addMember(
+          musician,
+          new Date(dateFormatter.parse("2000-01-01").getTime()),
+          new Date(dateFormatter.parse("2001-01-01").getTime())
+      );
+
+      band.save(connection);
+
+      RequestBuilder builder = MockMvcRequestBuilders.get(String.format("/artist/%d", band.getId()))
+                                                     .contentType(MediaType.APPLICATION_JSON);
+
+      MockHttpServletResponse response =
+          mockMvc
+              .perform(builder)
+              .andExpect(status().is(200))
+              .andReturn()
+              .getResponse();
+
+      JsonNode json = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
+      assertEquals(new JsonBandWriter(band).getJson(), json);
+      band.delete(connection);
+
+    }
+  }
 }
