@@ -94,17 +94,20 @@ abstract class ControllerTests {
         Files.delete(Paths.get(pathString));
       }
 
-      try (PreparedStatement preparedStatement = connection.prepareStatement("truncate table " + Resource.TABLE_NAME + " cascade")) {
+      try (PreparedStatement preparedStatement = connection
+          .prepareStatement("truncate table " + Resource.TABLE_NAME + " cascade")) {
         preparedStatement.execute();
       }
 
       // Delete all Persons
-      try (PreparedStatement preparedStatement = connection.prepareStatement("truncate table " + Person.TABLE_NAME + " cascade")) {
+      try (PreparedStatement preparedStatement = connection
+          .prepareStatement("truncate table " + Person.TABLE_NAME + " cascade")) {
         preparedStatement.execute();
       }
 
       // Delete all Artists
-      try (PreparedStatement preparedStatement = connection.prepareStatement("truncate table " + Artist.TABLE_NAME + " cascade")) {
+      try (PreparedStatement preparedStatement = connection
+          .prepareStatement("truncate table " + Artist.TABLE_NAME + " cascade")) {
         preparedStatement.execute();
       }
 
@@ -115,7 +118,8 @@ abstract class ControllerTests {
       }
 
       // Delete all Activities
-      try (PreparedStatement preparedStatement = connection.prepareStatement("truncate table " + Activity.TABLE_NAME + " cascade")) {
+      try (PreparedStatement preparedStatement = connection
+          .prepareStatement("truncate table " + Activity.TABLE_NAME + " cascade")) {
         preparedStatement.execute();
       }
     }
