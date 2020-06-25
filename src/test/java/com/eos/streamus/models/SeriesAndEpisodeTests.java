@@ -20,7 +20,7 @@ public class SeriesAndEpisodeTests extends DatabaseTests {
 
   @Test
   void testEmptySeriesCRUD() throws SQLException, NoResultException {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       // Create
       Series series = new Series(randomString());
       series.save(connection);
@@ -44,7 +44,7 @@ public class SeriesAndEpisodeTests extends DatabaseTests {
 
   @Test
   void testEpisodeCRUD() throws SQLException, NoResultException {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       // Create
       Series series = new Series(String.format(randomString(), new Date().getTime()));
       series.save(connection);
@@ -71,7 +71,7 @@ public class SeriesAndEpisodeTests extends DatabaseTests {
 
   @Test
   void testEpisodeDeleteCascade() throws SQLException {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       // Create
       Series series = new Series(String.format(randomString(), new Date().getTime()));
       series.save(connection);
@@ -86,7 +86,7 @@ public class SeriesAndEpisodeTests extends DatabaseTests {
 
   @Test
   void testEpisodeWithInvalidSeasonAndEpisodeValues() throws SQLException {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       // Create
       Series series = new Series(String.format(randomString(), new Date().getTime()));
       series.save(connection);
@@ -104,7 +104,7 @@ public class SeriesAndEpisodeTests extends DatabaseTests {
 
   @Test
   void testEpisodeWithAutomaticEpisodeNumber() throws SQLException {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       // Create
       Series series = new Series(String.format(randomString(), new Date().getTime()));
       series.save(connection);
@@ -122,7 +122,7 @@ public class SeriesAndEpisodeTests extends DatabaseTests {
 
   @Test
   void testPopulatedSeries() throws SQLException, NoResultException {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Series series = new Series("Test series");
       series.save(connection);
       List<Series.Episode> episodes = new ArrayList<>();

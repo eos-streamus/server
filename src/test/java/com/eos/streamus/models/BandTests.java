@@ -19,7 +19,7 @@ public class BandTests extends DatabaseTests {
 
   @Test
   void testEmptyBandCRUD() throws SQLException, NoResultException {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Band band = new Band("Test band");
       band.save(connection);
 
@@ -38,7 +38,7 @@ public class BandTests extends DatabaseTests {
 
   @Test
   void testBandWithMusicians() throws SQLException, NoResultException {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       List<Musician> artists = new ArrayList<>();
 
       Band pinkFloyd = new Band("Pink Floyd");
@@ -81,7 +81,7 @@ public class BandTests extends DatabaseTests {
 
   @Test
   void testBandWithOverlappingMusicians() throws SQLException, NoResultException {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Band testBand = new Band("Test");
       testBand.save(connection);
 

@@ -16,7 +16,7 @@ public class UserTests extends DatabaseTests {
 
   @Test
   void testUserCRUD() throws SQLException, NoResultException {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       // Create
       User user = randomUser();
       user.save(connection);

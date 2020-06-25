@@ -9,7 +9,7 @@ import com.eos.streamus.models.Person;
 import com.eos.streamus.payloadmodels.validators.BandMember;
 import com.eos.streamus.payloadmodels.validators.BandMemberValidator;
 import com.eos.streamus.payloadmodels.validators.MusicianValidator;
-import com.eos.streamus.utils.IDatabaseConnection;
+import com.eos.streamus.utils.IDatabaseConnector;
 import com.eos.streamus.writers.JsonAlbumListWriter;
 import com.eos.streamus.writers.JsonArtistListWriter;
 import com.eos.streamus.writers.JsonBandWriter;
@@ -35,7 +35,7 @@ import java.util.List;
 @RestController
 public class ArtistController implements CommonResponses {
   @Autowired
-  private IDatabaseConnection databaseConnection;
+  private IDatabaseConnector databaseConnector;
   @Autowired
   private MusicianValidator musicianValidator;
   @Autowired
@@ -44,7 +44,7 @@ public class ArtistController implements CommonResponses {
   @GetMapping("/artists")
   public ResponseEntity<JsonNode> allArtists() {
     List<Artist> allArtists;
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       allArtists = ArtistDAO.all(connection);
       for (Artist artist : allArtists) {
         artist.fetchAlbums(connection);
@@ -58,7 +58,7 @@ public class ArtistController implements CommonResponses {
 
   @GetMapping("/artist/{id}")
   public ResponseEntity<JsonNode> getArtist(@PathVariable int id) {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Artist artist = ArtistDAO.findById(id, connection);
       artist.fetchAlbums(connection);
       JsonWriter writer = artist instanceof Band ?
@@ -75,7 +75,7 @@ public class ArtistController implements CommonResponses {
 
   @GetMapping("/artist/{id}/discography")
   public ResponseEntity<JsonNode> getArtistDiscography(@PathVariable int id) {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Artist artist = ArtistDAO.findById(id, connection);
       artist.fetchAlbums(connection);
       return ResponseEntity.ok(new JsonAlbumListWriter(artist.getAlbums()).getJson());
@@ -89,7 +89,7 @@ public class ArtistController implements CommonResponses {
 
   @PostMapping("/band")
   public ResponseEntity<JsonNode> createBand(@Valid @RequestBody com.eos.streamus.payloadmodels.Band bandData) {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Band band = new Band(bandData.getName());
       band.save(connection);
       return ResponseEntity.ok(new JsonBandWriter(band).getJson());
@@ -106,7 +106,7 @@ public class ArtistController implements CommonResponses {
     if (result.hasErrors()) {
       return badRequest(result.toString());
     }
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       connection.setAutoCommit(false);
       Musician musician;
       if (data.getPerson() != null) {
@@ -145,7 +145,7 @@ public class ArtistController implements CommonResponses {
     if (result.hasErrors()) {
       return badRequest(result.toString());
     }
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       connection.setAutoCommit(false);
       Band band = Band.findById(bandId, connection);
       Musician musician = getMusicianFromBandMemberData(member, connection);
@@ -168,7 +168,7 @@ public class ArtistController implements CommonResponses {
 
   @DeleteMapping("/artist/{id}")
   public ResponseEntity<String> deleteArtist(@PathVariable final int id) {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       ArtistDAO.findById(id, connection).delete(connection);
       return ResponseEntity.ok("Artist deleted");
     } catch (SQLException sqlException) {

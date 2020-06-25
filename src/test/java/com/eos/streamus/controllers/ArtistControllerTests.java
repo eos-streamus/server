@@ -52,7 +52,7 @@ public class ArtistControllerTests extends ControllerTests {
 
   @Test
   void gettingAnExistingBandShouldReturnOkWithCorrectJson() throws Exception {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Band band = new Band("Test band");
       band.save(connection);
 
@@ -74,7 +74,7 @@ public class ArtistControllerTests extends ControllerTests {
 
   @Test
   void gettingAnExistingMusicianShouldReturnOkWithCorrectJson() throws Exception {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Musician musician = new Musician("Test musician");
       musician.save(connection);
 
@@ -96,7 +96,7 @@ public class ArtistControllerTests extends ControllerTests {
 
   @Test
   void gettingAnExistingPersonMusicianShouldReturnOkWithCorrectJson() throws Exception {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Musician musician = new Musician(
           new Person("John", "Doe", new Date(dateFormatter.parse("2000-01-01").getTime())));
       musician.save(connection);
@@ -120,7 +120,7 @@ public class ArtistControllerTests extends ControllerTests {
 
   @Test
   void gettingAnExistingBandWithMembersShouldReturnOkWithCorrectJson() throws Exception {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Band band = new Band("Test band");
       band.save(connection);
 
@@ -154,7 +154,7 @@ public class ArtistControllerTests extends ControllerTests {
 
   @Test
   void gettingAnExistingArtistWithAlbumsShouldReturnOkWithCorrectJson() throws Exception {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Album album = new Album("Test album", date("2000-01-01"));
       List<Path> paths = new ArrayList<>();
       for (int i = 0; i < 10; i++) {
@@ -201,7 +201,7 @@ public class ArtistControllerTests extends ControllerTests {
 
   @Test
   void gettingAnArtistsDiscographyShouldReturnOkWithCorrectJson() throws Exception {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Album album = new Album("Test album", date("2000-01-01"));
       List<Path> paths = new ArrayList<>();
       for (int i = 0; i < 10; i++) {
@@ -248,7 +248,7 @@ public class ArtistControllerTests extends ControllerTests {
 
   @Test
   void gettingANonExistentArtistShouldReturnNotFound() throws Exception {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Musician musician = new Musician("Test musician");
       musician.save(connection);
       musician.delete(connection);
@@ -265,7 +265,7 @@ public class ArtistControllerTests extends ControllerTests {
 
   @Test
   void gettingANonExistentArtistsDiscographyShouldReturnNotFound() throws Exception {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Band band = new Band("Test band");
       band.save(connection);
       band.delete(connection);
@@ -295,7 +295,7 @@ public class ArtistControllerTests extends ControllerTests {
     JsonNode json = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
     assertTrue(json.has("id"));
 
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Band band = Band.findById(json.get("id").asInt(), connection);
       assertEquals(new JsonBandWriter(band).getJson(), json);
       band.delete(connection);
@@ -342,7 +342,7 @@ public class ArtistControllerTests extends ControllerTests {
                                               .getResponse();
     JsonNode jsonNode = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
     assertTrue(jsonNode.has("id"));
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Musician musician = Musician.findById(jsonNode.get("id").asInt(), connection);
       assertEquals(new JsonMusicianWriter(musician).getJson(), jsonNode);
       musician.delete(connection);
@@ -367,7 +367,7 @@ public class ArtistControllerTests extends ControllerTests {
                                               .getResponse();
     JsonNode jsonNode = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
     assertTrue(jsonNode.has("id"));
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Musician musician = Musician.findById(jsonNode.get("id").asInt(), connection);
       assertEquals(new JsonMusicianWriter(musician).getJson(), jsonNode);
       musician.delete(connection);
@@ -393,7 +393,7 @@ public class ArtistControllerTests extends ControllerTests {
                                               .getResponse();
     JsonNode jsonNode = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
     assertTrue(jsonNode.has("id"));
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Musician musician = Musician.findById(jsonNode.get("id").asInt(), connection);
       assertEquals(new JsonMusicianWriter(musician).getJson(), jsonNode);
       musician.delete(connection);
@@ -505,7 +505,7 @@ public class ArtistControllerTests extends ControllerTests {
 
   @Test
   void addingABandMemberWithMusicianIdShouldReturnOkWithJson() throws Exception {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Band band = new Band("Test name");
       band.save(connection);
 
@@ -530,7 +530,7 @@ public class ArtistControllerTests extends ControllerTests {
 
   @Test
   void addingABandMemberWithANewNameMusicianShouldReturnOkWithJson() throws Exception {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Band band = new Band("Test name");
       band.save(connection);
 
@@ -552,7 +552,7 @@ public class ArtistControllerTests extends ControllerTests {
 
   @Test
   void addingABandMemberWithANewPersonMusicianShouldReturnOkWithJson() throws Exception {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Band band = new Band("Test name");
       band.save(connection);
 
@@ -577,7 +577,7 @@ public class ArtistControllerTests extends ControllerTests {
 
   @Test
   void addingABandMemberWithANewNameAndPersonMusicianShouldReturnOkWithJson() throws Exception {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Band band = new Band("Test name");
       band.save(connection);
 
@@ -604,7 +604,7 @@ public class ArtistControllerTests extends ControllerTests {
 
   @Test
   void addingABandMemberWithFromGreaterThanToShouldReturnBadRequest() throws Exception {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Band band = new Band("Test name");
       band.save(connection);
 
@@ -629,7 +629,7 @@ public class ArtistControllerTests extends ControllerTests {
 
   @Test
   void addingABandMemberWithOverlappingMembershipsToSameBandShouldReturnBadRequest() throws Exception {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Band band = new Band("Test name");
       band.save(connection);
 
@@ -653,7 +653,7 @@ public class ArtistControllerTests extends ControllerTests {
 
   @Test
   void addingABandMemberWithoutFromDateShouldReturnBadRequest() throws Exception {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Band band = new Band("Test name");
       band.save(connection);
 
@@ -675,7 +675,7 @@ public class ArtistControllerTests extends ControllerTests {
   // Delete tests
   @Test
   void deletingAnArtistShouldBeSuccessful() throws Exception {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Band band = new Band("Test band");
       band.save(connection);
 
@@ -688,7 +688,7 @@ public class ArtistControllerTests extends ControllerTests {
 
   @Test
   void deletingANonExistingArtistShouldReturnNotFound() throws Exception {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Band band = new Band("Test band");
       band.save(connection);
       band.delete(connection);

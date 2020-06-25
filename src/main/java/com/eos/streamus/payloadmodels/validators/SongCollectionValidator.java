@@ -4,7 +4,7 @@ import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.Song;
 import com.eos.streamus.payloadmodels.SongCollection;
 import com.eos.streamus.payloadmodels.Track;
-import com.eos.streamus.utils.IDatabaseConnection;
+import com.eos.streamus.utils.IDatabaseConnector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -18,7 +18,7 @@ import java.util.Comparator;
 public abstract class SongCollectionValidator implements Validator {
 
   @Autowired
-  private IDatabaseConnection databaseConnection;
+  private IDatabaseConnector databaseConnector;
 
   @Override
   public void validate(final Object o, final Errors errors) {
@@ -28,7 +28,7 @@ public abstract class SongCollectionValidator implements Validator {
       errors.reject("Invalid playlist name");
     }
 
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       songCollection.getTracks().sort(Comparator.comparingInt(Track::getTrackNumber));
       for (int i = 0; i < songCollection.getTracks().size(); i++) {
         if (songCollection.getTracks().get(i).getTrackNumber() < 1) {

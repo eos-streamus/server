@@ -16,7 +16,7 @@ public class ActivityTests extends DatabaseTests {
 
   @Test
   void testResourceActivity() throws SQLException, NoResultException {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Song song = new Song(randomString(), randomString(), 100);
       song.save(connection);
 
@@ -47,7 +47,7 @@ public class ActivityTests extends DatabaseTests {
 
   @Test
   void testCollectionActivity() throws SQLException, NoResultException {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Series theExpanse = new Series("The Expanse");
       short season1 = 1;
       theExpanse.new Episode(randomString(), "Dulcinea", 2700, season1);
@@ -109,7 +109,7 @@ public class ActivityTests extends DatabaseTests {
 
   @Test
   void testActivityMessages() throws SQLException, NoResultException {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Film film = new Film(randomString(), randomString(), (getRandom().nextInt() & Integer.MAX_VALUE));
       film.save(connection);
 

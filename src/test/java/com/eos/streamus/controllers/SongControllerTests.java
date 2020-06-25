@@ -37,7 +37,7 @@ public class SongControllerTests extends ControllerTests {
     );
 
     Song song = new Song(path.toString(), "sample audio", 27);
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       song.save(connection);
 
       // Get Song
@@ -58,7 +58,7 @@ public class SongControllerTests extends ControllerTests {
   @Test
   void gettingANonExistingSongShouldReturn404() throws Exception {
     Song song = new Song(SAMPLE_AUDIO_PATH.toString(), "sample audio", 27);
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       song.save(connection);
       song.delete(connection);
 
@@ -83,7 +83,7 @@ public class SongControllerTests extends ControllerTests {
     );
 
     Song song = new Song(path.toString(), "sample audio", 27);
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       song.save(connection);
 
       // Delete Song
@@ -103,7 +103,7 @@ public class SongControllerTests extends ControllerTests {
   @Test
   void aDeleteRequestShouldReturnNotFoundIfSongDoesNotExist() throws Exception {
 
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Song song = new Song("randomPath", "randomName", 27);
       song.save(connection);
       song.delete(connection);

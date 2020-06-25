@@ -6,9 +6,9 @@ import com.eos.streamus.controllers.SongController;
 import com.eos.streamus.payloadmodels.validators.BandMemberValidator;
 import com.eos.streamus.payloadmodels.validators.MusicianValidator;
 import com.eos.streamus.payloadmodels.validators.PersonValidator;
-import com.eos.streamus.utils.IDatabaseConnection;
+import com.eos.streamus.utils.IDatabaseConnector;
 import com.eos.streamus.utils.IResourcePathResolver;
-import com.eos.streamus.utils.TestDatabaseConnection;
+import com.eos.streamus.utils.TestDatabaseConnector;
 import com.eos.streamus.utils.TestResourcePathResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,8 +16,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class StreamusTestConfiguration {
   @Bean
-  public IDatabaseConnection databaseConnection() {
-    return new TestDatabaseConnection();
+  public IDatabaseConnector databaseConnector() {
+    return new TestDatabaseConnector();
   }
 
   @Bean
