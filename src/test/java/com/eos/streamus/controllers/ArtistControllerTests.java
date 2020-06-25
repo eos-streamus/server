@@ -1,7 +1,9 @@
 package com.eos.streamus.controllers;
 
 import com.eos.streamus.models.Band;
+import com.eos.streamus.models.Musician;
 import com.eos.streamus.writers.JsonBandWriter;
+import com.eos.streamus.writers.JsonMusicianWriter;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -52,6 +54,28 @@ public class ArtistControllerTests extends ControllerTests {
       JsonNode json = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
       assertEquals(new JsonBandWriter(band).getJson(), json);
       band.delete(connection);
+    }
+  }
+
+  @Test
+  void gettingAnExistingMusicianShouldReturnOkWithCorrectJson() throws Exception {
+    try (Connection connection = databaseConnection.getConnection()) {
+      Musician musician = new Musician("Test musician");
+      musician.save(connection);
+
+      RequestBuilder builder = MockMvcRequestBuilders.get(String.format("/artist/%d", musician.getId()))
+                                                     .contentType(MediaType.APPLICATION_JSON);
+
+      MockHttpServletResponse response =
+          mockMvc
+              .perform(builder)
+              .andExpect(status().is(200))
+              .andReturn()
+              .getResponse();
+
+      JsonNode json = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
+      assertEquals(new JsonMusicianWriter(musician).getJson(), json);
+      musician.delete(connection);
     }
   }
 }
