@@ -35,11 +35,6 @@ public class SongPlaylistController extends SongCollectionController {
   @Autowired
   private SongPlaylistValidator songPlaylistValidator;
 
-  @GetMapping("/songplaylist/{id}")
-  public ResponseEntity<JsonNode> getSongPlaylistById(@PathVariable final int id) {
-    return getSongCollectionById(id);
-  }
-
   @PostMapping("/songplaylist")
   public ResponseEntity<JsonNode> createSongPlaylist(
       @Valid @RequestBody final com.eos.streamus.payloadmodels.SongPlaylist songPlaylistData,
@@ -70,12 +65,6 @@ public class SongPlaylistController extends SongCollectionController {
       logException(sqlException);
       return internalServerError();
     }
-  }
-
-  @PostMapping("/songplaylist/{songPlaylistId}/{songId}")
-  public ResponseEntity<JsonNode> addSongToPlaylist(@PathVariable final int songPlaylistId,
-                                                    @PathVariable final int songId) {
-    return addSongToCollection(songPlaylistId, songId);
   }
 
   @PutMapping("/songplaylist/{id}")

@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -22,6 +24,7 @@ import java.util.Optional;
 
 import static org.springframework.http.ResponseEntity.ok;
 
+@RestController
 public abstract class SongCollectionController implements CommonResponses {
 
   @Autowired
@@ -31,7 +34,8 @@ public abstract class SongCollectionController implements CommonResponses {
 
   protected abstract JsonSongCollectionWriter jsonSongCollectionWriter(final SongCollection songCollection);
 
-  public ResponseEntity<JsonNode> getSongCollectionById(final int id) {
+  @GetMapping("/songcollection/{id}")
+  public ResponseEntity<JsonNode> getSongCollectionById(@PathVariable final int id) {
     try (Connection connection = databaseConnector.getConnection()) {
       return ok(jsonSongCollectionWriter(SongCollectionDAO.findById(id, connection)).getJson());
     } catch (SQLException sqlException) {
@@ -42,7 +46,9 @@ public abstract class SongCollectionController implements CommonResponses {
     }
   }
 
-  public ResponseEntity<JsonNode> addSongToCollection(final int songCollectionId, final int songId) {
+  @PostMapping("/songcollection/{songPlaylistId}/{songId}")
+  public ResponseEntity<JsonNode> addSongToCollection(@PathVariable final int songCollectionId,
+                                                      @PathVariable final int songId) {
     try (Connection connection = databaseConnector.getConnection()) {
       SongCollection songCollection = SongCollectionDAO.findById(songCollectionId, connection);
       songCollection.addSong(Song.findById(songId, connection));
@@ -55,7 +61,6 @@ public abstract class SongCollectionController implements CommonResponses {
       return internalServerError();
     }
   }
-
 
   public ResponseEntity<JsonNode> addOrMoveTrackInSongCollection(final int id, final Track trackData) {
     try (Connection connection = databaseConnector.getConnection()) {
@@ -90,4 +95,5 @@ public abstract class SongCollectionController implements CommonResponses {
       return internalServerError();
     }
   }
+
 }

@@ -32,11 +32,6 @@ public class AlbumController extends SongCollectionController {
   @Autowired
   private AlbumValidator albumValidator;
 
-  @GetMapping("/album/{id}")
-  public ResponseEntity<JsonNode> getAlbum(@PathVariable int id) {
-    return getSongCollectionById(id);
-  }
-
   @PostMapping("/albums")
   public ResponseEntity<JsonNode> createAlbum(@Valid @RequestBody final com.eos.streamus.payloadmodels.Album albumData,
                                               BindingResult result) {

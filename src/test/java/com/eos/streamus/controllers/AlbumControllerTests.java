@@ -29,7 +29,7 @@ public class AlbumControllerTests extends ControllerTests {
       Album album = new Album("Test album", date("2020-01-01"));
       album.save(connection);
 
-      RequestBuilder builder = MockMvcRequestBuilders.get(String.format("/album/%d", album.getId()));
+      RequestBuilder builder = MockMvcRequestBuilders.get(String.format("/songcollection/%d", album.getId()));
       MockHttpServletResponse response = mockMvc.perform(builder)
                                                 .andExpect(status().is(200))
                                                 .andReturn()
@@ -47,7 +47,7 @@ public class AlbumControllerTests extends ControllerTests {
       album.save(connection);
       album.delete(connection);
 
-      RequestBuilder builder = MockMvcRequestBuilders.get(String.format("/album/%d", album.getId()));
+      RequestBuilder builder = MockMvcRequestBuilders.get(String.format("/songcollection/%d", album.getId()));
       mockMvc.perform(builder)
              .andExpect(status().is(404))
              .andReturn();
