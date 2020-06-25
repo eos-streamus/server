@@ -35,7 +35,7 @@ public class FilmControllerTests extends ControllerTests {
     );
 
     Film film = new Film(path.toString(), "sample film", 27);
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       film.save(connection);
 
       // Get Film
@@ -71,7 +71,7 @@ public class FilmControllerTests extends ControllerTests {
     );
 
     Film film = new Film(path.toString(), "sample film", 27);
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       film.save(connection);
 
       // Get Film
@@ -97,7 +97,7 @@ public class FilmControllerTests extends ControllerTests {
     );
 
     Film film = new Film(path.toString(), "sample film", 27);
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       film.save(connection);
 
       // Get Film
@@ -122,7 +122,7 @@ public class FilmControllerTests extends ControllerTests {
     );
 
     Film film = new Film(path.toString(), "sample film", 27);
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       film.save(connection);
       film.delete(connection);
       Files.delete(path);
@@ -149,7 +149,7 @@ public class FilmControllerTests extends ControllerTests {
     );
 
     Film film = new Film(path.toString(), "sample video", 27);
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       film.save(connection);
 
       // Delete Film
@@ -174,7 +174,7 @@ public class FilmControllerTests extends ControllerTests {
     );
 
     Film film = new Film(path.toString(), "sample video", 27);
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       film.save(connection);
       film.delete(connection);
       Files.delete(path);

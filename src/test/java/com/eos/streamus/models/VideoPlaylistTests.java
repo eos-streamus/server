@@ -22,7 +22,7 @@ public class VideoPlaylistTests extends DatabaseTests {
 
   @Test
   void testEmptyVideoPlaylistCRUD() throws SQLException, NoResultException, ParseException {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
       java.sql.Date sqlDate = new java.sql.Date(dateFormat.parse("1970-08-01").getTime());
       User user = new User(
@@ -58,7 +58,7 @@ public class VideoPlaylistTests extends DatabaseTests {
 
   @Test
   void testPopulatedVideoPlaylistCRUD() throws SQLException, NoResultException {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       User user = randomUser();
       user.save(connection);
       VideoPlaylist videoPlaylist = new VideoPlaylist("Test video playlist", user);

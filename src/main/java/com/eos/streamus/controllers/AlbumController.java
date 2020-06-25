@@ -6,7 +6,7 @@ import com.eos.streamus.models.ArtistDAO;
 import com.eos.streamus.models.Song;
 import com.eos.streamus.payloadmodels.validators.AlbumValidator;
 import com.eos.streamus.payloadmodels.Track;
-import com.eos.streamus.utils.IDatabaseConnection;
+import com.eos.streamus.utils.IDatabaseConnector;
 import com.eos.streamus.writers.JsonAlbumWriter;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,13 +27,13 @@ import java.sql.SQLException;
 public class AlbumController implements CommonResponses {
 
   @Autowired
-  private IDatabaseConnection databaseConnection;
+  private IDatabaseConnector databaseConnector;
   @Autowired
   private AlbumValidator albumValidator;
 
   @GetMapping("/album/{id}")
   public ResponseEntity<JsonNode> getAlbum(@PathVariable int id) {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Album album = Album.findById(id, connection);
       return ResponseEntity.ok(new JsonAlbumWriter(album).getJson());
     } catch (NoResultException noResultException) {
@@ -52,7 +52,7 @@ public class AlbumController implements CommonResponses {
     if (result.hasErrors()) {
       return badRequest(result.toString());
     }
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       connection.setAutoCommit(false);
       Album album = new Album(albumData.getName(), new java.sql.Date(albumData.getReleaseDate().getTime()));
       for (int artistId : albumData.getArtistIds()) {
@@ -75,7 +75,7 @@ public class AlbumController implements CommonResponses {
 
   @DeleteMapping("/album/{id}")
   public ResponseEntity<String> deleteAlbum(@PathVariable final int id) {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Album.findById(id, connection).delete(connection);
       return ResponseEntity.ok("Album deleted");
     } catch (SQLException sqlException) {

@@ -16,7 +16,7 @@ public class AdminTests extends DatabaseTests {
 
   @Test
   void testAdmin() throws SQLException, NoResultException {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Admin admin = new Admin(
           "Test",
           "Admin", valueOf("1990-01-01"),

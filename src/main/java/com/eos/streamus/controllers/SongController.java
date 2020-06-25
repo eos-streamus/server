@@ -3,7 +3,7 @@ package com.eos.streamus.controllers;
 import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.Song;
 import com.eos.streamus.utils.FileInfo;
-import com.eos.streamus.utils.IDatabaseConnection;
+import com.eos.streamus.utils.IDatabaseConnector;
 import com.eos.streamus.utils.IResourcePathResolver;
 import com.eos.streamus.utils.ShellUtils;
 import com.eos.streamus.writers.JsonSongWriter;
@@ -43,7 +43,7 @@ public class SongController implements CommonResponses {
   private IResourcePathResolver resourcePathResolver;
 
   @Autowired
-  private IDatabaseConnection databaseConnection;
+  private IDatabaseConnector databaseConnector;
 
   /**
    * Save a new {@link Song}.
@@ -80,7 +80,7 @@ public class SongController implements CommonResponses {
     );
 
     File storedFile = new File(path);
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       multipartFile.transferTo(storedFile);
       FileInfo fileInfo = ShellUtils.getResourceInfo(storedFile.getPath());
       if (!fileInfo.isAudioOnly()) {
@@ -105,7 +105,7 @@ public class SongController implements CommonResponses {
   @GetMapping("/song/{id}")
   public ResponseEntity<ResourceRegion> getAudio(@RequestHeader HttpHeaders headers,
                                                  @PathVariable("id") int id) {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       return streamResource(Song.findById(id, connection), headers.getRange(), MAX_AUDIO_CHUNK_SIZE);
     } catch (NoResultException noResultException) {
       return notFound();
@@ -117,7 +117,7 @@ public class SongController implements CommonResponses {
 
   @DeleteMapping("/song/{id}")
   public ResponseEntity<String> deleteSong(@PathVariable("id") final int id) {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       return deleteFileAndResource(Song.findById(id, connection), connection);
     } catch (SQLException sqlException) {
       logException(sqlException);

@@ -15,7 +15,7 @@ public class AlbumTests extends DatabaseTests {
 
   @Test
   void testAlbum() throws SQLException, NoResultException {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Album album = new Album(randomString(), randomDate());
 
       Song[] songs = new Song[10];
@@ -38,7 +38,7 @@ public class AlbumTests extends DatabaseTests {
 
   @Test
   void testAlbumWithArtists() throws SQLException, NoResultException {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       Band band = new Band("test band");
       band.save(connection);
 

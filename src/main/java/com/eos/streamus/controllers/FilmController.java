@@ -3,7 +3,7 @@ package com.eos.streamus.controllers;
 import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.Film;
 import com.eos.streamus.utils.FileInfo;
-import com.eos.streamus.utils.IDatabaseConnection;
+import com.eos.streamus.utils.IDatabaseConnector;
 import com.eos.streamus.utils.IResourcePathResolver;
 import com.eos.streamus.utils.ShellUtils;
 import com.eos.streamus.writers.JsonFilmListWriter;
@@ -40,11 +40,11 @@ public class FilmController implements CommonResponses {
   @Autowired
   private IResourcePathResolver resourcePathResolver;
   @Autowired
-  private IDatabaseConnection databaseConnection;
+  private IDatabaseConnector databaseConnector;
 
   @GetMapping("/films")
   public ResponseEntity<JsonNode> allFilms() {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       return ResponseEntity.ok(new JsonFilmListWriter(Film.all(connection)).getJson());
     } catch (SQLException sqlException) {
       logException(sqlException);
@@ -78,7 +78,7 @@ public class FilmController implements CommonResponses {
 
     File storedFile = new File(path);
 
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       file.transferTo(storedFile);
       FileInfo fileInfo = ShellUtils.getResourceInfo(storedFile.getPath());
       if (!fileInfo.isVideo()) {
@@ -100,7 +100,7 @@ public class FilmController implements CommonResponses {
 
   @GetMapping("/film/{id}")
   public ResponseEntity<JsonNode> getFilm(@PathVariable("id") int id) {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       return ResponseEntity.ok().body(new JsonFilmWriter(Film.findById(id, connection)).getJson());
     } catch (SQLException sqlException) {
       logException(sqlException);
@@ -112,7 +112,7 @@ public class FilmController implements CommonResponses {
 
   @GetMapping("/film/{id}/stream")
   public ResponseEntity<ResourceRegion> streamFilm(@RequestHeader HttpHeaders headers, @PathVariable("id") int id) {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       return streamResource(Film.findById(id, connection), headers.getRange(), MAX_VIDEO_CHUNK_SIZE);
     } catch (NoResultException noResultException) {
       return notFound();
@@ -124,7 +124,7 @@ public class FilmController implements CommonResponses {
 
   @DeleteMapping("/film/{id}")
   public ResponseEntity<String> deleteFilm(@PathVariable final int id) {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       return deleteFileAndResource(Film.findById(id, connection), connection);
     } catch (SQLException sqlException) {
       logException(sqlException);

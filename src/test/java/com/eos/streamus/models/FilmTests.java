@@ -16,7 +16,7 @@ public class FilmTests extends DatabaseTests {
 
   @Test
   void testFilmCRUD() throws SQLException, NoResultException {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       // Create
       Film film = new Film(randomString(), randomString(), 100);
       film.save(connection);

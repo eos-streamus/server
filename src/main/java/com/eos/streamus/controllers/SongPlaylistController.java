@@ -7,7 +7,7 @@ import com.eos.streamus.models.SongPlaylist;
 import com.eos.streamus.models.User;
 import com.eos.streamus.payloadmodels.Track;
 import com.eos.streamus.payloadmodels.validators.SongPlaylistValidator;
-import com.eos.streamus.utils.IDatabaseConnection;
+import com.eos.streamus.utils.IDatabaseConnector;
 import com.eos.streamus.writers.JsonSongPlaylistWriter;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,13 +32,13 @@ import static org.springframework.http.ResponseEntity.ok;
 public class SongPlaylistController implements CommonResponses {
 
   @Autowired
-  private IDatabaseConnection databaseConnection;
+  private IDatabaseConnector databaseConnector;
   @Autowired
   private SongPlaylistValidator songPlaylistValidator;
 
   @GetMapping("/songplaylist/{id}")
   public ResponseEntity<JsonNode> getSongPlaylistById(@PathVariable final int id) {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       return ok(new JsonSongPlaylistWriter(SongPlaylist.findById(id, connection)).getJson());
     } catch (SQLException sqlException) {
       logException(sqlException);
@@ -57,7 +57,7 @@ public class SongPlaylistController implements CommonResponses {
     if (result.hasErrors()) {
       return badRequest(result.toString());
     }
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       connection.setAutoCommit(false);
       SongPlaylist songPlaylist = new SongPlaylist(
           songPlaylistData.getName(),
@@ -83,7 +83,7 @@ public class SongPlaylistController implements CommonResponses {
   @PostMapping("/songplaylist/{songPlaylistId}/{songId}")
   public ResponseEntity<JsonNode> addSongToPlaylist(@PathVariable final int songPlaylistId,
                                                     @PathVariable final int songId) {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       SongPlaylist songPlaylist = SongPlaylist.findById(songPlaylistId, connection);
       songPlaylist.addSong(Song.findById(songId, connection));
       songPlaylist.save(connection);
@@ -99,7 +99,7 @@ public class SongPlaylistController implements CommonResponses {
   @PutMapping("/songplaylist/{id}")
   public ResponseEntity<JsonNode> addOrMoveTrackInPlaylist(@PathVariable final int id,
                                                            @Valid @RequestBody final Track trackData) {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       SongPlaylist songPlaylist = SongPlaylist.findById(id, connection);
       Song song = Song.findById(trackData.getSongId(), connection);
       if (trackData.getTrackNumber() < 1 || trackData.getTrackNumber() > songPlaylist.getTracks().size()) {
@@ -128,7 +128,7 @@ public class SongPlaylistController implements CommonResponses {
 
   @DeleteMapping("/songplaylist/{id}")
   public ResponseEntity<String> deleteSongPlaylist(@PathVariable final int id) {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       SongPlaylist.findById(id, connection).delete(connection);
       return ok("SongPlaylist deleted");
     } catch (NoResultException noResultException) {
@@ -142,7 +142,7 @@ public class SongPlaylistController implements CommonResponses {
   @DeleteMapping("/songplaylist/{songPlaylistId}/{songId}")
   public ResponseEntity<JsonNode> deleteSongFromSongPlaylist(@PathVariable final int songPlaylistId,
                                                              @PathVariable final int songId) {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       SongPlaylist songPlaylist = SongPlaylist.findById(songPlaylistId, connection);
       Optional<SongCollection.Track> existingTrack = songPlaylist.getTracks().stream().filter(
           track -> track.getSong().getId() == songId

@@ -6,7 +6,7 @@ import com.eos.streamus.models.Artist;
 import com.eos.streamus.models.Collection;
 import com.eos.streamus.models.Person;
 import com.eos.streamus.models.Resource;
-import com.eos.streamus.utils.IDatabaseConnection;
+import com.eos.streamus.utils.IDatabaseConnector;
 import com.eos.streamus.utils.IResourcePathResolver;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.junit.jupiter.api.AfterAll;
@@ -69,7 +69,7 @@ abstract class ControllerTests {
   protected IResourcePathResolver resourcePathResolver;
 
   @Autowired
-  protected IDatabaseConnection databaseConnection;
+  protected IDatabaseConnector databaseConnector;
 
   protected final Date date(final String dateString) throws ParseException {
     return new Date(dateFormatter.parse(dateString).getTime());
@@ -77,7 +77,7 @@ abstract class ControllerTests {
 
   @AfterAll
   void emptyDatabase() throws SQLException, IOException {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       // Delete all Resources
       List<String> pathStrings = new ArrayList<>();
       try (PreparedStatement preparedStatement = connection.prepareStatement(

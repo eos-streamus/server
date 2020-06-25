@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class PersonTests extends DatabaseTests {
   @Test
   void testPersonCRUD() throws SQLException, NoResultException {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       // Create
       Person person = new Person("John", "Doe", randomDate());
       person.save(connection);

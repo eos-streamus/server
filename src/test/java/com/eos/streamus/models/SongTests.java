@@ -17,7 +17,7 @@ public class SongTests extends DatabaseTests {
 
   @Test
   void testSongCRUD() throws SQLException, NoResultException {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       // Create
       Song song = new Song(String.format("test%d.mp3", new Date().getTime()), randomString(), 100);
       song.save(connection);

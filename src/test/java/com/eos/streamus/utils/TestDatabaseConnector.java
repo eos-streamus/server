@@ -1,66 +1,34 @@
 package com.eos.streamus.utils;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
-
 @Service
 @Scope(value = "singleton")
-public class DatabaseConnection implements IDatabaseConnection {
+public class TestDatabaseConnector implements IDatabaseConnector {
   @Value("${jdbc.url}")
-  private String url;
+  protected String url;
 
   @Value("${jdbc.host}")
-  private String host;
+  protected String host;
 
   @Value("${jdbc.port}")
-  private int port;
+  protected int port;
 
-  @Value("${jdbc.databaseName}")
-  private String databaseName;
+  @Value("${jdbc.testDatabaseName}")
+  protected String databaseName;
 
   @Value("${database.user}")
-  private String user;
+  protected String user;
 
   @Value("${database.password}")
-  private String password;
-
-  @Override
+  protected String password;
   public Connection getConnection() throws SQLException {
     return DriverManager.getConnection(String.format("%s%s:%d/%s", url, host, port, databaseName), user, password);
   }
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

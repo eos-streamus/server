@@ -6,7 +6,7 @@ import com.eos.streamus.models.Collection;
 import com.eos.streamus.models.Person;
 import com.eos.streamus.models.Resource;
 import com.eos.streamus.models.User;
-import com.eos.streamus.utils.IDatabaseConnection;
+import com.eos.streamus.utils.IDatabaseConnector;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -36,10 +36,10 @@ public abstract class DatabaseTests {
   private final Random random = new Random();
 
   @Autowired
-  protected IDatabaseConnection databaseConnection;
+  protected IDatabaseConnector databaseConnector;
 
   public Connection getConnection() throws SQLException {
-    return databaseConnection.getConnection();
+    return databaseConnector.getConnection();
   }
 
   protected String randomString() {
@@ -68,14 +68,14 @@ public abstract class DatabaseTests {
   @Test
   void connectToDatabase() {
     assertDoesNotThrow(() -> {
-      Connection connection = databaseConnection.getConnection();
+      Connection connection = databaseConnector.getConnection();
       connection.close();
     });
   }
 
   @AfterAll
   void emptyDatabase() throws SQLException, IOException {
-    try (Connection connection = databaseConnection.getConnection()) {
+    try (Connection connection = databaseConnector.getConnection()) {
       // Delete all Resources
       List<String> pathStrings = new ArrayList<>();
       try (PreparedStatement preparedStatement = connection.prepareStatement(
