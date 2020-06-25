@@ -4,20 +4,21 @@ import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.Song;
 import com.eos.streamus.models.SongCollection;
 import com.eos.streamus.models.SongCollectionDAO;
-import com.eos.streamus.models.SongPlaylist;
 import com.eos.streamus.payloadmodels.Track;
 import com.eos.streamus.payloadmodels.validators.SongCollectionValidator;
 import com.eos.streamus.utils.IDatabaseConnector;
 import com.eos.streamus.writers.JsonSongCollectionWriter;
-import com.eos.streamus.writers.JsonSongPlaylistWriter;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Optional;
@@ -62,7 +63,9 @@ public abstract class SongCollectionController implements CommonResponses {
     }
   }
 
-  public ResponseEntity<JsonNode> addOrMoveTrackInSongCollection(final int id, final Track trackData) {
+  @PutMapping("/songcollection/{id}/tracks")
+  public ResponseEntity<JsonNode> addOrMoveTrackInSongCollection(@PathVariable final int id,
+                                                                 @Valid @RequestBody final Track trackData) {
     try (Connection connection = databaseConnector.getConnection()) {
 
       SongCollection songCollection = SongCollectionDAO.findById(id, connection);

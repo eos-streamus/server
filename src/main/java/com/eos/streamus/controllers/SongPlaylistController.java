@@ -67,12 +67,6 @@ public class SongPlaylistController extends SongCollectionController {
     }
   }
 
-  @PutMapping("/songplaylist/{id}")
-  public ResponseEntity<JsonNode> addOrMoveTrackInPlaylist(@PathVariable final int id,
-                                                           @Valid @RequestBody final Track trackData) {
-    return addOrMoveTrackInSongCollection(id, trackData);
-  }
-
   @DeleteMapping("/songplaylist/{id}")
   public ResponseEntity<String> deleteSongPlaylist(@PathVariable final int id) {
     try (Connection connection = databaseConnector.getConnection()) {
