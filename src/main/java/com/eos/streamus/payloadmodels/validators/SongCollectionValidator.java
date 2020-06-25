@@ -4,7 +4,7 @@ import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.Song;
 import com.eos.streamus.payloadmodels.SongCollection;
 import com.eos.streamus.payloadmodels.Track;
-import com.eos.streamus.utils.DatabaseConnection;
+import com.eos.streamus.utils.IDatabaseConnection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -18,7 +18,7 @@ import java.util.Comparator;
 public abstract class SongCollectionValidator implements Validator {
 
   @Autowired
-  private DatabaseConnection databaseConnection;
+  private IDatabaseConnection databaseConnection;
 
   @Override
   public void validate(final Object o, final Errors errors) {

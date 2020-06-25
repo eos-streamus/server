@@ -316,7 +316,7 @@ public class Band extends Artist {
     }
   }
 
-  private void fetchMembers(Connection connection) throws SQLException, NoResultException {
+  public void fetchMembers(Connection connection) throws SQLException, NoResultException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         String.format(
             "select * from %s where %s = ?",

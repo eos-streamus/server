@@ -7,7 +7,7 @@ import com.eos.streamus.models.SongPlaylist;
 import com.eos.streamus.models.User;
 import com.eos.streamus.payloadmodels.Track;
 import com.eos.streamus.payloadmodels.validators.SongPlaylistValidator;
-import com.eos.streamus.utils.DatabaseConnection;
+import com.eos.streamus.utils.IDatabaseConnection;
 import com.eos.streamus.writers.JsonSongPlaylistWriter;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,14 +31,10 @@ import static org.springframework.http.ResponseEntity.ok;
 @RestController
 public class SongPlaylistController implements CommonResponses {
 
-  private final DatabaseConnection databaseConnection;
-  private final SongPlaylistValidator songPlaylistValidator;
-
-  public SongPlaylistController(@Autowired DatabaseConnection databaseConnection,
-                                @Autowired SongPlaylistValidator songPlaylistValidator) {
-    this.databaseConnection = databaseConnection;
-    this.songPlaylistValidator = songPlaylistValidator;
-  }
+  @Autowired
+  private IDatabaseConnection databaseConnection;
+  @Autowired
+  private SongPlaylistValidator songPlaylistValidator;
 
   @GetMapping("/songplaylist/{id}")
   public ResponseEntity<JsonNode> getSongPlaylistById(@PathVariable final int id) {

@@ -1,11 +1,10 @@
 package com.eos.streamus.controllers;
 
 import com.eos.streamus.exceptions.NoResultException;
-import com.eos.streamus.models.Album;
 import com.eos.streamus.models.Film;
-import com.eos.streamus.utils.DatabaseConnection;
 import com.eos.streamus.utils.FileInfo;
-import com.eos.streamus.utils.ResourcePathResolver;
+import com.eos.streamus.utils.IDatabaseConnection;
+import com.eos.streamus.utils.IResourcePathResolver;
 import com.eos.streamus.utils.ShellUtils;
 import com.eos.streamus.writers.JsonFilmListWriter;
 import com.eos.streamus.writers.JsonFilmWriter;
@@ -27,8 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.UUID;
@@ -40,15 +37,10 @@ public class FilmController implements CommonResponses {
       "video/x-flv", "video/mp4", "video/MP2T", "video/3gpp", "video/quicktime", "video/x-msvideo", "video/x-ms-wmv"
   };
 
-  private final ResourcePathResolver resourcePathResolver;
-  private final DatabaseConnection databaseConnection;
-
   @Autowired
-  public FilmController(final ResourcePathResolver resourcePathResolver,
-                        final DatabaseConnection databaseConnection) {
-    this.resourcePathResolver = resourcePathResolver;
-    this.databaseConnection = databaseConnection;
-  }
+  private IResourcePathResolver resourcePathResolver;
+  @Autowired
+  private IDatabaseConnection databaseConnection;
 
   @GetMapping("/films")
   public ResponseEntity<JsonNode> allFilms() {
@@ -89,6 +81,9 @@ public class FilmController implements CommonResponses {
     try (Connection connection = databaseConnection.getConnection()) {
       file.transferTo(storedFile);
       FileInfo fileInfo = ShellUtils.getResourceInfo(storedFile.getPath());
+      if (!fileInfo.isVideo()) {
+        return badRequest("File is not video");
+      }
       Film film = new Film(path, name, fileInfo.getDuration());
       film.save(connection);
       return ResponseEntity.ok(new JsonFilmWriter(film).getJson());

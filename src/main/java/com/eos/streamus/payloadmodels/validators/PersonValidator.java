@@ -5,6 +5,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import java.util.Date;
+
 @Component
 public class PersonValidator implements Validator {
   @Override
@@ -29,6 +31,9 @@ public class PersonValidator implements Validator {
     }
     if (person.getLastName() != null && person.getLastName().isEmpty()) {
       errors.reject("<lastName> cannot be empty");
+    }
+    if (person.getDateOfBirth() != null && person.getDateOfBirth() > new Date().getTime()) {
+      errors.reject("<dateOfBirth> cannot be in the future");
     }
   }
 

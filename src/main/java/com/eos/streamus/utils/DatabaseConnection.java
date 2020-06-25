@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Scope(value = "singleton")
-public class DatabaseConnection {
+public class DatabaseConnection implements IDatabaseConnection {
   @Value("${jdbc.url}")
   private String url;
 
@@ -30,9 +30,11 @@ public class DatabaseConnection {
   @Value("${database.password}")
   private String password;
 
+  @Override
   public Connection getConnection() throws SQLException {
     return DriverManager.getConnection(String.format("%s%s:%d/%s", url, host, port, databaseName), user, password);
   }
+
 }
 
 

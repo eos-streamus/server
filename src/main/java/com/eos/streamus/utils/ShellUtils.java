@@ -10,7 +10,7 @@ import java.io.InputStreamReader;
 public class ShellUtils {
   private ShellUtils() {}
 
-  private static final String FFPROBE_COMMAND = "ffprobe -v quiet -print_format json -show_format";
+  private static final String FFPROBE_COMMAND = "ffprobe -v quiet -print_format json -show_format -show_streams";
 
   public static FileInfo getResourceInfo(final String path) throws IOException {
     Process process = Runtime.getRuntime().exec(String.format("%s \"%s\"", FFPROBE_COMMAND, path));

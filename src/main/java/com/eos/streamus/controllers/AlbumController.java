@@ -6,7 +6,7 @@ import com.eos.streamus.models.ArtistDAO;
 import com.eos.streamus.models.Song;
 import com.eos.streamus.payloadmodels.validators.AlbumValidator;
 import com.eos.streamus.payloadmodels.Track;
-import com.eos.streamus.utils.DatabaseConnection;
+import com.eos.streamus.utils.IDatabaseConnection;
 import com.eos.streamus.writers.JsonAlbumWriter;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +26,10 @@ import java.sql.SQLException;
 @Controller
 public class AlbumController implements CommonResponses {
 
-  private final DatabaseConnection databaseConnection;
-  private final AlbumValidator albumValidator;
-
-  public AlbumController(@Autowired DatabaseConnection databaseConnection, @Autowired AlbumValidator albumValidator) {
-    this.databaseConnection = databaseConnection;
-    this.albumValidator = albumValidator;
-  }
+  @Autowired
+  private IDatabaseConnection databaseConnection;
+  @Autowired
+  private AlbumValidator albumValidator;
 
   @GetMapping("/album/{id}")
   public ResponseEntity<JsonNode> getAlbum(@PathVariable int id) {

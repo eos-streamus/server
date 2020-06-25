@@ -2,9 +2,9 @@ package com.eos.streamus.controllers;
 
 import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.Song;
-import com.eos.streamus.utils.DatabaseConnection;
 import com.eos.streamus.utils.FileInfo;
-import com.eos.streamus.utils.ResourcePathResolver;
+import com.eos.streamus.utils.IDatabaseConnection;
+import com.eos.streamus.utils.IResourcePathResolver;
 import com.eos.streamus.utils.ShellUtils;
 import com.eos.streamus.writers.JsonSongWriter;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.UUID;
@@ -38,14 +39,11 @@ public class SongController implements CommonResponses {
       "audio/webm", "audio/flac", "audio/og"
   };
 
-  private final ResourcePathResolver resourcePathResolver;
-  private final DatabaseConnection databaseConnection;
+  @Autowired
+  private IResourcePathResolver resourcePathResolver;
 
-  public SongController(@Autowired final ResourcePathResolver resourcePathResolver,
-                        @Autowired final DatabaseConnection databaseConnection) {
-    this.resourcePathResolver = resourcePathResolver;
-    this.databaseConnection = databaseConnection;
-  }
+  @Autowired
+  private IDatabaseConnection databaseConnection;
 
   /**
    * Save a new {@link Song}.
@@ -85,6 +83,10 @@ public class SongController implements CommonResponses {
     try (Connection connection = databaseConnection.getConnection()) {
       multipartFile.transferTo(storedFile);
       FileInfo fileInfo = ShellUtils.getResourceInfo(storedFile.getPath());
+      if (!fileInfo.isAudioOnly()) {
+        Files.delete(storedFile.toPath());
+        return badRequest("file is not audio");
+      }
       Song song = new Song(path, name, fileInfo.getDuration());
       song.save(connection);
       return ResponseEntity.ok(new JsonSongWriter(song).getJson());

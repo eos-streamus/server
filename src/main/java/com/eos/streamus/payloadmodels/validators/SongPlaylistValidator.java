@@ -3,7 +3,7 @@ package com.eos.streamus.payloadmodels.validators;
 import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.User;
 import com.eos.streamus.payloadmodels.SongPlaylist;
-import com.eos.streamus.utils.DatabaseConnection;
+import com.eos.streamus.utils.IDatabaseConnection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -15,7 +15,7 @@ import java.sql.SQLException;
 public class SongPlaylistValidator extends SongCollectionValidator {
 
   @Autowired
-  private DatabaseConnection databaseConnection;
+  private IDatabaseConnection databaseConnection;
 
   @Override
   public boolean supports(final Class<?> aClass) {

@@ -8,8 +8,8 @@ import java.io.File;
 
 @Service
 @Scope(value = "singleton")
-public class ResourcePathResolver implements IResourcePathResolver {
-  @Value("${resourcePath}")
+public class TestResourcePathResolver implements IResourcePathResolver {
+  @Value("${testResourcePath}")
   private String resourcePath;
 
   @Override

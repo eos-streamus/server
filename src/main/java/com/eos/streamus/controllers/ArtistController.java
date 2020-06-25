@@ -9,7 +9,7 @@ import com.eos.streamus.models.Person;
 import com.eos.streamus.payloadmodels.validators.BandMember;
 import com.eos.streamus.payloadmodels.validators.BandMemberValidator;
 import com.eos.streamus.payloadmodels.validators.MusicianValidator;
-import com.eos.streamus.utils.DatabaseConnection;
+import com.eos.streamus.utils.IDatabaseConnection;
 import com.eos.streamus.writers.JsonAlbumListWriter;
 import com.eos.streamus.writers.JsonArtistListWriter;
 import com.eos.streamus.writers.JsonBandWriter;
@@ -34,17 +34,12 @@ import java.util.List;
 
 @RestController
 public class ArtistController implements CommonResponses {
-  private final DatabaseConnection databaseConnection;
-  private final MusicianValidator musicianValidator;
-  private final BandMemberValidator bandMemberValidator;
-
-  public ArtistController(@Autowired DatabaseConnection databaseConnection,
-                          @Autowired MusicianValidator musicianValidator,
-                          @Autowired BandMemberValidator bandMemberValidator) {
-    this.databaseConnection = databaseConnection;
-    this.musicianValidator = musicianValidator;
-    this.bandMemberValidator = bandMemberValidator;
-  }
+  @Autowired
+  private IDatabaseConnection databaseConnection;
+  @Autowired
+  private MusicianValidator musicianValidator;
+  @Autowired
+  private BandMemberValidator bandMemberValidator;
 
   @GetMapping("/artists")
   public ResponseEntity<JsonNode> allArtists() {
@@ -162,7 +157,7 @@ public class ArtistController implements CommonResponses {
       return badRequest("Invalid data");
     } catch (SQLException sqlException) {
       if (sqlException.getSQLState().equals("40002")) {
-        return badRequest("Overlapping band memberships for musician");
+        return badRequest(sqlException.getMessage());
       } else {
         logException(sqlException);
         return internalServerError();
@@ -191,7 +186,9 @@ public class ArtistController implements CommonResponses {
     } else if (member.getMusician().getId() != null) {
       musician = Musician.findById(member.getMusician().getId(), connection);
     } else {
-      if (member.getMusician().getPerson().getId() != null) {
+      if (member.getMusician().getPerson() == null) {
+        musician = new Musician(member.getMusician().getName());
+      } else if (member.getMusician().getPerson().getId() != null) {
         musician = member.getMusician().getName() == null ?
             new Musician(Person.findById(member.getMusician().getPerson().getId(), connection))
             :

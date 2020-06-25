@@ -1,76 +1,78 @@
-package com.eos.streamus;
+package com.eos.streamus.controllers;
 
+import com.eos.streamus.StreamusTestConfiguration;
 import com.eos.streamus.models.Activity;
 import com.eos.streamus.models.Artist;
 import com.eos.streamus.models.Collection;
 import com.eos.streamus.models.Person;
 import com.eos.streamus.models.Resource;
-import com.eos.streamus.models.User;
 import com.eos.streamus.utils.IDatabaseConnection;
+import com.eos.streamus.utils.IResourcePathResolver;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
-import static java.sql.Date.valueOf;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-
-@SpringBootTest
-@ContextConfiguration(classes = StreamusTestConfiguration.class)
+@WebMvcTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public abstract class DatabaseTests {
+@ContextConfiguration(classes = StreamusTestConfiguration.class)
+@AutoConfigureMockMvc
+abstract class ControllerTests {
+  static class TestJsonFactory extends JsonNodeFactory {
+    private static final long serialVersionUID = 6068382117192685166L;
 
-  private final Random random = new Random();
+  }
+
+  protected final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+
+  protected static final Path SAMPLE_AUDIO_PATH = Paths.get(
+      String.format(
+          "src%stest%sresources%ssample-audio.mp3",
+          File.separator,
+          File.separator,
+          File.separator
+      )
+  );
+
+  protected static final Path SAMPLE_VIDEO_PATH = Paths.get(
+      String.format(
+          "src%stest%sresources%ssample-video.mp4",
+          File.separator,
+          File.separator,
+          File.separator
+      )
+  );
+
+  @Autowired
+  protected MockMvc mockMvc;
+
+  @Autowired
+  protected IResourcePathResolver resourcePathResolver;
 
   @Autowired
   protected IDatabaseConnection databaseConnection;
 
-  public Connection getConnection() throws SQLException {
-    return databaseConnection.getConnection();
-  }
-
-  protected String randomString() {
-    return "randomString" + random.nextDouble();
-  }
-
-  protected java.sql.Date randomDate() {
-    int year = random.nextInt() % 70 + 1940;
-    int month = (random.nextInt() & Integer.MAX_VALUE) % 12 + 1;
-    return valueOf(String.format("%d-%s-01", year, (month < 10 ? "0" + month : month)));
-  }
-
-  protected Person randomPerson() {
-    return new Person(randomString(), randomString(), randomDate());
-  }
-
-  protected User randomUser() {
-    return new User(randomString(), randomString(), randomDate(), randomString() + "@" + randomString(),
-                    randomString());
-  }
-
-  protected Random getRandom() {
-    return random;
-  }
-
-  @Test
-  void connectToDatabase() {
-    assertDoesNotThrow(() -> {
-      Connection connection = databaseConnection.getConnection();
-      connection.close();
-    });
+  protected final Date date(final String dateString) throws ParseException {
+    return new Date(dateFormatter.parse(dateString).getTime());
   }
 
   @AfterAll
