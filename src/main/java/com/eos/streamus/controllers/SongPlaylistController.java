@@ -1,11 +1,9 @@
 package com.eos.streamus.controllers;
 
 import com.eos.streamus.exceptions.NoResultException;
-import com.eos.streamus.models.Song;
 import com.eos.streamus.models.SongCollection;
 import com.eos.streamus.models.SongPlaylist;
 import com.eos.streamus.models.User;
-import com.eos.streamus.payloadmodels.Track;
 import com.eos.streamus.payloadmodels.validators.SongCollectionValidator;
 import com.eos.streamus.payloadmodels.validators.SongPlaylistValidator;
 import com.eos.streamus.writers.JsonSongCollectionWriter;
@@ -35,31 +33,7 @@ public class SongPlaylistController extends SongCollectionController {
       @Valid @RequestBody final com.eos.streamus.payloadmodels.SongPlaylist songPlaylistData,
       BindingResult result
   ) {
-    songPlaylistValidator.validate(songPlaylistData, result);
-    if (result.hasErrors()) {
-      return badRequest(result.toString());
-    }
-    try (Connection connection = databaseConnector.getConnection()) {
-      connection.setAutoCommit(false);
-      SongPlaylist songPlaylist = new SongPlaylist(
-          songPlaylistData.getName(),
-          User.findById(songPlaylistData.getUserId(), connection)
-      );
-      for (Track track : songPlaylistData.getTracks()) {
-        songPlaylist.addTrack(
-            songPlaylist.new Track(track.getTrackNumber(), Song.findById(track.getSongId(), connection))
-        );
-      }
-      songPlaylist.save(connection);
-      connection.commit();
-      return ok(new JsonSongPlaylistWriter(songPlaylist).getJson());
-    } catch (NoResultException noResultException) {
-      // Should not happen
-      return badRequest("Invalid ids");
-    } catch (SQLException sqlException) {
-      logException(sqlException);
-      return internalServerError();
-    }
+    return createSongCollection(songPlaylistData, result);
   }
 
   @Override
@@ -70,6 +44,15 @@ public class SongPlaylistController extends SongCollectionController {
   @Override
   protected JsonSongCollectionWriter jsonSongCollectionWriter(final SongCollection songCollection) {
     return new JsonSongPlaylistWriter((SongPlaylist) songCollection);
+  }
+
+  @Override
+  protected SongCollection createSpecificCollection(
+      final com.eos.streamus.payloadmodels.SongCollection songCollectionData, Connection connection) throws SQLException, NoResultException {
+    return new SongPlaylist(
+        songCollectionData.getName(),
+        User.findById(((com.eos.streamus.payloadmodels.SongPlaylist) songCollectionData).getUserId(), connection)
+    );
   }
 
 }

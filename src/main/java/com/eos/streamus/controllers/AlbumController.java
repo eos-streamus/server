@@ -3,7 +3,6 @@ package com.eos.streamus.controllers;
 import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.Album;
 import com.eos.streamus.models.ArtistDAO;
-import com.eos.streamus.models.Song;
 import com.eos.streamus.models.SongCollection;
 import com.eos.streamus.payloadmodels.validators.AlbumValidator;
 import com.eos.streamus.payloadmodels.Track;
@@ -31,31 +30,11 @@ public class AlbumController extends SongCollectionController {
   private AlbumValidator albumValidator;
 
   @PostMapping("/albums")
-  public ResponseEntity<JsonNode> createAlbum(@Valid @RequestBody final com.eos.streamus.payloadmodels.Album albumData,
-                                              BindingResult result) {
-    albumValidator.validate(albumData, result);
-    if (result.hasErrors()) {
-      return badRequest(result.toString());
-    }
-    try (Connection connection = databaseConnector.getConnection()) {
-      connection.setAutoCommit(false);
-      Album album = new Album(albumData.getName(), new java.sql.Date(albumData.getReleaseDate().getTime()));
-      for (int artistId : albumData.getArtistIds()) {
-        album.addArtist(ArtistDAO.findById(artistId, connection));
-      }
-      for (Track track : albumData.getTracks()) {
-        album.addTrack(album.new Track(track.getTrackNumber(), Song.findById(track.getSongId(), connection)));
-      }
-      album.save(connection);
-      connection.commit();
-      return ResponseEntity.ok(new JsonAlbumWriter(album).getJson());
-    } catch (NoResultException noResultException) {
-      // Should not happen
-      return badRequest("Invalid ids");
-    } catch (SQLException sqlException) {
-      logException(sqlException);
-      return internalServerError();
-    }
+  public ResponseEntity<JsonNode> createAlbum(
+      @Valid @RequestBody final com.eos.streamus.payloadmodels.Album albumData,
+      BindingResult result
+  ) {
+    return createSongCollection(albumData, result);
   }
 
   @PostMapping("/album/{albumId}/{songId}")
@@ -78,6 +57,18 @@ public class AlbumController extends SongCollectionController {
   @Override
   protected JsonSongCollectionWriter jsonSongCollectionWriter(final SongCollection songCollection) {
     return new JsonAlbumWriter((Album) songCollection);
+  }
+
+  @Override
+  protected SongCollection createSpecificCollection(
+      final com.eos.streamus.payloadmodels.SongCollection songCollectionData,
+      final Connection connection) throws SQLException, NoResultException {
+    com.eos.streamus.payloadmodels.Album albumData = (com.eos.streamus.payloadmodels.Album) songCollectionData;
+    Album album = new Album(albumData.getName(), new java.sql.Date(albumData.getReleaseDate().getTime()));
+    for (int artistId : albumData.getArtistIds()) {
+      album.addArtist(ArtistDAO.findById(artistId, connection));
+    }
+    return album;
   }
 
 }

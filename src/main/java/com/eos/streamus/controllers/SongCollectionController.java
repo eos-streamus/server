@@ -11,6 +11,7 @@ import com.eos.streamus.writers.JsonSongCollectionWriter;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -132,6 +133,39 @@ public abstract class SongCollectionController implements CommonResponses {
       }
     } catch (NoResultException noResultException) {
       return notFound();
+    } catch (SQLException sqlException) {
+      logException(sqlException);
+      return internalServerError();
+    }
+  }
+
+  protected abstract SongCollection createSpecificCollection(
+      com.eos.streamus.payloadmodels.SongCollection songCollectionData,
+      Connection connection) throws SQLException, NoResultException;
+
+  protected ResponseEntity<JsonNode> createSongCollection(
+      com.eos.streamus.payloadmodels.SongCollection songCollectionData,
+      BindingResult result
+  ) {
+    getSongCollectionValidator().validate(songCollectionData, result);
+    if (result.hasErrors()) {
+      return badRequest(result.toString());
+    }
+    try (Connection connection = databaseConnector.getConnection()) {
+      connection.setAutoCommit(false);
+
+      SongCollection collection = createSpecificCollection(songCollectionData, connection);
+      for (Track track : songCollectionData.getTracks()) {
+        collection.addTrack(
+            collection.new Track(track.getTrackNumber(), Song.findById(track.getSongId(), connection))
+        );
+      }
+      collection.save(connection);
+      connection.commit();
+      return ok(jsonSongCollectionWriter(collection).getJson());
+    } catch (NoResultException noResultException) {
+      // Should not happen
+      return badRequest("Invalid ids");
     } catch (SQLException sqlException) {
       logException(sqlException);
       return internalServerError();
