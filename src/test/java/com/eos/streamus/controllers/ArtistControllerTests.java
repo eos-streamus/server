@@ -1,8 +1,11 @@
 package com.eos.streamus.controllers;
 
+import com.eos.streamus.models.Album;
 import com.eos.streamus.models.Band;
 import com.eos.streamus.models.Musician;
 import com.eos.streamus.models.Person;
+import com.eos.streamus.models.Song;
+import com.eos.streamus.models.SongCollection;
 import com.eos.streamus.writers.JsonBandWriter;
 import com.eos.streamus.writers.JsonMusicianWriter;
 import com.fasterxml.jackson.core.JsonFactory;
@@ -14,8 +17,14 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -136,6 +145,53 @@ public class ArtistControllerTests extends ControllerTests {
       assertEquals(new JsonBandWriter(band).getJson(), json);
       band.delete(connection);
 
+    }
+  }
+
+  @Test
+  void gettingAnExistingArtistWithAlbumsShouldReturnOkWithCorrectJson() throws Exception {
+    try (Connection connection = databaseConnection.getConnection()) {
+      Album album = new Album("Test album", date("2000-01-01"));
+      List<Path> paths = new ArrayList<>();
+      for (int i = 0; i < 10; i++) {
+        Path path = Files.copy(
+            SAMPLE_AUDIO_PATH,
+            Paths.get(resourcePathResolver.getAudioDir() + "sample-audio-" + UUID.randomUUID() + ".mp3")
+        );
+        paths.add(path);
+        Song song = new Song(path.toString(), "sample audio", 27);
+        song.save(connection);
+        album.addSong(song);
+      }
+      album.save(connection);
+
+      Band band = new Band("Test band");
+      band.save(connection);
+      album.addArtist(band);
+      album.save(connection);
+
+      band.fetchAlbums(connection);
+
+      RequestBuilder builder = MockMvcRequestBuilders.get(String.format("/artist/%d", band.getId()))
+                                                     .contentType(MediaType.APPLICATION_JSON);
+
+      MockHttpServletResponse response =
+          mockMvc
+              .perform(builder)
+              .andExpect(status().is(200))
+              .andReturn()
+              .getResponse();
+      JsonNode json = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
+      assertEquals(new JsonBandWriter(band).getJson(), json);
+
+      for (Path path : paths) {
+        Files.delete(path);
+      }
+      for (SongCollection.Track track : album.getTracks()) {
+        track.getSong().delete(connection);
+      }
+      album.delete(connection);
+      band.delete(connection);
     }
   }
 }
