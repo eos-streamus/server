@@ -25,6 +25,7 @@ import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 
@@ -433,6 +434,68 @@ public class ArtistControllerTests extends ControllerTests {
     RequestBuilder builder = MockMvcRequestBuilders.post("/musician")
                                                    .contentType(MediaType.APPLICATION_JSON)
                                                    .content(objectNode.toPrettyString());
+
+    mockMvc.perform(builder)
+           .andExpect(status().is(400));
+  }
+
+  @Test
+  void creatingAMusicianWithInvalidPersonAndValidNameShouldReturnBadRequest() throws Exception {
+
+    // Test with empty first name
+    ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
+    objectNode.put("name", "test name");
+    ObjectNode personObjectNode = objectNode.putObject("person");
+    personObjectNode.put("firstName", "");
+    personObjectNode.put("lastName", "Doe");
+    personObjectNode.put("dateOfBirth", date("2000-01-01").getTime());
+    RequestBuilder builder = MockMvcRequestBuilders.post("/musician")
+                                                   .contentType(MediaType.APPLICATION_JSON)
+                                                   .content(objectNode.toPrettyString());
+
+    mockMvc.perform(builder)
+           .andExpect(status().is(400));
+
+    // Test with empty last name
+    objectNode = new ObjectNode(new TestJsonFactory());
+    objectNode.put("name", "test name");
+    personObjectNode = objectNode.putObject("person");
+    personObjectNode.put("firstName", "John");
+    personObjectNode.put("lastName", "");
+    personObjectNode.put("dateOfBirth", date("2000-01-01").getTime());
+    builder = MockMvcRequestBuilders.post("/musician")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(objectNode.toPrettyString());
+
+    mockMvc.perform(builder)
+           .andExpect(status().is(400));
+
+    // Test with date of birth in the future
+    objectNode = new ObjectNode(new TestJsonFactory());
+    objectNode.put("name", "test name");
+    personObjectNode = objectNode.putObject("person");
+    personObjectNode.put("firstName", "John");
+    personObjectNode.put("lastName", "Doe");
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(new java.util.Date());
+    calendar.add(Calendar.DATE, 1);
+    personObjectNode.put("dateOfBirth", calendar.getTime().getTime());
+    builder = MockMvcRequestBuilders.post("/musician")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(objectNode.toPrettyString());
+
+    mockMvc.perform(builder)
+           .andExpect(status().is(400));
+
+    // Test with no last name
+    objectNode = new ObjectNode(new TestJsonFactory());
+    objectNode.put("name", "test name");
+    personObjectNode = objectNode.putObject("person");
+    personObjectNode.put("firstName", "John");
+    personObjectNode.put("dateOfBirth", date("2000-01-01").getTime());
+    builder = MockMvcRequestBuilders.post("/musician")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(objectNode.toPrettyString());
 
     mockMvc.perform(builder)
            .andExpect(status().is(400));
