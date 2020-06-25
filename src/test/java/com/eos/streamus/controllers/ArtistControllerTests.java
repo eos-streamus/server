@@ -242,4 +242,21 @@ public class ArtistControllerTests extends ControllerTests {
       band.delete(connection);
     }
   }
+
+  @Test
+  void gettingANonExistentArtistShouldReturnNotFound() throws Exception {
+    try (Connection connection = databaseConnection.getConnection()) {
+      Musician musician = new Musician("Test musician");
+      musician.save(connection);
+      musician.delete(connection);
+
+      RequestBuilder builder = MockMvcRequestBuilders.get(String.format("/artist/%d", musician.getId()))
+                                                     .contentType(MediaType.APPLICATION_JSON);
+
+      mockMvc
+          .perform(builder)
+          .andExpect(status().is(404))
+          .andReturn();
+    }
+  }
 }
