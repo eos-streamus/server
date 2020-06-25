@@ -6,8 +6,9 @@ import com.eos.streamus.models.SongCollection;
 import com.eos.streamus.models.SongPlaylist;
 import com.eos.streamus.models.User;
 import com.eos.streamus.payloadmodels.Track;
+import com.eos.streamus.payloadmodels.validators.SongCollectionValidator;
 import com.eos.streamus.payloadmodels.validators.SongPlaylistValidator;
-import com.eos.streamus.utils.IDatabaseConnector;
+import com.eos.streamus.writers.JsonSongCollectionWriter;
 import com.eos.streamus.writers.JsonSongPlaylistWriter;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +30,8 @@ import java.util.Optional;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
-public class SongPlaylistController implements CommonResponses {
+public class SongPlaylistController extends SongCollectionController {
 
-  @Autowired
-  private IDatabaseConnector databaseConnector;
   @Autowired
   private SongPlaylistValidator songPlaylistValidator;
 
@@ -83,17 +82,7 @@ public class SongPlaylistController implements CommonResponses {
   @PostMapping("/songplaylist/{songPlaylistId}/{songId}")
   public ResponseEntity<JsonNode> addSongToPlaylist(@PathVariable final int songPlaylistId,
                                                     @PathVariable final int songId) {
-    try (Connection connection = databaseConnector.getConnection()) {
-      SongPlaylist songPlaylist = SongPlaylist.findById(songPlaylistId, connection);
-      songPlaylist.addSong(Song.findById(songId, connection));
-      songPlaylist.save(connection);
-      return ok(new JsonSongPlaylistWriter(songPlaylist).getJson());
-    } catch (NoResultException noResultException) {
-      return notFound();
-    } catch (SQLException sqlException) {
-      logException(sqlException);
-      return internalServerError();
-    }
+    return addSongToCollection(songPlaylistId, songId);
   }
 
   @PutMapping("/songplaylist/{id}")
@@ -162,6 +151,16 @@ public class SongPlaylistController implements CommonResponses {
       logException(sqlException);
       return internalServerError();
     }
+  }
+
+  @Override
+  protected SongCollectionValidator getSongCollectionValidator() {
+    return songPlaylistValidator;
+  }
+
+  @Override
+  protected JsonSongCollectionWriter jsonSongCollectionWriter(final SongCollection songCollection) {
+    return new JsonSongPlaylistWriter((SongPlaylist) songCollection);
   }
 
 }

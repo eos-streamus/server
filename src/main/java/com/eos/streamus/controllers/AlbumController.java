@@ -4,10 +4,12 @@ import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.Album;
 import com.eos.streamus.models.ArtistDAO;
 import com.eos.streamus.models.Song;
+import com.eos.streamus.models.SongCollection;
 import com.eos.streamus.payloadmodels.validators.AlbumValidator;
 import com.eos.streamus.payloadmodels.Track;
-import com.eos.streamus.utils.IDatabaseConnector;
+import com.eos.streamus.payloadmodels.validators.SongCollectionValidator;
 import com.eos.streamus.writers.JsonAlbumWriter;
+import com.eos.streamus.writers.JsonSongCollectionWriter;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,10 +26,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 @Controller
-public class AlbumController implements CommonResponses {
+public class AlbumController extends SongCollectionController {
 
-  @Autowired
-  private IDatabaseConnector databaseConnector;
   @Autowired
   private AlbumValidator albumValidator;
 
@@ -83,6 +83,22 @@ public class AlbumController implements CommonResponses {
     } catch (NoResultException noResultException) {
       return notFound();
     }
+  }
+
+  @PostMapping("/album/{albumId}/{songId}")
+  public ResponseEntity<JsonNode> addSongToPlaylist(@PathVariable final int albumId,
+                                                    @PathVariable final int songId) {
+    return addSongToCollection(albumId, songId);
+  }
+
+  @Override
+  protected SongCollectionValidator getSongCollectionValidator() {
+    return albumValidator;
+  }
+
+  @Override
+  protected JsonSongCollectionWriter jsonSongCollectionWriter(final SongCollection songCollection) {
+    return new JsonAlbumWriter((Album) songCollection);
   }
 
 }
