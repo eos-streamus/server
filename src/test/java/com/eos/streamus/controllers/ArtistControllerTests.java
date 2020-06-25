@@ -500,4 +500,28 @@ public class ArtistControllerTests extends ControllerTests {
     mockMvc.perform(builder)
            .andExpect(status().is(400));
   }
+
+  @Test
+  void addingABandMemberWithCorrectDataShouldReturnOkWithJson() throws Exception {
+    try (Connection connection = databaseConnection.getConnection()) {
+      Band band = new Band("Test name");
+      band.save(connection);
+
+      Musician musician = new Musician("Test musician");
+      musician.save(connection);
+
+      ObjectNode bandMemberData = new ObjectNode(new TestJsonFactory());
+      bandMemberData.put("musicianId", musician.getId());
+      bandMemberData.put("from", "2000-01-01");
+
+      RequestBuilder builder = MockMvcRequestBuilders.post(String.format("/band/%d/members", band.getId()))
+                                                     .contentType(MediaType.APPLICATION_JSON)
+                                                     .content(bandMemberData.toPrettyString());
+      MockHttpServletResponse response = mockMvc.perform(builder).andExpect(status().is(200)).andReturn().getResponse();
+      JsonNode result = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
+      band.fetchMembers(connection);
+      assertEquals(new JsonBandWriter(band).getJson(), result);
+    }
+  }
+
 }
