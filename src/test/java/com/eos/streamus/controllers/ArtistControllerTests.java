@@ -396,4 +396,16 @@ public class ArtistControllerTests extends ControllerTests {
       musician.delete(connection);
     }
   }
+
+  @Test
+  void creatingAMusicianWithNoPersonAndNoNameShouldReturnBadRequest() throws Exception {
+    ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
+
+    RequestBuilder builder = MockMvcRequestBuilders.post("/musician")
+                                                   .contentType(MediaType.APPLICATION_JSON)
+                                                   .content(objectNode.toPrettyString());
+
+    mockMvc.perform(builder)
+           .andExpect(status().is(400));
+  }
 }
