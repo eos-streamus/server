@@ -48,10 +48,15 @@ public class SongPlaylistController extends SongCollectionController {
 
   @Override
   protected SongCollection createSpecificCollection(
-      final com.eos.streamus.payloadmodels.SongCollection songCollectionData, Connection connection) throws SQLException, NoResultException {
+      final com.eos.streamus.payloadmodels.SongCollection songCollectionData,
+      final Connection connection
+  ) throws SQLException, NoResultException {
     return new SongPlaylist(
         songCollectionData.getName(),
-        User.findById(((com.eos.streamus.payloadmodels.SongPlaylist) songCollectionData).getUserId(), connection)
+        User.findById(
+            ((com.eos.streamus.payloadmodels.SongPlaylist) songCollectionData).getUserId(),
+            connection
+        )
     );
   }
 
