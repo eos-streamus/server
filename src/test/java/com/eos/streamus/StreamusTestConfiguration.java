@@ -4,10 +4,12 @@ import com.eos.streamus.controllers.AlbumController;
 import com.eos.streamus.controllers.ArtistController;
 import com.eos.streamus.controllers.FilmController;
 import com.eos.streamus.controllers.SongController;
+import com.eos.streamus.controllers.SongPlaylistController;
 import com.eos.streamus.payloadmodels.validators.AlbumValidator;
 import com.eos.streamus.payloadmodels.validators.BandMemberValidator;
 import com.eos.streamus.payloadmodels.validators.MusicianValidator;
 import com.eos.streamus.payloadmodels.validators.PersonValidator;
+import com.eos.streamus.payloadmodels.validators.SongPlaylistValidator;
 import com.eos.streamus.utils.IDatabaseConnector;
 import com.eos.streamus.utils.IResourcePathResolver;
 import com.eos.streamus.utils.TestDatabaseConnector;
@@ -60,4 +62,14 @@ public class StreamusTestConfiguration {
 
   @Bean
   public BandMemberValidator bandMemberValidator() { return new BandMemberValidator(); }
+
+  @Bean
+  public SongPlaylistController songPlaylistController() {
+    return new SongPlaylistController();
+  }
+
+  @Bean
+  public SongPlaylistValidator songPlaylistValidator() {
+    return new SongPlaylistValidator();
+  }
 }
