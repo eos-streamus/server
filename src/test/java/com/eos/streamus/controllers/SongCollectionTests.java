@@ -135,4 +135,31 @@ public class SongCollectionTests extends ControllerTests {
     }
   }
 
+  @Test
+  void movingATrackInASongCollectionWithAnOutOfBoundTrackNumberReturnBadRequest() throws Exception {
+    try (Connection connection = databaseConnector.getConnection()) {
+      Album album = new Album("Test album", date("2000-01-01"));
+      album.save(connection);
+      List<SongCollection.Track> tracks = new ArrayList<>();
+      for (int i = 0; i < 10; i++) {
+        Song song = new Song(UUID.randomUUID().toString(), UUID.randomUUID().toString(), 100);
+        song.save(connection);
+        tracks.add(album.addSong(song));
+      }
+      album.save(connection);
+
+      SongCollection.Track trackToMove = tracks.get(2);
+      int newTrackNumber = 13;
+      ObjectNode trackData = new ObjectNode(new TestJsonFactory());
+      trackData.put("songId", trackToMove.getSong().getId());
+      trackData.put("trackNumber", newTrackNumber);
+      RequestBuilder builder = MockMvcRequestBuilders.put(String.format("/album/%d", album.getId()))
+                                                     .contentType(MediaType.APPLICATION_JSON)
+                                                     .content(trackData.toPrettyString());
+
+      mockMvc.perform(builder).andExpect(status().is(400)).andReturn();
+
+    }
+  }
+
 }
