@@ -187,4 +187,38 @@ public class SongCollectionTests extends ControllerTests {
     }
   }
 
+  @Test
+  void insertingATrackInASongCollectionWithACorrectTrackNumberReturnOkWithCorrectJson() throws Exception {
+    try (Connection connection = databaseConnector.getConnection()) {
+      Album album = new Album("Test album", date("2000-01-01"));
+      album.save(connection);
+      List<SongCollection.Track> tracks = new ArrayList<>();
+      for (int i = 0; i < 10; i++) {
+        Song song = new Song(UUID.randomUUID().toString(), UUID.randomUUID().toString(), 100);
+        song.save(connection);
+        tracks.add(album.addSong(song));
+      }
+      album.save(connection);
+
+      Song songToInsert = new Song(UUID.randomUUID().toString(), UUID.randomUUID().toString(), 100);
+      songToInsert.save(connection);
+      int newTrackNumber = 4;
+      ObjectNode trackData = new ObjectNode(new TestJsonFactory());
+      trackData.put("songId", songToInsert.getId());
+      trackData.put("trackNumber", newTrackNumber);
+      RequestBuilder builder = MockMvcRequestBuilders.put(String.format("/album/%d", album.getId()))
+                                                     .contentType(MediaType.APPLICATION_JSON)
+                                                     .content(trackData.toPrettyString());
+
+      MockHttpServletResponse response = mockMvc.perform(builder).andExpect(status().is(200)).andReturn().getResponse();
+      JsonNode json = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
+
+      for (JsonNode trackNode : json.get("tracks")) {
+        if (trackNode.get("id").asInt() == songToInsert.getId()) {
+          assertEquals(trackNode.get("trackNumber").asInt(), newTrackNumber);
+        }
+      }
+    }
+  }
+
 }
