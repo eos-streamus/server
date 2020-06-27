@@ -192,11 +192,10 @@ public class SongCollectionTests extends ControllerTests {
     try (Connection connection = databaseConnector.getConnection()) {
       Album album = new Album("Test album", date("2000-01-01"));
       album.save(connection);
-      List<SongCollection.Track> tracks = new ArrayList<>();
       for (int i = 0; i < 10; i++) {
         Song song = new Song(UUID.randomUUID().toString(), UUID.randomUUID().toString(), 100);
         song.save(connection);
-        tracks.add(album.addSong(song));
+        album.addSong(song);
       }
       album.save(connection);
 
