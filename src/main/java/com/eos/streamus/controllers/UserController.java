@@ -68,6 +68,9 @@ public class UserController implements CommonResponses {
   public ResponseEntity<JsonNode> login(@RequestBody @Valid final LoginDTO loginDTO) {
     try (Connection connection = databaseConnector.getConnection()) {
       User user = User.findByEmail(loginDTO.getEmail(), connection);
+      if (user == null) {
+        return badRequest("Invalid email or password");
+      }
       String password = user.getPassword(connection);
       if (passwordEncoder.matches(loginDTO.getPassword(), password)) {
         return ResponseEntity.ok(new JsonUserWriter(user).getJson());
