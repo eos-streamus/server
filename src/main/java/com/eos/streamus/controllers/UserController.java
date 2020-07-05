@@ -102,7 +102,9 @@ public class UserController implements CommonResponses {
   }
 
   @PutMapping("/user/{id}")
-  public ResponseEntity<JsonNode> updateUser(@PathVariable final int id, @RequestBody @Valid final UserData userData, BindingResult result) {
+  public ResponseEntity<JsonNode> updateUser(@PathVariable final int id,
+                                             @RequestBody @Valid final UserData userData,
+                                             BindingResult result) {
     userValidator.validate(userData, result);
     if (result.hasErrors()) {
       return badRequest(result.toString());
@@ -135,4 +137,5 @@ public class UserController implements CommonResponses {
       return notFound();
     }
   }
+
 }
