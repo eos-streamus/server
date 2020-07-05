@@ -1,6 +1,6 @@
-package com.eos.streamus.payloadmodels;
+package com.eos.streamus.dto;
 
-public class Track {
+public class TrackDTO {
   private int trackNumber;
   private int songId;
 

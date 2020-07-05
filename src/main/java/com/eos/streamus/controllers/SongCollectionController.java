@@ -1,11 +1,11 @@
 package com.eos.streamus.controllers;
 
+import com.eos.streamus.dto.TrackDTO;
 import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.Song;
 import com.eos.streamus.models.SongCollection;
 import com.eos.streamus.models.SongCollectionDAO;
-import com.eos.streamus.payloadmodels.Track;
-import com.eos.streamus.payloadmodels.validators.SongCollectionValidator;
+import com.eos.streamus.dto.validators.SongCollectionDTOValidator;
 import com.eos.streamus.utils.IDatabaseConnector;
 import com.eos.streamus.writers.JsonSongCollectionWriter;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -25,7 +25,7 @@ public abstract class SongCollectionController implements CommonResponses {
   @Autowired
   protected IDatabaseConnector databaseConnector;
 
-  protected abstract SongCollectionValidator getSongCollectionValidator();
+  protected abstract SongCollectionDTOValidator getSongCollectionDTOValidator();
 
   protected abstract JsonSongCollectionWriter jsonSongCollectionWriter(final SongCollection songCollection);
 
@@ -54,7 +54,7 @@ public abstract class SongCollectionController implements CommonResponses {
     }
   }
 
-  public ResponseEntity<JsonNode> addOrMoveTrackInSongCollection(final int id, final Track trackData) {
+  public ResponseEntity<JsonNode> addOrMoveTrackInSongCollection(final int id, final TrackDTO trackData) {
     try (Connection connection = databaseConnector.getConnection()) {
 
       SongCollection songCollection = SongCollectionDAO.findById(id, connection);
@@ -124,14 +124,14 @@ public abstract class SongCollectionController implements CommonResponses {
   }
 
   protected abstract SongCollection createSpecificCollection(
-      com.eos.streamus.payloadmodels.SongCollection songCollectionData,
+      com.eos.streamus.dto.SongCollectionDTO songCollectionData,
       Connection connection) throws SQLException, NoResultException;
 
   protected ResponseEntity<JsonNode> createSongCollection(
-      com.eos.streamus.payloadmodels.SongCollection songCollectionData,
+      com.eos.streamus.dto.SongCollectionDTO songCollectionData,
       BindingResult result
   ) {
-    getSongCollectionValidator().validate(songCollectionData, result);
+    getSongCollectionDTOValidator().validate(songCollectionData, result);
     if (result.hasErrors()) {
       return badRequest(result.toString());
     }
@@ -139,7 +139,7 @@ public abstract class SongCollectionController implements CommonResponses {
       connection.setAutoCommit(false);
 
       SongCollection collection = createSpecificCollection(songCollectionData, connection);
-      for (Track track : songCollectionData.getTracks()) {
+      for (TrackDTO track : songCollectionData.getTracks()) {
         collection.addTrack(
             collection.new Track(track.getTrackNumber(), Song.findById(track.getSongId(), connection))
         );

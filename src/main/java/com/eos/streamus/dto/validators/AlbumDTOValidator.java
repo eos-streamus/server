@@ -1,8 +1,8 @@
-package com.eos.streamus.payloadmodels.validators;
+package com.eos.streamus.dto.validators;
 
 import com.eos.streamus.exceptions.NoResultException;
-import com.eos.streamus.models.User;
-import com.eos.streamus.payloadmodels.SongPlaylist;
+import com.eos.streamus.models.ArtistDAO;
+import com.eos.streamus.dto.AlbumDTO;
 import com.eos.streamus.utils.IDatabaseConnector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,25 +12,23 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 @Component
-public class SongPlaylistValidator extends SongCollectionValidator {
+public class AlbumDTOValidator extends SongCollectionDTOValidator {
 
   @Autowired
   private IDatabaseConnector databaseConnector;
 
   @Override
   public boolean supports(final Class<?> aClass) {
-    return aClass.equals(SongPlaylist.class);
+    return aClass.equals(AlbumDTO.class);
   }
 
   @Override
   protected void validateSubclassProperties(final Object o, final Errors errors) {
-    SongPlaylist songPlaylist = (SongPlaylist) o;
-    if (songPlaylist.getName().isBlank()) {
-      errors.reject("Invalid playlist name");
-    }
-
+    AlbumDTO albumDTO = (AlbumDTO) o;
     try (Connection connection = databaseConnector.getConnection()) {
-      User.findById(songPlaylist.getUserId(), connection);
+      for (Integer artistId : albumDTO.getArtistIds()) {
+        ArtistDAO.findById(artistId, connection);
+      }
     } catch (SQLException sqlException) {
       errors.reject("SQL Error");
     } catch (NoResultException noResultException) {

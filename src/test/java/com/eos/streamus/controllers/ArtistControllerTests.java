@@ -595,6 +595,7 @@ public class ArtistControllerTests extends ControllerTests {
                                                      .content(bandMemberData.toPrettyString());
       MockHttpServletResponse response = mockMvc.perform(builder).andExpect(status().is(200)).andReturn()
                                                 .getResponse();
+      System.out.println(response);
       JsonNode result = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
       band.fetchMembers(connection);
       assertEquals(new JsonBandWriter(band).getJson(), result);

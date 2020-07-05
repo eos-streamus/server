@@ -1,9 +1,9 @@
-package com.eos.streamus.payloadmodels.validators;
+package com.eos.streamus.dto.validators;
 
 import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.Song;
-import com.eos.streamus.payloadmodels.SongCollection;
-import com.eos.streamus.payloadmodels.Track;
+import com.eos.streamus.dto.SongCollectionDTO;
+import com.eos.streamus.dto.TrackDTO;
 import com.eos.streamus.utils.IDatabaseConnector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,14 +15,14 @@ import java.sql.SQLException;
 import java.util.Comparator;
 
 @Component
-public abstract class SongCollectionValidator implements Validator {
+public abstract class SongCollectionDTOValidator implements Validator {
 
   @Autowired
   private IDatabaseConnector databaseConnector;
 
   @Override
   public final void validate(final Object o, final Errors errors) {
-    SongCollection songCollection = (SongCollection) o;
+    SongCollectionDTO songCollection = (SongCollectionDTO) o;
 
     if (songCollection.getName().isBlank()) {
       errors.reject("Invalid playlist name");
@@ -30,7 +30,7 @@ public abstract class SongCollectionValidator implements Validator {
 
     try (Connection connection = databaseConnector.getConnection()) {
       if (songCollection.getTracks() != null) {
-        songCollection.getTracks().sort(Comparator.comparingInt(Track::getTrackNumber));
+        songCollection.getTracks().sort(Comparator.comparingInt(TrackDTO::getTrackNumber));
         for (int i = 0; i < songCollection.getTracks().size(); i++) {
           if (songCollection.getTracks().get(i).getTrackNumber() < 1) {
             errors.reject("Invalid track number, must be >= 1");
