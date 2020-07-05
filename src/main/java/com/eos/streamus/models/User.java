@@ -161,33 +161,6 @@ public class User extends Person {
     }
   }
 
-  public static User findByUsername(final String username, Connection connection) throws SQLException {
-    try (PreparedStatement preparedStatement = connection.prepareStatement(
-        String.format(
-            "select * from %s where %s = ?",
-            VIEW_NAME,
-            USERNAME_COLUMN
-        )
-    )) {
-      preparedStatement.setString(1, username);
-      try (ResultSet resultSet = preparedStatement.executeQuery()) {
-        if (resultSet.next()) {
-          return new User(
-              resultSet.getInt(ID_COLUMN),
-              resultSet.getString(FIRST_NAME_COLUMN),
-              resultSet.getString(LAST_NAME_COLUMN),
-              resultSet.getDate(DATE_OF_BIRTH_COLUMN),
-              resultSet.getTimestamp(CREATED_AT_COLUMN),
-              resultSet.getTimestamp(UPDATED_AT_COLUMN),
-              resultSet.getString(EMAIL_COLUMN),
-              resultSet.getString(USERNAME_COLUMN)
-          );
-        }
-        return null;
-      }
-    }
-  }
-
   public void updatePassword(String password, Connection connection) throws SQLException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         String.format(
