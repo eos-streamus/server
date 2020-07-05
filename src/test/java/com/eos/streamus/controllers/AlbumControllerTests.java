@@ -14,7 +14,7 @@ import java.util.UUID;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class AlbumControllerTests extends ControllerTests {
+class AlbumControllerTests extends ControllerTests {
 
   @Test
   void creatingAnAlbumWithANonExistingArtistShouldReturnBadRequest() throws Exception {

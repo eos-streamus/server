@@ -1,6 +1,5 @@
 package com.eos.streamus.models;
 
-import com.eos.streamus.DatabaseTests;
 import com.eos.streamus.exceptions.NoResultException;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
-public class BandTests extends DatabaseTests {
+class BandTests extends DatabaseTests {
 
   @Test
   void testEmptyBandCRUD() throws SQLException, NoResultException {

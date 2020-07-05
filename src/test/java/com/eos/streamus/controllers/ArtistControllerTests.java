@@ -34,7 +34,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class ArtistControllerTests extends ControllerTests {
+class ArtistControllerTests extends ControllerTests {
 
   @Test
   void gettingArtistsShouldReturnOkWithArray() throws Exception {
