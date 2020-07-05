@@ -1,5 +1,7 @@
 package com.eos.streamus.controllers;
 
+import com.eos.streamus.dto.LoginDTO;
+import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.User;
 import com.eos.streamus.payloadmodels.UserData;
 import com.eos.streamus.payloadmodels.validators.UserValidator;
@@ -59,6 +61,24 @@ public class UserController implements CommonResponses {
     } catch (SQLException sqlException) {
       logException(sqlException);
       return internalServerError();
+    }
+  }
+
+  @PostMapping("/login")
+  public ResponseEntity<JsonNode> login(@RequestBody @Valid final LoginDTO loginDTO) {
+    try (Connection connection = databaseConnector.getConnection()) {
+      User user = User.findByEmail(loginDTO.getEmail(), connection);
+      String password = user.getPassword(connection);
+      if (passwordEncoder.matches(loginDTO.getPassword(), password)) {
+        return ResponseEntity.ok(new JsonUserWriter(user).getJson());
+      } else {
+        return badRequest("Invalid email or password");
+      }
+    } catch (SQLException sqlException) {
+      logException(sqlException);
+      return internalServerError();
+    } catch (NoResultException noResultException) {
+      return notFound();
     }
   }
 

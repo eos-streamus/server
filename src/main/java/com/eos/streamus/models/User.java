@@ -178,6 +178,26 @@ public class User extends Person {
       preparedStatement.execute();
     }
   }
+
+  public String getPassword(Connection connection) throws SQLException, NoResultException {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(
+        String.format(
+            "select %s from %s where %s = ?",
+            PASSWORD_TABLE_PASSWORD_COLUMN,
+            PASSWORD_TABLE_NAME,
+            PASSWORD_TABLE_USER_ID_COLUMN
+        )
+    )) {
+      preparedStatement.setInt(1, getId());
+      try (ResultSet resultSet = preparedStatement.executeQuery()) {
+        if (resultSet.next()) {
+          return resultSet.getString(1);
+        } else {
+          throw new NoResultException();
+        }
+      }
+    }
+  }
   //#endregion Database operations
 
   //#region Equals
