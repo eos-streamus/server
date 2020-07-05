@@ -10,6 +10,9 @@ public class User extends Person {
   protected static final String EMAIL_COLUMN = "email";
   protected static final String USERNAME_COLUMN = "username";
   private static final String VIEW_NAME = "vuser";
+  private static final String PASSWORD_TABLE_NAME = "UserPassword";
+  private static final String PASSWORD_TABLE_USER_ID_COLUMN = "idUser";
+  private static final String PASSWORD_TABLE_PASSWORD_COLUMN = "password";
   //#endregion Static attributes
 
   //#region Instance attributes
@@ -128,6 +131,78 @@ public class User extends Person {
             resultSet.getString(USERNAME_COLUMN)
         );
       }
+    }
+  }
+
+  public static User findByEmail(final String email, Connection connection) throws SQLException {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(
+        String.format(
+            "select * from %s where %s = ?",
+            VIEW_NAME,
+            EMAIL_COLUMN
+        )
+    )) {
+      preparedStatement.setString(1, email);
+      try (ResultSet resultSet = preparedStatement.executeQuery()) {
+        if (resultSet.next()) {
+          return new User(
+              resultSet.getInt(ID_COLUMN),
+              resultSet.getString(FIRST_NAME_COLUMN),
+              resultSet.getString(LAST_NAME_COLUMN),
+              resultSet.getDate(DATE_OF_BIRTH_COLUMN),
+              resultSet.getTimestamp(CREATED_AT_COLUMN),
+              resultSet.getTimestamp(UPDATED_AT_COLUMN),
+              resultSet.getString(EMAIL_COLUMN),
+              resultSet.getString(USERNAME_COLUMN)
+          );
+        }
+        return null;
+      }
+    }
+  }
+
+  public static User findByUsername(final String username, Connection connection) throws SQLException {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(
+        String.format(
+            "select * from %s where %s = ?",
+            VIEW_NAME,
+            USERNAME_COLUMN
+        )
+    )) {
+      preparedStatement.setString(1, username);
+      try (ResultSet resultSet = preparedStatement.executeQuery()) {
+        if (resultSet.next()) {
+          return new User(
+              resultSet.getInt(ID_COLUMN),
+              resultSet.getString(FIRST_NAME_COLUMN),
+              resultSet.getString(LAST_NAME_COLUMN),
+              resultSet.getDate(DATE_OF_BIRTH_COLUMN),
+              resultSet.getTimestamp(CREATED_AT_COLUMN),
+              resultSet.getTimestamp(UPDATED_AT_COLUMN),
+              resultSet.getString(EMAIL_COLUMN),
+              resultSet.getString(USERNAME_COLUMN)
+          );
+        }
+        return null;
+      }
+    }
+  }
+
+  public void updatePassword(String password, Connection connection) throws SQLException {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(
+        String.format(
+            "INSERT INTO %s(%s, %s) VALUES (?, ?) ON CONFLICT (%s) DO UPDATE SET %s = excluded.%s;",
+            PASSWORD_TABLE_NAME,
+            PASSWORD_TABLE_USER_ID_COLUMN,
+            PASSWORD_TABLE_PASSWORD_COLUMN,
+            PASSWORD_TABLE_USER_ID_COLUMN,
+            PASSWORD_TABLE_PASSWORD_COLUMN,
+            PASSWORD_TABLE_PASSWORD_COLUMN
+        )
+    )) {
+      preparedStatement.setInt(1, getId());
+      preparedStatement.setString(2, password);
+      preparedStatement.execute();
     }
   }
   //#endregion Database operations
