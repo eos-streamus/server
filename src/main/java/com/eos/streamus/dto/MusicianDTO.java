@@ -1,6 +1,8 @@
-package com.eos.streamus.payloadmodels;
+package com.eos.streamus.dto;
 
-public class Musician {
+import com.eos.streamus.payloadmodels.Person;
+
+public class MusicianDTO {
   private Integer id;
   private String name;
   private Person person;
