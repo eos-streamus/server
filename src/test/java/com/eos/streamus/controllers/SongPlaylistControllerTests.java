@@ -1,7 +1,7 @@
 package com.eos.streamus.controllers;
 
-import com.eos.streamus.models.Band;
 import com.eos.streamus.models.Song;
+import com.eos.streamus.models.User;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
@@ -14,21 +14,25 @@ import java.util.UUID;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class AlbumControllerTests extends ControllerTests {
+public class SongPlaylistControllerTests extends ControllerTests {
 
   @Test
-  void creatingAnAlbumWithANonExistingArtistShouldReturnBadRequest() throws Exception {
+  void creatingASongPlaylistWithANonExistingUserShouldReturnBadRequest() throws Exception {
     try (Connection connection = databaseConnector.getConnection()) {
-      Band band = new Band("Test band");
-      band.save(connection);
-      band.delete(connection);
+      User user = new User(
+          "John",
+          "Doe",
+          date("2000-01-01"),
+          UUID.randomUUID().toString() + "@streamus.com",
+          UUID.randomUUID().toString()
+      );
+      user.save(connection);
+      user.delete(connection);
       ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
-      objectNode.put("name", "Test album");
-      objectNode.put("releaseDate", "2000-01-01");
-      ArrayNode artists = objectNode.putArray("artistIds");
-      artists.add(band.getId());
+      objectNode.put("name", "Test playlist");
+      objectNode.put("userId", user.getId());
 
-      RequestBuilder builder = MockMvcRequestBuilders.post("/albums")
+      RequestBuilder builder = MockMvcRequestBuilders.post("/songplaylist")
                                                      .contentType(MediaType.APPLICATION_JSON)
                                                      .content(objectNode.toPrettyString());
 
@@ -37,10 +41,16 @@ public class AlbumControllerTests extends ControllerTests {
   }
 
   @Test
-  void creatingAnAlbumWithNonContinuousTrackNumbersShouldReturnBadRequest() throws Exception {
+  void creatingASongPlaylistWithNonContinuousTrackNumbersShouldReturnBadRequest() throws Exception {
     try (Connection connection = databaseConnector.getConnection()) {
-      Band band = new Band("Test band");
-      band.save(connection);
+      User user = new User(
+          "John",
+          "Doe",
+          date("2000-01-01"),
+          UUID.randomUUID().toString() + "@streamus.com",
+          UUID.randomUUID().toString()
+      );
+      user.save(connection);
 
       Song song1 = new Song(UUID.randomUUID().toString(), "Test song 1", 27);
       song1.save(connection);
@@ -48,11 +58,8 @@ public class AlbumControllerTests extends ControllerTests {
       song2.save(connection);
 
       ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
-      objectNode.put("name", "Test album");
-      objectNode.put("releaseDate", "2000-01-01");
-
-      ArrayNode artists = objectNode.putArray("artistIds");
-      artists.add(band.getId());
+      objectNode.put("name", "Test SongPlaylist");
+      objectNode.put("userId", user.getId());
 
       ArrayNode tracks = objectNode.putArray("tracks");
 
@@ -64,7 +71,7 @@ public class AlbumControllerTests extends ControllerTests {
       song2Node.put("songId", song2.getId());
       song2Node.put("trackNumber", 3);
 
-      RequestBuilder builder = MockMvcRequestBuilders.post("/albums")
+      RequestBuilder builder = MockMvcRequestBuilders.post("/songplaylist")
                                                      .contentType(MediaType.APPLICATION_JSON)
                                                      .content(objectNode.toPrettyString());
 
@@ -73,21 +80,24 @@ public class AlbumControllerTests extends ControllerTests {
   }
 
   @Test
-  void creatingAnAlbumWithNonExistingSongsShouldReturnBadRequest() throws Exception {
+  void creatingASongPlaylistWithNonExistingSongsShouldReturnBadRequest() throws Exception {
     try (Connection connection = databaseConnector.getConnection()) {
-      Band band = new Band("Test band");
-      band.save(connection);
+      User user = new User(
+          "John",
+          "Doe",
+          date("2000-01-01"),
+          UUID.randomUUID().toString() + "@streamus.com",
+          UUID.randomUUID().toString()
+      );
+      user.save(connection);
 
       Song song1 = new Song(UUID.randomUUID().toString(), "Test song 1", 27);
       song1.save(connection);
       song1.delete(connection);
 
       ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
-      objectNode.put("name", "Test album");
-      objectNode.put("releaseDate", "2000-01-01");
-
-      ArrayNode artists = objectNode.putArray("artistIds");
-      artists.add(band.getId());
+      objectNode.put("name", "Test SongPlaylist");
+      objectNode.put("userId", user.getId());
 
       ArrayNode tracks = objectNode.putArray("tracks");
 
@@ -95,7 +105,7 @@ public class AlbumControllerTests extends ControllerTests {
       song1Node.put("songId", song1.getId());
       song1Node.put("trackNumber", 1);
 
-      RequestBuilder builder = MockMvcRequestBuilders.post("/albums")
+      RequestBuilder builder = MockMvcRequestBuilders.post("/songplaylist")
                                                      .contentType(MediaType.APPLICATION_JSON)
                                                      .content(objectNode.toPrettyString());
 
@@ -104,21 +114,24 @@ public class AlbumControllerTests extends ControllerTests {
   }
 
   @Test
-  void creatingAnAlbumWithASingleTrackWithNumberGreaterThanOneShouldReturnBadRequest() throws Exception {
+  void creatingASongPlaylistWithASingleTrackWithNumberGreaterThanOneShouldReturnBadRequest() throws Exception {
     try (Connection connection = databaseConnector.getConnection()) {
-      Band band = new Band("Test band");
-      band.save(connection);
+      User user = new User(
+          "John",
+          "Doe",
+          date("2000-01-01"),
+          UUID.randomUUID().toString() + "@streamus.com",
+          UUID.randomUUID().toString()
+      );
+      user.save(connection);
 
       Song song1 = new Song(UUID.randomUUID().toString(), "Test song 1", 27);
       song1.save(connection);
       song1.delete(connection);
 
       ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
-      objectNode.put("name", "Test album");
-      objectNode.put("releaseDate", "2000-01-01");
-
-      ArrayNode artists = objectNode.putArray("artistIds");
-      artists.add(band.getId());
+      objectNode.put("name", "Test SongPlaylist");
+      objectNode.put("userId", user.getId());
 
       ArrayNode tracks = objectNode.putArray("tracks");
 
@@ -126,7 +139,7 @@ public class AlbumControllerTests extends ControllerTests {
       song1Node.put("songId", song1.getId());
       song1Node.put("trackNumber", 3);
 
-      RequestBuilder builder = MockMvcRequestBuilders.post("/albums")
+      RequestBuilder builder = MockMvcRequestBuilders.post("/songplaylist")
                                                      .contentType(MediaType.APPLICATION_JSON)
                                                      .content(objectNode.toPrettyString());
 
@@ -135,21 +148,24 @@ public class AlbumControllerTests extends ControllerTests {
   }
 
   @Test
-  void creatingAnAlbumWithASingleTrackWithNumberLessThanOneShouldReturnBadRequest() throws Exception {
+  void creatingASongPlaylistWithASingleTrackWithNumberLessThanOneShouldReturnBadRequest() throws Exception {
     try (Connection connection = databaseConnector.getConnection()) {
-      Band band = new Band("Test band");
-      band.save(connection);
+      User user = new User(
+          "John",
+          "Doe",
+          date("2000-01-01"),
+          UUID.randomUUID().toString() + "@streamus.com",
+          UUID.randomUUID().toString()
+      );
+      user.save(connection);
 
       Song song1 = new Song(UUID.randomUUID().toString(), "Test song 1", 27);
       song1.save(connection);
       song1.delete(connection);
 
       ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
-      objectNode.put("name", "Test album");
-      objectNode.put("releaseDate", "2000-01-01");
-
-      ArrayNode artists = objectNode.putArray("artistIds");
-      artists.add(band.getId());
+      objectNode.put("name", "Test SongPlaylist");
+      objectNode.put("userId", user.getId());
 
       ArrayNode tracks = objectNode.putArray("tracks");
 
@@ -157,7 +173,7 @@ public class AlbumControllerTests extends ControllerTests {
       song1Node.put("songId", song1.getId());
       song1Node.put("trackNumber", 0);
 
-      RequestBuilder builder = MockMvcRequestBuilders.post("/albums")
+      RequestBuilder builder = MockMvcRequestBuilders.post("/songplaylist")
                                                      .contentType(MediaType.APPLICATION_JSON)
                                                      .content(objectNode.toPrettyString());
 

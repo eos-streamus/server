@@ -14,7 +14,7 @@ public class JsonUserWriter extends JsonPersonWriter {
   @Override
   protected JsonNode getSpecificJson(final ObjectNode objectNode) {
     super.getSpecificJson(objectNode);
-    return objectNode.put("email", user.getEmail());
+    return objectNode.put("email", user.getEmail()).put("username", user.getUsername());
   }
 
 }
