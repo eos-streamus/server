@@ -1,5 +1,6 @@
 package com.eos.streamus.controllers;
 
+import com.eos.streamus.dto.AlbumDTO;
 import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.Album;
 import com.eos.streamus.models.ArtistDAO;
@@ -38,10 +39,10 @@ public class AlbumController extends SongCollectionController {
 
   @PostMapping("/albums")
   public ResponseEntity<JsonNode> createAlbum(
-      @Valid @RequestBody final com.eos.streamus.payloadmodels.Album albumData,
+      @Valid @RequestBody final AlbumDTO albumDTO,
       BindingResult result
   ) {
-    return createSongCollection(albumData, result);
+    return createSongCollection(albumDTO, result);
   }
 
   @PostMapping("/album/{albumId}/{songId}")
@@ -74,9 +75,9 @@ public class AlbumController extends SongCollectionController {
   protected SongCollection createSpecificCollection(
       final com.eos.streamus.payloadmodels.SongCollection songCollectionData,
       final Connection connection) throws SQLException, NoResultException {
-    com.eos.streamus.payloadmodels.Album albumData = (com.eos.streamus.payloadmodels.Album) songCollectionData;
-    Album album = new Album(albumData.getName(), new java.sql.Date(albumData.getReleaseDate().getTime()));
-    for (int artistId : albumData.getArtistIds()) {
+    AlbumDTO albumDTO = (AlbumDTO) songCollectionData;
+    Album album = new Album(albumDTO.getName(), new java.sql.Date(albumDTO.getReleaseDate().getTime()));
+    for (int artistId : albumDTO.getArtistIds()) {
       album.addArtist(ArtistDAO.findById(artistId, connection));
     }
     return album;

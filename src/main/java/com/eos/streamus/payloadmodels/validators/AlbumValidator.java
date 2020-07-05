@@ -2,7 +2,7 @@ package com.eos.streamus.payloadmodels.validators;
 
 import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.ArtistDAO;
-import com.eos.streamus.payloadmodels.Album;
+import com.eos.streamus.dto.AlbumDTO;
 import com.eos.streamus.utils.IDatabaseConnector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,14 +19,14 @@ public class AlbumValidator extends SongCollectionValidator {
 
   @Override
   public boolean supports(final Class<?> aClass) {
-    return aClass.equals(Album.class);
+    return aClass.equals(AlbumDTO.class);
   }
 
   @Override
   protected void validateSubclassProperties(final Object o, final Errors errors) {
-    Album album = (Album) o;
+    AlbumDTO albumDTO = (AlbumDTO) o;
     try (Connection connection = databaseConnector.getConnection()) {
-      for (Integer artistId : album.getArtistIds()) {
+      for (Integer artistId : albumDTO.getArtistIds()) {
         ArtistDAO.findById(artistId, connection);
       }
     } catch (SQLException sqlException) {
