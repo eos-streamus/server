@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -85,4 +87,16 @@ public class UserController implements CommonResponses {
     }
   }
 
+  @DeleteMapping("/user/{id}")
+  public ResponseEntity<String> deleteUser(@PathVariable final int id) {
+    try (Connection connection = databaseConnector.getConnection()) {
+      User.findById(id, connection).delete(connection);
+      return ResponseEntity.ok("User deleted");
+    } catch (SQLException sqlException) {
+      logException(sqlException);
+      return internalServerErrorString();
+    } catch (NoResultException noResultException) {
+      return notFound();
+    }
+  }
 }
