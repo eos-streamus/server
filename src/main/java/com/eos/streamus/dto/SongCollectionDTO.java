@@ -1,10 +1,12 @@
-package com.eos.streamus.payloadmodels;
+package com.eos.streamus.dto;
+
+import com.eos.streamus.payloadmodels.Track;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
 
-public abstract class SongCollection {
+public abstract class SongCollectionDTO {
   @NotNull
   @Size(min = 1)
   private String name;
