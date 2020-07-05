@@ -9,7 +9,8 @@ public class Song extends Resource implements SavableDeletableEntity {
   private static final String TABLE_NAME = "Song";
   private static final String PRIMARY_KEY_NAME = "idResource";
   private static final String CREATION_FUNCTION_NAME = "createSong";
-  //#endregion Static attributs
+  private static final String VIEW_NAME = "vSong";
+  //#endregion Static attributes
 
   //#region Constructors
   Song(Integer id, String path, String name, Timestamp createdAt, int duration) {
@@ -40,7 +41,9 @@ public class Song extends Resource implements SavableDeletableEntity {
 
   //#region Database operations
   public static Song findById(int id, Connection connection) throws SQLException, NoResultException {
-    try (PreparedStatement statement = connection.prepareStatement("select * from vsong where id = ?")) {
+    try (PreparedStatement statement = connection.prepareStatement(
+        String.format("select * from %s where id = ?", VIEW_NAME)
+    )) {
       statement.setInt(1, id);
       try (ResultSet rs = statement.executeQuery()) {
         if (!rs.next()) {

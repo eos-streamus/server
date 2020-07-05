@@ -131,8 +131,11 @@ public class Person implements SavableDeletableEntity {
     } else {
       try (PreparedStatement preparedStatement = connection.prepareStatement(
           String.format(
-              "update %s set firstname = ?, lastname = ?, dateOfBirth = ? where id = ? returning updatedAt;",
-              TABLE_NAME
+              "update %s set %s = ?, %s = ?, %s = ? where id = ? returning updatedAt;",
+              TABLE_NAME,
+              FIRST_NAME_COLUMN,
+              LAST_NAME_COLUMN,
+              DATE_OF_BIRTH_COLUMN
           )
       )) {
         preparedStatement.setString(1, firstName);

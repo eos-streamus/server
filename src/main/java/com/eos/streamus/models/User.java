@@ -9,7 +9,7 @@ public class User extends Person {
   private static final String TABLE_NAME = "StreamUsUser";
   protected static final String EMAIL_COLUMN = "email";
   protected static final String USERNAME_COLUMN = "username";
-  private static final String VIEW_NAME = "vuser";
+  private static final String VIEW_NAME = "vUser";
   private static final String PASSWORD_TABLE_NAME = "UserPassword";
   private static final String PASSWORD_TABLE_USER_ID_COLUMN = "idUser";
   private static final String PASSWORD_TABLE_PASSWORD_COLUMN = "password";
@@ -203,7 +203,7 @@ public class User extends Person {
   //#region Equals
   @Override
   public int hashCode() {
-    return super.hashCode();
+    return getId();
   }
 
   @Override

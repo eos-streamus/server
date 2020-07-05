@@ -144,7 +144,7 @@ public class CollectionActivity extends Activity {
   //#region Equals
   @Override
   public int hashCode() {
-    return super.hashCode();
+    return getId();
   }
 
   @Override

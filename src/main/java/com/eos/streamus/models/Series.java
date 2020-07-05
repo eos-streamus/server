@@ -124,7 +124,7 @@ public class Series extends VideoCollection {
     //#region Equals
     @Override
     public int hashCode() {
-      return super.hashCode();
+      return getId();
     }
 
     @Override
@@ -153,7 +153,7 @@ public class Series extends VideoCollection {
   //#endregion
 
   //#region Instance attributes
-  List<Episode> episodes = new ArrayList<>();
+  final List<Episode> episodes = new ArrayList<>();
   //#endregion
 
   //#region Constructors
@@ -299,7 +299,7 @@ public class Series extends VideoCollection {
   //#region Equals
   @Override
   public int hashCode() {
-    return super.hashCode();
+    return getId();
   }
 
   @Override
