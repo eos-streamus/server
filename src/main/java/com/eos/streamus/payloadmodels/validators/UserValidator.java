@@ -44,5 +44,14 @@ public class UserValidator extends PersonValidator {
     if (userData.getPassword().trim().length() < minPasswordLength) {
       errors.reject("Password not long enough");
     }
+
+    if (userData.getUpdatedPassword() != null) {
+      if (userData.getUpdatedPassword().isBlank()) {
+        errors.reject("Password cannot be empty");
+      }
+      if (userData.getUpdatedPassword().trim().length() < minPasswordLength) {
+        errors.reject("Password not long enough");
+      }
+    }
   }
 }

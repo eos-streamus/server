@@ -10,6 +10,12 @@ public class UserData extends Person {
   @NotNull
   private String password;
 
+  private String updatedPassword;
+
+  public String getUpdatedPassword() {
+    return updatedPassword;
+  }
+
   public String getEmail() {
     return email;
   }

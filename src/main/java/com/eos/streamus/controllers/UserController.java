@@ -15,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -95,6 +96,41 @@ public class UserController implements CommonResponses {
     } catch (SQLException sqlException) {
       logException(sqlException);
       return internalServerErrorString();
+    } catch (NoResultException noResultException) {
+      return notFound();
+    }
+  }
+
+  @PutMapping("/user/{id}")
+  public ResponseEntity<JsonNode> updateUser(@PathVariable final int id, @RequestBody @Valid final UserData userData, BindingResult result) {
+    userValidator.validate(userData, result);
+    if (result.hasErrors()) {
+      return badRequest(result.toString());
+    }
+
+    try (Connection connection = databaseConnector.getConnection()) {
+      User user = User.findById(id, connection);
+      String currentPassword = user.getPassword(connection);
+      if (!passwordEncoder.matches(userData.getPassword(), currentPassword)) {
+        return badRequest("Invalid password");
+      }
+      User userByEmail = User.findByEmail(userData.getEmail(), connection);
+      if (userByEmail != null && !userByEmail.getId().equals(user.getId())) {
+        return badRequest("Invalid email");
+      }
+      user.setEmail(userData.getEmail());
+      user.setFirstName(userData.getFirstName());
+      user.setLastName(userData.getLastName());
+      user.setDateOfBirth(new Date(userData.getDateOfBirth()));
+      user.setUsername(userData.getUsername());
+      user.save(connection);
+      if (userData.getUpdatedPassword() != null) {
+        user.updatePassword(passwordEncoder.encode(userData.getUpdatedPassword()), connection);
+      }
+      return ResponseEntity.ok(new JsonUserWriter(user).getJson());
+    } catch (SQLException sqlException) {
+      logException(sqlException);
+      return internalServerError();
     } catch (NoResultException noResultException) {
       return notFound();
     }
