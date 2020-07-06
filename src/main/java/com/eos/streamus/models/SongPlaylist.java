@@ -123,7 +123,7 @@ public final class SongPlaylist extends SongCollection {
   //#region Equals
   @Override
   public int hashCode() {
-    return super.hashCode();
+    return getId();
   }
 
   @Override

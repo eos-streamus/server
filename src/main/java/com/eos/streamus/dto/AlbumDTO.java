@@ -1,10 +1,10 @@
-package com.eos.streamus.payloadmodels;
+package com.eos.streamus.dto;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 
-public class Album extends SongCollection {
+public class AlbumDTO extends SongCollectionDTO {
   @NotNull
   private List<Integer> artistIds;
   @NotNull

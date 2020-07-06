@@ -1,9 +1,9 @@
-package com.eos.streamus.payloadmodels;
+package com.eos.streamus.dto;
 
-public class Musician {
+public class MusicianDTO {
   private Integer id;
   private String name;
-  private Person person;
+  private PersonDTO person;
 
   public Integer getId() {
     return id;
@@ -13,7 +13,7 @@ public class Musician {
     return name;
   }
 
-  public Person getPerson() {
+  public PersonDTO getPerson() {
     return person;
   }
 

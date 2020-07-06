@@ -143,7 +143,7 @@ public class Musician extends Artist {
   //#region Equals
   @Override
   public int hashCode() {
-    return super.hashCode();
+    return getId();
   }
 
   @Override

@@ -1,8 +1,8 @@
-package com.eos.streamus.payloadmodels;
+package com.eos.streamus.dto;
 
 import javax.validation.constraints.NotNull;
 
-public class SongPlaylist extends SongCollection {
+public class SongPlaylistDTO extends SongCollectionDTO {
   @NotNull
   private Integer userId;
 

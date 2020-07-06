@@ -1,5 +1,6 @@
-package com.eos.streamus;
+package com.eos.streamus.models;
 
+import com.eos.streamus.StreamusTestConfiguration;
 import com.eos.streamus.models.Activity;
 import com.eos.streamus.models.Artist;
 import com.eos.streamus.models.Collection;
@@ -31,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 @SpringBootTest
 @ContextConfiguration(classes = StreamusTestConfiguration.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public abstract class DatabaseTests {
+abstract class DatabaseTests {
 
   private final Random random = new Random();
 

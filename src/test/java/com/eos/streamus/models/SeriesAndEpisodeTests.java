@@ -1,6 +1,5 @@
 package com.eos.streamus.models;
 
-import com.eos.streamus.DatabaseTests;
 import com.eos.streamus.exceptions.NoResultException;
 import org.junit.jupiter.api.Test;
 import org.postgresql.util.PSQLException;
@@ -16,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
-public class SeriesAndEpisodeTests extends DatabaseTests {
+class SeriesAndEpisodeTests extends DatabaseTests {
 
   @Test
   void testEmptySeriesCRUD() throws SQLException, NoResultException {

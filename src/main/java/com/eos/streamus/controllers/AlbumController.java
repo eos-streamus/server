@@ -1,12 +1,13 @@
 package com.eos.streamus.controllers;
 
+import com.eos.streamus.dto.AlbumDTO;
+import com.eos.streamus.dto.TrackDTO;
 import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.Album;
 import com.eos.streamus.models.ArtistDAO;
 import com.eos.streamus.models.SongCollection;
-import com.eos.streamus.payloadmodels.validators.AlbumValidator;
-import com.eos.streamus.payloadmodels.Track;
-import com.eos.streamus.payloadmodels.validators.SongCollectionValidator;
+import com.eos.streamus.dto.validators.AlbumDTOValidator;
+import com.eos.streamus.dto.validators.SongCollectionDTOValidator;
 import com.eos.streamus.writers.JsonAlbumWriter;
 import com.eos.streamus.writers.JsonSongCollectionWriter;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -29,7 +30,7 @@ import java.sql.SQLException;
 public class AlbumController extends SongCollectionController {
 
   @Autowired
-  private AlbumValidator albumValidator;
+  private AlbumDTOValidator albumDTOValidator;
 
   @GetMapping("/album/{id}")
   public ResponseEntity<JsonNode> getAlbumById(@PathVariable final int id) {
@@ -38,10 +39,10 @@ public class AlbumController extends SongCollectionController {
 
   @PostMapping("/albums")
   public ResponseEntity<JsonNode> createAlbum(
-      @Valid @RequestBody final com.eos.streamus.payloadmodels.Album albumData,
+      @Valid @RequestBody final AlbumDTO albumDTO,
       BindingResult result
   ) {
-    return createSongCollection(albumData, result);
+    return createSongCollection(albumDTO, result);
   }
 
   @PostMapping("/album/{albumId}/{songId}")
@@ -51,8 +52,8 @@ public class AlbumController extends SongCollectionController {
 
   @PutMapping("/album/{id}")
   public ResponseEntity<JsonNode> addOrMoveTrackInAlbum(@PathVariable final int id,
-                                                        @Valid @RequestBody final Track trackData) {
-    return addOrMoveTrackInSongCollection(id, trackData);
+                                                        @Valid @RequestBody final TrackDTO trackDTO) {
+    return addOrMoveTrackInSongCollection(id, trackDTO);
   }
 
   @DeleteMapping("/album/{id}")
@@ -61,8 +62,8 @@ public class AlbumController extends SongCollectionController {
   }
 
   @Override
-  protected SongCollectionValidator getSongCollectionValidator() {
-    return albumValidator;
+  protected SongCollectionDTOValidator getSongCollectionDTOValidator() {
+    return albumDTOValidator;
   }
 
   @Override
@@ -72,11 +73,11 @@ public class AlbumController extends SongCollectionController {
 
   @Override
   protected SongCollection createSpecificCollection(
-      final com.eos.streamus.payloadmodels.SongCollection songCollectionData,
+      final com.eos.streamus.dto.SongCollectionDTO songCollectionDTO,
       final Connection connection) throws SQLException, NoResultException {
-    com.eos.streamus.payloadmodels.Album albumData = (com.eos.streamus.payloadmodels.Album) songCollectionData;
-    Album album = new Album(albumData.getName(), new java.sql.Date(albumData.getReleaseDate().getTime()));
-    for (int artistId : albumData.getArtistIds()) {
+    AlbumDTO albumDTO = (AlbumDTO) songCollectionDTO;
+    Album album = new Album(albumDTO.getName(), new java.sql.Date(albumDTO.getReleaseDate().getTime()));
+    for (int artistId : albumDTO.getArtistIds()) {
       album.addArtist(ArtistDAO.findById(artistId, connection));
     }
     return album;

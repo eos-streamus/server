@@ -1,8 +1,8 @@
-package com.eos.streamus.payloadmodels;
+package com.eos.streamus.dto;
 
 import javax.validation.constraints.NotNull;
 
-public class Person {
+public class PersonDTO {
   private Integer id;
 
   @NotNull

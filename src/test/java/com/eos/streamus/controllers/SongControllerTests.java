@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class SongControllerTests extends ControllerTests {
+class SongControllerTests extends ControllerTests {
 
   //#region Get song
   @Test

@@ -14,7 +14,7 @@ import java.util.UUID;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class SongPlaylistControllerTests extends ControllerTests {
+class SongPlaylistControllerTests extends ControllerTests {
 
   @Test
   void creatingASongPlaylistWithANonExistingUserShouldReturnBadRequest() throws Exception {
