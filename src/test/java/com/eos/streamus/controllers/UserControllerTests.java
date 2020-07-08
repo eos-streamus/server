@@ -29,12 +29,13 @@ class UserControllerTests extends ControllerTests {
   @Value("${minUsernameLength}")
   private int minUsernameLength;
 
+  private static final String ACCEPTABLE_CHARACTERS = "ABCEDFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+
   private String randomStringOfLength(int length) {
-    String acceptableCharacters = "ABCEDFGHIJKLMNOPQRSTUVWXYZabdefghijklmnopqrstuvwxyz1234567890";
     StringBuilder stringBuilder = new StringBuilder();
     Random random = new Random();
     for (int i = 0; i < length; i++) {
-      stringBuilder.append(acceptableCharacters.charAt(Math.abs(random.nextInt()) % acceptableCharacters.length()));
+      stringBuilder.append(ACCEPTABLE_CHARACTERS.charAt(Math.abs(random.nextInt()) % ACCEPTABLE_CHARACTERS.length()));
     }
     return stringBuilder.toString();
   }
