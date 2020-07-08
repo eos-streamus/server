@@ -42,6 +42,9 @@ public class UserController implements CommonResponses {
 
   @PostMapping("/users")
   public ResponseEntity<JsonNode> register(@RequestBody @Valid final UserDTO userDTO, BindingResult result) {
+    if (result.hasErrors()) {
+      return badRequest(result.toString());
+    }
     userDTOValidator.validate(userDTO, result);
     if (result.hasErrors()) {
       return badRequest(result.toString());
