@@ -21,8 +21,9 @@ abstract class JwtSetupControllerTests extends ControllerTests {
   @Autowired
   private JwtFilter jwtFilter;
 
+  @Override
   @BeforeAll
-  void addFilter() {
+  void setupMockMvc() {
     mockMvc = MockMvcBuilders.webAppContextSetup(context).addFilter(jwtFilter).build();
   }
 
@@ -41,4 +42,5 @@ abstract class JwtSetupControllerTests extends ControllerTests {
   protected final ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
     return mockMvc.perform(builder.header("Authorization", "Bearer " + token));
   }
+
 }

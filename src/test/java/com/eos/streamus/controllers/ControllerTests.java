@@ -67,6 +67,11 @@ abstract class ControllerTests {
       )
   );
 
+  @BeforeAll
+  void setupMockMvc() {
+    mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+  }
+
   @Autowired
   protected WebApplicationContext context;
 
