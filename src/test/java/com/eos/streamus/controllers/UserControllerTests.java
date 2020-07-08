@@ -159,6 +159,7 @@ class UserControllerTests extends ControllerTests {
   void signingUpWithInvalidEmailShouldReturnBadRequest() throws Exception {
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
     final String email = UUID.randomUUID().toString();
+    objectNode.put("email", email);
     objectNode.put("username", "johnDoe");
     objectNode.put("firstName", "John");
     objectNode.put("lastName", "Doe");
@@ -174,6 +175,7 @@ class UserControllerTests extends ControllerTests {
   void signingUpWithInvalidFirstNameShouldReturnBadRequest() throws Exception {
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
     final String email = UUID.randomUUID().toString() + "@streamus.com";
+    objectNode.put("email", email);
     objectNode.put("username", "johnDoe");
     objectNode.put("firstName", "");
     objectNode.put("lastName", "Doe");
@@ -189,6 +191,7 @@ class UserControllerTests extends ControllerTests {
   void signingUpWithInvalidLastNameShouldReturnBadRequest() throws Exception {
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
     final String email = UUID.randomUUID().toString() + "@streamus.com";
+    objectNode.put("email", email);
     objectNode.put("username", "johnDoe");
     objectNode.put("firstName", "John");
     objectNode.put("lastName", "");
@@ -206,6 +209,7 @@ class UserControllerTests extends ControllerTests {
     final String email = UUID.randomUUID().toString() + "@streamus.com";
     objectNode.put("username", "johnDoe");
     objectNode.put("firstName", "John");
+    objectNode.put("email", email);
     objectNode.put("lastName", "Doe");
     objectNode.put("dateOfBirth", "shouldFail");
     objectNode.put("password", "JohnDoe-password");
@@ -219,6 +223,7 @@ class UserControllerTests extends ControllerTests {
   void signingUpWithDateOfBirthInTheFutureShouldReturnBadRequest() throws Exception {
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
     final String email = UUID.randomUUID().toString() + "@streamus.com";
+    objectNode.put("email", email);
     objectNode.put("username", "johnDoe");
     objectNode.put("firstName", "John");
     objectNode.put("lastName", "Doe");
