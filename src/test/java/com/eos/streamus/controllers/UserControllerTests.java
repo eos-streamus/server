@@ -41,4 +41,26 @@ class UserControllerTests extends ControllerTests {
     }
   }
 
+  @Test
+  void signingUpWithAnAlreadyUsedEmailShouldReturnBadRequest() throws Exception {
+    ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
+    final String email = UUID.randomUUID().toString() + "@streamus.com";
+
+    try (Connection connection = databaseConnector.getConnection()) {
+      new User("John", "Doe", java.sql.Date.valueOf("2000-01-01"), email, "john_doe")
+          .save(connection);
+    }
+
+    objectNode.put("email", email);
+    objectNode.put("username", "johnDoe");
+    objectNode.put("firstName", "John");
+    objectNode.put("lastName", "Doe");
+    objectNode.put("dateOfBirth", "2000-01-01");
+    objectNode.put("password", "JohnDoe-password");
+    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/users")
+                                                                  .contentType(MediaType.APPLICATION_JSON)
+                                                                  .content(objectNode.toPrettyString());
+    perform(builder).andExpect(status().is(400)).andReturn().getResponse();
+  }
+
 }
