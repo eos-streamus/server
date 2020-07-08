@@ -6,7 +6,7 @@ import com.eos.streamus.dto.validators.UserDTOValidator;
 import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.User;
 import com.eos.streamus.utils.IDatabaseConnector;
-import com.eos.streamus.utils.JwtUtils;
+import com.eos.streamus.utils.JwtService;
 import com.eos.streamus.writers.JsonUserWriter;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ public class UserController implements CommonResponses {
   private PasswordEncoder passwordEncoder;
 
   @Autowired
-  private JwtUtils jwtUtils;
+  private JwtService jwtService;
 
   @PostMapping("/users")
   public ResponseEntity<JsonNode> register(@RequestBody @Valid final UserDTO userDTO, BindingResult result) {
@@ -80,7 +80,7 @@ public class UserController implements CommonResponses {
       }
       String password = user.getPassword(connection);
       if (passwordEncoder.matches(loginDTO.getPassword(), password)) {
-        return ResponseEntity.ok(jwtUtils.createToken(user));
+        return ResponseEntity.ok(jwtService.createToken(user));
       } else {
         return ResponseEntity.badRequest().body("Invalid email or password");
       }

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.RequestBuilder;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.sql.Connection;
@@ -14,7 +14,7 @@ import java.util.UUID;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class SongPlaylistControllerTests extends ControllerTests {
+class SongPlaylistControllerTests extends JwtSetupControllerTests {
 
   @Test
   void creatingASongPlaylistWithANonExistingUserShouldReturnBadRequest() throws Exception {
@@ -32,11 +32,11 @@ class SongPlaylistControllerTests extends ControllerTests {
       objectNode.put("name", "Test playlist");
       objectNode.put("userId", user.getId());
 
-      RequestBuilder builder = MockMvcRequestBuilders.post("/songplaylist")
-                                                     .contentType(MediaType.APPLICATION_JSON)
-                                                     .content(objectNode.toPrettyString());
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/songplaylist")
+                                                                    .contentType(MediaType.APPLICATION_JSON)
+                                                                    .content(objectNode.toPrettyString());
 
-      mockMvc.perform(builder).andExpect(status().is(400));
+      perform(builder).andExpect(status().is(400));
     }
   }
 
@@ -71,11 +71,11 @@ class SongPlaylistControllerTests extends ControllerTests {
       song2Node.put("songId", song2.getId());
       song2Node.put("trackNumber", 3);
 
-      RequestBuilder builder = MockMvcRequestBuilders.post("/songplaylist")
-                                                     .contentType(MediaType.APPLICATION_JSON)
-                                                     .content(objectNode.toPrettyString());
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/songplaylist")
+                                                                    .contentType(MediaType.APPLICATION_JSON)
+                                                                    .content(objectNode.toPrettyString());
 
-      mockMvc.perform(builder).andExpect(status().is(400));
+      perform(builder).andExpect(status().is(400));
     }
   }
 
@@ -105,11 +105,11 @@ class SongPlaylistControllerTests extends ControllerTests {
       song1Node.put("songId", song1.getId());
       song1Node.put("trackNumber", 1);
 
-      RequestBuilder builder = MockMvcRequestBuilders.post("/songplaylist")
-                                                     .contentType(MediaType.APPLICATION_JSON)
-                                                     .content(objectNode.toPrettyString());
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/songplaylist")
+                                                                    .contentType(MediaType.APPLICATION_JSON)
+                                                                    .content(objectNode.toPrettyString());
 
-      mockMvc.perform(builder).andExpect(status().is(400));
+      perform(builder).andExpect(status().is(400));
     }
   }
 
@@ -139,11 +139,11 @@ class SongPlaylistControllerTests extends ControllerTests {
       song1Node.put("songId", song1.getId());
       song1Node.put("trackNumber", 3);
 
-      RequestBuilder builder = MockMvcRequestBuilders.post("/songplaylist")
-                                                     .contentType(MediaType.APPLICATION_JSON)
-                                                     .content(objectNode.toPrettyString());
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/songplaylist")
+                                                                    .contentType(MediaType.APPLICATION_JSON)
+                                                                    .content(objectNode.toPrettyString());
 
-      mockMvc.perform(builder).andExpect(status().is(400));
+      perform(builder).andExpect(status().is(400));
     }
   }
 
@@ -173,11 +173,11 @@ class SongPlaylistControllerTests extends ControllerTests {
       song1Node.put("songId", song1.getId());
       song1Node.put("trackNumber", 0);
 
-      RequestBuilder builder = MockMvcRequestBuilders.post("/songplaylist")
-                                                     .contentType(MediaType.APPLICATION_JSON)
-                                                     .content(objectNode.toPrettyString());
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/songplaylist")
+                                                                    .contentType(MediaType.APPLICATION_JSON)
+                                                                    .content(objectNode.toPrettyString());
 
-      mockMvc.perform(builder).andExpect(status().is(400));
+      perform(builder).andExpect(status().is(400));
     }
   }
 

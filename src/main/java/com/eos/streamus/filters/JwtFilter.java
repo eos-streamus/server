@@ -1,6 +1,6 @@
 package com.eos.streamus.filters;
 
-import com.eos.streamus.utils.JwtUtils;
+import com.eos.streamus.utils.JwtService;
 import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,7 +20,7 @@ import java.io.IOException;
 public class JwtFilter implements Filter {
 
   @Autowired
-  private JwtUtils jwtUtils;
+  private JwtService jwtService;
 
   @Override
   public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse,
@@ -38,7 +38,7 @@ public class JwtFilter implements Filter {
         } else {
           String jwtToken = jwtTokenHeader.substring(7);
           try {
-            jwtUtils.decode(jwtToken);
+            jwtService.decode(jwtToken);
             filterChain.doFilter(servletRequest, servletResponse);
           } catch (JwtException e) {
             ((HttpServletResponse) servletResponse).sendError(HttpServletResponse.SC_FORBIDDEN);

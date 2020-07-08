@@ -15,7 +15,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.web.servlet.RequestBuilder;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.sql.Connection;
@@ -28,7 +28,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class SongCollectionTests extends ControllerTests {
+class SongCollectionTests extends JwtSetupControllerTests {
 
   private User user;
 
@@ -46,11 +46,11 @@ class SongCollectionTests extends ControllerTests {
       Album album = new Album("Test album", date("2020-01-01"));
       album.save(connection);
 
-      RequestBuilder builder = MockMvcRequestBuilders.get(String.format("/album/%d", album.getId()));
-      MockHttpServletResponse response = mockMvc.perform(builder)
-                                                .andExpect(status().is(200))
-                                                .andReturn()
-                                                .getResponse();
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(String.format("/album/%d", album.getId()));
+      MockHttpServletResponse response = perform(builder)
+          .andExpect(status().is(200))
+          .andReturn()
+          .getResponse();
 
       JsonNode json = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
       assertEquals(new JsonAlbumWriter(album).getJson(), json);
@@ -64,10 +64,10 @@ class SongCollectionTests extends ControllerTests {
       album.save(connection);
       album.delete(connection);
 
-      RequestBuilder builder = MockMvcRequestBuilders.get(String.format("/album/%d", album.getId()));
-      mockMvc.perform(builder)
-             .andExpect(status().is(404))
-             .andReturn();
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(String.format("/album/%d", album.getId()));
+      perform(builder)
+          .andExpect(status().is(404))
+          .andReturn();
     }
   }
 
@@ -77,11 +77,12 @@ class SongCollectionTests extends ControllerTests {
       SongPlaylist songPlaylist = new SongPlaylist("Test songPlaylist", user);
       songPlaylist.save(connection);
 
-      RequestBuilder builder = MockMvcRequestBuilders.get(String.format("/songplaylist/%d", songPlaylist.getId()));
-      MockHttpServletResponse response = mockMvc.perform(builder)
-                                                .andExpect(status().is(200))
-                                                .andReturn()
-                                                .getResponse();
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+          .get(String.format("/songplaylist/%d", songPlaylist.getId()));
+      MockHttpServletResponse response = perform(builder)
+          .andExpect(status().is(200))
+          .andReturn()
+          .getResponse();
 
       JsonNode json = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
       assertEquals(new JsonSongPlaylistWriter(songPlaylist).getJson(), json);
@@ -95,10 +96,11 @@ class SongCollectionTests extends ControllerTests {
       songPlaylist.save(connection);
       songPlaylist.delete(connection);
 
-      RequestBuilder builder = MockMvcRequestBuilders.get(String.format("/songplaylist/%d", songPlaylist.getId()));
-      mockMvc.perform(builder)
-             .andExpect(status().is(404))
-             .andReturn();
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+          .get(String.format("/songplaylist/%d", songPlaylist.getId()));
+      perform(builder)
+          .andExpect(status().is(404))
+          .andReturn();
     }
   }
 
@@ -120,11 +122,11 @@ class SongCollectionTests extends ControllerTests {
       ObjectNode trackData = new ObjectNode(new TestJsonFactory());
       trackData.put("songId", trackToMove.getSong().getId());
       trackData.put("trackNumber", newTrackNumber);
-      RequestBuilder builder = MockMvcRequestBuilders.put(String.format("/album/%d", album.getId()))
-                                                     .contentType(MediaType.APPLICATION_JSON)
-                                                     .content(trackData.toPrettyString());
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put(String.format("/album/%d", album.getId()))
+                                                                    .contentType(MediaType.APPLICATION_JSON)
+                                                                    .content(trackData.toPrettyString());
 
-      MockHttpServletResponse response = mockMvc.perform(builder).andExpect(status().is(200)).andReturn().getResponse();
+      MockHttpServletResponse response = perform(builder).andExpect(status().is(200)).andReturn().getResponse();
       JsonNode json = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
 
       for (JsonNode trackNode : json.get("tracks")) {
@@ -153,11 +155,11 @@ class SongCollectionTests extends ControllerTests {
       ObjectNode trackData = new ObjectNode(new TestJsonFactory());
       trackData.put("songId", trackToMove.getSong().getId());
       trackData.put("trackNumber", newTrackNumber);
-      RequestBuilder builder = MockMvcRequestBuilders.put(String.format("/album/%d", album.getId()))
-                                                     .contentType(MediaType.APPLICATION_JSON)
-                                                     .content(trackData.toPrettyString());
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put(String.format("/album/%d", album.getId()))
+                                                                    .contentType(MediaType.APPLICATION_JSON)
+                                                                    .content(trackData.toPrettyString());
 
-      mockMvc.perform(builder).andExpect(status().is(400)).andReturn();
+      perform(builder).andExpect(status().is(400)).andReturn();
     }
   }
 
@@ -179,11 +181,11 @@ class SongCollectionTests extends ControllerTests {
       ObjectNode trackData = new ObjectNode(new TestJsonFactory());
       trackData.put("songId", trackToMove.getSong().getId());
       trackData.put("trackNumber", newTrackNumber);
-      RequestBuilder builder = MockMvcRequestBuilders.put(String.format("/album/%d", album.getId()))
-                                                     .contentType(MediaType.APPLICATION_JSON)
-                                                     .content(trackData.toPrettyString());
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put(String.format("/album/%d", album.getId()))
+                                                                    .contentType(MediaType.APPLICATION_JSON)
+                                                                    .content(trackData.toPrettyString());
 
-      mockMvc.perform(builder).andExpect(status().is(400)).andReturn();
+      perform(builder).andExpect(status().is(400)).andReturn();
     }
   }
 
@@ -205,11 +207,11 @@ class SongCollectionTests extends ControllerTests {
       ObjectNode trackData = new ObjectNode(new TestJsonFactory());
       trackData.put("songId", songToInsert.getId());
       trackData.put("trackNumber", newTrackNumber);
-      RequestBuilder builder = MockMvcRequestBuilders.put(String.format("/album/%d", album.getId()))
-                                                     .contentType(MediaType.APPLICATION_JSON)
-                                                     .content(trackData.toPrettyString());
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put(String.format("/album/%d", album.getId()))
+                                                                    .contentType(MediaType.APPLICATION_JSON)
+                                                                    .content(trackData.toPrettyString());
 
-      MockHttpServletResponse response = mockMvc.perform(builder).andExpect(status().is(200)).andReturn().getResponse();
+      MockHttpServletResponse response = perform(builder).andExpect(status().is(200)).andReturn().getResponse();
       JsonNode json = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
 
       for (JsonNode trackNode : json.get("tracks")) {

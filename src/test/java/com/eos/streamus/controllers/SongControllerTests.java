@@ -12,6 +12,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -26,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class SongControllerTests extends ControllerTests {
+class SongControllerTests extends JwtSetupControllerTests {
 
   //#region Get song
   @Test
@@ -41,13 +42,13 @@ class SongControllerTests extends ControllerTests {
       song.save(connection);
 
       // Get Song
-      RequestBuilder builder =
+      MockHttpServletRequestBuilder builder =
           MockMvcRequestBuilders
               .get(String.format("/song/%d", song.getId()))
               .contentType(MediaType.APPLICATION_JSON);
-      MvcResult result = mockMvc.perform(builder)
-                                .andExpect(status().is(206))
-                                .andReturn();
+      MvcResult result = perform(builder)
+          .andExpect(status().is(206))
+          .andReturn();
       assertTrue("Result length > 0", result.getResponse().getContentAsByteArray().length > 0);
 
       Files.delete(path);
@@ -63,12 +64,11 @@ class SongControllerTests extends ControllerTests {
       song.delete(connection);
 
       // Get Song
-      RequestBuilder builder =
+      MockHttpServletRequestBuilder builder =
           MockMvcRequestBuilders
               .get(String.format("/song/%d", song.getId()))
               .contentType(MediaType.APPLICATION_JSON);
-      mockMvc
-          .perform(builder)
+      perform(builder)
           .andExpect(status().is(404));
     }
   }
@@ -87,12 +87,11 @@ class SongControllerTests extends ControllerTests {
       song.save(connection);
 
       // Delete Song
-      RequestBuilder builder =
+      MockHttpServletRequestBuilder builder =
           MockMvcRequestBuilders
               .delete(String.format("/song/%d", song.getId()))
               .contentType(MediaType.APPLICATION_JSON);
-      mockMvc
-          .perform(builder)
+      perform(builder)
           .andExpect(status().is(200));
 
       assertThrows(NoResultException.class, () -> Song.findById(song.getId(), connection));
@@ -107,11 +106,10 @@ class SongControllerTests extends ControllerTests {
       Song song = new Song("randomPath", "randomName", 27);
       song.save(connection);
       song.delete(connection);
-      RequestBuilder builder = MockMvcRequestBuilders
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
           .get(String.format("/song/%d", song.getId()))
           .contentType(MediaType.APPLICATION_JSON);
-      mockMvc
-          .perform(builder)
+      perform(builder)
           .andExpect(status().is(404));
     }
   }
@@ -132,8 +130,7 @@ class SongControllerTests extends ControllerTests {
     requestBuilder
         .file(mockMultipartFile)
         .param("name", "sample-audio.mp3");
-    MockHttpServletResponse response = mockMvc
-        .perform(requestBuilder)
+    MockHttpServletResponse response = perform(requestBuilder)
         .andExpect(status().is(200)).andReturn()
         .getResponse();
     JsonNode json = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
@@ -150,8 +147,7 @@ class SongControllerTests extends ControllerTests {
 
     requestBuilder
         .param("name", "sample-audio.mp3");
-    mockMvc
-        .perform(requestBuilder)
+    perform(requestBuilder)
         .andExpect(status().is(400));
   }
 
@@ -169,8 +165,7 @@ class SongControllerTests extends ControllerTests {
     requestBuilder
         .file(mockMultipartFile);
 
-    mockMvc
-        .perform(requestBuilder)
+    perform(requestBuilder)
         .andExpect(status().is(400));
   }
 
@@ -178,8 +173,7 @@ class SongControllerTests extends ControllerTests {
   void postingASongWithNoDataAtAllShouldReturnBadRequest() throws Exception {
     MockMultipartHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
         .multipart("/song");
-    mockMvc
-        .perform(requestBuilder)
+    perform(requestBuilder)
         .andExpect(status().is(400));
 
   }
@@ -200,8 +194,7 @@ class SongControllerTests extends ControllerTests {
         .file(mockMultipartFile)
         .param("name", "sample-audio.mp3");
 
-    mockMvc
-        .perform(requestBuilder)
+    perform(requestBuilder)
         .andExpect(status().is(400));
   }
 
@@ -221,8 +214,7 @@ class SongControllerTests extends ControllerTests {
         .file(mockMultipartFile)
         .param("name", "sample-audio.mp3");
 
-    mockMvc
-        .perform(requestBuilder)
+    perform(requestBuilder)
         .andExpect(status().is(400));
   }
   //#endregion Post song

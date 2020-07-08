@@ -1,22 +1,30 @@
 package com.eos.streamus.controllers;
 
 import com.eos.streamus.StreamusTestConfiguration;
+import com.eos.streamus.filters.JwtFilter;
 import com.eos.streamus.models.Activity;
 import com.eos.streamus.models.Artist;
 import com.eos.streamus.models.Collection;
 import com.eos.streamus.models.Person;
 import com.eos.streamus.models.Resource;
+import com.eos.streamus.models.User;
 import com.eos.streamus.utils.IDatabaseConnector;
 import com.eos.streamus.utils.IResourcePathResolver;
+import com.eos.streamus.utils.JwtService;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,6 +68,8 @@ abstract class ControllerTests {
   );
 
   @Autowired
+  protected WebApplicationContext context;
+
   protected MockMvc mockMvc;
 
   @Autowired
@@ -67,6 +77,10 @@ abstract class ControllerTests {
 
   @Autowired
   protected IDatabaseConnector databaseConnector;
+
+  protected ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
+    return mockMvc.perform(builder);
+  }
 
   protected final Date date(final String dateString) throws ParseException {
     return new Date(dateFormatter.parse(dateString).getTime());

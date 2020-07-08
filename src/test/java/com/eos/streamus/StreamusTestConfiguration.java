@@ -10,8 +10,10 @@ import com.eos.streamus.dto.validators.BandMemberDTOValidator;
 import com.eos.streamus.dto.validators.MusicianDTOValidator;
 import com.eos.streamus.dto.validators.PersonDTOValidator;
 import com.eos.streamus.dto.validators.SongPlaylistDTOValidator;
+import com.eos.streamus.filters.JwtFilter;
 import com.eos.streamus.utils.IDatabaseConnector;
 import com.eos.streamus.utils.IResourcePathResolver;
+import com.eos.streamus.utils.JwtService;
 import com.eos.streamus.utils.TestDatabaseConnector;
 import com.eos.streamus.utils.TestResourcePathResolver;
 import org.springframework.context.annotation.Bean;
@@ -71,6 +73,16 @@ public class StreamusTestConfiguration {
   @Bean
   public SongPlaylistDTOValidator songPlaylistValidator() {
     return new SongPlaylistDTOValidator();
+  }
+
+  @Bean
+  public JwtService jwtUtils() {
+    return new JwtService();
+  }
+
+  @Bean
+  public JwtFilter jwtFilter() {
+    return new JwtFilter();
   }
 
 }
