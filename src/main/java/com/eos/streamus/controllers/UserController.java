@@ -55,7 +55,7 @@ public class UserController implements CommonResponses {
       User user = new User(
           userDTO.getFirstName(),
           userDTO.getLastName(),
-          new Date(userDTO.getDateOfBirth()),
+          Date.valueOf(userDTO.getDateOfBirth()),
           userDTO.getEmail(),
           userDTO.getUsername()
       );
@@ -127,7 +127,7 @@ public class UserController implements CommonResponses {
       user.setEmail(userDTO.getEmail());
       user.setFirstName(userDTO.getFirstName());
       user.setLastName(userDTO.getLastName());
-      user.setDateOfBirth(new Date(userDTO.getDateOfBirth()));
+      user.setDateOfBirth(Date.valueOf(userDTO.getDateOfBirth()));
       user.setUsername(userDTO.getUsername());
       user.save(connection);
       if (userDTO.getUpdatedPassword() != null) {
