@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import java.text.ParseException;
+
 import static com.eos.streamus.utils.Constants.EMAIL_REGEX;
 
 @Component
@@ -37,8 +39,12 @@ public class UserDTOValidator implements Validator {
     }
 
     if (userDTO.getDateOfBirth() != null) {
-      if (java.sql.Date.valueOf(userDTO.getDateOfBirth()).after(new java.sql.Date(System.currentTimeMillis()))) {
-        errors.reject("Date of birth cannot be in the future");
+      try {
+        if (java.sql.Date.valueOf(userDTO.getDateOfBirth()).after(new java.sql.Date(System.currentTimeMillis()))) {
+          errors.reject("Date of birth cannot be in the future");
+        }
+      } catch (IllegalArgumentException illegalArgumentException) {
+        errors.reject("Invalid date format");
       }
     }
 
