@@ -348,7 +348,7 @@ class ArtistControllerTests extends JwtSetupControllerTests {
     ObjectNode personObjectNode = objectNode.putObject("person");
     personObjectNode.put("firstName", "John");
     personObjectNode.put("lastName", "Doe");
-    personObjectNode.put("dateOfBirth", date("2000-01-01").getTime());
+    personObjectNode.put("dateOfBirth", "2000-01-01");
 
     MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/musician")
                                                                   .contentType(MediaType.APPLICATION_JSON)
@@ -374,7 +374,7 @@ class ArtistControllerTests extends JwtSetupControllerTests {
     ObjectNode personObjectNode = objectNode.putObject("person");
     personObjectNode.put("firstName", "John");
     personObjectNode.put("lastName", "Doe");
-    personObjectNode.put("dateOfBirth", date("2000-01-01").getTime());
+    personObjectNode.put("dateOfBirth", "2000-01-01");
 
     MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/musician")
                                                                   .contentType(MediaType.APPLICATION_JSON)
@@ -425,7 +425,7 @@ class ArtistControllerTests extends JwtSetupControllerTests {
     ObjectNode personObjectNode = objectNode.putObject("person");
     personObjectNode.put("firstName", "John");
     personObjectNode.put("lastName", "Doe");
-    personObjectNode.put("dateOfBirth", date("2000-01-01").getTime());
+    personObjectNode.put("dateOfBirth", "2000-01-01");
     MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/musician")
                                                                   .contentType(MediaType.APPLICATION_JSON)
                                                                   .content(objectNode.toPrettyString());
@@ -443,7 +443,7 @@ class ArtistControllerTests extends JwtSetupControllerTests {
     ObjectNode personObjectNode = objectNode.putObject("person");
     personObjectNode.put("firstName", "");
     personObjectNode.put("lastName", "Doe");
-    personObjectNode.put("dateOfBirth", date("2000-01-01").getTime());
+    personObjectNode.put("dateOfBirth", "2000-01-01");
     MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/musician")
                                                                   .contentType(MediaType.APPLICATION_JSON)
                                                                   .content(objectNode.toPrettyString());
@@ -457,7 +457,7 @@ class ArtistControllerTests extends JwtSetupControllerTests {
     personObjectNode = objectNode.putObject("person");
     personObjectNode.put("firstName", "John");
     personObjectNode.put("lastName", "");
-    personObjectNode.put("dateOfBirth", date("2000-01-01").getTime());
+    personObjectNode.put("dateOfBirth", "2000-01-01");
     builder = MockMvcRequestBuilders.post("/musician")
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectNode.toPrettyString());
@@ -474,7 +474,15 @@ class ArtistControllerTests extends JwtSetupControllerTests {
     Calendar calendar = Calendar.getInstance();
     calendar.setTime(new java.util.Date());
     calendar.add(Calendar.DATE, 1);
-    personObjectNode.put("dateOfBirth", calendar.getTime().getTime());
+    personObjectNode
+        .put("dateOfBirth",
+             String.format(
+                 "%s-%s-%s",
+                 calendar.get(Calendar.YEAR),
+                 calendar.get(Calendar.MONTH) + 1,
+                 calendar.get(Calendar.DATE)
+             )
+        );
     builder = MockMvcRequestBuilders.post("/musician")
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectNode.toPrettyString());
@@ -487,7 +495,7 @@ class ArtistControllerTests extends JwtSetupControllerTests {
     objectNode.put("name", "test name");
     personObjectNode = objectNode.putObject("person");
     personObjectNode.put("firstName", "John");
-    personObjectNode.put("dateOfBirth", date("2000-01-01").getTime());
+    personObjectNode.put("dateOfBirth", "2000-01-01");
     builder = MockMvcRequestBuilders.post("/musician")
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectNode.toPrettyString());
@@ -556,7 +564,7 @@ class ArtistControllerTests extends JwtSetupControllerTests {
       ObjectNode personNode = musicianNode.putObject("person");
       personNode.put("firstName", "John");
       personNode.put("lastName", "Doe");
-      personNode.put("dateOfBirth", date("2000-01-01").getTime());
+      personNode.put("dateOfBirth", "2000-01-01");
       bandMemberData.put("from", "2000-01-01");
 
       MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
@@ -583,7 +591,7 @@ class ArtistControllerTests extends JwtSetupControllerTests {
       ObjectNode personNode = musicianNode.putObject("person");
       personNode.put("firstName", "John");
       personNode.put("lastName", "Doe");
-      personNode.put("dateOfBirth", date("2000-01-01").getTime());
+      personNode.put("dateOfBirth", "2000-01-01");
       bandMemberData.put("from", "2000-01-01");
 
       MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
@@ -611,7 +619,7 @@ class ArtistControllerTests extends JwtSetupControllerTests {
       ObjectNode personNode = musicianNode.putObject("person");
       personNode.put("firstName", "John");
       personNode.put("lastName", "Doe");
-      personNode.put("dateOfBirth", date("2000-01-01").getTime());
+      personNode.put("dateOfBirth", "2000-01-01");
       bandMemberData.put("from", "2000-01-01");
       bandMemberData.put("to", "1999-01-01");
 
