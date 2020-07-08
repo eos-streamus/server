@@ -1,19 +1,25 @@
 package com.eos.streamus.controllers;
 
 import com.eos.streamus.models.User;
+import com.eos.streamus.utils.JwtService;
 import com.eos.streamus.writers.JsonUserWriter;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.sql.Connection;
 
+import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Random;
@@ -29,7 +35,13 @@ class UserControllerTests extends ControllerTests {
   @Value("${minUsernameLength}")
   private int minUsernameLength;
 
+  @Autowired
+  private PasswordEncoder passwordEncoder;
+
   private static final String ACCEPTABLE_CHARACTERS = "ABCEDFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+
+  @Autowired
+  private JwtService jwtService;
 
   private String randomStringOfLength(int length) {
     StringBuilder stringBuilder = new StringBuilder();
@@ -285,6 +297,30 @@ class UserControllerTests extends ControllerTests {
                                                                   .contentType(MediaType.APPLICATION_JSON)
                                                                   .content(objectNode.toPrettyString());
     perform(builder).andExpect(status().is(400)).andReturn().getResponse();
+  }
+
+  @Test
+  void signingInWithValidUserDataShouldReturnAValidJWT() throws Exception {
+    User user;
+    String password;
+    try (Connection connection = databaseConnector.getConnection()) {
+      user = new User("John", "Doe", Date.valueOf("2000-01-01"), randomStringOfLength(5) + "@streamus.com",
+                      randomStringOfLength(minUsernameLength));
+      user.save(connection);
+      password = randomStringOfLength(minPasswordLength);
+      user.updatePassword(passwordEncoder.encode(password), connection);
+    }
+
+    ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
+    objectNode.put("email", user.getEmail());
+    objectNode.put("password", password);
+    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/login")
+                                                                  .contentType(MediaType.APPLICATION_JSON)
+                                                                  .content(objectNode.toPrettyString());
+    MockHttpServletResponse response = perform(builder).andExpect(status().is(200)).andReturn().getResponse();
+    String token = response.getContentAsString();
+    Jws<Claims> claimsJws = jwtService.decode(token);
+    assertEquals(claimsJws.getBody().get("email", String.class), user.getEmail());
   }
 
 }
