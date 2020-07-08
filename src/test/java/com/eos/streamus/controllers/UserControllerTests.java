@@ -323,4 +323,86 @@ class UserControllerTests extends ControllerTests {
     assertEquals(claimsJws.getBody().get("email", String.class), user.getEmail());
   }
 
+  @Test
+  void signingInWithInvalidUserDataShouldReturnBadRequest() throws Exception {
+    User user;
+    String password;
+    try (Connection connection = databaseConnector.getConnection()) {
+      user = new User("John", "Doe", Date.valueOf("2000-01-01"), randomStringOfLength(5) + "@streamus.com",
+                      randomStringOfLength(minUsernameLength));
+      user.save(connection);
+      password = randomStringOfLength(minPasswordLength);
+      user.updatePassword(passwordEncoder.encode(password), connection);
+    }
+
+    ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
+    objectNode.put("email", user.getEmail());
+    objectNode.put("password", randomStringOfLength(minPasswordLength));
+    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/login")
+                                                                  .contentType(MediaType.APPLICATION_JSON)
+                                                                  .content(objectNode.toPrettyString());
+    perform(builder).andExpect(status().is(400)).andReturn();
+  }
+
+  @Test
+  void signingInWithInvalidEmailShouldReturnBadRequest() throws Exception {
+    User user;
+    String password;
+    try (Connection connection = databaseConnector.getConnection()) {
+      user = new User("John", "Doe", Date.valueOf("2000-01-01"), randomStringOfLength(5) + "@streamus.com",
+                      randomStringOfLength(minUsernameLength));
+      user.save(connection);
+      password = randomStringOfLength(minPasswordLength);
+      user.updatePassword(passwordEncoder.encode(password), connection);
+    }
+
+    ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
+    objectNode.put("email", randomStringOfLength(5) + "@streamus.com");
+    objectNode.put("password", password);
+    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/login")
+                                                                  .contentType(MediaType.APPLICATION_JSON)
+                                                                  .content(objectNode.toPrettyString());
+    perform(builder).andExpect(status().is(400)).andReturn();
+  }
+
+  @Test
+  void signingInWithMissingEmailShouldReturnBadRequest() throws Exception {
+    User user;
+    String password;
+    try (Connection connection = databaseConnector.getConnection()) {
+      user = new User("John", "Doe", Date.valueOf("2000-01-01"), randomStringOfLength(5) + "@streamus.com",
+                      randomStringOfLength(minUsernameLength));
+      user.save(connection);
+      password = randomStringOfLength(minPasswordLength);
+      user.updatePassword(passwordEncoder.encode(password), connection);
+    }
+
+    ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
+    objectNode.put("password", password);
+    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/login")
+                                                                  .contentType(MediaType.APPLICATION_JSON)
+                                                                  .content(objectNode.toPrettyString());
+    perform(builder).andExpect(status().is(400)).andReturn();
+  }
+
+  @Test
+  void signingInWithMissingPasswordShouldReturnBadRequest() throws Exception {
+    User user;
+    String password;
+    try (Connection connection = databaseConnector.getConnection()) {
+      user = new User("John", "Doe", Date.valueOf("2000-01-01"), randomStringOfLength(5) + "@streamus.com",
+                      randomStringOfLength(minUsernameLength));
+      user.save(connection);
+      password = randomStringOfLength(minPasswordLength);
+      user.updatePassword(passwordEncoder.encode(password), connection);
+    }
+
+    ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
+    objectNode.put("email", user.getEmail());
+    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/login")
+                                                                  .contentType(MediaType.APPLICATION_JSON)
+                                                                  .content(objectNode.toPrettyString());
+    perform(builder).andExpect(status().is(400)).andReturn();
+  }
+
 }

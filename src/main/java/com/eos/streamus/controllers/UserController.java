@@ -75,7 +75,10 @@ public class UserController implements CommonResponses {
   }
 
   @PostMapping("/login")
-  public ResponseEntity<String> login(@RequestBody @Valid final LoginDTO loginDTO) {
+  public ResponseEntity<String> login(@RequestBody @Valid final LoginDTO loginDTO, BindingResult result) {
+    if (result.hasErrors()) {
+      return ResponseEntity.badRequest().body(result.toString());
+    }
     try (Connection connection = databaseConnector.getConnection()) {
       User user = User.findByEmail(loginDTO.getEmail(), connection);
       if (user == null) {
