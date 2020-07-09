@@ -428,9 +428,11 @@ class UserControllerTests extends ControllerTests {
     objectNode.put("password", password);
     String newPassword = randomStringOfLength(minPasswordLength);
     objectNode.put("updatedPassword", newPassword);
+
     builder.contentType(MediaType.APPLICATION_JSON);
     builder.content(objectNode.toPrettyString());
-    MockHttpServletResponse response = perform(builder).andExpect(status().is(200)).andReturn().getResponse();
+    perform(builder).andExpect(status().is(200)).andReturn();
+
     objectNode = new ObjectNode(new TestJsonFactory());
     objectNode.put("email", user.getEmail());
     objectNode.put("password", newPassword);
