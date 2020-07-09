@@ -508,11 +508,38 @@ class UserControllerTests extends ControllerTests {
 
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
     objectNode.put("email", email);
-    objectNode.put("username", user.getEmail());
+    objectNode.put("username", user.getUsername());
     objectNode.put("firstName", user.getFirstName());
     objectNode.put("lastName", user.getLastName());
     objectNode.put("dateOfBirth", "2000-01-01");
     objectNode.put("password", password);
+
+    MockHttpServletRequestBuilder builder = put("/user/" + user.getId());
+    builder.contentType(MediaType.APPLICATION_JSON);
+    builder.content(objectNode.toPrettyString());
+    perform(builder).andExpect(status().is(400)).andReturn();
+  }
+
+  @Test
+  void updatingAUserProfileWithATooShortPasswordShouldReturnBadRequest() throws Exception {
+    User user;
+    String password;
+    try (Connection connection = databaseConnector.getConnection()) {
+      user = new User("John", "Doe", date("2000-01-01"), randomStringOfLength(10) + "@streamus.com",
+                      randomStringOfLength(minUsernameLength));
+      user.save(connection);
+      password = randomStringOfLength(minPasswordLength);
+      user.updatePassword(passwordEncoder.encode(password), connection);
+    }
+
+    ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
+    objectNode.put("email", user.getEmail());
+    objectNode.put("username", user.getUsername());
+    objectNode.put("firstName", user.getFirstName());
+    objectNode.put("lastName", user.getLastName());
+    objectNode.put("dateOfBirth", "2000-01-01");
+    objectNode.put("password", password);
+    objectNode.put("updatedPassword", randomStringOfLength(minPasswordLength - 1));
 
     MockHttpServletRequestBuilder builder = put("/user/" + user.getId());
     builder.contentType(MediaType.APPLICATION_JSON);
