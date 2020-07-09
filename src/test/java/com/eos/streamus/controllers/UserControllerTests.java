@@ -484,4 +484,40 @@ class UserControllerTests extends ControllerTests {
     }
   }
 
+  @Test
+  void updatingAUserProfileWithUsedEmailShouldReturnBadRequest() throws Exception {
+    User user;
+    String password;
+    String email = randomStringOfLength(10) + "@streamus.com";
+    try (Connection connection = databaseConnector.getConnection()) {
+      user = new User("John", "Doe", date("2000-01-01"), randomStringOfLength(10) + "@streamus.com",
+                      randomStringOfLength(minUsernameLength));
+      user.save(connection);
+      password = randomStringOfLength(minPasswordLength);
+      user.updatePassword(passwordEncoder.encode(password), connection);
+
+      // Used email user
+      new User(
+          "John",
+          "Doe",
+          date("2000-01-01"),
+          email,
+          randomStringOfLength(minUsernameLength)
+      ).save(connection);
+    }
+
+    ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
+    objectNode.put("email", email);
+    objectNode.put("username", user.getEmail());
+    objectNode.put("firstName", user.getFirstName());
+    objectNode.put("lastName", user.getLastName());
+    objectNode.put("dateOfBirth", "2000-01-01");
+    objectNode.put("password", password);
+
+    MockHttpServletRequestBuilder builder = put("/user/" + user.getId());
+    builder.contentType(MediaType.APPLICATION_JSON);
+    builder.content(objectNode.toPrettyString());
+    perform(builder).andExpect(status().is(400)).andReturn();
+  }
+
 }
