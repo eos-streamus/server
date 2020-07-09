@@ -115,6 +115,9 @@ public class UserController implements CommonResponses {
   public ResponseEntity<JsonNode> updateUser(@PathVariable final int id,
                                              @RequestBody @Valid final UserDTO userDTO,
                                              BindingResult result) {
+    if (result.hasErrors()) {
+      return badRequest(result.toString());
+    }
     userDTOValidator.validate(userDTO, result);
     if (result.hasErrors()) {
       return badRequest(result.toString());

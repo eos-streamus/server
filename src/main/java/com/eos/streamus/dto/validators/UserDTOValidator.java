@@ -6,10 +6,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import java.text.ParseException;
-
-import static com.eos.streamus.utils.Constants.EMAIL_REGEX;
-
 @Component
 public class UserDTOValidator implements Validator {
   @Value("${minPasswordLength}")
@@ -46,13 +42,6 @@ public class UserDTOValidator implements Validator {
       } catch (IllegalArgumentException illegalArgumentException) {
         errors.reject("Invalid date format");
       }
-    }
-
-    if (userDTO.getEmail().isBlank()) {
-      errors.reject("Invalid email");
-    }
-    if (!userDTO.getEmail().matches(EMAIL_REGEX)) {
-      errors.reject("Invalid email");
     }
 
     if (userDTO.getUsername().isBlank()) {

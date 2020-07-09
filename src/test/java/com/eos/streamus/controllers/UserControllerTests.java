@@ -27,6 +27,8 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class UserControllerTests extends ControllerTests {
@@ -62,7 +64,7 @@ class UserControllerTests extends ControllerTests {
     objectNode.put("lastName", "Doe");
     objectNode.put("dateOfBirth", "2000-01-01");
     objectNode.put("password", randomStringOfLength(minPasswordLength));
-    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/users")
+    MockHttpServletRequestBuilder builder = post("/users")
                                                                   .contentType(MediaType.APPLICATION_JSON)
                                                                   .content(objectNode.toPrettyString());
     MockHttpServletResponse response = perform(builder).andExpect(status().is(200)).andReturn().getResponse();
@@ -89,7 +91,7 @@ class UserControllerTests extends ControllerTests {
     objectNode.put("lastName", "Doe");
     objectNode.put("dateOfBirth", "2000-01-01");
     objectNode.put("password", randomStringOfLength(minPasswordLength));
-    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/users")
+    MockHttpServletRequestBuilder builder = post("/users")
                                                                   .contentType(MediaType.APPLICATION_JSON)
                                                                   .content(objectNode.toPrettyString());
     perform(builder).andExpect(status().is(400)).andReturn().getResponse();
@@ -104,7 +106,7 @@ class UserControllerTests extends ControllerTests {
     objectNode.put("lastName", "Doe");
     objectNode.put("dateOfBirth", "2000-01-01");
     objectNode.put("password", randomStringOfLength(minPasswordLength));
-    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/users")
+    MockHttpServletRequestBuilder builder = post("/users")
                                                                   .contentType(MediaType.APPLICATION_JSON)
                                                                   .content(objectNode.toPrettyString());
     perform(builder).andExpect(status().is(400)).andReturn().getResponse();
@@ -119,7 +121,7 @@ class UserControllerTests extends ControllerTests {
     objectNode.put("lastName", "Doe");
     objectNode.put("dateOfBirth", "2000-01-01");
     objectNode.put("password", randomStringOfLength(minPasswordLength));
-    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/users")
+    MockHttpServletRequestBuilder builder = post("/users")
                                                                   .contentType(MediaType.APPLICATION_JSON)
                                                                   .content(objectNode.toPrettyString());
     perform(builder).andExpect(status().is(400)).andReturn().getResponse();
@@ -134,7 +136,7 @@ class UserControllerTests extends ControllerTests {
     objectNode.put("lastName", "Doe");
     objectNode.put("dateOfBirth", "2000-01-01");
     objectNode.put("password", randomStringOfLength(minPasswordLength));
-    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/users")
+    MockHttpServletRequestBuilder builder = post("/users")
                                                                   .contentType(MediaType.APPLICATION_JSON)
                                                                   .content(objectNode.toPrettyString());
     perform(builder).andExpect(status().is(400)).andReturn().getResponse();
@@ -149,7 +151,7 @@ class UserControllerTests extends ControllerTests {
     objectNode.put("firstName", "John");
     objectNode.put("dateOfBirth", "2000-01-01");
     objectNode.put("password", randomStringOfLength(minPasswordLength));
-    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/users")
+    MockHttpServletRequestBuilder builder = post("/users")
                                                                   .contentType(MediaType.APPLICATION_JSON)
                                                                   .content(objectNode.toPrettyString());
     perform(builder).andExpect(status().is(400)).andReturn().getResponse();
@@ -164,7 +166,7 @@ class UserControllerTests extends ControllerTests {
     objectNode.put("firstName", "John");
     objectNode.put("lastName", "Doe");
     objectNode.put("password", randomStringOfLength(minPasswordLength));
-    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/users")
+    MockHttpServletRequestBuilder builder = post("/users")
                                                                   .contentType(MediaType.APPLICATION_JSON)
                                                                   .content(objectNode.toPrettyString());
     perform(builder).andExpect(status().is(400)).andReturn().getResponse();
@@ -179,7 +181,7 @@ class UserControllerTests extends ControllerTests {
     objectNode.put("firstName", "John");
     objectNode.put("lastName", "Doe");
     objectNode.put("dateOfBirth", "2000-01-01");
-    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/users")
+    MockHttpServletRequestBuilder builder = post("/users")
                                                                   .contentType(MediaType.APPLICATION_JSON)
                                                                   .content(objectNode.toPrettyString());
     perform(builder).andExpect(status().is(400)).andReturn().getResponse();
@@ -195,7 +197,7 @@ class UserControllerTests extends ControllerTests {
     objectNode.put("lastName", "Doe");
     objectNode.put("dateOfBirth", "2000-01-01");
     objectNode.put("password", randomStringOfLength(minPasswordLength - 1));
-    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/users")
+    MockHttpServletRequestBuilder builder = post("/users")
                                                                   .contentType(MediaType.APPLICATION_JSON)
                                                                   .content(objectNode.toPrettyString());
     perform(builder).andExpect(status().is(400)).andReturn().getResponse();
@@ -211,7 +213,7 @@ class UserControllerTests extends ControllerTests {
     objectNode.put("lastName", "Doe");
     objectNode.put("dateOfBirth", "2000-01-01");
     objectNode.put("password", randomStringOfLength(minUsernameLength - 1));
-    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/users")
+    MockHttpServletRequestBuilder builder = post("/users")
                                                                   .contentType(MediaType.APPLICATION_JSON)
                                                                   .content(objectNode.toPrettyString());
     perform(builder).andExpect(status().is(400)).andReturn().getResponse();
@@ -227,7 +229,7 @@ class UserControllerTests extends ControllerTests {
     objectNode.put("lastName", "Doe");
     objectNode.put("dateOfBirth", "2000-01-01");
     objectNode.put("password", randomStringOfLength(minPasswordLength));
-    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/users")
+    MockHttpServletRequestBuilder builder = post("/users")
                                                                   .contentType(MediaType.APPLICATION_JSON)
                                                                   .content(objectNode.toPrettyString());
     perform(builder).andExpect(status().is(400)).andReturn().getResponse();
@@ -243,7 +245,7 @@ class UserControllerTests extends ControllerTests {
     objectNode.put("lastName", "Doe");
     objectNode.put("dateOfBirth", "2000-01-01");
     objectNode.put("password", randomStringOfLength(minPasswordLength));
-    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/users")
+    MockHttpServletRequestBuilder builder = post("/users")
                                                                   .contentType(MediaType.APPLICATION_JSON)
                                                                   .content(objectNode.toPrettyString());
     perform(builder).andExpect(status().is(400)).andReturn().getResponse();
@@ -259,7 +261,7 @@ class UserControllerTests extends ControllerTests {
     objectNode.put("lastName", "");
     objectNode.put("dateOfBirth", "2000-01-01");
     objectNode.put("password", randomStringOfLength(minPasswordLength));
-    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/users")
+    MockHttpServletRequestBuilder builder = post("/users")
                                                                   .contentType(MediaType.APPLICATION_JSON)
                                                                   .content(objectNode.toPrettyString());
     perform(builder).andExpect(status().is(400)).andReturn().getResponse();
@@ -275,7 +277,7 @@ class UserControllerTests extends ControllerTests {
     objectNode.put("lastName", "Doe");
     objectNode.put("dateOfBirth", "shouldFail");
     objectNode.put("password", randomStringOfLength(minPasswordLength));
-    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/users")
+    MockHttpServletRequestBuilder builder = post("/users")
                                                                   .contentType(MediaType.APPLICATION_JSON)
                                                                   .content(objectNode.toPrettyString());
     perform(builder).andExpect(status().is(400)).andReturn().getResponse();
@@ -293,7 +295,7 @@ class UserControllerTests extends ControllerTests {
     String dateString = dateFormat.format(new java.sql.Date(new java.util.Date().getTime() + 24 * 60 * 60 * 1000));
     objectNode.put("dateOfBirth", dateString);
     objectNode.put("password", randomStringOfLength(minPasswordLength));
-    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/users")
+    MockHttpServletRequestBuilder builder = post("/users")
                                                                   .contentType(MediaType.APPLICATION_JSON)
                                                                   .content(objectNode.toPrettyString());
     perform(builder).andExpect(status().is(400)).andReturn().getResponse();
@@ -314,7 +316,7 @@ class UserControllerTests extends ControllerTests {
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
     objectNode.put("email", user.getEmail());
     objectNode.put("password", password);
-    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/login")
+    MockHttpServletRequestBuilder builder = post("/login")
                                                                   .contentType(MediaType.APPLICATION_JSON)
                                                                   .content(objectNode.toPrettyString());
     MockHttpServletResponse response = perform(builder).andExpect(status().is(200)).andReturn().getResponse();
@@ -338,7 +340,7 @@ class UserControllerTests extends ControllerTests {
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
     objectNode.put("email", user.getEmail());
     objectNode.put("password", randomStringOfLength(minPasswordLength));
-    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/login")
+    MockHttpServletRequestBuilder builder = post("/login")
                                                                   .contentType(MediaType.APPLICATION_JSON)
                                                                   .content(objectNode.toPrettyString());
     perform(builder).andExpect(status().is(400)).andReturn();
@@ -359,7 +361,7 @@ class UserControllerTests extends ControllerTests {
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
     objectNode.put("email", randomStringOfLength(5) + "@streamus.com");
     objectNode.put("password", password);
-    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/login")
+    MockHttpServletRequestBuilder builder = post("/login")
                                                                   .contentType(MediaType.APPLICATION_JSON)
                                                                   .content(objectNode.toPrettyString());
     perform(builder).andExpect(status().is(400)).andReturn();
@@ -379,7 +381,7 @@ class UserControllerTests extends ControllerTests {
 
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
     objectNode.put("password", password);
-    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/login")
+    MockHttpServletRequestBuilder builder = post("/login")
                                                                   .contentType(MediaType.APPLICATION_JSON)
                                                                   .content(objectNode.toPrettyString());
     perform(builder).andExpect(status().is(400)).andReturn();
@@ -399,10 +401,45 @@ class UserControllerTests extends ControllerTests {
 
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
     objectNode.put("email", user.getEmail());
-    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/login")
+    MockHttpServletRequestBuilder builder = post("/login")
                                                                   .contentType(MediaType.APPLICATION_JSON)
                                                                   .content(objectNode.toPrettyString());
     perform(builder).andExpect(status().is(400)).andReturn();
+  }
+
+  @Test
+  void updatingAUserProfileWithNewPasswordShouldWork() throws Exception {
+    User user;
+    String password;
+    try (Connection connection = databaseConnector.getConnection()) {
+      user = new User("John", "Doe", date("2000-01-01"), randomStringOfLength(10) + "@streamus.com",
+                      randomStringOfLength(minUsernameLength));
+      user.save(connection);
+      password = randomStringOfLength(minPasswordLength);
+      user.updatePassword(passwordEncoder.encode(password), connection);
+    }
+    MockHttpServletRequestBuilder builder = put("/user/" + user.getId());
+    ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
+    objectNode.put("email", user.getEmail());
+    objectNode.put("username", randomStringOfLength(minUsernameLength));
+    objectNode.put("firstName", "John");
+    objectNode.put("lastName", "Doe");
+    objectNode.put("dateOfBirth", "2000-01-01");
+    objectNode.put("password", password);
+    String newPassword = randomStringOfLength(minPasswordLength);
+    objectNode.put("updatedPassword", newPassword);
+    builder.contentType(MediaType.APPLICATION_JSON);
+    builder.content(objectNode.toPrettyString());
+    MockHttpServletResponse response = perform(builder).andExpect(status().is(200)).andReturn().getResponse();
+    objectNode = new ObjectNode(new TestJsonFactory());
+    objectNode.put("email", user.getEmail());
+    objectNode.put("password", newPassword);
+
+    builder = post("/login")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectNode.toPrettyString());
+    String token = perform(builder).andExpect(status().is(200)).andReturn().getResponse().getContentAsString();
+    jwtService.decode(token);
   }
 
 }
