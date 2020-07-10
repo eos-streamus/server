@@ -309,7 +309,7 @@ class UserControllerTests extends ControllerTests {
                       randomStringOfLength(minUsernameLength));
       user.save(connection);
       password = randomStringOfLength(minPasswordLength);
-      user.updatePassword(passwordEncoder.encode(password), connection);
+      user.upsertPassword(passwordEncoder.encode(password), connection);
     }
 
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
@@ -333,7 +333,7 @@ class UserControllerTests extends ControllerTests {
                       randomStringOfLength(minUsernameLength));
       user.save(connection);
       password = randomStringOfLength(minPasswordLength);
-      user.updatePassword(passwordEncoder.encode(password), connection);
+      user.upsertPassword(passwordEncoder.encode(password), connection);
     }
 
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
@@ -354,7 +354,7 @@ class UserControllerTests extends ControllerTests {
                       randomStringOfLength(minUsernameLength));
       user.save(connection);
       password = randomStringOfLength(minPasswordLength);
-      user.updatePassword(passwordEncoder.encode(password), connection);
+      user.upsertPassword(passwordEncoder.encode(password), connection);
     }
 
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
@@ -375,7 +375,7 @@ class UserControllerTests extends ControllerTests {
                       randomStringOfLength(minUsernameLength));
       user.save(connection);
       password = randomStringOfLength(minPasswordLength);
-      user.updatePassword(passwordEncoder.encode(password), connection);
+      user.upsertPassword(passwordEncoder.encode(password), connection);
     }
 
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
@@ -395,7 +395,7 @@ class UserControllerTests extends ControllerTests {
                       randomStringOfLength(minUsernameLength));
       user.save(connection);
       password = randomStringOfLength(minPasswordLength);
-      user.updatePassword(passwordEncoder.encode(password), connection);
+      user.upsertPassword(passwordEncoder.encode(password), connection);
     }
 
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
@@ -415,7 +415,7 @@ class UserControllerTests extends ControllerTests {
                       randomStringOfLength(minUsernameLength));
       user.save(connection);
       password = randomStringOfLength(minPasswordLength);
-      user.updatePassword(passwordEncoder.encode(password), connection);
+      user.upsertPassword(passwordEncoder.encode(password), connection);
     }
     MockHttpServletRequestBuilder builder = put("/user/" + user.getId());
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
@@ -452,7 +452,7 @@ class UserControllerTests extends ControllerTests {
                       randomStringOfLength(minUsernameLength));
       user.save(connection);
       password = randomStringOfLength(minPasswordLength);
-      user.updatePassword(passwordEncoder.encode(password), connection);
+      user.upsertPassword(passwordEncoder.encode(password), connection);
     }
 
     MockHttpServletRequestBuilder builder = put("/user/" + user.getId());
@@ -493,7 +493,7 @@ class UserControllerTests extends ControllerTests {
                       randomStringOfLength(minUsernameLength));
       user.save(connection);
       password = randomStringOfLength(minPasswordLength);
-      user.updatePassword(passwordEncoder.encode(password), connection);
+      user.upsertPassword(passwordEncoder.encode(password), connection);
 
       // Used email user
       new User(
@@ -528,7 +528,7 @@ class UserControllerTests extends ControllerTests {
                       randomStringOfLength(minUsernameLength));
       user.save(connection);
       password = randomStringOfLength(minPasswordLength);
-      user.updatePassword(passwordEncoder.encode(password), connection);
+      user.upsertPassword(passwordEncoder.encode(password), connection);
     }
 
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
@@ -555,7 +555,7 @@ class UserControllerTests extends ControllerTests {
                       randomStringOfLength(minUsernameLength));
       user.save(connection);
       password = randomStringOfLength(minPasswordLength);
-      user.updatePassword(passwordEncoder.encode(password), connection);
+      user.upsertPassword(passwordEncoder.encode(password), connection);
     }
 
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
@@ -580,7 +580,7 @@ class UserControllerTests extends ControllerTests {
                       randomStringOfLength(minUsernameLength));
       user.save(connection);
       password = randomStringOfLength(minPasswordLength);
-      user.updatePassword(passwordEncoder.encode(password), connection);
+      user.upsertPassword(passwordEncoder.encode(password), connection);
     }
 
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
@@ -605,7 +605,7 @@ class UserControllerTests extends ControllerTests {
                       randomStringOfLength(minUsernameLength));
       user.save(connection);
       password = randomStringOfLength(minPasswordLength);
-      user.updatePassword(passwordEncoder.encode(password), connection);
+      user.upsertPassword(passwordEncoder.encode(password), connection);
     }
 
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
@@ -630,7 +630,7 @@ class UserControllerTests extends ControllerTests {
                       randomStringOfLength(minUsernameLength));
       user.save(connection);
       password = randomStringOfLength(minPasswordLength);
-      user.updatePassword(passwordEncoder.encode(password), connection);
+      user.upsertPassword(passwordEncoder.encode(password), connection);
     }
 
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
@@ -655,7 +655,7 @@ class UserControllerTests extends ControllerTests {
                       randomStringOfLength(minUsernameLength));
       user.save(connection);
       password = randomStringOfLength(minPasswordLength);
-      user.updatePassword(passwordEncoder.encode(password), connection);
+      user.upsertPassword(passwordEncoder.encode(password), connection);
     }
 
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
@@ -680,7 +680,7 @@ class UserControllerTests extends ControllerTests {
                       randomStringOfLength(minUsernameLength));
       user.save(connection);
       password = randomStringOfLength(minPasswordLength);
-      user.updatePassword(passwordEncoder.encode(password), connection);
+      user.upsertPassword(passwordEncoder.encode(password), connection);
     }
 
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());

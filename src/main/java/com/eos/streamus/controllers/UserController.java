@@ -65,7 +65,7 @@ public class UserController implements CommonResponses {
       connection.setAutoCommit(false);
       String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
       user.save(connection);
-      user.updatePassword(encodedPassword, connection);
+      user.upsertPassword(encodedPassword, connection);
       connection.commit();
       return ResponseEntity.ok(new JsonUserWriter(user).getJson());
     } catch (SQLException sqlException) {
@@ -140,7 +140,7 @@ public class UserController implements CommonResponses {
       user.setUsername(userDTO.getUsername());
       user.save(connection);
       if (userDTO.getUpdatedPassword() != null) {
-        user.updatePassword(passwordEncoder.encode(userDTO.getUpdatedPassword()), connection);
+        user.upsertPassword(passwordEncoder.encode(userDTO.getUpdatedPassword()), connection);
       }
       return ResponseEntity.ok(new JsonUserWriter(user).getJson());
     } catch (SQLException sqlException) {

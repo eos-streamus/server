@@ -161,7 +161,7 @@ public class User extends Person {
     }
   }
 
-  public void updatePassword(String password, Connection connection) throws SQLException {
+  public void upsertPassword(String password, Connection connection) throws SQLException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         String.format(
             "INSERT INTO %s(%s, %s) VALUES (?, ?) ON CONFLICT (%s) DO UPDATE SET %s = excluded.%s;",
