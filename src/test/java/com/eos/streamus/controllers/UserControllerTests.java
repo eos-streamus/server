@@ -15,7 +15,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.sql.Connection;
 
@@ -540,6 +539,156 @@ class UserControllerTests extends ControllerTests {
     objectNode.put("dateOfBirth", "2000-01-01");
     objectNode.put("password", password);
     objectNode.put("updatedPassword", randomStringOfLength(minPasswordLength - 1));
+
+    MockHttpServletRequestBuilder builder = put("/user/" + user.getId());
+    builder.contentType(MediaType.APPLICATION_JSON);
+    builder.content(objectNode.toPrettyString());
+    perform(builder).andExpect(status().is(400)).andReturn();
+  }
+
+  @Test
+  void updatingAUserProfileWithMissingEmailShouldReturnBadRequest() throws Exception {
+    User user;
+    String password;
+    try (Connection connection = databaseConnector.getConnection()) {
+      user = new User("John", "Doe", date("2000-01-01"), randomStringOfLength(10) + "@streamus.com",
+                      randomStringOfLength(minUsernameLength));
+      user.save(connection);
+      password = randomStringOfLength(minPasswordLength);
+      user.updatePassword(passwordEncoder.encode(password), connection);
+    }
+
+    ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
+    objectNode.put("username", user.getUsername());
+    objectNode.put("firstName", user.getFirstName());
+    objectNode.put("lastName", user.getLastName());
+    objectNode.put("dateOfBirth", "2000-01-01");
+    objectNode.put("password", password);
+
+    MockHttpServletRequestBuilder builder = put("/user/" + user.getId());
+    builder.contentType(MediaType.APPLICATION_JSON);
+    builder.content(objectNode.toPrettyString());
+    perform(builder).andExpect(status().is(400)).andReturn();
+  }
+
+  @Test
+  void updatingAUserProfileWithMissingUsernameShouldReturnBadRequest() throws Exception {
+    User user;
+    String password;
+    try (Connection connection = databaseConnector.getConnection()) {
+      user = new User("John", "Doe", date("2000-01-01"), randomStringOfLength(10) + "@streamus.com",
+                      randomStringOfLength(minUsernameLength));
+      user.save(connection);
+      password = randomStringOfLength(minPasswordLength);
+      user.updatePassword(passwordEncoder.encode(password), connection);
+    }
+
+    ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
+    objectNode.put("email", user.getEmail());
+    objectNode.put("firstName", user.getFirstName());
+    objectNode.put("lastName", user.getLastName());
+    objectNode.put("dateOfBirth", "2000-01-01");
+    objectNode.put("password", password);
+
+    MockHttpServletRequestBuilder builder = put("/user/" + user.getId());
+    builder.contentType(MediaType.APPLICATION_JSON);
+    builder.content(objectNode.toPrettyString());
+    perform(builder).andExpect(status().is(400)).andReturn();
+  }
+
+  @Test
+  void updatingAUserProfileWithMissingFirstNameShouldReturnBadRequest() throws Exception {
+    User user;
+    String password;
+    try (Connection connection = databaseConnector.getConnection()) {
+      user = new User("John", "Doe", date("2000-01-01"), randomStringOfLength(10) + "@streamus.com",
+                      randomStringOfLength(minUsernameLength));
+      user.save(connection);
+      password = randomStringOfLength(minPasswordLength);
+      user.updatePassword(passwordEncoder.encode(password), connection);
+    }
+
+    ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
+    objectNode.put("email", user.getEmail());
+    objectNode.put("username", user.getUsername());
+    objectNode.put("lastName", user.getLastName());
+    objectNode.put("dateOfBirth", "2000-01-01");
+    objectNode.put("password", password);
+
+    MockHttpServletRequestBuilder builder = put("/user/" + user.getId());
+    builder.contentType(MediaType.APPLICATION_JSON);
+    builder.content(objectNode.toPrettyString());
+    perform(builder).andExpect(status().is(400)).andReturn();
+  }
+
+  @Test
+  void updatingAUserProfileWithMissingLastNameShouldReturnBadRequest() throws Exception {
+    User user;
+    String password;
+    try (Connection connection = databaseConnector.getConnection()) {
+      user = new User("John", "Doe", date("2000-01-01"), randomStringOfLength(10) + "@streamus.com",
+                      randomStringOfLength(minUsernameLength));
+      user.save(connection);
+      password = randomStringOfLength(minPasswordLength);
+      user.updatePassword(passwordEncoder.encode(password), connection);
+    }
+
+    ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
+    objectNode.put("email", user.getEmail());
+    objectNode.put("username", user.getUsername());
+    objectNode.put("firstName", user.getFirstName());
+    objectNode.put("dateOfBirth", "2000-01-01");
+    objectNode.put("password", password);
+
+    MockHttpServletRequestBuilder builder = put("/user/" + user.getId());
+    builder.contentType(MediaType.APPLICATION_JSON);
+    builder.content(objectNode.toPrettyString());
+    perform(builder).andExpect(status().is(400)).andReturn();
+  }
+
+  @Test
+  void updatingAUserProfileWithMissingDateOfBirthShouldReturnBadRequest() throws Exception {
+    User user;
+    String password;
+    try (Connection connection = databaseConnector.getConnection()) {
+      user = new User("John", "Doe", date("2000-01-01"), randomStringOfLength(10) + "@streamus.com",
+                      randomStringOfLength(minUsernameLength));
+      user.save(connection);
+      password = randomStringOfLength(minPasswordLength);
+      user.updatePassword(passwordEncoder.encode(password), connection);
+    }
+
+    ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
+    objectNode.put("email", user.getEmail());
+    objectNode.put("username", user.getUsername());
+    objectNode.put("firstName", user.getFirstName());
+    objectNode.put("lastName", user.getLastName());
+    objectNode.put("password", password);
+
+    MockHttpServletRequestBuilder builder = put("/user/" + user.getId());
+    builder.contentType(MediaType.APPLICATION_JSON);
+    builder.content(objectNode.toPrettyString());
+    perform(builder).andExpect(status().is(400)).andReturn();
+  }
+
+  @Test
+  void updatingAUserProfileWithMissingPasswordShouldReturnBadRequest() throws Exception {
+    User user;
+    String password;
+    try (Connection connection = databaseConnector.getConnection()) {
+      user = new User("John", "Doe", date("2000-01-01"), randomStringOfLength(10) + "@streamus.com",
+                      randomStringOfLength(minUsernameLength));
+      user.save(connection);
+      password = randomStringOfLength(minPasswordLength);
+      user.updatePassword(passwordEncoder.encode(password), connection);
+    }
+
+    ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
+    objectNode.put("email", user.getEmail());
+    objectNode.put("username", user.getUsername());
+    objectNode.put("firstName", user.getFirstName());
+    objectNode.put("lastName", user.getLastName());
+    objectNode.put("dateOfBirth", "2000-01-01");
 
     MockHttpServletRequestBuilder builder = put("/user/" + user.getId());
     builder.contentType(MediaType.APPLICATION_JSON);
