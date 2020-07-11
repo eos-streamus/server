@@ -6,29 +6,39 @@ import java.sql.*;
 
 public class User extends Person {
   //#region Static attributes
+  /** Table name in database. */
   private static final String TABLE_NAME = "StreamUsUser";
+  /** Email column name. */
   protected static final String EMAIL_COLUMN = "email";
+  /** Username column name. */
   protected static final String USERNAME_COLUMN = "username";
+  /** View name. */
   private static final String VIEW_NAME = "vUser";
+  /** User password column name. */
   private static final String PASSWORD_TABLE_NAME = "UserPassword";
+  /** User id column name in password table. */
   private static final String PASSWORD_TABLE_USER_ID_COLUMN = "idUser";
+  /** Password column name in password table. */
   private static final String PASSWORD_TABLE_PASSWORD_COLUMN = "password";
   //#endregion Static attributes
 
   //#region Instance attributes
+  /** Email of this User. */
   private String email;
+  /** Username of this User. */
   private String username;
   //#endregion Instance attributes
 
   //#region Constructors
-  protected User(Integer id, String firstName, String lastName, Date dateOfBirth, // NOSONAR
-                 Timestamp createdAt, Timestamp updatedAt, String email, String username) {
+  protected User(final Integer id, final String firstName, final String lastName, final Date dateOfBirth, // NOSONAR
+                 final Timestamp createdAt, final Timestamp updatedAt, final String email, final String username) {
     super(id, firstName, lastName, dateOfBirth, createdAt, updatedAt);
     this.email = email;
     this.username = username;
   }
 
-  public User(String firstName, String lastName, Date dateOfBirth, String email, String username) {
+  public User(final String firstName, final String lastName, final Date dateOfBirth,
+              final String email, final String username) {
     super(firstName, lastName, dateOfBirth);
     this.email = email;
     this.username = username;
@@ -36,32 +46,35 @@ public class User extends Person {
   //#endregion Constructors
 
   //#region Getters and Setters
-  public String getEmail() {
+  public final String getEmail() {
     return email;
   }
 
-  public void setEmail(String email) {
+  public final void setEmail(final String email) {
     this.email = email;
   }
 
-  public String getUsername() {
+  public final String getUsername() {
     return username;
   }
 
-  public void setUsername(String username) {
+  public final void setUsername(final String username) {
     this.username = username;
   }
 
+  /** @return Table name. */
   @Override
   public String tableName() {
     return TABLE_NAME;
   }
 
+  /** @return Creation function name. */
   @Override
   public String creationFunctionName() {
     return "createUser";
   }
 
+  /** @return Primary key name. */
   @Override
   public String primaryKeyName() {
     return "idPerson";
@@ -69,8 +82,15 @@ public class User extends Person {
   //#endregion Getters and Setters
 
   //#region Database operations
+
+  /**
+   * Save this instance to database.
+   *
+   * @param connection {@link Connection} to use to save.
+   * @throws SQLException if an error occurs.
+   */
   @Override
-  public void save(Connection connection) throws SQLException {
+  public void save(final Connection connection) throws SQLException {
     if (this.getId() == null) {
       try (PreparedStatement preparedStatement = connection.prepareStatement(
           String.format(
@@ -108,7 +128,7 @@ public class User extends Person {
     }
   }
 
-  public static User findById(Integer id, Connection connection) throws SQLException, NoResultException {
+  public static User findById(final Integer id, final Connection connection) throws SQLException, NoResultException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         String.format(
             "select * from %s where id = ?",
@@ -134,7 +154,7 @@ public class User extends Person {
     }
   }
 
-  public static User findByEmail(final String email, Connection connection) throws SQLException {
+  public static User findByEmail(final String email, final Connection connection) throws SQLException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         String.format(
             "select * from %s where %s = ?",
@@ -161,7 +181,7 @@ public class User extends Person {
     }
   }
 
-  public void upsertPassword(String password, Connection connection) throws SQLException {
+  public final void upsertPassword(final String password, final Connection connection) throws SQLException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         String.format(
             "INSERT INTO %s(%s, %s) VALUES (?, ?) ON CONFLICT (%s) DO UPDATE SET %s = excluded.%s;",
@@ -179,7 +199,7 @@ public class User extends Person {
     }
   }
 
-  public String getPassword(Connection connection) throws SQLException, NoResultException {
+  public final String getPassword(final Connection connection) throws SQLException, NoResultException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         String.format(
             "select %s from %s where %s = ?",
@@ -201,13 +221,20 @@ public class User extends Person {
   //#endregion Database operations
 
   //#region Equals
+  /** @return hashcode of this instance. */
   @Override
   public int hashCode() {
     return getId();
   }
 
+  /**
+   * Tests if given object is equal to this instance.
+   *
+   * @param o Object to test.
+   * @return If the test passes.
+   */
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     return super.equals(o) && ((User) o).email.equals(email);
   }
   //#endregion Equals
