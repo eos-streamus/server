@@ -7,8 +7,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class JsonSeriesWriter extends JsonCollectionWriter {
-
+public final class JsonSeriesWriter extends JsonCollectionWriter {
+  /** {@link com.eos.streamus.models.Series} to write as Json. */
   private final Series series;
 
   protected JsonSeriesWriter(final Series series) {
