@@ -5,17 +5,19 @@ import javax.validation.constraints.Size;
 import java.util.List;
 
 public abstract class SongCollectionDTO {
+  /** Name of SongCollection. */
   @NotNull
   @Size(min = 1)
   private String name;
+  /** {@link com.eos.streamus.dto.TrackDTO}s of collection. */
   @NotNull
   private List<TrackDTO> tracks;
 
-  public String getName() {
+  public final String getName() {
     return name;
   }
 
-  public List<TrackDTO> getTracks() {
+  public final List<TrackDTO> getTracks() {
     return tracks;
   }
 }
