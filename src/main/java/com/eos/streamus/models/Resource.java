@@ -87,13 +87,15 @@ public abstract class Resource implements SavableDeletableEntity {
     this.duration = duration;
   }
 
+  /** @return Primary key name. */
   @Override
-  public final String primaryKeyName() {
+  public String primaryKeyName() {
     return ID_COLUMN;
   }
 
+  /** @return Table name. */
   @Override
-  public final String tableName() {
+  public String tableName() {
     return TABLE_NAME;
   }
   //#endregion Getters and Setters
