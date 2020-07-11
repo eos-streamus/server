@@ -9,11 +9,23 @@ import java.util.Date;
 
 @Component
 public class PersonDTOValidator implements Validator {
+  /**
+   * Checks that a class is supported by this validator.
+   *
+   * @param aClass Class to test.
+   * @return If the class is supported.
+   */
   @Override
   public boolean supports(final Class<?> aClass) {
     return aClass.equals(PersonDTO.class);
   }
 
+  /**
+   * Validate a given object.
+   *
+   * @param o Object to validate.
+   * @param errors Error list to add possible errors found to.
+   */
   @Override
   public void validate(final Object o, final Errors errors) {
     PersonDTO person = (PersonDTO) o;

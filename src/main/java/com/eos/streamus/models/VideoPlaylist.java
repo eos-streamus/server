@@ -8,25 +8,30 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VideoPlaylist extends VideoCollection {
-  public class VideoPlaylistVideo extends Pair<Integer, Video> implements SavableDeletable {
+public final class VideoPlaylist extends VideoCollection {
+  public final class VideoPlaylistVideo extends Pair<Integer, Video> implements SavableDeletable {
     //#region Static attributes
+    /** Table name in database. */
     public static final String TABLE_NAME = "VideoPlaylistVideo";
+    /** Primary key column name. */
     public static final String ID_VIDEO_COLUMN = "idVideo";
+    /** VideoPlaylist id column name. */
     public static final String ID_VIDEO_PLAYLIST_VIDEO_COLUMN = "idVideoPlaylist";
+    /** Number column name. */
     public static final String NUMBER_COLUMN = "number";
+    /** Creation function name in database. */
     public static final String CREATION_FUNCTION_NAME = "addVideoToPlaylist";
     //#endregion Static attributes
 
     //#region Constructors
-    public VideoPlaylistVideo(Integer key, Video value) {
+    public VideoPlaylistVideo(final Integer key, final Video value) {
       super(key, value);
     }
     //#endregion Constructors
 
     //#region Database operations
     @Override
-    public void delete(Connection connection) throws SQLException {
+    public void delete(final Connection connection) throws SQLException {
       try (PreparedStatement preparedStatement = connection.prepareStatement(
           String.format(
               "delete from %s where %s = ? and %s = ?;",
@@ -44,7 +49,7 @@ public class VideoPlaylist extends VideoCollection {
     }
 
     @Override
-    public void save(Connection connection) throws SQLException {
+    public void save(final Connection connection) throws SQLException {
       try (PreparedStatement preparedStatement = connection.prepareStatement(
           String.format(
               "select * from %s(?, ?);",
@@ -83,7 +88,7 @@ public class VideoPlaylist extends VideoCollection {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
       if (o == null || o.getClass() != getClass()) {
         return false;
       }
@@ -94,25 +99,33 @@ public class VideoPlaylist extends VideoCollection {
   }
 
   //#region Static attributes
+  /** Creation function name in database. */
   private static final String CREATION_FUNCTION_NAME = "createVideoPlaylist";
+  /** Table name in database. */
   private static final String TABLE_NAME = "VideoPlaylist";
+  /** Primary key column name. */
   private static final String PRIMARY_KEY_NAME = "idVideoCollection";
+  /** View name. */
   private static final String VIEW_NAME = "VVideoPlaylist";
+  /** User id column name. */
   private static final String USER_ID_COLUMN = "idUser";
   //#endregion Static attributes
 
   //#region Instance attributes
+  /** Owner of this playlist. */
   private final User user;
+  /** List of videos in this playlist. */
   private final List<VideoPlaylistVideo> videos = new ArrayList<>();
   //#endregion Instance attributes
 
   //#region Constructors
-  VideoPlaylist(Integer id, String name, Timestamp createdAt, Timestamp updatedAt, User user) {
+  VideoPlaylist(final Integer id, final String name, final Timestamp createdAt,
+                final Timestamp updatedAt, final User user) {
     super(id, name, createdAt, updatedAt);
     this.user = user;
   }
 
-  public VideoPlaylist(String name, User user) {
+  public VideoPlaylist(final String name, final User user) {
     super(name);
     this.user = user;
   }
@@ -147,7 +160,7 @@ public class VideoPlaylist extends VideoCollection {
     return videos;
   }
 
-  public void addVideo(Video video) {
+  public void addVideo(final Video video) {
     Integer newVideoNumber = 0;
     for (VideoPlaylistVideo videoPlaylistVideo : videos) {
       if (videoPlaylistVideo.getKey() > newVideoNumber) {
@@ -157,14 +170,14 @@ public class VideoPlaylist extends VideoCollection {
     videos.add(new VideoPlaylistVideo(newVideoNumber + 1, video));
   }
 
-  public void addVideo(VideoPlaylistVideo video) {
+  public void addVideo(final VideoPlaylistVideo video) {
     videos.add(video);
   }
   //#endregion Accessors
 
   //#region Database operations
   @Override
-  public void save(Connection connection) throws SQLException {
+  public void save(final Connection connection) throws SQLException {
     if (this.getId() == null) {
       try (PreparedStatement preparedStatement = connection.prepareStatement(
           String.format(
@@ -218,7 +231,7 @@ public class VideoPlaylist extends VideoCollection {
     }
   }
 
-  private List<VideoPlaylistVideo> getVideosFromDatabase(Connection connection) throws SQLException {
+  private List<VideoPlaylistVideo> getVideosFromDatabase(final Connection connection) throws SQLException {
     List<VideoPlaylistVideo> loadedVideos = new ArrayList<>();
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         String.format(
@@ -257,7 +270,8 @@ public class VideoPlaylist extends VideoCollection {
     return loadedVideos;
   }
 
-  public static VideoPlaylist findById(Integer id, Connection connection) throws SQLException, NoResultException {
+  public static VideoPlaylist findById(final Integer id,
+                                       final Connection connection) throws SQLException, NoResultException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         String.format(
             "select * from %s where %s = ?;",
@@ -318,7 +332,7 @@ public class VideoPlaylist extends VideoCollection {
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     if (!super.equals(o)) {
       return false;
     }

@@ -3,17 +3,21 @@ package com.eos.streamus.dto;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
-public class UserDTO extends PersonDTO {
+public final class UserDTO extends PersonDTO {
+  /** Email. */
   @NotNull
   @Email
   private String email;
 
+  /** Username. */
   @NotNull
   private String username;
 
+  /** Password. */
   @NotNull
   private String password;
 
+  /** Update password if provided. */
   private String updatedPassword;
 
   public String getUpdatedPassword() {

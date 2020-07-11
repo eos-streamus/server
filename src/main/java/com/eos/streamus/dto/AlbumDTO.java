@@ -4,9 +4,11 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 
-public class AlbumDTO extends SongCollectionDTO {
+public final class AlbumDTO extends SongCollectionDTO {
+  /** Artist ids. */
   @NotNull
   private List<Integer> artistIds;
+  /** Release date of album. */
   @NotNull
   private Date releaseDate;
 

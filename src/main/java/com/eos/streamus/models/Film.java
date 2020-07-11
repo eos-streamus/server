@@ -8,41 +8,46 @@ import java.util.List;
 
 public class Film extends Video {
   //#region Static attributes
+  /** Table name in database. */
   private static final String TABLE_NAME = "Film";
+  /** View name in database. */
   private static final String VIEW_NAME = "vfilm";
+  /** Creation function name in database. */
   private static final String CREATION_FUNCTION_NAME = "createFilm";
+  /** Primary key column name. */
   private static final String PRIMARY_KEY_NAME = "idVideo";
   //#endregion Static attributes
 
   //#region Constructors
-  private Film(Integer id, String path, String name, Timestamp createdAt, Integer duration) {
+  private Film(final Integer id, final String path, final String name,
+               final Timestamp createdAt, final Integer duration) {
     super(id, path, name, createdAt, duration);
   }
 
-  public Film(String path, String name, Integer duration) {
+  public Film(final String path, final String name, final Integer duration) {
     super(path, name, duration);
   }
   //#endregion Constructors
 
   //#region Getters and Setters
   @Override
-  public String creationFunctionName() {
+  public final String creationFunctionName() {
     return CREATION_FUNCTION_NAME;
   }
 
   @Override
-  public String tableName() {
+  public final String tableName() {
     return TABLE_NAME;
   }
 
   @Override
-  public String primaryKeyName() {
+  public final String primaryKeyName() {
     return PRIMARY_KEY_NAME;
   }
   //#endregion Getters and Setters
 
   //#region Database operations
-  public static Film findById(int id, Connection connection) throws SQLException, NoResultException {
+  public static Film findById(final int id, final Connection connection) throws SQLException, NoResultException {
     try (PreparedStatement statement = connection.prepareStatement(
         String.format(
             "select * from %s where %s = ?",
@@ -66,7 +71,7 @@ public class Film extends Video {
     }
   }
 
-  public static List<Film> all(Connection connection) throws SQLException {
+  public static List<Film> all(final Connection connection) throws SQLException {
     List<Film> allFilms = new ArrayList<>();
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         String.format("select * from %s", VIEW_NAME)

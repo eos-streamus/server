@@ -13,24 +13,35 @@ import java.util.List;
 
 public class CollectionActivity extends Activity {
   //#region Static attributes
+  /** Table name in database. */
   public static final String TABLE_NAME = "CollectionActivity";
+  /** Activity id column name. */
   public static final String PRIMARY_KEY_NAME = "idActivity";
-  public static final String COLLECTION_ID = "IdCollection";
+  /** Collection id column name. */
+  public static final String COLLECTION_ID = "idCollection";
+  /** Creation function name in database. */
   public static final String CREATION_FUNCTION_NAME = "createCollectionActivity";
+  /** View name. */
   public static final String VIEW_NAME = "vFullCollectionActivity";
+  /** CollectionActivity id column name in view. */
   public static final String VIEW_ID = "idCollectionActivity";
+  /** ResourceActivity id column name in view. */
   public static final String VIEW_RESOURCE_ACTIVITY_ID = "idResourceActivity";
+  /** Resource id column name in view. */
   public static final String VIEW_RESOURCE_ID = "idResource";
+  /** Number column name in view. */
   public static final String VIEW_NUMBER_ID = "num";
   //#endregion Static attributes
 
   //#region Instance attributes
+  /** List of all associated {@link Resource}s and {@link Activity}. */
   private final List<Pair<Integer, Pair<Resource, ResourceActivity>>> resourceActivities;
+  /** Associated {@link Collection}. */
   private final Collection collection;
   //#endregion Instance attributes
 
   //#region Constructors
-  protected CollectionActivity(User creator, Collection collection) {
+  protected CollectionActivity(final User creator, final Collection collection) {
     super(creator);
     if (collection == null) {
       throw new NullPointerException("Collection cannot be null");
@@ -42,7 +53,7 @@ public class CollectionActivity extends Activity {
     }
   }
 
-  private CollectionActivity(Integer id, Collection collection) {
+  private CollectionActivity(final Integer id, final Collection collection) {
     super(id);
     if (collection == null) {
       throw new NullPointerException("Collection cannot be null");
@@ -54,17 +65,28 @@ public class CollectionActivity extends Activity {
 
   //#region Getters and Setters
   @Override
-  public String creationFunctionName() {
+  public final String creationFunctionName() {
     return null;
   }
 
-  public List<Pair<Integer, Pair<Resource, ResourceActivity>>> getContent() {
+  public final List<Pair<Integer, Pair<Resource, ResourceActivity>>> getContent() {
     return resourceActivities;
   }
   //#endregion Getters and Setters
 
   //#region Database operations
-  public ResourceActivity continueOrNext(Connection connection) throws SQLException {
+
+  /**
+   * Returns the {@link ResourceActivity} where this CollectionActivity is "at". Either continuing a started
+   * ResourceActivity, or starting the next one.
+   *
+   * @param connection Connection to use to save a new ResourceActivity.
+   *
+   * @return ResourceActivity to stream.
+   *
+   * @throws SQLException If an error occurs while saving a new ResourceActivity.
+   */
+  public ResourceActivity continueOrNext(final Connection connection) throws SQLException {
     if (this.getId() == null) {
       throw new NotPersistedException("CollectionActivity must be saved before starting");
     }
@@ -82,7 +104,7 @@ public class CollectionActivity extends Activity {
   }
 
   @Override
-  public void save(Connection connection) throws SQLException {
+  public final void save(final Connection connection) throws SQLException {
     if (getId() == null) {
       try (PreparedStatement preparedStatement = connection.prepareStatement(
           String.format(
@@ -105,7 +127,8 @@ public class CollectionActivity extends Activity {
     }
   }
 
-  public static CollectionActivity findById(Integer id, Connection connection) throws SQLException, NoResultException {
+  public static CollectionActivity findById(final Integer id, final Connection connection)
+      throws SQLException, NoResultException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         String.format(
             "select * from %s where %s = ?;",
@@ -143,12 +166,12 @@ public class CollectionActivity extends Activity {
 
   //#region Equals
   @Override
-  public int hashCode() {
+  public final int hashCode() {
     return getId();
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public final boolean equals(final Object obj) {
     if (!super.equals(obj)) {
       return false;
     }

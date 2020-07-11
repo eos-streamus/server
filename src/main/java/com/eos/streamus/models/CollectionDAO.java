@@ -5,10 +5,11 @@ import com.eos.streamus.exceptions.NoResultException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class CollectionDAO {
+public final class CollectionDAO {
   private CollectionDAO() {}
 
-  public static Collection findById(Integer id, Connection connection) throws SQLException, NoResultException {
+  public static Collection findById(final Integer id, final Connection connection)
+      throws SQLException, NoResultException {
     Collection collection = null;
     try {
       collection = VideoPlaylist.findById(id, connection);

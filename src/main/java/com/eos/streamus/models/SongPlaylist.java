@@ -6,23 +6,27 @@ import java.sql.*;
 
 public final class SongPlaylist extends SongCollection {
   //#region Static attributes
+  /** Creation function name. */
   private static final String CREATION_FUNCTION_NAME = "createSongPlaylist";
+  /** View name. */
   private static final String VIEW_NAME = "vSongPlaylist";
+  /** User id column name. */
   private static final String USER_ID_COLUMN = "idUser";
   //#endregion Static attributes
 
   //#region Instance attributes
+  /** User this playlist is owned by. */
   private final User user;
   //#endregion Instance attributes
 
-  //#region Constructors
-  private SongPlaylist(Integer id, String name, Timestamp createdAt,
-                       Timestamp updatedAt, final User user, Track... tracks) {
+  //#region Constructor
+  private SongPlaylist(final Integer id, final String name, final Timestamp createdAt,
+                       final Timestamp updatedAt, final User user, final Track... tracks) {
     super(id, name, createdAt, updatedAt, tracks);
     this.user = user;
   }
 
-  public SongPlaylist(String name, final User user, Track... tracks) {
+  public SongPlaylist(final String name, final User user, final Track... tracks) {
     super(name, tracks);
     this.user = user;
   }
@@ -34,14 +38,14 @@ public final class SongPlaylist extends SongCollection {
     return CREATION_FUNCTION_NAME;
   }
 
-  public final User getUser() {
+  public User getUser() {
     return user;
   }
   //#endregion Getters and Setters
 
   //#region Database operations
   @Override
-  public void save(Connection connection) throws SQLException {
+  public void save(final Connection connection) throws SQLException {
     if (this.getId() == null) {
       try (PreparedStatement preparedStatement = connection.prepareStatement(
           String.format(
@@ -66,7 +70,8 @@ public final class SongPlaylist extends SongCollection {
     }
   }
 
-  public static SongPlaylist findById(Integer id, Connection connection) throws SQLException, NoResultException {
+  public static SongPlaylist findById(final Integer id, final Connection connection)
+      throws SQLException, NoResultException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         String.format(
             "select * from %s where %s = ?;",
@@ -127,7 +132,7 @@ public final class SongPlaylist extends SongCollection {
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     if (o == null) {
       return false;
     }

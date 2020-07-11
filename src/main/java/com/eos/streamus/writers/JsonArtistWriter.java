@@ -7,9 +7,10 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 abstract class JsonArtistWriter extends JsonObjectWriter {
+  /** Artist to write as Json. */
   private final Artist artist;
 
-  public JsonArtistWriter(final Artist artist) {
+  JsonArtistWriter(final Artist artist) {
     this.artist = artist;
   }
 
@@ -26,6 +27,6 @@ abstract class JsonArtistWriter extends JsonObjectWriter {
     return addSpecificArtistJson(objectNode);
   }
 
-  protected abstract JsonNode addSpecificArtistJson(final ObjectNode objectNode);
+  protected abstract JsonNode addSpecificArtistJson(ObjectNode objectNode);
 
 }

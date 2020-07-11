@@ -1,9 +1,9 @@
 package com.eos.streamus.utils;
 
-public class Constants {
+public final class Constants {
   private Constants() {}
 
-  /** Source: https://emailregex.com/ */
+  /** Source: https://emailregex.com/ . */
   public static final String EMAIL_REGEX = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"" +
                                            "(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f" +
                                            "]|\\\\[\\x01" +

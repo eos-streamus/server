@@ -7,21 +7,32 @@ import com.eos.streamus.exceptions.NotPersistedException;
 import java.sql.*;
 import java.util.Date;
 
-public class ResourceActivity extends Activity {
+public final class ResourceActivity extends Activity {
   //#region Static Attributes
+  /** Table name in database. */
   public static final String TABLE_NAME = "ResourceActivity";
+  /** Activity id column name. */
   public static final String PRIMARY_KEY_NAME = "idActivity";
+  /** Resource id column name. */
   public static final String RESOURCE_ID_COLUMN = "idResource";
+  /** Creation function name in database. */
   public static final String CREATION_FUNCTION_NAME = "createResourceActivity";
+  /** Started at timestamp column name. */
   public static final String STARTED_AT_COLUMN = "startedAt";
+  /** Paused at timestamp column name. */
   public static final String PAUSED_AT_COLUMN = "pausedAt";
+  /** CollectionActivity id column name. */
   public static final String COLLECTION_ACTIVITY_ID_COLUMN = "idCollectionActivity";
   //#endregion Static Attributes
 
   //#region Instance Attributes
+  /** {@link com.eos.streamus.models.Resource} of this Activity. */
   private final Resource resource;
+  /** Started at timestamp. */
   private Timestamp startedAt;
+  /** Paused at marker. */
   private int pausedAt;
+  /** Possible associated CollectionActivity. */
   private CollectionActivity collectionActivity;
   //#endregion Instance Attributes
 
@@ -31,7 +42,7 @@ public class ResourceActivity extends Activity {
     this.resource = resource;
   }
 
-  private ResourceActivity(Integer id, final Resource resource, Timestamp startedAt) {
+  private ResourceActivity(final Integer id, final Resource resource, final Timestamp startedAt) {
     super(id);
     this.resource = resource;
     this.startedAt = startedAt;
@@ -65,7 +76,7 @@ public class ResourceActivity extends Activity {
     return pausedAt;
   }
 
-  public void setPausedAt(int pausedAt) {
+  public void setPausedAt(final int pausedAt) {
     this.pausedAt = pausedAt;
   }
 
@@ -89,7 +100,7 @@ public class ResourceActivity extends Activity {
 
   //#region Database operations
   @Override
-  public void save(Connection connection) throws SQLException {
+  public void save(final Connection connection) throws SQLException {
     if (getUsers().isEmpty() && collectionActivity == null) {
       throw new IncompleteDataException("At least one UserActivity must be present");
     }
@@ -101,7 +112,7 @@ public class ResourceActivity extends Activity {
     super.save(connection);
   }
 
-  private void saveNew(Connection connection) throws SQLException {
+  private void saveNew(final Connection connection) throws SQLException {
     try (PreparedStatement preparedStatement =
              connection.prepareStatement(
                  String.format(
@@ -126,7 +137,7 @@ public class ResourceActivity extends Activity {
     }
   }
 
-  private void update(Connection connection) throws SQLException {
+  private void update(final Connection connection) throws SQLException {
     try (
         PreparedStatement preparedStatement = connection.prepareStatement(
             String.format(
@@ -151,7 +162,8 @@ public class ResourceActivity extends Activity {
     }
   }
 
-  public static ResourceActivity findById(Integer id, Connection connection) throws SQLException, NoResultException {
+  public static ResourceActivity findById(final Integer id, final Connection connection)
+      throws SQLException, NoResultException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         String.format(
             "select * from %s where %s = ?",
@@ -185,7 +197,7 @@ public class ResourceActivity extends Activity {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(final Object obj) {
     if (!super.equals(obj)) {
       return false;
     }

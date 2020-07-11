@@ -8,7 +8,8 @@ import java.io.File;
 
 @Service
 @Scope(value = "singleton")
-public class ResourcePathResolver implements IResourcePathResolver {
+public final class ResourcePathResolver implements IResourcePathResolver {
+  /** Base resource path to be used by application. */
   @Value("${resourcePath}")
   private String resourcePath;
 

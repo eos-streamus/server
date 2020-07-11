@@ -5,9 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 @SpringBootApplication
-public class StreamUsApplication {
-
-  public static void main(String[] args) {
+public final class StreamUsApplication {
+  private StreamUsApplication() {}
+  public static void main(final String[] args) {
     AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
     ctx.register(StreamusApplicationConfiguration.class);
     ctx.refresh();

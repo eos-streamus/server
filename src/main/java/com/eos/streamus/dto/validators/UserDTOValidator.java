@@ -7,9 +7,11 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 @Component
-public class UserDTOValidator implements Validator {
+public final class UserDTOValidator implements Validator {
+  /** Minimum password length to accept. */
   @Value("${minPasswordLength}")
   private int minPasswordLength;
+  /** Minimum username length to accept. */
   @Value("${minUsernameLength}")
   private int minUsernameLength;
 
@@ -18,10 +20,7 @@ public class UserDTOValidator implements Validator {
     return aClass.equals(UserDTO.class);
   }
 
-  @Override
-  public void validate(final Object o, final Errors errors) {
-    UserDTO userDTO = (UserDTO) o;
-
+  private void checkNullAndBlank(final UserDTO userDTO, final Errors errors) {
     if (userDTO.getFirstName() == null || userDTO.getFirstName().isBlank()) {
       errors.reject("First name must be defined");
     }
@@ -33,6 +32,13 @@ public class UserDTOValidator implements Validator {
     if (userDTO.getDateOfBirth() == null) {
       errors.reject("Last name must be defined");
     }
+  }
+
+  @Override
+  public void validate(final Object o, final Errors errors) {
+    UserDTO userDTO = (UserDTO) o;
+
+    checkNullAndBlank(userDTO, errors);
 
     if (userDTO.getDateOfBirth() != null) {
       try {

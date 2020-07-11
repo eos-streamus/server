@@ -2,9 +2,11 @@ package com.eos.streamus.dto;
 
 import javax.validation.constraints.NotNull;
 
-public class LoginDTO {
+public final class LoginDTO {
+  /** Login email. */
   @NotNull
   private String email;
+  /** Login password. */
   @NotNull
   private String password;
 

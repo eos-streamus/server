@@ -6,43 +6,49 @@ import java.sql.*;
 
 public class Admin extends User {
   //#region Static Attributes
+  /** Table name in database. */
   private static final String TABLE_NAME = "Admin";
+  /** Name of primary key column in table. */
   private static final String PRIMARY_KEY_NAME = "idUser";
+  /** Name of creation function name in database. */
   private static final String CREATION_FUNCTION_NAME = "createAdmin";
+  /** Name of view in database. */
   private static final String VIEW_NAME = "vadmin";
   //#endregion Static Attributes
 
   //#region Constructors
-  private Admin(Integer id, String firstName, String lastName, Date dateOfBirth, Timestamp createdAt, // NOSONAR
-                Timestamp updatedAt, String email, String username) {
+  private Admin(final Integer id, final String firstName, final String lastName, // NOSONAR
+                final Date dateOfBirth, final Timestamp createdAt, final Timestamp updatedAt,
+                final String email, final String username) {
     super(id, firstName, lastName, dateOfBirth, createdAt, updatedAt, email, username);
   }
 
-  public Admin(String firstName, String lastName, Date dateOfBirth, String email, String username) {
+  public Admin(final String firstName, final String lastName, final Date dateOfBirth,
+               final String email, final String username) {
     super(firstName, lastName, dateOfBirth, email, username);
   }
   //#endregion Constructors
 
   //#region Getters and Setters
   @Override
-  public String tableName() {
+  public final String tableName() {
     return TABLE_NAME;
   }
 
   @Override
-  public String creationFunctionName() {
+  public final String creationFunctionName() {
     return CREATION_FUNCTION_NAME;
   }
 
   @Override
-  public String primaryKeyName() {
+  public final String primaryKeyName() {
     return PRIMARY_KEY_NAME;
   }
   //#endregion Getters and Setters
 
   //#region Database operations
   @Override
-  public void save(Connection connection) throws SQLException {
+  public final void save(final Connection connection) throws SQLException {
     if (getId() == null) {
       try (PreparedStatement preparedStatement = connection.prepareStatement(
           String.format(
@@ -67,7 +73,7 @@ public class Admin extends User {
     }
   }
 
-  public static Admin findById(Integer id, Connection connection) throws SQLException, NoResultException {
+  public static Admin findById(final Integer id, final Connection connection) throws SQLException, NoResultException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         String.format(
             "select * from %s where %s = ?;", VIEW_NAME, Person.ID_COLUMN

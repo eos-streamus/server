@@ -9,36 +9,44 @@ import java.sql.SQLException;
 
 public class Musician extends Artist {
   //#region Static attributes
+  /** Table name in database. */
   private static final String TABLE_NAME = "Musician";
+  /** Artist id column name. */
   private static final String PRIMARY_KEY_NAME = "idArtist";
+  /** Person id column name. */
   private static final String PERSON_ID_COLUMN = "idPerson";
+  /** Creation function name in database. */
   private static final String CREATION_FUNCTION_NAME = "createMusician";
+  /** View name. */
   private static final String VIEW_NAME = "vMusician";
+  /** Id column name in view. */
   private static final String VIEW_ID_COLUMN = "id";
+  /** Name column name in view. */
   private static final String VIEW_NAME_COLUMN = "name";
   //#endregion Static attributes
 
   //#region Instance attributes
+  /** Person (if exists) of this Musician. */
   private final Person person;
   //#endregion Instance attributes
 
   //#region Constructors
-  private Musician(Integer id, String name) {
+  private Musician(final Integer id, final String name) {
     super(id, name);
     person = null;
   }
 
-  private Musician(Integer id, String name, Person person) {
+  private Musician(final Integer id, final String name, final Person person) {
     super(id, name);
     this.person = person;
   }
 
-  private Musician(Integer id, Person person) {
+  private Musician(final Integer id, final Person person) {
     super(id, null);
     this.person = person;
   }
 
-  public Musician(String name) {
+  public Musician(final String name) {
     super(name);
     if (name == null) {
       throw new IllegalArgumentException("Musician should either be a Person or have a name");
@@ -46,7 +54,7 @@ public class Musician extends Artist {
     person = null;
   }
 
-  public Musician(Person person) {
+  public Musician(final Person person) {
     super(null);
     if (person == null) {
       throw new IllegalArgumentException("Musician should either be a Person or have a name");
@@ -54,7 +62,7 @@ public class Musician extends Artist {
     this.person = person;
   }
 
-  public Musician(String name, Person person) {
+  public Musician(final String name, final Person person) {
     super(name);
     this.person = person;
   }
@@ -62,28 +70,28 @@ public class Musician extends Artist {
 
   //#region Getters and Setters
   @Override
-  public String creationFunctionName() {
+  public final String creationFunctionName() {
     return CREATION_FUNCTION_NAME;
   }
 
-  public Person getPerson() {
+  public final Person getPerson() {
     return person;
   }
 
   @Override
-  public String tableName() {
+  public final String tableName() {
     return TABLE_NAME;
   }
 
   @Override
-  public String primaryKeyName() {
+  public final String primaryKeyName() {
     return PRIMARY_KEY_NAME;
   }
   //#endregion Getters and Setters
 
   //#region Database operations
   @Override
-  public void save(Connection connection) throws SQLException {
+  public final void save(final Connection connection) throws SQLException {
     if (this.getId() == null) {
       try (PreparedStatement preparedStatement = connection.prepareStatement(
           String.format(
@@ -112,7 +120,8 @@ public class Musician extends Artist {
     }
   }
 
-  public static Musician findById(Integer id, Connection connection) throws SQLException, NoResultException {
+  public static Musician findById(final Integer id, final Connection connection)
+      throws SQLException, NoResultException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         String.format(
             "select * from %s where %s = ?;",
@@ -142,12 +151,12 @@ public class Musician extends Artist {
 
   //#region Equals
   @Override
-  public int hashCode() {
+  public final int hashCode() {
     return getId();
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public final boolean equals(final Object obj) {
     if (obj == null) {
       return false;
     }

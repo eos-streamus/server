@@ -31,17 +31,21 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 @RestController
-public class SongController implements CommonResponses {
+public final class SongController implements CommonResponses {
+  /** Maximum Audio byte chunk size to stream at a time. */
   private static final long MAX_AUDIO_CHUNK_SIZE = (long) 1024 * 1024;
 
+  /** Accepted Audio Mime types. */
   private static final String[] AUDIO_MIME_TYPES = {
       "audio/wav", "audio/mpeg", "audio/mp4", "audio/aac", "audio/aacp", "audio/ogg", "audio/webm", "audio/ogg",
       "audio/webm", "audio/flac", "audio/og"
   };
 
+  /** {@link IResourcePathResolver} to use. */
   @Autowired
   private IResourcePathResolver resourcePathResolver;
 
+  /** {@link IDatabaseConnector} to use. */
   @Autowired
   private IDatabaseConnector databaseConnector;
 
@@ -54,8 +58,8 @@ public class SongController implements CommonResponses {
    * @return response (bad request, ok, internal server error).
    */
   @PostMapping("/song")
-  public ResponseEntity<JsonNode> postSong(@RequestParam("file") MultipartFile multipartFile,
-                                           @RequestParam("name") String name) {
+  public ResponseEntity<JsonNode> postSong(@RequestParam("file") final MultipartFile multipartFile,
+                                           @RequestParam("name") final String name) {
 
     if (multipartFile.getContentType() == null) {
       return badRequest("No specified mime type");
@@ -103,8 +107,8 @@ public class SongController implements CommonResponses {
   }
 
   @GetMapping("/song/{id}")
-  public ResponseEntity<ResourceRegion> getAudio(@RequestHeader HttpHeaders headers,
-                                                 @PathVariable("id") int id) {
+  public ResponseEntity<ResourceRegion> getAudio(@RequestHeader final HttpHeaders headers,
+                                                 @PathVariable("id") final int id) {
     try (Connection connection = databaseConnector.getConnection()) {
       return streamResource(Song.findById(id, connection), headers.getRange(), MAX_AUDIO_CHUNK_SIZE);
     } catch (NoResultException noResultException) {

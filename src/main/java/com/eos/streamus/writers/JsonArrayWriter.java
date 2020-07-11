@@ -10,6 +10,6 @@ abstract class JsonArrayWriter implements JsonWriter {
     return getSpecificArrayJson(arrayNode);
   }
 
-  protected abstract JsonNode getSpecificArrayJson(final ArrayNode arrayNode);
+  protected abstract JsonNode getSpecificArrayJson(ArrayNode arrayNode);
 
 }

@@ -1,36 +1,46 @@
 package com.eos.streamus.utils;
 
+import java.util.Objects;
+
 public class Pair<K, V> {
+  /** Key of pair. */
   private K key;
+  /** Value of pair. */
   private V value;
 
-  public Pair(K key, V value) {
+  public Pair(final K key, final V value) {
     this.key = key;
     this.value = value;
   }
 
-  public K getKey() {
+  public final K getKey() {
     return key;
   }
 
-  public V getValue() {
+  public final V getValue() {
     return value;
   }
 
-  public void setKey(K key) {
+  public final void setKey(final K key) {
     this.key = key;
   }
 
-  public void setValue(V value) {
+  public final void setValue(final V value) {
     this.value = value;
   }
 
+  /** @return hashcode of this Pair. */
   @Override
   public int hashCode() {
-    return key.hashCode() * 31 + value.hashCode();
+    return Objects.hash(key.hashCode(), value.hashCode());
   }
 
-  public boolean equals(Object obj) {
+  /**
+   * Tests if other object is equal to this instance.
+   * @param obj Object test.
+   * @return If they are equal.
+   */
+  public boolean equals(final Object obj) {
     if (obj == null || obj.getClass() != getClass()) {
       return false;
     }
@@ -44,6 +54,7 @@ public class Pair<K, V> {
     return key.equals(pair.key) && value.equals(pair.value);
   }
 
+  /** @return String representation of this pair. */
   public String toString() {
     return String.format("<%s, %s>", key, value);
   }

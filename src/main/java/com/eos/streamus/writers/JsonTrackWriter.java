@@ -3,7 +3,8 @@ package com.eos.streamus.writers;
 import com.eos.streamus.models.SongCollection;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class JsonTrackWriter extends JsonResourceWriter {
+public final class JsonTrackWriter extends JsonResourceWriter {
+  /** {@link SongCollection.Track} to write as Json. */
   private final SongCollection.Track track;
 
   public JsonTrackWriter(final SongCollection.Track track) {

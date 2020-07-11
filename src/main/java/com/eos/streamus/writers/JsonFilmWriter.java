@@ -3,7 +3,7 @@ package com.eos.streamus.writers;
 import com.eos.streamus.models.Film;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class JsonFilmWriter extends JsonResourceWriter {
+public final class JsonFilmWriter extends JsonResourceWriter {
 
   public JsonFilmWriter(final Film film) {
     super(film);

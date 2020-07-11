@@ -5,10 +5,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 abstract class JsonResourceWriter extends JsonObjectWriter {
-
+  /** {@link com.eos.streamus.models.Resource} to write as Json. */
   private final Resource resource;
 
-  public JsonResourceWriter(final Resource resource) {
+  JsonResourceWriter(final Resource resource) {
     this.resource = resource;
   }
 
@@ -20,6 +20,6 @@ abstract class JsonResourceWriter extends JsonObjectWriter {
     return addSpecificJsonAttributes(objectNode);
   }
 
-  protected abstract ObjectNode addSpecificJsonAttributes(final ObjectNode objectNode);
+  protected abstract ObjectNode addSpecificJsonAttributes(ObjectNode objectNode);
 
 }

@@ -31,14 +31,18 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 @RestController
-public class FilmController implements CommonResponses {
+public final class FilmController implements CommonResponses {
+  /** Max Video chunk size to return at a time during stream. */
   private static final long MAX_VIDEO_CHUNK_SIZE = (long) 1024 * 1024;
+  /** Accepted Video Mime types. */
   private static final String[] VIDEO_MIME_TYPES = {
       "video/x-flv", "video/mp4", "video/MP2T", "video/3gpp", "video/quicktime", "video/x-msvideo", "video/x-ms-wmv"
   };
 
+  /** {@link com.eos.streamus.utils.IResourcePathResolver} to use. */
   @Autowired
   private IResourcePathResolver resourcePathResolver;
+  /** {@link com.eos.streamus.utils.IDatabaseConnector} to use. */
   @Autowired
   private IDatabaseConnector databaseConnector;
 
@@ -53,8 +57,8 @@ public class FilmController implements CommonResponses {
   }
 
   @PostMapping("/film")
-  public ResponseEntity<JsonNode> postFilm(@RequestParam("file") MultipartFile file,
-                                           @RequestParam("name") String name) {
+  public ResponseEntity<JsonNode> postFilm(@RequestParam("file") final MultipartFile file,
+                                           @RequestParam("name") final String name) {
     if (file.getContentType() == null) {
       return badRequest("No specified mime type");
     }
@@ -99,7 +103,7 @@ public class FilmController implements CommonResponses {
   }
 
   @GetMapping("/film/{id}")
-  public ResponseEntity<JsonNode> getFilm(@PathVariable("id") int id) {
+  public ResponseEntity<JsonNode> getFilm(@PathVariable("id") final int id) {
     try (Connection connection = databaseConnector.getConnection()) {
       return ResponseEntity.ok().body(new JsonFilmWriter(Film.findById(id, connection)).getJson());
     } catch (SQLException sqlException) {
@@ -111,7 +115,8 @@ public class FilmController implements CommonResponses {
   }
 
   @GetMapping("/film/{id}/stream")
-  public ResponseEntity<ResourceRegion> streamFilm(@RequestHeader HttpHeaders headers, @PathVariable("id") int id) {
+  public ResponseEntity<ResourceRegion> streamFilm(@RequestHeader final HttpHeaders headers,
+                                                   @PathVariable("id") final int id) {
     try (Connection connection = databaseConnector.getConnection()) {
       return streamResource(Film.findById(id, connection), headers.getRange(), MAX_VIDEO_CHUNK_SIZE);
     } catch (NoResultException noResultException) {

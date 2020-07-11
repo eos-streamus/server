@@ -8,7 +8,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class JsonAlbumWriter extends JsonSongCollectionWriter {
+public final class JsonAlbumWriter extends JsonSongCollectionWriter {
+  /** {@link com.eos.streamus.models.Album} to write as Json. */
   private final Album album;
   public JsonAlbumWriter(final Album album) {
     super(album);

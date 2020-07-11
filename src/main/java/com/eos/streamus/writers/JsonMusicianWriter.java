@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class JsonMusicianWriter extends JsonArtistWriter {
+  /** {@link Musician} to write as Json. */
   private final Musician musician;
 
   public JsonMusicianWriter(final Musician musician) {
@@ -13,7 +14,7 @@ public class JsonMusicianWriter extends JsonArtistWriter {
   }
 
   @Override
-  protected JsonNode addSpecificArtistJson(final ObjectNode objectNode) {
+  protected final JsonNode addSpecificArtistJson(final ObjectNode objectNode) {
     if (musician.getPerson() != null) {
       objectNode.set("person", new JsonPersonWriter(musician.getPerson()).getJson());
     }
