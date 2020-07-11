@@ -17,6 +17,7 @@ import java.util.Comparator;
 @Component
 public abstract class SongCollectionDTOValidator implements Validator {
 
+  /** {@link com.eos.streamus.utils.IDatabaseConnector} to use. */
   @Autowired
   private IDatabaseConnector databaseConnector;
 
@@ -56,6 +57,6 @@ public abstract class SongCollectionDTOValidator implements Validator {
     validateSubclassProperties(o, errors);
   }
 
-  protected abstract void validateSubclassProperties(final Object o, final Errors errors);
+  protected abstract void validateSubclassProperties(Object o, Errors errors);
 
 }
