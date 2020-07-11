@@ -1,6 +1,6 @@
 package com.eos.streamus.dto.validators;
 
-import com.eos.streamus.dto.BandMember;
+import com.eos.streamus.dto.BandMemberDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -14,16 +14,16 @@ public final class BandMemberDTOValidator implements Validator {
 
   @Override
   public boolean supports(final Class<?> aClass) {
-    return aClass.equals(BandMember.class);
+    return aClass.equals(BandMemberDTO.class);
   }
 
   @Override
   public void validate(final Object o, final Errors errors) {
-    BandMember bandMember = (BandMember) o;
-    if (bandMember.getMusician() != null) {
-      musicianDTOValidator.validate(bandMember.getMusician(), errors);
+    BandMemberDTO bandMemberDTO = (BandMemberDTO) o;
+    if (bandMemberDTO.getMusician() != null) {
+      musicianDTOValidator.validate(bandMemberDTO.getMusician(), errors);
     }
-    if (bandMember.getMusician() == null && bandMember.getMusicianId() == null) {
+    if (bandMemberDTO.getMusician() == null && bandMemberDTO.getMusicianId() == null) {
       errors.reject("Invalid musician data");
     }
   }

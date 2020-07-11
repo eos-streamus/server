@@ -6,7 +6,7 @@ import com.eos.streamus.models.ArtistDAO;
 import com.eos.streamus.models.Band;
 import com.eos.streamus.models.Musician;
 import com.eos.streamus.models.Person;
-import com.eos.streamus.dto.BandMember;
+import com.eos.streamus.dto.BandMemberDTO;
 import com.eos.streamus.dto.validators.BandMemberDTOValidator;
 import com.eos.streamus.dto.validators.MusicianDTOValidator;
 import com.eos.streamus.utils.IDatabaseConnector;
@@ -139,7 +139,7 @@ public class ArtistController implements CommonResponses {
 
   @PostMapping("/band/{bandId}/members")
   public ResponseEntity<JsonNode> addMemberToBand(@PathVariable int bandId,
-                                                  @Valid @RequestBody BandMember member,
+                                                  @Valid @RequestBody BandMemberDTO member,
                                                   BindingResult result) {
     bandMemberDTOValidator.validate(member, result);
     if (result.hasErrors()) {
@@ -179,7 +179,7 @@ public class ArtistController implements CommonResponses {
     }
   }
 
-  private Musician getMusicianFromBandMemberData(BandMember member,
+  private Musician getMusicianFromBandMemberData(BandMemberDTO member,
                                                  Connection connection) throws SQLException, NoResultException {
     Musician musician;
     if (member.getMusicianId() != null) {
