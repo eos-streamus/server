@@ -17,9 +17,9 @@ public class Admin extends User {
   //#endregion Static Attributes
 
   //#region Constructors
-  private Admin(final Integer id, final String firstName, final String lastName,
+  private Admin(final Integer id, final String firstName, final String lastName, // NOSONAR
                 final Date dateOfBirth, final Timestamp createdAt, final Timestamp updatedAt,
-                final String email, final String username) { // NOSONAR
+                final String email, final String username) {
     super(id, firstName, lastName, dateOfBirth, createdAt, updatedAt, email, username);
   }
 

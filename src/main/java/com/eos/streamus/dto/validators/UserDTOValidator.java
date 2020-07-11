@@ -20,10 +20,7 @@ public final class UserDTOValidator implements Validator {
     return aClass.equals(UserDTO.class);
   }
 
-  @Override
-  public void validate(final Object o, final Errors errors) {
-    UserDTO userDTO = (UserDTO) o;
-
+  private void checkNullAndBlank(final UserDTO userDTO, final Errors errors) {
     if (userDTO.getFirstName() == null || userDTO.getFirstName().isBlank()) {
       errors.reject("First name must be defined");
     }
@@ -35,6 +32,13 @@ public final class UserDTOValidator implements Validator {
     if (userDTO.getDateOfBirth() == null) {
       errors.reject("Last name must be defined");
     }
+  }
+
+  @Override
+  public void validate(final Object o, final Errors errors) {
+    UserDTO userDTO = (UserDTO) o;
+
+    checkNullAndBlank(userDTO, errors);
 
     if (userDTO.getDateOfBirth() != null) {
       try {
