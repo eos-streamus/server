@@ -8,12 +8,18 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 public class JsonPersonWriter extends JsonObjectWriter {
+  /** {@link com.eos.streamus.models.Person} to write as Json. */
   private final Person person;
 
   public JsonPersonWriter(final Person person) {
     this.person = person;
   }
 
+  /**
+   * Adds Person specific properties in ObjectNode.
+   * @param objectNode ObjectNode to write properties to.
+   * @return Json node.
+   */
   @Override
   protected JsonNode getSpecificJson(final ObjectNode objectNode) {
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
