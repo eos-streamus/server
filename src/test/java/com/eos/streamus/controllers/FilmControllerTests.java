@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.web.servlet.RequestBuilder;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class FilmControllerTests extends ControllerTests {
+class FilmControllerTests extends JwtSetupControllerTests {
 
   //#region Get film
   @Test
@@ -39,14 +39,14 @@ class FilmControllerTests extends ControllerTests {
       film.save(connection);
 
       // Get Film
-      RequestBuilder builder =
+      MockHttpServletRequestBuilder builder =
           MockMvcRequestBuilders
               .get(String.format("/film/%d", film.getId()))
               .contentType(MediaType.APPLICATION_JSON);
-      MockHttpServletResponse response = mockMvc.perform(builder)
-                                                .andExpect(status().is(200))
-                                                .andReturn()
-                                                .getResponse();
+      MockHttpServletResponse response = perform(builder)
+          .andExpect(status().is(200))
+          .andReturn()
+          .getResponse();
 
       JsonNode json = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
 
@@ -75,7 +75,7 @@ class FilmControllerTests extends ControllerTests {
       film.save(connection);
 
       // Get Film
-      RequestBuilder builder =
+      MockHttpServletRequestBuilder builder =
           MockMvcRequestBuilders
               .get(String.format("/film/%d", film.getId()))
               .contentType(MediaType.APPLICATION_JSON);
@@ -83,9 +83,9 @@ class FilmControllerTests extends ControllerTests {
       Files.delete(path);
       film.delete(connection);
 
-      mockMvc.perform(builder)
-             .andExpect(status().is(404))
-             .andReturn();
+      perform(builder)
+          .andExpect(status().is(404))
+          .andReturn();
     }
   }
 
@@ -101,13 +101,13 @@ class FilmControllerTests extends ControllerTests {
       film.save(connection);
 
       // Get Film
-      RequestBuilder builder =
+      MockHttpServletRequestBuilder builder =
           MockMvcRequestBuilders
               .get(String.format("/film/%d/stream", film.getId()));
 
-      mockMvc.perform(builder)
-             .andExpect(status().is(206))
-             .andReturn();
+      perform(builder)
+          .andExpect(status().is(206))
+          .andReturn();
 
       Files.delete(path);
       film.delete(connection);
@@ -128,13 +128,13 @@ class FilmControllerTests extends ControllerTests {
       Files.delete(path);
 
       // Get Film
-      RequestBuilder builder =
+      MockHttpServletRequestBuilder builder =
           MockMvcRequestBuilders
               .get(String.format("/film/%d/stream", film.getId()));
 
-      mockMvc.perform(builder)
-             .andExpect(status().is(404))
-             .andReturn();
+      perform(builder)
+          .andExpect(status().is(404))
+          .andReturn();
 
     }
   }
@@ -153,12 +153,11 @@ class FilmControllerTests extends ControllerTests {
       film.save(connection);
 
       // Delete Film
-      RequestBuilder builder =
+      MockHttpServletRequestBuilder builder =
           MockMvcRequestBuilders
               .delete(String.format("/film/%d", film.getId()))
               .contentType(MediaType.APPLICATION_JSON);
-      mockMvc
-          .perform(builder)
+      perform(builder)
           .andExpect(status().is(200));
 
       assertThrows(NoResultException.class, () -> Film.findById(film.getId(), connection));
@@ -180,12 +179,11 @@ class FilmControllerTests extends ControllerTests {
       Files.delete(path);
 
       // Delete Film
-      RequestBuilder builder =
+      MockHttpServletRequestBuilder builder =
           MockMvcRequestBuilders
               .delete(String.format("/film/%d", film.getId()))
               .contentType(MediaType.APPLICATION_JSON);
-      mockMvc
-          .perform(builder)
+      perform(builder)
           .andExpect(status().is(404));
     }
   }
@@ -206,8 +204,7 @@ class FilmControllerTests extends ControllerTests {
     requestBuilder
         .file(mockMultipartFile)
         .param("name", "sample-video.mp4");
-    MockHttpServletResponse response = mockMvc
-        .perform(requestBuilder)
+    MockHttpServletResponse response = perform(requestBuilder)
         .andExpect(status().is(200)).andReturn()
         .getResponse();
     JsonNode json = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
@@ -224,8 +221,7 @@ class FilmControllerTests extends ControllerTests {
 
     requestBuilder
         .param("name", "sample-video.mp4");
-    mockMvc
-        .perform(requestBuilder)
+    perform(requestBuilder)
         .andExpect(status().is(400));
   }
 
@@ -243,8 +239,7 @@ class FilmControllerTests extends ControllerTests {
     requestBuilder
         .file(mockMultipartFile);
 
-    mockMvc
-        .perform(requestBuilder)
+    perform(requestBuilder)
         .andExpect(status().is(400));
   }
 
@@ -252,8 +247,7 @@ class FilmControllerTests extends ControllerTests {
   void postingAFilmWithNoDataAtAllShouldReturnBadRequest() throws Exception {
     MockMultipartHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
         .multipart("/film");
-    mockMvc
-        .perform(requestBuilder)
+    perform(requestBuilder)
         .andExpect(status().is(400));
 
   }
@@ -273,8 +267,7 @@ class FilmControllerTests extends ControllerTests {
         .file(mockMultipartFile)
         .param("name", "sample-video.mp4");
 
-    mockMvc
-        .perform(requestBuilder)
+    perform(requestBuilder)
         .andExpect(status().is(400));
   }
 
@@ -293,8 +286,7 @@ class FilmControllerTests extends ControllerTests {
         .file(mockMultipartFile)
         .param("name", "sample-video.mp4");
 
-    mockMvc
-        .perform(requestBuilder)
+    perform(requestBuilder)
         .andExpect(status().is(400));
   }
   //#endregion Post film

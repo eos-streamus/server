@@ -32,7 +32,7 @@ public class PersonDTOValidator implements Validator {
     if (person.getLastName() != null && person.getLastName().isEmpty()) {
       errors.reject("<lastName> cannot be empty");
     }
-    if (person.getDateOfBirth() != null && person.getDateOfBirth() > new Date().getTime()) {
+    if (person.getDateOfBirth() != null && java.sql.Date.valueOf(person.getDateOfBirth()).after(new Date())) {
       errors.reject("<dateOfBirth> cannot be in the future");
     }
   }

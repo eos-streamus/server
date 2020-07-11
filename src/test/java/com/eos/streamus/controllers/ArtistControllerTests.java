@@ -18,7 +18,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.web.servlet.RequestBuilder;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.nio.file.Files;
@@ -34,15 +34,14 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class ArtistControllerTests extends ControllerTests {
+class ArtistControllerTests extends JwtSetupControllerTests {
 
   @Test
   void gettingArtistsShouldReturnOkWithArray() throws Exception {
-    RequestBuilder builder = MockMvcRequestBuilders.get("/artists")
-                                                   .contentType(MediaType.APPLICATION_JSON);
+    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/artists")
+                                                                  .contentType(MediaType.APPLICATION_JSON);
     MockHttpServletResponse response =
-        mockMvc
-            .perform(builder)
+        perform(builder)
             .andExpect(status().is(200))
             .andReturn()
             .getResponse();
@@ -56,12 +55,11 @@ class ArtistControllerTests extends ControllerTests {
       Band band = new Band("Test band");
       band.save(connection);
 
-      RequestBuilder builder = MockMvcRequestBuilders.get(String.format("/artist/%d", band.getId()))
-                                                     .contentType(MediaType.APPLICATION_JSON);
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(String.format("/artist/%d", band.getId()))
+                                                                    .contentType(MediaType.APPLICATION_JSON);
 
       MockHttpServletResponse response =
-          mockMvc
-              .perform(builder)
+          perform(builder)
               .andExpect(status().is(200))
               .andReturn()
               .getResponse();
@@ -78,12 +76,11 @@ class ArtistControllerTests extends ControllerTests {
       Musician musician = new Musician("Test musician");
       musician.save(connection);
 
-      RequestBuilder builder = MockMvcRequestBuilders.get(String.format("/artist/%d", musician.getId()))
-                                                     .contentType(MediaType.APPLICATION_JSON);
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(String.format("/artist/%d", musician.getId()))
+                                                                    .contentType(MediaType.APPLICATION_JSON);
 
       MockHttpServletResponse response =
-          mockMvc
-              .perform(builder)
+          perform(builder)
               .andExpect(status().is(200))
               .andReturn()
               .getResponse();
@@ -101,12 +98,11 @@ class ArtistControllerTests extends ControllerTests {
           new Person("John", "Doe", new Date(dateFormatter.parse("2000-01-01").getTime())));
       musician.save(connection);
 
-      RequestBuilder builder = MockMvcRequestBuilders.get(String.format("/artist/%d", musician.getId()))
-                                                     .contentType(MediaType.APPLICATION_JSON);
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(String.format("/artist/%d", musician.getId()))
+                                                                    .contentType(MediaType.APPLICATION_JSON);
 
       MockHttpServletResponse response =
-          mockMvc
-              .perform(builder)
+          perform(builder)
               .andExpect(status().is(200))
               .andReturn()
               .getResponse();
@@ -135,12 +131,11 @@ class ArtistControllerTests extends ControllerTests {
 
       band.save(connection);
 
-      RequestBuilder builder = MockMvcRequestBuilders.get(String.format("/artist/%d", band.getId()))
-                                                     .contentType(MediaType.APPLICATION_JSON);
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(String.format("/artist/%d", band.getId()))
+                                                                    .contentType(MediaType.APPLICATION_JSON);
 
       MockHttpServletResponse response =
-          mockMvc
-              .perform(builder)
+          perform(builder)
               .andExpect(status().is(200))
               .andReturn()
               .getResponse();
@@ -176,12 +171,11 @@ class ArtistControllerTests extends ControllerTests {
 
       band.fetchAlbums(connection);
 
-      RequestBuilder builder = MockMvcRequestBuilders.get(String.format("/artist/%d", band.getId()))
-                                                     .contentType(MediaType.APPLICATION_JSON);
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(String.format("/artist/%d", band.getId()))
+                                                                    .contentType(MediaType.APPLICATION_JSON);
 
       MockHttpServletResponse response =
-          mockMvc
-              .perform(builder)
+          perform(builder)
               .andExpect(status().is(200))
               .andReturn()
               .getResponse();
@@ -223,12 +217,12 @@ class ArtistControllerTests extends ControllerTests {
 
       band.fetchAlbums(connection);
 
-      RequestBuilder builder = MockMvcRequestBuilders.get(String.format("/artist/%d/discography", band.getId()))
-                                                     .contentType(MediaType.APPLICATION_JSON);
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+          .get(String.format("/artist/%d/discography", band.getId()))
+          .contentType(MediaType.APPLICATION_JSON);
 
       MockHttpServletResponse response =
-          mockMvc
-              .perform(builder)
+          perform(builder)
               .andExpect(status().is(200))
               .andReturn()
               .getResponse();
@@ -253,11 +247,10 @@ class ArtistControllerTests extends ControllerTests {
       musician.save(connection);
       musician.delete(connection);
 
-      RequestBuilder builder = MockMvcRequestBuilders.get(String.format("/artist/%d", musician.getId()))
-                                                     .contentType(MediaType.APPLICATION_JSON);
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(String.format("/artist/%d", musician.getId()))
+                                                                    .contentType(MediaType.APPLICATION_JSON);
 
-      mockMvc
-          .perform(builder)
+      perform(builder)
           .andExpect(status().is(404))
           .andReturn();
     }
@@ -270,11 +263,11 @@ class ArtistControllerTests extends ControllerTests {
       band.save(connection);
       band.delete(connection);
 
-      RequestBuilder builder = MockMvcRequestBuilders.get(String.format("/artist/%d/discography", band.getId()))
-                                                     .contentType(MediaType.APPLICATION_JSON);
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+          .get(String.format("/artist/%d/discography", band.getId()))
+          .contentType(MediaType.APPLICATION_JSON);
 
-      mockMvc
-          .perform(builder)
+      perform(builder)
           .andExpect(status().is(404))
           .andReturn();
     }
@@ -285,13 +278,13 @@ class ArtistControllerTests extends ControllerTests {
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
     objectNode.put("name", "Test band");
 
-    RequestBuilder builder =
+    MockHttpServletRequestBuilder builder =
         MockMvcRequestBuilders
             .post("/band")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectNode.toPrettyString());
 
-    MockHttpServletResponse response = mockMvc.perform(builder).andExpect(status().is(200)).andReturn().getResponse();
+    MockHttpServletResponse response = perform(builder).andExpect(status().is(200)).andReturn().getResponse();
     JsonNode json = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
     assertTrue(json.has("id"));
 
@@ -307,13 +300,13 @@ class ArtistControllerTests extends ControllerTests {
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
     objectNode.put("name", "");
 
-    RequestBuilder builder =
+    MockHttpServletRequestBuilder builder =
         MockMvcRequestBuilders
             .post("/band")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectNode.toPrettyString());
 
-    mockMvc.perform(builder).andExpect(status().is(400)).andReturn();
+    perform(builder).andExpect(status().is(400)).andReturn();
 
     objectNode = new ObjectNode(new TestJsonFactory());
     objectNode.put("fail", "failValue");
@@ -324,7 +317,7 @@ class ArtistControllerTests extends ControllerTests {
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectNode.toPrettyString());
 
-    mockMvc.perform(builder).andExpect(status().is(400)).andReturn();
+    perform(builder).andExpect(status().is(400)).andReturn();
   }
 
   @Test
@@ -332,14 +325,14 @@ class ArtistControllerTests extends ControllerTests {
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
     objectNode.put("name", "test musician");
 
-    RequestBuilder builder = MockMvcRequestBuilders.post("/musician")
-                                                   .contentType(MediaType.APPLICATION_JSON)
-                                                   .content(objectNode.toPrettyString());
+    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/musician")
+                                                                  .contentType(MediaType.APPLICATION_JSON)
+                                                                  .content(objectNode.toPrettyString());
 
-    MockHttpServletResponse response = mockMvc.perform(builder)
-                                              .andExpect(status().is(200))
-                                              .andReturn()
-                                              .getResponse();
+    MockHttpServletResponse response = perform(builder)
+        .andExpect(status().is(200))
+        .andReturn()
+        .getResponse();
     JsonNode jsonNode = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
     assertTrue(jsonNode.has("id"));
     try (Connection connection = databaseConnector.getConnection()) {
@@ -355,16 +348,16 @@ class ArtistControllerTests extends ControllerTests {
     ObjectNode personObjectNode = objectNode.putObject("person");
     personObjectNode.put("firstName", "John");
     personObjectNode.put("lastName", "Doe");
-    personObjectNode.put("dateOfBirth", date("2000-01-01").getTime());
+    personObjectNode.put("dateOfBirth", "2000-01-01");
 
-    RequestBuilder builder = MockMvcRequestBuilders.post("/musician")
-                                                   .contentType(MediaType.APPLICATION_JSON)
-                                                   .content(objectNode.toPrettyString());
+    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/musician")
+                                                                  .contentType(MediaType.APPLICATION_JSON)
+                                                                  .content(objectNode.toPrettyString());
 
-    MockHttpServletResponse response = mockMvc.perform(builder)
-                                              .andExpect(status().is(200))
-                                              .andReturn()
-                                              .getResponse();
+    MockHttpServletResponse response = perform(builder)
+        .andExpect(status().is(200))
+        .andReturn()
+        .getResponse();
     JsonNode jsonNode = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
     assertTrue(jsonNode.has("id"));
     try (Connection connection = databaseConnector.getConnection()) {
@@ -381,16 +374,16 @@ class ArtistControllerTests extends ControllerTests {
     ObjectNode personObjectNode = objectNode.putObject("person");
     personObjectNode.put("firstName", "John");
     personObjectNode.put("lastName", "Doe");
-    personObjectNode.put("dateOfBirth", date("2000-01-01").getTime());
+    personObjectNode.put("dateOfBirth", "2000-01-01");
 
-    RequestBuilder builder = MockMvcRequestBuilders.post("/musician")
-                                                   .contentType(MediaType.APPLICATION_JSON)
-                                                   .content(objectNode.toPrettyString());
+    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/musician")
+                                                                  .contentType(MediaType.APPLICATION_JSON)
+                                                                  .content(objectNode.toPrettyString());
 
-    MockHttpServletResponse response = mockMvc.perform(builder)
-                                              .andExpect(status().is(200))
-                                              .andReturn()
-                                              .getResponse();
+    MockHttpServletResponse response = perform(builder)
+        .andExpect(status().is(200))
+        .andReturn()
+        .getResponse();
     JsonNode jsonNode = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
     assertTrue(jsonNode.has("id"));
     try (Connection connection = databaseConnector.getConnection()) {
@@ -404,12 +397,12 @@ class ArtistControllerTests extends ControllerTests {
   void creatingAMusicianWithNoPersonAndNoNameShouldReturnBadRequest() throws Exception {
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
 
-    RequestBuilder builder = MockMvcRequestBuilders.post("/musician")
-                                                   .contentType(MediaType.APPLICATION_JSON)
-                                                   .content(objectNode.toPrettyString());
+    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/musician")
+                                                                  .contentType(MediaType.APPLICATION_JSON)
+                                                                  .content(objectNode.toPrettyString());
 
-    mockMvc.perform(builder)
-           .andExpect(status().is(400));
+    perform(builder)
+        .andExpect(status().is(400));
   }
 
   @Test
@@ -417,12 +410,12 @@ class ArtistControllerTests extends ControllerTests {
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
     objectNode.put("name", "");
 
-    RequestBuilder builder = MockMvcRequestBuilders.post("/musician")
-                                                   .contentType(MediaType.APPLICATION_JSON)
-                                                   .content(objectNode.toPrettyString());
+    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/musician")
+                                                                  .contentType(MediaType.APPLICATION_JSON)
+                                                                  .content(objectNode.toPrettyString());
 
-    mockMvc.perform(builder)
-           .andExpect(status().is(400));
+    perform(builder)
+        .andExpect(status().is(400));
   }
 
   @Test
@@ -432,13 +425,13 @@ class ArtistControllerTests extends ControllerTests {
     ObjectNode personObjectNode = objectNode.putObject("person");
     personObjectNode.put("firstName", "John");
     personObjectNode.put("lastName", "Doe");
-    personObjectNode.put("dateOfBirth", date("2000-01-01").getTime());
-    RequestBuilder builder = MockMvcRequestBuilders.post("/musician")
-                                                   .contentType(MediaType.APPLICATION_JSON)
-                                                   .content(objectNode.toPrettyString());
+    personObjectNode.put("dateOfBirth", "2000-01-01");
+    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/musician")
+                                                                  .contentType(MediaType.APPLICATION_JSON)
+                                                                  .content(objectNode.toPrettyString());
 
-    mockMvc.perform(builder)
-           .andExpect(status().is(400));
+    perform(builder)
+        .andExpect(status().is(400));
   }
 
   @Test
@@ -450,13 +443,13 @@ class ArtistControllerTests extends ControllerTests {
     ObjectNode personObjectNode = objectNode.putObject("person");
     personObjectNode.put("firstName", "");
     personObjectNode.put("lastName", "Doe");
-    personObjectNode.put("dateOfBirth", date("2000-01-01").getTime());
-    RequestBuilder builder = MockMvcRequestBuilders.post("/musician")
-                                                   .contentType(MediaType.APPLICATION_JSON)
-                                                   .content(objectNode.toPrettyString());
+    personObjectNode.put("dateOfBirth", "2000-01-01");
+    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/musician")
+                                                                  .contentType(MediaType.APPLICATION_JSON)
+                                                                  .content(objectNode.toPrettyString());
 
-    mockMvc.perform(builder)
-           .andExpect(status().is(400));
+    perform(builder)
+        .andExpect(status().is(400));
 
     // Test with empty last name
     objectNode = new ObjectNode(new TestJsonFactory());
@@ -464,13 +457,13 @@ class ArtistControllerTests extends ControllerTests {
     personObjectNode = objectNode.putObject("person");
     personObjectNode.put("firstName", "John");
     personObjectNode.put("lastName", "");
-    personObjectNode.put("dateOfBirth", date("2000-01-01").getTime());
+    personObjectNode.put("dateOfBirth", "2000-01-01");
     builder = MockMvcRequestBuilders.post("/musician")
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectNode.toPrettyString());
 
-    mockMvc.perform(builder)
-           .andExpect(status().is(400));
+    perform(builder)
+        .andExpect(status().is(400));
 
     // Test with date of birth in the future
     objectNode = new ObjectNode(new TestJsonFactory());
@@ -481,26 +474,34 @@ class ArtistControllerTests extends ControllerTests {
     Calendar calendar = Calendar.getInstance();
     calendar.setTime(new java.util.Date());
     calendar.add(Calendar.DATE, 1);
-    personObjectNode.put("dateOfBirth", calendar.getTime().getTime());
+    personObjectNode
+        .put("dateOfBirth",
+             String.format(
+                 "%s-%s-%s",
+                 calendar.get(Calendar.YEAR),
+                 calendar.get(Calendar.MONTH) + 1,
+                 calendar.get(Calendar.DATE)
+             )
+        );
     builder = MockMvcRequestBuilders.post("/musician")
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectNode.toPrettyString());
 
-    mockMvc.perform(builder)
-           .andExpect(status().is(400));
+    perform(builder)
+        .andExpect(status().is(400));
 
     // Test with no last name
     objectNode = new ObjectNode(new TestJsonFactory());
     objectNode.put("name", "test name");
     personObjectNode = objectNode.putObject("person");
     personObjectNode.put("firstName", "John");
-    personObjectNode.put("dateOfBirth", date("2000-01-01").getTime());
+    personObjectNode.put("dateOfBirth", "2000-01-01");
     builder = MockMvcRequestBuilders.post("/musician")
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectNode.toPrettyString());
 
-    mockMvc.perform(builder)
-           .andExpect(status().is(400));
+    perform(builder)
+        .andExpect(status().is(400));
   }
 
   @Test
@@ -516,10 +517,11 @@ class ArtistControllerTests extends ControllerTests {
       bandMemberData.put("musicianId", musician.getId());
       bandMemberData.put("from", "2000-01-01");
 
-      RequestBuilder builder = MockMvcRequestBuilders.post(String.format("/band/%d/members", band.getId()))
-                                                     .contentType(MediaType.APPLICATION_JSON)
-                                                     .content(bandMemberData.toPrettyString());
-      MockHttpServletResponse response = mockMvc.perform(builder).andExpect(status().is(200)).andReturn().getResponse();
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+          .post(String.format("/band/%d/members", band.getId()))
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(bandMemberData.toPrettyString());
+      MockHttpServletResponse response = perform(builder).andExpect(status().is(200)).andReturn().getResponse();
       JsonNode result = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
       band.fetchMembers(connection);
       assertEquals(new JsonBandWriter(band).getJson(), result);
@@ -539,10 +541,11 @@ class ArtistControllerTests extends ControllerTests {
       musicianNode.put("name", "Test musician");
       bandMemberData.put("from", "2000-01-01");
 
-      RequestBuilder builder = MockMvcRequestBuilders.post(String.format("/band/%d/members", band.getId()))
-                                                     .contentType(MediaType.APPLICATION_JSON)
-                                                     .content(bandMemberData.toPrettyString());
-      MockHttpServletResponse response = mockMvc.perform(builder).andExpect(status().is(200)).andReturn().getResponse();
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+          .post(String.format("/band/%d/members", band.getId()))
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(bandMemberData.toPrettyString());
+      MockHttpServletResponse response = perform(builder).andExpect(status().is(200)).andReturn().getResponse();
       JsonNode result = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
       band.fetchMembers(connection);
       assertEquals(new JsonBandWriter(band).getJson(), result);
@@ -561,13 +564,14 @@ class ArtistControllerTests extends ControllerTests {
       ObjectNode personNode = musicianNode.putObject("person");
       personNode.put("firstName", "John");
       personNode.put("lastName", "Doe");
-      personNode.put("dateOfBirth", date("2000-01-01").getTime());
+      personNode.put("dateOfBirth", "2000-01-01");
       bandMemberData.put("from", "2000-01-01");
 
-      RequestBuilder builder = MockMvcRequestBuilders.post(String.format("/band/%d/members", band.getId()))
-                                                     .contentType(MediaType.APPLICATION_JSON)
-                                                     .content(bandMemberData.toPrettyString());
-      MockHttpServletResponse response = mockMvc.perform(builder).andExpect(status().is(200)).andReturn().getResponse();
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+          .post(String.format("/band/%d/members", band.getId()))
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(bandMemberData.toPrettyString());
+      MockHttpServletResponse response = perform(builder).andExpect(status().is(200)).andReturn().getResponse();
       JsonNode result = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
       band.fetchMembers(connection);
       assertEquals(new JsonBandWriter(band).getJson(), result);
@@ -587,15 +591,15 @@ class ArtistControllerTests extends ControllerTests {
       ObjectNode personNode = musicianNode.putObject("person");
       personNode.put("firstName", "John");
       personNode.put("lastName", "Doe");
-      personNode.put("dateOfBirth", date("2000-01-01").getTime());
+      personNode.put("dateOfBirth", "2000-01-01");
       bandMemberData.put("from", "2000-01-01");
 
-      RequestBuilder builder = MockMvcRequestBuilders.post(String.format("/band/%d/members", band.getId()))
-                                                     .contentType(MediaType.APPLICATION_JSON)
-                                                     .content(bandMemberData.toPrettyString());
-      MockHttpServletResponse response = mockMvc.perform(builder).andExpect(status().is(200)).andReturn()
-                                                .getResponse();
-      System.out.println(response);
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+          .post(String.format("/band/%d/members", band.getId()))
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(bandMemberData.toPrettyString());
+      MockHttpServletResponse response = perform(builder).andExpect(status().is(200)).andReturn()
+                                                         .getResponse();
       JsonNode result = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
       band.fetchMembers(connection);
       assertEquals(new JsonBandWriter(band).getJson(), result);
@@ -615,16 +619,17 @@ class ArtistControllerTests extends ControllerTests {
       ObjectNode personNode = musicianNode.putObject("person");
       personNode.put("firstName", "John");
       personNode.put("lastName", "Doe");
-      personNode.put("dateOfBirth", date("2000-01-01").getTime());
+      personNode.put("dateOfBirth", "2000-01-01");
       bandMemberData.put("from", "2000-01-01");
       bandMemberData.put("to", "1999-01-01");
 
-      RequestBuilder builder = MockMvcRequestBuilders.post(String.format("/band/%d/members", band.getId()))
-                                                     .contentType(MediaType.APPLICATION_JSON)
-                                                     .content(bandMemberData.toPrettyString());
-      mockMvc.perform(builder)
-             .andExpect(status().is(400))
-             .andReturn();
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+          .post(String.format("/band/%d/members", band.getId()))
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(bandMemberData.toPrettyString());
+      perform(builder)
+          .andExpect(status().is(400))
+          .andReturn();
     }
   }
 
@@ -643,12 +648,13 @@ class ArtistControllerTests extends ControllerTests {
       bandMemberData.put("musicianId", musician.getId());
       bandMemberData.put("from", "2005-01-01");
 
-      RequestBuilder builder = MockMvcRequestBuilders.post(String.format("/band/%d/members", band.getId()))
-                                                     .contentType(MediaType.APPLICATION_JSON)
-                                                     .content(bandMemberData.toPrettyString());
-      mockMvc.perform(builder)
-             .andExpect(status().is(400))
-             .andReturn();
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+          .post(String.format("/band/%d/members", band.getId()))
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(bandMemberData.toPrettyString());
+      perform(builder)
+          .andExpect(status().is(400))
+          .andReturn();
     }
   }
 
@@ -664,12 +670,13 @@ class ArtistControllerTests extends ControllerTests {
       ObjectNode bandMemberData = new ObjectNode(new TestJsonFactory());
       bandMemberData.put("musicianId", musician.getId());
 
-      RequestBuilder builder = MockMvcRequestBuilders.post(String.format("/band/%d/members", band.getId()))
-                                                     .contentType(MediaType.APPLICATION_JSON)
-                                                     .content(bandMemberData.toPrettyString());
-      mockMvc.perform(builder)
-             .andExpect(status().is(400))
-             .andReturn();
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+          .post(String.format("/band/%d/members", band.getId()))
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(bandMemberData.toPrettyString());
+      perform(builder)
+          .andExpect(status().is(400))
+          .andReturn();
     }
   }
 
@@ -680,8 +687,8 @@ class ArtistControllerTests extends ControllerTests {
       Band band = new Band("Test band");
       band.save(connection);
 
-      RequestBuilder builder = MockMvcRequestBuilders.delete(String.format("/artist/%d", band.getId()));
-      mockMvc.perform(builder).andExpect(status().is(200));
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.delete(String.format("/artist/%d", band.getId()));
+      perform(builder).andExpect(status().is(200));
 
       assertThrows(NoResultException.class, () -> ArtistDAO.findById(band.getId(), connection));
     }
@@ -694,8 +701,8 @@ class ArtistControllerTests extends ControllerTests {
       band.save(connection);
       band.delete(connection);
 
-      RequestBuilder builder = MockMvcRequestBuilders.delete(String.format("/artist/%d", band.getId()));
-      mockMvc.perform(builder).andExpect(status().is(404));
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.delete(String.format("/artist/%d", band.getId()));
+      perform(builder).andExpect(status().is(404));
     }
   }
 

@@ -1,11 +1,12 @@
 package com.eos.streamus.controllers;
 
 import com.eos.streamus.dto.LoginDTO;
-import com.eos.streamus.exceptions.NoResultException;
-import com.eos.streamus.models.User;
 import com.eos.streamus.dto.UserDTO;
 import com.eos.streamus.dto.validators.UserDTOValidator;
+import com.eos.streamus.exceptions.NoResultException;
+import com.eos.streamus.models.User;
 import com.eos.streamus.utils.IDatabaseConnector;
+import com.eos.streamus.utils.JwtService;
 import com.eos.streamus.writers.JsonUserWriter;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.sql.Date;
+import java.sql.SQLException;
 
 @RestController
 public class UserController implements CommonResponses {
@@ -36,8 +37,14 @@ public class UserController implements CommonResponses {
   @Autowired
   private PasswordEncoder passwordEncoder;
 
+  @Autowired
+  private JwtService jwtService;
+
   @PostMapping("/users")
   public ResponseEntity<JsonNode> register(@RequestBody @Valid final UserDTO userDTO, BindingResult result) {
+    if (result.hasErrors()) {
+      return badRequest(result.toString());
+    }
     userDTOValidator.validate(userDTO, result);
     if (result.hasErrors()) {
       return badRequest(result.toString());
@@ -51,14 +58,14 @@ public class UserController implements CommonResponses {
       User user = new User(
           userDTO.getFirstName(),
           userDTO.getLastName(),
-          new Date(userDTO.getDateOfBirth()),
+          Date.valueOf(userDTO.getDateOfBirth()),
           userDTO.getEmail(),
           userDTO.getUsername()
       );
       connection.setAutoCommit(false);
       String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
       user.save(connection);
-      user.updatePassword(encodedPassword, connection);
+      user.upsertPassword(encodedPassword, connection);
       connection.commit();
       return ResponseEntity.ok(new JsonUserWriter(user).getJson());
     } catch (SQLException sqlException) {
@@ -68,21 +75,24 @@ public class UserController implements CommonResponses {
   }
 
   @PostMapping("/login")
-  public ResponseEntity<JsonNode> login(@RequestBody @Valid final LoginDTO loginDTO) {
+  public ResponseEntity<String> login(@RequestBody @Valid final LoginDTO loginDTO, BindingResult result) {
+    if (result.hasErrors()) {
+      return ResponseEntity.badRequest().body(result.toString());
+    }
     try (Connection connection = databaseConnector.getConnection()) {
       User user = User.findByEmail(loginDTO.getEmail(), connection);
       if (user == null) {
-        return badRequest("Invalid email or password");
+        return ResponseEntity.badRequest().body("Invalid email or password");
       }
       String password = user.getPassword(connection);
       if (passwordEncoder.matches(loginDTO.getPassword(), password)) {
-        return ResponseEntity.ok(new JsonUserWriter(user).getJson());
+        return ResponseEntity.ok(jwtService.createToken(user));
       } else {
-        return badRequest("Invalid email or password");
+        return ResponseEntity.badRequest().body("Invalid email or password");
       }
     } catch (SQLException sqlException) {
       logException(sqlException);
-      return internalServerError();
+      return internalServerErrorString();
     } catch (NoResultException noResultException) {
       return notFound();
     }
@@ -105,6 +115,9 @@ public class UserController implements CommonResponses {
   public ResponseEntity<JsonNode> updateUser(@PathVariable final int id,
                                              @RequestBody @Valid final UserDTO userDTO,
                                              BindingResult result) {
+    if (result.hasErrors()) {
+      return badRequest(result.toString());
+    }
     userDTOValidator.validate(userDTO, result);
     if (result.hasErrors()) {
       return badRequest(result.toString());
@@ -123,11 +136,11 @@ public class UserController implements CommonResponses {
       user.setEmail(userDTO.getEmail());
       user.setFirstName(userDTO.getFirstName());
       user.setLastName(userDTO.getLastName());
-      user.setDateOfBirth(new Date(userDTO.getDateOfBirth()));
+      user.setDateOfBirth(Date.valueOf(userDTO.getDateOfBirth()));
       user.setUsername(userDTO.getUsername());
       user.save(connection);
       if (userDTO.getUpdatedPassword() != null) {
-        user.updatePassword(passwordEncoder.encode(userDTO.getUpdatedPassword()), connection);
+        user.upsertPassword(passwordEncoder.encode(userDTO.getUpdatedPassword()), connection);
       }
       return ResponseEntity.ok(new JsonUserWriter(user).getJson());
     } catch (SQLException sqlException) {

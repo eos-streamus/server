@@ -5,17 +5,23 @@ import com.eos.streamus.controllers.ArtistController;
 import com.eos.streamus.controllers.FilmController;
 import com.eos.streamus.controllers.SongController;
 import com.eos.streamus.controllers.SongPlaylistController;
+import com.eos.streamus.controllers.UserController;
 import com.eos.streamus.dto.validators.AlbumDTOValidator;
 import com.eos.streamus.dto.validators.BandMemberDTOValidator;
 import com.eos.streamus.dto.validators.MusicianDTOValidator;
 import com.eos.streamus.dto.validators.PersonDTOValidator;
 import com.eos.streamus.dto.validators.SongPlaylistDTOValidator;
+import com.eos.streamus.dto.validators.UserDTOValidator;
+import com.eos.streamus.filters.JwtFilter;
 import com.eos.streamus.utils.IDatabaseConnector;
 import com.eos.streamus.utils.IResourcePathResolver;
+import com.eos.streamus.utils.JwtService;
 import com.eos.streamus.utils.TestDatabaseConnector;
 import com.eos.streamus.utils.TestResourcePathResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class StreamusTestConfiguration {
@@ -50,6 +56,11 @@ public class StreamusTestConfiguration {
   }
 
   @Bean
+  public UserController userController() {
+    return new UserController();
+  }
+
+  @Bean
   public AlbumDTOValidator albumValidator() {
     return new AlbumDTOValidator();
   }
@@ -59,6 +70,9 @@ public class StreamusTestConfiguration {
 
   @Bean
   public PersonDTOValidator personValidator() { return new PersonDTOValidator(); }
+
+  @Bean
+  public PersonDTOValidator personDTOValidator() { return new PersonDTOValidator(); }
 
   @Bean
   public BandMemberDTOValidator bandMemberValidator() { return new BandMemberDTOValidator(); }
@@ -72,5 +86,21 @@ public class StreamusTestConfiguration {
   public SongPlaylistDTOValidator songPlaylistValidator() {
     return new SongPlaylistDTOValidator();
   }
+
+  @Bean
+  public UserDTOValidator userDTOValidator() { return new UserDTOValidator(); }
+
+  @Bean
+  public JwtService jwtUtils() {
+    return new JwtService();
+  }
+
+  @Bean
+  public JwtFilter jwtFilter() {
+    return new JwtFilter();
+  }
+
+  @Bean
+  public PasswordEncoder passwordEncoder() {return new BCryptPasswordEncoder(); }
 
 }

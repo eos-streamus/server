@@ -11,7 +11,7 @@ public class PersonDTO {
   @NotNull
   private String lastName;
 
-  private Long dateOfBirth;
+  private String dateOfBirth;
 
   public Integer getId() {
     return id;
@@ -25,7 +25,7 @@ public class PersonDTO {
     return lastName;
   }
 
-  public Long getDateOfBirth() {
+  public String getDateOfBirth() {
     return dateOfBirth;
   }
 

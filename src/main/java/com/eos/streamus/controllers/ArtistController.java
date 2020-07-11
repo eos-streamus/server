@@ -118,7 +118,7 @@ public class ArtistController implements CommonResponses {
           person = new Person(
               dataPerson.getFirstName(),
               dataPerson.getLastName(),
-              dataPerson.getDateOfBirth() == null ? null : new Date(dataPerson.getDateOfBirth())
+              dataPerson.getDateOfBirth() == null ? null : Date.valueOf(dataPerson.getDateOfBirth())
           );
           person.save(connection);
         }
@@ -202,7 +202,7 @@ public class ArtistController implements CommonResponses {
         Person person = new Person(
             personDTO.getFirstName(),
             personDTO.getLastName(),
-            new Date(personDTO.getDateOfBirth())
+            Date.valueOf(personDTO.getDateOfBirth())
         );
         musician = member.getMusician().getName() == null ?
             new Musician(person)
