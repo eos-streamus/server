@@ -10,40 +10,50 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Series extends VideoCollection {
-  public class Episode extends Video {
+public final class Series extends VideoCollection {
+  public final class Episode extends Video {
     //#region Static attributes
+    /** Table name in database. */
     public static final String TABLE_NAME = "Episode";
+    /** Primary key column name. */
     public static final String PRIMARY_KEY_NAME = "idVideo";
+    /** Season number column name. */
     public static final String SEASON_NUMBER_COLUMN = "seasonNumber";
+    /** Episode number column name. */
     public static final String EPISODE_NUMBER_COLUMN = "episodeNumber";
+    /** Creation function name in database. */
     public static final String CREATION_FUNCTION_NAME = "createEpisode";
+    /** View name. */
     public static final String VIEW_NAME = "vEpisode";
+    /** Series id column name in view. */
     public static final String SERIES_ID_COLUMN = "idSeries";
     //#endregion Static attributes
 
     //#region Instance attributes
+    /** This Episode's Season number. */
     private final short seasonNumber;
+    /** This Episode's number. */
     private final short episodeNumber;
     //#endregion Instance attributes
 
     //#region Constructors
-    Episode(Integer id, String path, String name, Timestamp createdAt, Integer duration, final short seasonNumber,
-            final short episodeNumber) {
+    Episode(final Integer id, final String path, final String name, final Timestamp createdAt,
+            final Integer duration, final short seasonNumber, final short episodeNumber) {
       super(id, path, name, createdAt, duration);
       this.seasonNumber = seasonNumber;
       this.episodeNumber = episodeNumber;
       Series.this.episodes.add(this);
     }
 
-    public Episode(String path, String name, Integer duration, final short seasonNumber, final short episodeNumber) {
+    public Episode(final String path, final String name, final Integer duration, final short seasonNumber,
+                   final short episodeNumber) {
       super(path, name, duration);
       this.seasonNumber = seasonNumber;
       this.episodeNumber = episodeNumber;
       Series.this.episodes.add(this);
     }
 
-    public Episode(String path, String name, Integer duration, final short seasonNumber) {
+    public Episode(final String path, final String name, final Integer duration, final short seasonNumber) {
       this(path, name, duration, seasonNumber, (short) (Series.this.getNumberOfEpisodesInSeason(seasonNumber) + 1));
     }
     //#endregion Constructors
@@ -79,7 +89,7 @@ public class Series extends VideoCollection {
 
     //#region Database operations
     @Override
-    public void save(Connection connection) throws SQLException {
+    public void save(final Connection connection) throws SQLException {
       if (Series.this.getId() == null) {
         throw new NotPersistedException("Episode series not persisted");
       }
@@ -128,7 +138,7 @@ public class Series extends VideoCollection {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
       if (!super.equals(o)) {
         return false;
       }
@@ -143,25 +153,39 @@ public class Series extends VideoCollection {
   }
 
   //#region Static attributes
+  /** Table name in database. */
   public static final String TABLE_NAME = "Series";
+  /** Primary key column name. */
   public static final String PRIMARY_KEY_NAME = "idVideoCollection";
+  /** View name. */
   public static final String VIEW_NAME = "vSeries";
+  /** Creation function name in database. */
   public static final String CREATION_FUNCTION_NAME = "createSeries";
+  /**
+   *
+   */
   public static final String EPISODE_ID_VIEW_COLUMN = "idEpisode";
+  /**
+   *
+   */
   public static final String EPISODE_CREATED_AT_COLUMN = "episodeCreatedAt";
+  /**
+   *
+   */
   public static final String EPISODE_NAME_COLUMN = "episodeName";
   //#endregion
 
   //#region Instance attributes
-  final List<Episode> episodes = new ArrayList<>();
+  /** List of episodes of this Series. */
+  private final List<Episode> episodes = new ArrayList<>();
   //#endregion
 
   //#region Constructors
-  private Series(Integer id, String name, Timestamp createdAt, Timestamp updatedAt) {
+  private Series(final Integer id, final String name, final Timestamp createdAt, final Timestamp updatedAt) {
     super(id, name, createdAt, updatedAt);
   }
 
-  public Series(String name) {
+  public Series(final String name) {
     super(name);
   }
   //#endregion Constructors
@@ -209,7 +233,7 @@ public class Series extends VideoCollection {
     return (short) episodes.stream().filter(e -> e.seasonNumber == seasonNumber).count();
   }
 
-  public List<Episode> getSeason(short seasonNumber) {
+  public List<Episode> getSeason(final short seasonNumber) {
     return
         episodes
             .stream()
@@ -221,7 +245,7 @@ public class Series extends VideoCollection {
 
   //#region Database operations
   @Override
-  public void save(Connection connection) throws SQLException {
+  public void save(final Connection connection) throws SQLException {
     if (this.getId() == null) {
       try (PreparedStatement preparedStatement = connection
           .prepareStatement(String.format("select * from %s(?::varchar(200))", CREATION_FUNCTION_NAME))) {
@@ -251,7 +275,7 @@ public class Series extends VideoCollection {
     }
   }
 
-  public static Series findById(int id, Connection connection) throws SQLException, NoResultException {
+  public static Series findById(final int id, final Connection connection) throws SQLException, NoResultException {
     try (PreparedStatement preparedStatement = connection
         .prepareStatement(String.format("select * from %s where %s = ?;", VIEW_NAME, Collection.PRIMARY_KEY_NAME))) {
       preparedStatement.setInt(1, id);
@@ -303,7 +327,7 @@ public class Series extends VideoCollection {
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     if (!super.equals(o)) {
       return false;
     }
