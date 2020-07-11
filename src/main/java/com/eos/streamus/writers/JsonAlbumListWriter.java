@@ -6,7 +6,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import java.util.List;
 
-public class JsonAlbumListWriter extends JsonArrayWriter {
+public final class JsonAlbumListWriter extends JsonArrayWriter {
+  /** Albums to convert to Json. */
   private final List<Album> albums;
 
   public JsonAlbumListWriter(final List<Album> albums) {
