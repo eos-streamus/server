@@ -6,12 +6,15 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 /**
  * Class that contains FFProbe information about a file. For now, used only for duration.
  */
-public class FileInfo {
+public final class FileInfo {
+  /** Duration of media file. */
   private final int duration;
+  /** If File is video file. */
   private boolean isVideo;
+  /** If file is audio file (caution: Video files are often also audio files). */
   private boolean isAudio;
 
-  FileInfo(ObjectNode jsonData) {
+  FileInfo(final ObjectNode jsonData) {
     this.duration = jsonData.get("format").get("duration").asInt();
     for (final JsonNode stream : jsonData.get("streams")) {
       if (stream.get("codec_type").asText().equals("audio")) {
@@ -22,15 +25,15 @@ public class FileInfo {
     }
   }
 
-  public final int getDuration() {
+  public int getDuration() {
     return duration;
   }
 
-  public final boolean isAudio() {return isAudio;}
+  public boolean isAudio() { return isAudio; }
 
-  public final boolean isVideo() {return isVideo;}
+  public boolean isVideo() { return isVideo; }
 
-  public final boolean isAudioOnly() {
+  public boolean isAudioOnly() {
     return isAudio && !isVideo;
   }
 
