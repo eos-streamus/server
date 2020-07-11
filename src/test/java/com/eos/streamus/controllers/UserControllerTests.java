@@ -39,12 +39,12 @@ class UserControllerTests extends ControllerTests {
   @Autowired
   private PasswordEncoder passwordEncoder;
 
-  private static final String ACCEPTABLE_CHARACTERS = "ABCEDFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
-
   @Autowired
   private JwtService jwtService;
 
-  private String randomStringOfLength(int length) {
+  private static final String ACCEPTABLE_CHARACTERS = "ABCEDFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+
+  private String randomStringOfLength(final int length) {
     StringBuilder stringBuilder = new StringBuilder();
     Random random = new Random();
     for (int i = 0; i < length; i++) {
@@ -99,7 +99,6 @@ class UserControllerTests extends ControllerTests {
   @Test
   void signingUpWithMissingEmailShouldReturnBadRequest() throws Exception {
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
-    final String email = UUID.randomUUID().toString() + "@streamus.com";
     objectNode.put("username", randomStringOfLength(minUsernameLength));
     objectNode.put("firstName", "John");
     objectNode.put("lastName", "Doe");
