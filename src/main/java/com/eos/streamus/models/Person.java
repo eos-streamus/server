@@ -6,34 +6,47 @@ import java.sql.*;
 
 public class Person implements SavableDeletableEntity {
   //#region Static attributes
+  /** Table name in database. */
   public static final String TABLE_NAME = "Person";
+  /** Primary key column (id) name. */
   protected static final String ID_COLUMN = "id";
+  /** First name column name. */
   protected static final String FIRST_NAME_COLUMN = "firstName";
+  /** Last name column name. */
   protected static final String LAST_NAME_COLUMN = "lastName";
+  /** Date of birth column name. */
   protected static final String DATE_OF_BIRTH_COLUMN = "dateOfBirth";
+  /** Created at timestamp column name. */
   protected static final String CREATED_AT_COLUMN = "createdAt";
+  /** Updated at timestamp column name. */
   protected static final String UPDATED_AT_COLUMN = "updatedAt";
   //#endregion Static attributes
 
   //#region Instance attributes
+  /** Id of the Person. */
   private Integer id;
+  /** First name of the Person. */
   private String firstName;
+  /** Last name of the Person. */
   private String lastName;
+  /** Date of birth of the Person. */
   private Date dateOfBirth;
+  /** Creation timestamp of the Person. */
   private Timestamp createdAt;
+  /** Last update timestamp of the Person. */
   private Timestamp updatedAt;
   //#endregion Instance attributes
 
   //#region Constructors
-  protected Person(Integer id, String firstName, String lastName,
-                   Date dateOfBirth, Timestamp createdAt, Timestamp updatedAt) {
+  protected Person(final Integer id, final String firstName, final String lastName,
+                   final Date dateOfBirth, final Timestamp createdAt, final Timestamp updatedAt) {
     this(firstName, lastName, dateOfBirth);
     this.id = id;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
   }
 
-  public Person(String firstName, String lastName, Date dateOfBirth) {
+  public Person(final String firstName, final String lastName, final Date dateOfBirth) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.dateOfBirth = dateOfBirth;
@@ -41,74 +54,85 @@ public class Person implements SavableDeletableEntity {
   //#endregion Constructors
 
   //#region getters and setters
+
+  /** @return Table name. */
   @Override
   public String tableName() {
     return TABLE_NAME;
   }
 
+  /** @return Primary key name. */
   @Override
   public String primaryKeyName() {
     return ID_COLUMN;
   }
 
+  /** @return Creation function name in database. */
   @Override
   public String creationFunctionName() {
     return "createPerson";
   }
 
   @Override
-  public Integer getId() {
+  public final Integer getId() {
     return id;
   }
 
-  public void setId(Integer id) {
+  public final void setId(final Integer id) {
     this.id = id;
   }
 
-  public String getFirstName() {
+  public final String getFirstName() {
     return firstName;
   }
 
-  public void setFirstName(String firstName) {
+  public final void setFirstName(final String firstName) {
     this.firstName = firstName;
   }
 
-  public String getLastName() {
+  public final String getLastName() {
     return lastName;
   }
 
-  public void setLastName(String lastName) {
+  public final void setLastName(final String lastName) {
     this.lastName = lastName;
   }
 
-  public Date getDateOfBirth() {
+  public final Date getDateOfBirth() {
     return dateOfBirth;
   }
 
-  public void setDateOfBirth(Date dateOfBirth) {
+  public final void setDateOfBirth(final Date dateOfBirth) {
     this.dateOfBirth = dateOfBirth;
   }
 
-  public Timestamp getCreatedAt() {
+  public final Timestamp getCreatedAt() {
     return createdAt;
   }
 
-  protected void setCreatedAt(Timestamp createdAt) {
+  protected final void setCreatedAt(final Timestamp createdAt) {
     this.createdAt = createdAt;
   }
 
-  public Timestamp getUpdatedAt() {
+  public final Timestamp getUpdatedAt() {
     return updatedAt;
   }
 
-  protected void setUpdatedAt(Timestamp updatedAt) {
+  protected final void setUpdatedAt(final Timestamp updatedAt) {
     this.updatedAt = updatedAt;
   }
   //#endregion getters and setters
 
   //#region Database operations
+
+  /**
+   * Save Person to database.
+   *
+   * @param connection {@link Connection} to use to save.
+   * @throws SQLException If an error occurs.
+   */
   @Override
-  public void save(Connection connection) throws SQLException {
+  public void save(final Connection connection) throws SQLException {
     if (this.id == null) {
       try (PreparedStatement preparedStatement = connection.prepareStatement(
           String.format(
@@ -150,7 +174,7 @@ public class Person implements SavableDeletableEntity {
     }
   }
 
-  public static Person findById(Integer id, Connection connection) throws SQLException, NoResultException {
+  public static Person findById(final Integer id, final Connection connection) throws SQLException, NoResultException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         String.format(
             "select * from %s where id = ?;",
@@ -176,6 +200,8 @@ public class Person implements SavableDeletableEntity {
   //#endregion Database operations
 
   //#region String representations
+
+  /** @return Get String representation of person. */
   @Override
   public String toString() {
     return defaultToString();
@@ -183,13 +209,19 @@ public class Person implements SavableDeletableEntity {
   //#endregion String representations
 
   //#region Equals
+  /** @return hashcode of this instance. */
   @Override
   public int hashCode() {
     return id;
   }
 
+  /**
+   * Checks if this instance is equal to given one.
+   * @param o Object to test.
+   * @return If the instances are equal.
+   */
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     if (o == null || o.getClass() != this.getClass()) {
       return false;
     }
