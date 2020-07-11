@@ -11,6 +11,7 @@
     <groupId>com.eos</groupId>
     <artifactId>streamus</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <url>https://github.com/eos-streamus/server</url>
     <name>streamus</name>
     <description>StreamUs - Stream synchronized music and video in groups</description>
 
@@ -31,6 +32,9 @@
                         </reports>
                     </reportSet>
                 </reportSets>
+                <configuration>
+                    <configLocation>eos_java_checks.xml</configLocation>
+                </configuration>
             </plugin>
         </plugins>
     </reporting>
