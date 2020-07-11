@@ -7,11 +7,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class VideoDAO {
+public final class VideoDAO {
 
   private VideoDAO() {}
 
-  public static synchronized Video findById(Integer id, Connection connection) throws NoResultException, SQLException {
+  public static synchronized Video findById(final Integer id, final Connection connection)
+      throws NoResultException, SQLException {
     // Ignore NoResultException later
     try {
       return Film.findById(id, connection);
