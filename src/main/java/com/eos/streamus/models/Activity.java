@@ -7,38 +7,47 @@ import com.eos.streamus.utils.Pair;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class Activity implements SavableDeletableEntity {
   public class UserActivity extends Pair<User, Boolean> implements SavableDeletable {
     //#region Static attributes
+    /** Name of the table. */
     public static final String TABLE_NAME = "UserActivity";
+    /** Name of User id column in table. */
     public static final String USER_ID_COLUMN = "idUser";
+    /** Name of Activity id column. */
     public static final String ACTIVITY_ID_COLUMN = "idActivity";
+    /** Name of manages column in table. */
     public static final String MANAGES_COLUMN = "manages";
     //#endregion Static attributes
 
     //#region Constructors
-    public UserActivity(User user, Boolean isManager) {
+    public UserActivity(final User user, final Boolean isManager) {
       super(user, isManager);
     }
     //#endregion Constructors
 
     //#region Getters and Setters
-    public Activity getActivity() {
+
+    /** @return {@link Activity} associated to this UserActivity. */
+    public final Activity getActivity() {
       return Activity.this;
     }
 
-    public User getUser() {
+    /** @return {@link User} associated to this UserActivity. */
+    public final User getUser() {
       return this.getKey();
     }
 
-    public Boolean isManager() {
+    /** @return Whether associated {@link User} manages this {@link Activity}. */
+    public final Boolean isManager() {
       return this.getValue();
     }
     //#endregion Getters and Setters
 
     //#region Database operations
-    public boolean isNotPersisted(Connection connection) throws SQLException {
+    private boolean isNotPersisted(final Connection connection) throws SQLException {
       if (getUser() == null || getUser().getId() == null) {
         throw new NotPersistedException("User is not persisted");
       }
@@ -55,8 +64,14 @@ public abstract class Activity implements SavableDeletableEntity {
       }
     }
 
+    /**
+     * Delete this UserActivity from database.
+     *
+     * @param connection {@link Connection} to use to delete.
+     * @throws SQLException if an error occurs.
+     */
     @Override
-    public void delete(Connection connection) throws SQLException {
+    public final void delete(final Connection connection) throws SQLException {
       if (isNotPersisted(connection)) {
         throw new NotPersistedException("UserActivity is not persisted");
       }
@@ -68,8 +83,14 @@ public abstract class Activity implements SavableDeletableEntity {
       }
     }
 
+    /**
+     * Save this UserActivity in database.
+     *
+     * @param connection {@link Connection} to use to save.
+     * @throws SQLException if an error occurs.
+     */
     @Override
-    public void save(Connection connection) throws SQLException {
+    public final void save(final Connection connection) throws SQLException {
       if (Activity.this.id == null) {
         throw new NotPersistedException("Activity is not persisted");
       }
@@ -95,12 +116,12 @@ public abstract class Activity implements SavableDeletableEntity {
 
     //#region Equals
     @Override
-    public int hashCode() {
-      return Activity.this.id * 31 + getUser().getId();
+    public final int hashCode() {
+      return Objects.hash(Activity.this.id, getUser().getId());
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public final boolean equals(final Object obj) {
       if (obj == null) {
         return false;
       }
@@ -116,31 +137,41 @@ public abstract class Activity implements SavableDeletableEntity {
     //#endregion Equals
   }
 
-  public class ActivityMessage implements SavableDeletableEntity {
+  public final class ActivityMessage implements SavableDeletableEntity {
     //#region Static attributes
+    /** Table name in database. */
     private static final String TABLE_NAME = "ActivityMessage";
+    /** Name of primary key column in database. */
     private static final String PRIMARY_KEY_NAME = "id";
+    /** Name of Activity id column in database. */
     private static final String ACTIVITY_ID_COLUMN = "idActivity";
+    /** Name of {@link com.eos.streamus.models.User} id column in database. */
     private static final String USER_ID_COLUMN = "idUser";
+    /** Name of posted at timestamp column name. */
     private static final String POSTED_AT_COLUMN = "postedAt";
+    /** Name of content column name in database. */
     private static final String CONTENT_COLUMN = "content";
     //#endregion Static attributes
 
     //#region Instance attributes
+    /** id value. */
     private Integer id;
+    /** {@link com.eos.streamus.models.User} that writes the message. */
     private final User user;
+    /** Message content. */
     private final String content;
+    /** Message posted at timestamp. */
     private Timestamp postedAt;
     //#endregion Instance attributes
 
     //#region Constructors
-    public ActivityMessage(User user, String content) {
+    public ActivityMessage(final User user, final String content) {
       this.user = user;
       this.content = content;
       Activity.this.messages.add(this);
     }
 
-    public ActivityMessage(Integer id, User user, String content, Timestamp postedAt) {
+    public ActivityMessage(final Integer id, final User user, final String content, final Timestamp postedAt) {
       this(user, content);
       this.id = id;
       this.postedAt = postedAt;
@@ -187,7 +218,7 @@ public abstract class Activity implements SavableDeletableEntity {
 
     //#region Database operations
     @Override
-    public void save(Connection connection) throws SQLException {
+    public void save(final Connection connection) throws SQLException {
       if (this.id == null) {
         try (PreparedStatement preparedStatement = connection.prepareStatement(
             String.format(
@@ -216,11 +247,11 @@ public abstract class Activity implements SavableDeletableEntity {
     //#region Equals
     @Override
     public int hashCode() {
-      return Activity.this.hashCode() * 31 + user.hashCode();
+      return Objects.hash(Activity.this.hashCode(), user.hashCode());
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       if (obj == null) {
         return false;
       }
@@ -237,18 +268,23 @@ public abstract class Activity implements SavableDeletableEntity {
   }
 
   //#region Static Attributes
+  /** Table name in database. */
   public static final String TABLE_NAME = "Activity";
+  /** Primary key column name in database. */
   protected static final String PRIMARY_KEY_NAME = "id";
   //#endregion Static Attributes
 
   //#region Instance Attributes
+  /** Id of instance. */
   private Integer id;
+  /** List of all {@link com.eos.streamus.models.Activity.UserActivity} of this instance. */
   private final List<UserActivity> users = new ArrayList<>();
+  /** List of all {@link com.eos.streamus.models.Activity.ActivityMessage} of this activity. */
   private final List<ActivityMessage> messages = new ArrayList<>();
   //#endregion Instance Attributes
 
   //#region Constructors
-  protected Activity(User creator) {
+  protected Activity(final User creator) {
     if (creator == null) {
       throw new NullPointerException("Creator cannot be null");
     }
@@ -258,7 +294,7 @@ public abstract class Activity implements SavableDeletableEntity {
     users.add(new UserActivity(creator, true));
   }
 
-  protected Activity(Integer id) {
+  protected Activity(final Integer id) {
     this.id = id;
   }
 
@@ -267,26 +303,38 @@ public abstract class Activity implements SavableDeletableEntity {
   //#endregion Constructors
 
   //#region Getters and Setters
+  /** @return id of this Activity. */
   @Override
   public Integer getId() {
     return id;
   }
 
-  protected void setId(Integer id) {
+  /**
+   * Set id of Activity.
+   * @param id id of Activity.
+   */
+  protected void setId(final Integer id) {
     this.id = id;
   }
 
+  /** @return Name of underlying table in database. */
   @Override
   public String tableName() {
     return TABLE_NAME;
   }
 
+  /** @return Name of underlying table primary key column in database. */
   @Override
   public String primaryKeyName() {
     return PRIMARY_KEY_NAME;
   }
 
-  public void addUser(User user, boolean isManager) {
+  /**
+   * Add a user to this activity.
+   * @param user new User of activity.
+   * @param isManager Whether the user can manage the activity.
+   */
+  public void addUser(final User user, final boolean isManager) {
     if (user == null) {
       throw new NullPointerException();
     }
@@ -296,18 +344,27 @@ public abstract class Activity implements SavableDeletableEntity {
     this.users.add(new UserActivity(user, isManager));
   }
 
+  /** @return list of {@link com.eos.streamus.models.User}s. */
   public List<UserActivity> getUsers() {
     return new ArrayList<>(users);
   }
 
+  /** @return list of {@link com.eos.streamus.models.Activity.ActivityMessage}s of the Activity. */
   public List<ActivityMessage> getMessages() {
     return messages;
   }
   //#endregion Getters and Setters
 
   //#region Database operations
+
+  /**
+   * Save this instance to database.
+   *
+   * @param connection {@link Connection} to use to save.
+   * @throws SQLException if an error occurs during the operation.
+   */
   @Override
-  public void save(Connection connection) throws SQLException {
+  public void save(final Connection connection) throws SQLException {
     if (id == null) {
       throw new NotPersistedException("Activity#save cannot be called from non persisted Activity");
     }
@@ -318,7 +375,14 @@ public abstract class Activity implements SavableDeletableEntity {
     }
   }
 
-  protected void fetchUserActivities(Connection connection) throws SQLException, NoResultException {
+  /**
+   * Fetch and populate list of {@link UserActivity} of this activity.
+   *
+   * @param connection {@link Connection} to use to fetch entries.
+   * @throws SQLException If an error occurs.
+   * @throws NoResultException If an associated {@link User} cannot be found.
+   */
+  protected void fetchUserActivities(final Connection connection) throws SQLException, NoResultException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         String.format("select * from %s where %s = ?;", UserActivity.TABLE_NAME, UserActivity.ACTIVITY_ID_COLUMN))) {
       preparedStatement.setInt(1, this.getId());
@@ -331,11 +395,14 @@ public abstract class Activity implements SavableDeletableEntity {
     }
   }
 
-  public void fetchActivityMessages(Connection connection) throws SQLException, NoResultException {
-    try (PreparedStatement preparedStatement = connection.prepareStatement(String
-                                                                               .format("select * from %s where %s = ?;",
-                                                                                       ActivityMessage.TABLE_NAME,
-                                                                                       ActivityMessage.ACTIVITY_ID_COLUMN))) {
+  public final void fetchActivityMessages(final Connection connection) throws SQLException, NoResultException {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(
+        String.format(
+            "select * from %s where %s = ?;",
+            ActivityMessage.TABLE_NAME,
+            ActivityMessage.ACTIVITY_ID_COLUMN
+        )
+    )) {
       preparedStatement.setInt(1, id);
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
         while (resultSet.next()) {
@@ -352,6 +419,8 @@ public abstract class Activity implements SavableDeletableEntity {
   //#endregion Database operations
 
   //#region String representations
+
+  /** @return String representation of this instance. */
   @Override
   public String toString() {
     return defaultToString();
@@ -359,13 +428,19 @@ public abstract class Activity implements SavableDeletableEntity {
   //#endregion String representations
 
   //#region Equals
+  /** @return hashcode of instance. */
   @Override
   public int hashCode() {
     return id;
   }
 
+  /**
+   * Returns whether this Activity is equal to another object.
+   * @param obj Object to compare.
+   * @return if they are equal.
+   */
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(final Object obj) {
     if (obj == null) {
       return false;
     }
