@@ -15,17 +15,22 @@ import java.util.Comparator;
 import java.util.List;
 
 public abstract class SongCollection extends Collection {
-  public class Track extends Pair<Integer, Song> implements SavableDeletable {
+  public final class Track extends Pair<Integer, Song> implements SavableDeletable {
     //#region Static attributes
+    /** Table name in database. */
     public static final String TABLE_NAME = "SongCollectionSong";
+    /** Track number column name. */
     public static final String TRACK_NUMBER_COLUMN = "trackNumber";
+    /** Song id column name. */
     public static final String ID_SONG_COLUMN = "idSong";
+    /** SongCollection id column name. */
     public static final String ID_SONG_COLLECTION_COLUMN = "idSongCollection";
+    /** Creation function name in database. */
     public static final String CREATION_FUNCTION_NAME = "addSongToSongCollection";
     //#endregion Static attributes
 
     //#region Constructors
-    public Track(Integer trackNumber, Song song) {
+    public Track(final Integer trackNumber, final Song song) {
       super(trackNumber, song);
     }
     //#endregion Constructors
@@ -53,7 +58,7 @@ public abstract class SongCollection extends Collection {
      *
      * @throws SQLException if operation failed.
      */
-    public void save(Connection connection) throws SQLException {
+    public void save(final Connection connection) throws SQLException {
       if (this.getKey() == null) {
         try (PreparedStatement songPreparedStatement = connection.prepareStatement(
             String.format("select * from %s(?, ?);", CREATION_FUNCTION_NAME)
@@ -83,7 +88,7 @@ public abstract class SongCollection extends Collection {
       }
     }
 
-    private void updateTrackNumber(Connection connection) throws SQLException {
+    private void updateTrackNumber(final Connection connection) throws SQLException {
       try (PreparedStatement preparedStatement = connection.prepareStatement(
           String.format(
               "update %s set %s = ? where %s = ? and %s = ?",
@@ -101,7 +106,7 @@ public abstract class SongCollection extends Collection {
     }
 
     @Override
-    public void delete(Connection connection) throws SQLException {
+    public void delete(final Connection connection) throws SQLException {
       try (PreparedStatement preparedStatement = connection.prepareStatement(
           String.format(
               "delete from %s where %s = ? and %s = ?",
@@ -140,7 +145,7 @@ public abstract class SongCollection extends Collection {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
       if (o == null || o.getClass() != getClass()) {
         return false;
       }
@@ -151,21 +156,23 @@ public abstract class SongCollection extends Collection {
   }
 
   //#region Instance attributes
+  /** Tracks of collection. */
   private final List<Track> tracks = new ArrayList<>();
   //#endregion Instance attributes
 
   //#region Constructors
-  protected SongCollection(Integer id, String name, Timestamp createdAt, Timestamp updatedAt, Track... tracks) {
+  protected SongCollection(final Integer id, final String name, final Timestamp createdAt,
+                           final Timestamp updatedAt, final Track... tracks) {
     super(id, name, createdAt, updatedAt);
     initTracks(tracks);
   }
 
-  protected SongCollection(String name, Track... tracks) {
+  protected SongCollection(final String name, final Track... tracks) {
     super(name);
     initTracks(tracks);
   }
 
-  private void initTracks(Track... tracks) {
+  private void initTracks(final Track... tracks) {
     this.tracks.addAll(Arrays.asList(tracks));
   }
   //#endregion Constructors
@@ -176,7 +183,7 @@ public abstract class SongCollection extends Collection {
   }
 
   @Override
-  protected List<Pair<Integer, Resource>> getSpecificContent() {
+  protected final List<Pair<Integer, Resource>> getSpecificContent() {
     List<Pair<Integer, Resource>> content = new ArrayList<>();
     for (Track track : tracks) {
       content.add(new Pair<>(track.getKey(), track.getValue()));
@@ -191,7 +198,7 @@ public abstract class SongCollection extends Collection {
    *
    * @return Newly created Track.
    */
-  public Track addSong(Song song) {
+  public Track addSong(final Song song) {
     Integer newTrackNumber = 0;
     for (Track track : tracks) {
       if (track.getKey() > newTrackNumber) {
@@ -208,17 +215,19 @@ public abstract class SongCollection extends Collection {
    *
    * @param track Track to add.
    */
-  public void addTrack(Track track) {
+  public void addTrack(final Track track) {
     if (!this.tracks.contains(track)) {
       this.tracks.add(track);
     }
   }
 
+  /** @return Table name. */
   @Override
   public String tableName() {
     return TABLE_NAME;
   }
 
+  /** @return primary key name. */
   @Override
   public String primaryKeyName() {
     return PRIMARY_KEY_NAME;
@@ -226,8 +235,15 @@ public abstract class SongCollection extends Collection {
   //#endregion Accessors
 
   //#region Database operations
+
+  /**
+   * Save this instance to database.
+   *
+   * @param connection {@link Connection} to use to save.
+   * @throws SQLException if an error occurs.
+   */
   @Override
-  public void save(Connection connection) throws SQLException {
+  public void save(final Connection connection) throws SQLException {
     super.save(connection);
     List<Track> databaseTracks = getTracksFromDatabase(connection);
     sortTracks();
@@ -261,7 +277,7 @@ public abstract class SongCollection extends Collection {
     }
   }
 
-  private List<Track> getTracksFromDatabase(Connection connection) throws SQLException {
+  private List<Track> getTracksFromDatabase(final Connection connection) throws SQLException {
     List<Track> loadedTracks = new ArrayList<>();
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         String.format(
@@ -309,7 +325,7 @@ public abstract class SongCollection extends Collection {
    *
    * @throws SQLException If SQL statements fail or if integrity constraints are violated.
    */
-  public void moveTrack(Track trackToUpdate, int newTrackNumber, Connection connection)
+  public void moveTrack(final Track trackToUpdate, final int newTrackNumber, final Connection connection)
       throws SQLException {
     final int oldTrackNumber = trackToUpdate.getTrackNumber();
     if (!tracks.contains(trackToUpdate)) {
@@ -344,7 +360,7 @@ public abstract class SongCollection extends Collection {
     tracks.remove(track);
   }
 
-  private void swapTrackNumbers(Track track1, Track track2, Connection connection)
+  private void swapTrackNumbers(final Track track1, final Track track2, final Connection connection)
       throws SQLException {
     final int tmpTrackNumber = track1.getTrackNumber();
     track1.setTrackNumber(track2.getTrackNumber());
@@ -361,13 +377,19 @@ public abstract class SongCollection extends Collection {
   //#endregion
 
   //#region Equals
+  /** @return hashcode of instance. */
   @Override
   public int hashCode() {
     return getId();
   }
 
+  /**
+   * Tests if this instance is equal to given object.
+   * @param o object to test.
+   * @return if the instances are equal.
+   */
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     if (!super.equals(o)) {
       return false;
     }
