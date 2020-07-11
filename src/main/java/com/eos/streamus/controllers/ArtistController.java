@@ -33,11 +33,14 @@ import java.sql.SQLException;
 import java.util.List;
 
 @RestController
-public class ArtistController implements CommonResponses {
+public final class ArtistController implements CommonResponses {
+  /** {@link com.eos.streamus.utils.IDatabaseConnector} to use. */
   @Autowired
   private IDatabaseConnector databaseConnector;
+  /** {@link com.eos.streamus.dto.validators.MusicianDTOValidator} to use. */
   @Autowired
   private MusicianDTOValidator musicianDTOValidator;
+  /** {@link com.eos.streamus.dto.validators.BandMemberDTOValidator} to use. */
   @Autowired
   private BandMemberDTOValidator bandMemberDTOValidator;
 
@@ -57,7 +60,7 @@ public class ArtistController implements CommonResponses {
   }
 
   @GetMapping("/artist/{id}")
-  public ResponseEntity<JsonNode> getArtist(@PathVariable int id) {
+  public ResponseEntity<JsonNode> getArtist(@PathVariable final int id) {
     try (Connection connection = databaseConnector.getConnection()) {
       Artist artist = ArtistDAO.findById(id, connection);
       artist.fetchAlbums(connection);
@@ -74,7 +77,7 @@ public class ArtistController implements CommonResponses {
   }
 
   @GetMapping("/artist/{id}/discography")
-  public ResponseEntity<JsonNode> getArtistDiscography(@PathVariable int id) {
+  public ResponseEntity<JsonNode> getArtistDiscography(@PathVariable final int id) {
     try (Connection connection = databaseConnector.getConnection()) {
       Artist artist = ArtistDAO.findById(id, connection);
       artist.fetchAlbums(connection);
@@ -88,7 +91,7 @@ public class ArtistController implements CommonResponses {
   }
 
   @PostMapping("/band")
-  public ResponseEntity<JsonNode> createBand(@Valid @RequestBody com.eos.streamus.dto.BandDTO bandData) {
+  public ResponseEntity<JsonNode> createBand(@Valid @RequestBody final com.eos.streamus.dto.BandDTO bandData) {
     try (Connection connection = databaseConnector.getConnection()) {
       Band band = new Band(bandData.getName());
       band.save(connection);
@@ -100,8 +103,8 @@ public class ArtistController implements CommonResponses {
   }
 
   @PostMapping("/musician")
-  public ResponseEntity<JsonNode> createMusician(@Valid @RequestBody com.eos.streamus.dto.MusicianDTO data,
-                                                 BindingResult result) {
+  public ResponseEntity<JsonNode> createMusician(@Valid @RequestBody final com.eos.streamus.dto.MusicianDTO data,
+                                                 final BindingResult result) {
     musicianDTOValidator.validate(data, result);
     if (result.hasErrors()) {
       return badRequest(result.toString());
@@ -138,9 +141,9 @@ public class ArtistController implements CommonResponses {
   }
 
   @PostMapping("/band/{bandId}/members")
-  public ResponseEntity<JsonNode> addMemberToBand(@PathVariable int bandId,
-                                                  @Valid @RequestBody BandMemberDTO member,
-                                                  BindingResult result) {
+  public ResponseEntity<JsonNode> addMemberToBand(@PathVariable final int bandId,
+                                                  @Valid @RequestBody final BandMemberDTO member,
+                                                  final BindingResult result) {
     bandMemberDTOValidator.validate(member, result);
     if (result.hasErrors()) {
       return badRequest(result.toString());
@@ -179,8 +182,8 @@ public class ArtistController implements CommonResponses {
     }
   }
 
-  private Musician getMusicianFromBandMemberData(BandMemberDTO member,
-                                                 Connection connection) throws SQLException, NoResultException {
+  private Musician getMusicianFromBandMemberData(final BandMemberDTO member,
+                                                 final Connection connection) throws SQLException, NoResultException {
     Musician musician;
     if (member.getMusicianId() != null) {
       musician = Musician.findById(member.getMusicianId(), connection);
@@ -214,4 +217,5 @@ public class ArtistController implements CommonResponses {
     return musician;
 
   }
+
 }
