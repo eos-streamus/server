@@ -10,21 +10,29 @@ import java.util.List;
 public class Band extends Artist {
   public class Member implements SavableDeletable {
     //#region Static attributes
+    /** BandMusician Table name in database. */
     public static final String TABLE_NAME = "BandMusician";
+    /** idBand column in table. */
     public static final String BAND_ID_COLUMN = "idBand";
+    /** idMusician column in table. */
     public static final String MUSICIAN_ID_COLUMN = "idMusician";
+    /** memberFrom column in table. */
     public static final String FROM_COLUMN = "memberFrom";
+    /** memberTo column in table. */
     public static final String TO_COLUMN = "memberTo";
     //#endregion Static attributes
 
     //#region Instance attributes
+    /** Member {@link com.eos.streamus.models.Musician}. */
     private final Musician musician;
+    /** Membership start date. */
     private final Date from;
+    /** Membership end date. */
     private Date to;
     //#endregion Instance attributes
 
     //#region Constructors
-    public Member(Musician musician, Date from) {
+    public Member(final Musician musician, final Date from) {
       if (musician == null || from == null) {
         throw new IllegalArgumentException("Member.musician and Member.from cannot be null");
       }
@@ -35,7 +43,7 @@ public class Band extends Artist {
       this.from = from;
     }
 
-    public Member(Musician musician, Date from, Date to) {
+    public Member(final Musician musician, final Date from, final Date to) {
       this(musician, from);
       this.to = to;
     }
@@ -50,17 +58,17 @@ public class Band extends Artist {
       return from;
     }
 
-    public Date getTo() {
+    public final Date getTo() {
       return to;
     }
 
-    public Band getBand() {
+    public final Band getBand() {
       return Band.this;
     }
     //#endregion Getters and Setters
 
     //#region Database operations
-    public boolean isPersisted(Connection connection) throws SQLException {
+    public final boolean isPersisted(final Connection connection) throws SQLException {
       try (PreparedStatement existsStatement = connection.prepareStatement(String.format(
           "select 1 from %s where %s = ? and %s = ? and %s = ?", TABLE_NAME, BAND_ID_COLUMN, MUSICIAN_ID_COLUMN,
           FROM_COLUMN))) {
@@ -74,7 +82,7 @@ public class Band extends Artist {
     }
 
     @Override
-    public void delete(Connection connection) throws SQLException {
+    public final void delete(final Connection connection) throws SQLException {
       try (PreparedStatement preparedStatement = connection.prepareStatement(String.format(
           "delete from %s where %s = ? and %s = ? and %s = ?;", TABLE_NAME, BAND_ID_COLUMN, MUSICIAN_ID_COLUMN,
           FROM_COLUMN))) {
@@ -86,7 +94,7 @@ public class Band extends Artist {
     }
 
     @Override
-    public void save(Connection connection) throws SQLException {
+    public final void save(final Connection connection) throws SQLException {
       if (Band.this.getId() == null) {
         throw new NotPersistedException("Band not persisted");
       }
@@ -147,7 +155,7 @@ public class Band extends Artist {
 
     //#region String representations
     @Override
-    public String toString() {
+    public final String toString() {
       return String.format(
           "%s[%s= %d, %s= %d, %s= %s, %s= %s]",
           getClass().getName(),
@@ -165,7 +173,7 @@ public class Band extends Artist {
 
     //#region Equals
     @Override
-    public int hashCode() {
+    public final int hashCode() {
       int hashCode = musician.hashCode() * 31 + Band.this.hashCode() * 31;
       if (from != null) {
         hashCode += 31 * from.hashCode();
@@ -177,7 +185,7 @@ public class Band extends Artist {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public final boolean equals(final Object obj) {
       if (obj == null) {
         return false;
       }
@@ -200,24 +208,31 @@ public class Band extends Artist {
   }
 
   //#region Static attributes
+  /** Band table name. */
   public static final String TABLE_NAME = "Band";
+  /** idArtist column name. */
   public static final String PRIMARY_KEY_NAME = "idArtist";
+  /** Band creation function name. */
   public static final String CREATION_FUNCTION_NAME = "createBand";
+  /** Band view name. */
   public static final String VIEW_NAME = "vBand";
+  /** Id of Band column name in view. */
   public static final String VIEW_ID_COLUMN = "id";
+  /** Name of Band column name in view. */
   public static final String VIEW_NAME_COLUMN = "name";
   //#endregion Static attributes
 
   //#region Instance attributes
-  final List<Member> members = new ArrayList<>();
+  /** List of memberships. */
+  private final List<Member> members = new ArrayList<>();
   //#endregion Instance attributes
 
   //#region Constructors
-  private Band(Integer id, String name) {
+  private Band(final Integer id, final String name) {
     super(id, name);
   }
 
-  public Band(String name) {
+  public Band(final String name) {
     super(name);
     if (name == null) {
       throw new IllegalArgumentException("Band name cannot be null");
@@ -227,33 +242,33 @@ public class Band extends Artist {
 
   //#region Getters and Setters
   @Override
-  public String tableName() {
+  public final String tableName() {
     return TABLE_NAME;
   }
 
   @Override
-  public String primaryKeyName() {
+  public final String primaryKeyName() {
     return PRIMARY_KEY_NAME;
   }
 
   @Override
-  public String creationFunctionName() {
+  public final String creationFunctionName() {
     return CREATION_FUNCTION_NAME;
   }
 
-  public List<Member> getMembers() {
+  public final List<Member> getMembers() {
     return members;
   }
 
-  public void addMember(Musician musician, Date from, Date to) {
+  public final void addMember(final Musician musician, final Date from, final Date to) {
     members.add(this.new Member(musician, from, to));
   }
 
-  public void addMember(Musician musician, Date from) {
+  public final void addMember(final Musician musician, final Date from) {
     members.add(new Member(musician, from));
   }
 
-  public void addMember(Member member) {
+  public final void addMember(final Member member) {
     if (!member.getBand().equals(this)) {
       throw new IllegalArgumentException(String.format("Member %s has a different band", member));
     }
@@ -263,7 +278,7 @@ public class Band extends Artist {
 
   //#region Database operations
   @Override
-  public void save(Connection connection) throws SQLException {
+  public final void save(final Connection connection) throws SQLException {
     if (this.getId() == null) {
       try (PreparedStatement preparedStatement = connection.prepareStatement(
           String.format(
@@ -296,7 +311,7 @@ public class Band extends Artist {
     }
   }
 
-  public static Band findById(Integer id, Connection connection) throws SQLException, NoResultException {
+  public static Band findById(final Integer id, final Connection connection) throws SQLException, NoResultException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         String.format(
             "select * from %s where %s = ?",
@@ -316,7 +331,7 @@ public class Band extends Artist {
     }
   }
 
-  public void fetchMembers(Connection connection) throws SQLException, NoResultException {
+  public final void fetchMembers(final Connection connection) throws SQLException, NoResultException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         String.format(
             "select * from %s where %s = ?",
@@ -339,12 +354,12 @@ public class Band extends Artist {
 
   //#region Equals
   @Override
-  public int hashCode() {
+  public final int hashCode() {
     return getId();
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public final boolean equals(final Object obj) {
     if (!super.equals(obj)) {
       return false;
     }
