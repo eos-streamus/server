@@ -26,22 +26,26 @@ import java.sql.Date;
 import java.sql.SQLException;
 
 @RestController
-public class UserController implements CommonResponses {
+public final class UserController implements CommonResponses {
 
+  /** {@link com.eos.streamus.utils.IDatabaseConnector} to use. */
   @Autowired
   private IDatabaseConnector databaseConnector;
 
+  /** {@link com.eos.streamus.dto.validators.UserDTOValidator} to use. */
   @Autowired
   private UserDTOValidator userDTOValidator;
 
+  /** {@link org.springframework.security.crypto.password.PasswordEncoder} to use. */
   @Autowired
   private PasswordEncoder passwordEncoder;
 
+  /** {@link com.eos.streamus.utils.JwtService} to use. */
   @Autowired
   private JwtService jwtService;
 
   @PostMapping("/users")
-  public ResponseEntity<JsonNode> register(@RequestBody @Valid final UserDTO userDTO, BindingResult result) {
+  public ResponseEntity<JsonNode> register(@RequestBody @Valid final UserDTO userDTO, final BindingResult result) {
     if (result.hasErrors()) {
       return badRequest(result.toString());
     }
@@ -75,7 +79,7 @@ public class UserController implements CommonResponses {
   }
 
   @PostMapping("/login")
-  public ResponseEntity<String> login(@RequestBody @Valid final LoginDTO loginDTO, BindingResult result) {
+  public ResponseEntity<String> login(@RequestBody @Valid final LoginDTO loginDTO, final BindingResult result) {
     if (result.hasErrors()) {
       return ResponseEntity.badRequest().body(result.toString());
     }
@@ -114,7 +118,7 @@ public class UserController implements CommonResponses {
   @PutMapping("/user/{id}")
   public ResponseEntity<JsonNode> updateUser(@PathVariable final int id,
                                              @RequestBody @Valid final UserDTO userDTO,
-                                             BindingResult result) {
+                                             final BindingResult result) {
     if (result.hasErrors()) {
       return badRequest(result.toString());
     }
