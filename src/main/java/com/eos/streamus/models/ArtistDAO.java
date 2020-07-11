@@ -10,10 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class ArtistDAO {
+public final class ArtistDAO {
   private ArtistDAO() {}
 
-  public static Artist findById(Integer id, Connection connection) throws SQLException, NoResultException {
+  public static Artist findById(final Integer id, final Connection connection) throws SQLException, NoResultException {
     try {
       return Musician.findById(id, connection);
     } catch (NoResultException e) {
@@ -22,7 +22,7 @@ public class ArtistDAO {
     return Band.findById(id, connection);
   }
 
-  public static List<Artist> all(Connection connection) throws SQLException {
+  public static List<Artist> all(final Connection connection) throws SQLException {
     List<Artist> artists = new ArrayList<>();
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         String.format(
