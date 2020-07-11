@@ -1,8 +1,11 @@
 package com.eos.streamus.dto;
 
-public class MusicianDTO {
+public final class MusicianDTO {
+  /** Musician id. */
   private Integer id;
+  /** Musician name. */
   private String name;
+  /** Musician person. */
   private PersonDTO person;
 
   public Integer getId() {
