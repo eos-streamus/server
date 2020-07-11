@@ -8,7 +8,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import java.util.List;
 
-public class JsonArtistListWriter extends JsonArrayWriter {
+public final class JsonArtistListWriter extends JsonArrayWriter {
+  /** List of {@link com.eos.streamus.models.Artist}s to write as Json. */
   private final List<Artist> artists;
 
   public JsonArtistListWriter(final List<Artist> artists) {
