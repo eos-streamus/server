@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 abstract class JsonCollectionWriter extends JsonObjectWriter {
+  /** {@link com.eos.streamus.models.Collection} to write as Json. */
   private final Collection collection;
 
   protected JsonCollectionWriter(final Collection collection) {
@@ -20,6 +21,6 @@ abstract class JsonCollectionWriter extends JsonObjectWriter {
     return getSpecificCollectionJson(objectNode);
   }
 
-  protected abstract JsonNode getSpecificCollectionJson(final ObjectNode objectNode);
+  protected abstract JsonNode getSpecificCollectionJson(ObjectNode objectNode);
 
 }
