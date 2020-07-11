@@ -8,69 +8,92 @@ import java.util.List;
 
 public class Album extends SongCollection {
   //#region Static attributes
+  /** Creation function name in database. */
   private static final String CREATION_FUNCTION_NAME = "createAlbum";
+  /** Table name in database. */
   private static final String TABLE_NAME = "Album";
+  /** Primary key column name in table. */
   private static final String PRIMARY_KEY_NAME = "idSongCollection";
+  /** Release date column name. */
   private static final String RELEASE_DATE_COLUMN = "releaseDate";
+  /** AlbumArtist association table name. */
   private static final String ALBUM_ARTIST_TABLE_NAME = "AlbumArtist";
+  /** Artist id column name in AlbumArtist. */
   private static final String ALBUM_ARTIST_ARTIST_ID_COLUMN = "idArtist";
+  /** Album id column name in AlbumArtist. */
   private static final String ALBUM_ARTIST_ALBUM_ID_COLUMN = "idAlbum";
+  /** View name. */
   private static final String VIEW_NAME = "vAlbum";
+  /** Id column name in view. */
   private static final String VIEW_ID = "id";
+  /** Song id column name in view. */
   private static final String VIEW_SONG_ID = "idSong";
+  /** Track number column name in view. */
   private static final String TRACK_NUMBER_COLUMN = "trackNumber";
+  /** Song name column name in view. */
   private static final String VIEW_SONG_NAME_COLUMN = "songName";
+  /** Song created at timestamp column name in view. */
   private static final String SONG_CREATED_AT_COLUMN = "songCreatedAt";
   //#endregion Static attributes
 
   //#region Instance attributes
+  /** List of {@link Artist} of the Album. */
   private final List<Artist> artists = new ArrayList<>();
+  /** Release date of the Album. */
   private final Date releaseDate;
   //#endregion Instance attributes
 
   //#region Constructors
-  private Album(Integer id, String name, Date releaseDate, Timestamp createdAt, Timestamp updatedAt, Track... tracks) {
+  private Album(final Integer id, final String name, final Date releaseDate, final Timestamp createdAt,
+                final Timestamp updatedAt, final Track... tracks) {
     super(id, name, createdAt, updatedAt, tracks);
     this.releaseDate = releaseDate;
   }
 
-  public Album(String name, Date releaseDate, Track... tracks) {
+  public Album(final String name, final Date releaseDate, final Track... tracks) {
     super(name, tracks);
     this.releaseDate = releaseDate;
   }
 
   @Override
-  public String creationFunctionName() {
+  public final String creationFunctionName() {
     return CREATION_FUNCTION_NAME;
   }
 
   @Override
-  public String tableName() {
+  public final String tableName() {
     return TABLE_NAME;
   }
   //#endregion Constructors
 
   //#region Accessors
-  public void addArtist(Artist artist) {
+
+  /**
+   * Add an {@link Artist} to this Album.
+   *
+   * @param artist Artist to add.
+   */
+  public void addArtist(final Artist artist) {
     if (artist == null) {
       throw new NullPointerException();
     }
     artists.add(artist);
   }
 
+  /** @return List of {@link Artist}s of this Album. */
   public List<Artist> getArtists() {
     return artists;
   }
 
   @Override
-  public String primaryKeyName() {
+  public final String primaryKeyName() {
     return PRIMARY_KEY_NAME;
   }
   //#endregion Accessors
 
   //#region Database operations
   @Override
-  public void save(Connection connection) throws SQLException {
+  public final void save(final Connection connection) throws SQLException {
     if (this.getId() == null) {
       try (PreparedStatement preparedStatement = connection.prepareStatement(
           String.format(
@@ -106,7 +129,7 @@ public class Album extends SongCollection {
     super.save(connection);
   }
 
-  public static Album findById(Integer id, Connection connection) throws SQLException, NoResultException {
+  public static Album findById(final Integer id, final Connection connection) throws SQLException, NoResultException {
     Album album;
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         String.format(
@@ -161,12 +184,12 @@ public class Album extends SongCollection {
 
   //#region Equals
   @Override
-  public int hashCode() {
+  public final int hashCode() {
     return getId();
   }
 
   @Override
-  public boolean equals(Object o) {
+  public final boolean equals(final Object o) {
     if (!super.equals(o)) {
       return false;
     }
