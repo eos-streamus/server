@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.RequestBuilder;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.sql.Connection;
@@ -14,7 +14,7 @@ import java.util.UUID;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class AlbumControllerTests extends ControllerTests {
+class AlbumControllerTests extends JwtSetupControllerTests {
 
   @Test
   void creatingAnAlbumWithANonExistingArtistShouldReturnBadRequest() throws Exception {
@@ -28,11 +28,11 @@ public class AlbumControllerTests extends ControllerTests {
       ArrayNode artists = objectNode.putArray("artistIds");
       artists.add(band.getId());
 
-      RequestBuilder builder = MockMvcRequestBuilders.post("/albums")
-                                                     .contentType(MediaType.APPLICATION_JSON)
-                                                     .content(objectNode.toPrettyString());
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/albums")
+                                                                    .contentType(MediaType.APPLICATION_JSON)
+                                                                    .content(objectNode.toPrettyString());
 
-      mockMvc.perform(builder).andExpect(status().is(400));
+      perform(builder).andExpect(status().is(400));
     }
   }
 
@@ -64,11 +64,11 @@ public class AlbumControllerTests extends ControllerTests {
       song2Node.put("songId", song2.getId());
       song2Node.put("trackNumber", 3);
 
-      RequestBuilder builder = MockMvcRequestBuilders.post("/albums")
-                                                     .contentType(MediaType.APPLICATION_JSON)
-                                                     .content(objectNode.toPrettyString());
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/albums")
+                                                                    .contentType(MediaType.APPLICATION_JSON)
+                                                                    .content(objectNode.toPrettyString());
 
-      mockMvc.perform(builder).andExpect(status().is(400));
+      perform(builder).andExpect(status().is(400));
     }
   }
 
@@ -95,11 +95,11 @@ public class AlbumControllerTests extends ControllerTests {
       song1Node.put("songId", song1.getId());
       song1Node.put("trackNumber", 1);
 
-      RequestBuilder builder = MockMvcRequestBuilders.post("/albums")
-                                                     .contentType(MediaType.APPLICATION_JSON)
-                                                     .content(objectNode.toPrettyString());
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/albums")
+                                                                    .contentType(MediaType.APPLICATION_JSON)
+                                                                    .content(objectNode.toPrettyString());
 
-      mockMvc.perform(builder).andExpect(status().is(400));
+      perform(builder).andExpect(status().is(400));
     }
   }
 
@@ -126,11 +126,11 @@ public class AlbumControllerTests extends ControllerTests {
       song1Node.put("songId", song1.getId());
       song1Node.put("trackNumber", 3);
 
-      RequestBuilder builder = MockMvcRequestBuilders.post("/albums")
-                                                     .contentType(MediaType.APPLICATION_JSON)
-                                                     .content(objectNode.toPrettyString());
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/albums")
+                                                                    .contentType(MediaType.APPLICATION_JSON)
+                                                                    .content(objectNode.toPrettyString());
 
-      mockMvc.perform(builder).andExpect(status().is(400));
+      perform(builder).andExpect(status().is(400));
     }
   }
 
@@ -157,11 +157,11 @@ public class AlbumControllerTests extends ControllerTests {
       song1Node.put("songId", song1.getId());
       song1Node.put("trackNumber", 0);
 
-      RequestBuilder builder = MockMvcRequestBuilders.post("/albums")
-                                                     .contentType(MediaType.APPLICATION_JSON)
-                                                     .content(objectNode.toPrettyString());
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/albums")
+                                                                    .contentType(MediaType.APPLICATION_JSON)
+                                                                    .content(objectNode.toPrettyString());
 
-      mockMvc.perform(builder).andExpect(status().is(400));
+      perform(builder).andExpect(status().is(400));
     }
   }
 

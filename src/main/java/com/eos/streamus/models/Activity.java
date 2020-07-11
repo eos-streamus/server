@@ -13,7 +13,7 @@ public abstract class Activity implements SavableDeletableEntity {
     //#region Static attributes
     public static final String TABLE_NAME = "UserActivity";
     public static final String USER_ID_COLUMN = "idUser";
-    public static final String ACTTIVITY_ID_COLUMN = "idActivity";
+    public static final String ACTIVITY_ID_COLUMN = "idActivity";
     public static final String MANAGES_COLUMN = "manages";
     //#endregion Static attributes
 
@@ -46,7 +46,7 @@ public abstract class Activity implements SavableDeletableEntity {
         throw new NotPersistedException("Activity is not persisted");
       }
       try (PreparedStatement preparedStatement = connection.prepareStatement(
-          String.format("select 1 from %s where %s = ? and %s = ?", TABLE_NAME, USER_ID_COLUMN, ACTTIVITY_ID_COLUMN))) {
+          String.format("select 1 from %s where %s = ? and %s = ?", TABLE_NAME, USER_ID_COLUMN, ACTIVITY_ID_COLUMN))) {
         preparedStatement.setInt(1, getUser().getId());
         preparedStatement.setInt(2, Activity.this.id);
         try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -61,7 +61,7 @@ public abstract class Activity implements SavableDeletableEntity {
         throw new NotPersistedException("UserActivity is not persisted");
       }
       try (PreparedStatement preparedStatement = connection.prepareStatement(
-          String.format("delete from %s where %s = ? and %s = ?;", TABLE_NAME, USER_ID_COLUMN, ACTTIVITY_ID_COLUMN))) {
+          String.format("delete from %s where %s = ? and %s = ?;", TABLE_NAME, USER_ID_COLUMN, ACTIVITY_ID_COLUMN))) {
         preparedStatement.setInt(1, getUser().getId());
         preparedStatement.setInt(2, Activity.this.id);
         preparedStatement.execute();
@@ -78,7 +78,7 @@ public abstract class Activity implements SavableDeletableEntity {
       }
       if (isNotPersisted(connection)) {
         try (PreparedStatement preparedStatement = connection.prepareStatement(String.format(
-            "insert into %s(%s, %s, %s) values (?, ?, ?);", TABLE_NAME, USER_ID_COLUMN, ACTTIVITY_ID_COLUMN,
+            "insert into %s(%s, %s, %s) values (?, ?, ?);", TABLE_NAME, USER_ID_COLUMN, ACTIVITY_ID_COLUMN,
             MANAGES_COLUMN))) {
           preparedStatement.setInt(1, getUser().getId());
           preparedStatement.setInt(2, Activity.this.id);
@@ -320,7 +320,7 @@ public abstract class Activity implements SavableDeletableEntity {
 
   protected void fetchUserActivities(Connection connection) throws SQLException, NoResultException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
-        String.format("select * from %s where %s = ?;", UserActivity.TABLE_NAME, UserActivity.ACTTIVITY_ID_COLUMN))) {
+        String.format("select * from %s where %s = ?;", UserActivity.TABLE_NAME, UserActivity.ACTIVITY_ID_COLUMN))) {
       preparedStatement.setInt(1, this.getId());
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
         while (resultSet.next()) {

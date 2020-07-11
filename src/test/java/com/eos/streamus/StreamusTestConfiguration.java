@@ -5,17 +5,23 @@ import com.eos.streamus.controllers.ArtistController;
 import com.eos.streamus.controllers.FilmController;
 import com.eos.streamus.controllers.SongController;
 import com.eos.streamus.controllers.SongPlaylistController;
-import com.eos.streamus.payloadmodels.validators.AlbumValidator;
-import com.eos.streamus.payloadmodels.validators.BandMemberValidator;
-import com.eos.streamus.payloadmodels.validators.MusicianValidator;
-import com.eos.streamus.payloadmodels.validators.PersonValidator;
-import com.eos.streamus.payloadmodels.validators.SongPlaylistValidator;
+import com.eos.streamus.controllers.UserController;
+import com.eos.streamus.dto.validators.AlbumDTOValidator;
+import com.eos.streamus.dto.validators.BandMemberDTOValidator;
+import com.eos.streamus.dto.validators.MusicianDTOValidator;
+import com.eos.streamus.dto.validators.PersonDTOValidator;
+import com.eos.streamus.dto.validators.SongPlaylistDTOValidator;
+import com.eos.streamus.dto.validators.UserDTOValidator;
+import com.eos.streamus.filters.JwtFilter;
 import com.eos.streamus.utils.IDatabaseConnector;
 import com.eos.streamus.utils.IResourcePathResolver;
+import com.eos.streamus.utils.JwtService;
 import com.eos.streamus.utils.TestDatabaseConnector;
 import com.eos.streamus.utils.TestResourcePathResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class StreamusTestConfiguration {
@@ -50,18 +56,26 @@ public class StreamusTestConfiguration {
   }
 
   @Bean
-  public AlbumValidator albumValidator() {
-    return new AlbumValidator();
+  public UserController userController() {
+    return new UserController();
   }
 
   @Bean
-  public MusicianValidator musicianValidator() { return new MusicianValidator(); }
+  public AlbumDTOValidator albumValidator() {
+    return new AlbumDTOValidator();
+  }
 
   @Bean
-  public PersonValidator personValidator() { return new PersonValidator(); }
+  public MusicianDTOValidator musicianValidator() { return new MusicianDTOValidator(); }
 
   @Bean
-  public BandMemberValidator bandMemberValidator() { return new BandMemberValidator(); }
+  public PersonDTOValidator personValidator() { return new PersonDTOValidator(); }
+
+  @Bean
+  public PersonDTOValidator personDTOValidator() { return new PersonDTOValidator(); }
+
+  @Bean
+  public BandMemberDTOValidator bandMemberValidator() { return new BandMemberDTOValidator(); }
 
   @Bean
   public SongPlaylistController songPlaylistController() {
@@ -69,7 +83,24 @@ public class StreamusTestConfiguration {
   }
 
   @Bean
-  public SongPlaylistValidator songPlaylistValidator() {
-    return new SongPlaylistValidator();
+  public SongPlaylistDTOValidator songPlaylistValidator() {
+    return new SongPlaylistDTOValidator();
   }
+
+  @Bean
+  public UserDTOValidator userDTOValidator() { return new UserDTOValidator(); }
+
+  @Bean
+  public JwtService jwtUtils() {
+    return new JwtService();
+  }
+
+  @Bean
+  public JwtFilter jwtFilter() {
+    return new JwtFilter();
+  }
+
+  @Bean
+  public PasswordEncoder passwordEncoder() {return new BCryptPasswordEncoder(); }
+
 }

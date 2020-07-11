@@ -6,9 +6,9 @@ import com.eos.streamus.models.ArtistDAO;
 import com.eos.streamus.models.Band;
 import com.eos.streamus.models.Musician;
 import com.eos.streamus.models.Person;
-import com.eos.streamus.payloadmodels.validators.BandMember;
-import com.eos.streamus.payloadmodels.validators.BandMemberValidator;
-import com.eos.streamus.payloadmodels.validators.MusicianValidator;
+import com.eos.streamus.dto.BandMember;
+import com.eos.streamus.dto.validators.BandMemberDTOValidator;
+import com.eos.streamus.dto.validators.MusicianDTOValidator;
 import com.eos.streamus.utils.IDatabaseConnector;
 import com.eos.streamus.writers.JsonAlbumListWriter;
 import com.eos.streamus.writers.JsonArtistListWriter;
@@ -37,9 +37,9 @@ public class ArtistController implements CommonResponses {
   @Autowired
   private IDatabaseConnector databaseConnector;
   @Autowired
-  private MusicianValidator musicianValidator;
+  private MusicianDTOValidator musicianDTOValidator;
   @Autowired
-  private BandMemberValidator bandMemberValidator;
+  private BandMemberDTOValidator bandMemberDTOValidator;
 
   @GetMapping("/artists")
   public ResponseEntity<JsonNode> allArtists() {
@@ -88,7 +88,7 @@ public class ArtistController implements CommonResponses {
   }
 
   @PostMapping("/band")
-  public ResponseEntity<JsonNode> createBand(@Valid @RequestBody com.eos.streamus.payloadmodels.Band bandData) {
+  public ResponseEntity<JsonNode> createBand(@Valid @RequestBody com.eos.streamus.dto.BandDTO bandData) {
     try (Connection connection = databaseConnector.getConnection()) {
       Band band = new Band(bandData.getName());
       band.save(connection);
@@ -100,9 +100,9 @@ public class ArtistController implements CommonResponses {
   }
 
   @PostMapping("/musician")
-  public ResponseEntity<JsonNode> createMusician(@Valid @RequestBody com.eos.streamus.payloadmodels.Musician data,
+  public ResponseEntity<JsonNode> createMusician(@Valid @RequestBody com.eos.streamus.dto.MusicianDTO data,
                                                  BindingResult result) {
-    musicianValidator.validate(data, result);
+    musicianDTOValidator.validate(data, result);
     if (result.hasErrors()) {
       return badRequest(result.toString());
     }
@@ -111,14 +111,14 @@ public class ArtistController implements CommonResponses {
       Musician musician;
       if (data.getPerson() != null) {
         Person person;
-        com.eos.streamus.payloadmodels.Person dataPerson = data.getPerson();
+        com.eos.streamus.dto.PersonDTO dataPerson = data.getPerson();
         if (dataPerson.getId() != null) {
           person = Person.findById(dataPerson.getId(), connection);
         } else {
           person = new Person(
               dataPerson.getFirstName(),
               dataPerson.getLastName(),
-              dataPerson.getDateOfBirth() == null ? null : new Date(dataPerson.getDateOfBirth())
+              dataPerson.getDateOfBirth() == null ? null : Date.valueOf(dataPerson.getDateOfBirth())
           );
           person.save(connection);
         }
@@ -141,7 +141,7 @@ public class ArtistController implements CommonResponses {
   public ResponseEntity<JsonNode> addMemberToBand(@PathVariable int bandId,
                                                   @Valid @RequestBody BandMember member,
                                                   BindingResult result) {
-    bandMemberValidator.validate(member, result);
+    bandMemberDTOValidator.validate(member, result);
     if (result.hasErrors()) {
       return badRequest(result.toString());
     }
@@ -179,7 +179,8 @@ public class ArtistController implements CommonResponses {
     }
   }
 
-  private Musician getMusicianFromBandMemberData(BandMember member, Connection connection) throws SQLException, NoResultException {
+  private Musician getMusicianFromBandMemberData(BandMember member,
+                                                 Connection connection) throws SQLException, NoResultException {
     Musician musician;
     if (member.getMusicianId() != null) {
       musician = Musician.findById(member.getMusicianId(), connection);
@@ -197,11 +198,11 @@ public class ArtistController implements CommonResponses {
                 Person.findById(member.getMusician().getPerson().getId(), connection)
             );
       } else {
-        com.eos.streamus.payloadmodels.Person payloadPerson = member.getMusician().getPerson();
+        com.eos.streamus.dto.PersonDTO personDTO = member.getMusician().getPerson();
         Person person = new Person(
-            payloadPerson.getFirstName(),
-            payloadPerson.getLastName(),
-            new Date(payloadPerson.getDateOfBirth())
+            personDTO.getFirstName(),
+            personDTO.getLastName(),
+            Date.valueOf(personDTO.getDateOfBirth())
         );
         musician = member.getMusician().getName() == null ?
             new Musician(person)
@@ -211,6 +212,6 @@ public class ArtistController implements CommonResponses {
       musician.save(connection);
     }
     return musician;
-  }
 
+  }
 }

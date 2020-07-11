@@ -1,6 +1,6 @@
-package com.eos.streamus.payloadmodels.validators;
+package com.eos.streamus.dto.validators;
 
-import com.eos.streamus.payloadmodels.Person;
+import com.eos.streamus.dto.PersonDTO;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -8,15 +8,15 @@ import org.springframework.validation.Validator;
 import java.util.Date;
 
 @Component
-public class PersonValidator implements Validator {
+public class PersonDTOValidator implements Validator {
   @Override
   public boolean supports(final Class<?> aClass) {
-    return aClass.equals(Person.class);
+    return aClass.equals(PersonDTO.class);
   }
 
   @Override
   public void validate(final Object o, final Errors errors) {
-    Person person = (Person) o;
+    PersonDTO person = (PersonDTO) o;
     if ((person.getFirstName() == null) ^ (person.getLastName() == null)) {
       errors.reject("<firstName> and <lastName> must either both be defined, or not");
     }
@@ -32,7 +32,7 @@ public class PersonValidator implements Validator {
     if (person.getLastName() != null && person.getLastName().isEmpty()) {
       errors.reject("<lastName> cannot be empty");
     }
-    if (person.getDateOfBirth() != null && person.getDateOfBirth() > new Date().getTime()) {
+    if (person.getDateOfBirth() != null && java.sql.Date.valueOf(person.getDateOfBirth()).after(new Date())) {
       errors.reject("<dateOfBirth> cannot be in the future");
     }
   }

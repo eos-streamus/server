@@ -1,12 +1,13 @@
 package com.eos.streamus.controllers;
 
+import com.eos.streamus.dto.validators.SongCollectionDTOValidator;
 import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.SongCollection;
 import com.eos.streamus.models.SongPlaylist;
 import com.eos.streamus.models.User;
-import com.eos.streamus.payloadmodels.Track;
-import com.eos.streamus.payloadmodels.validators.SongCollectionValidator;
-import com.eos.streamus.payloadmodels.validators.SongPlaylistValidator;
+import com.eos.streamus.dto.SongPlaylistDTO;
+import com.eos.streamus.dto.TrackDTO;
+import com.eos.streamus.dto.validators.SongPlaylistDTOValidator;
 import com.eos.streamus.writers.JsonSongCollectionWriter;
 import com.eos.streamus.writers.JsonSongPlaylistWriter;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -25,13 +26,11 @@ import javax.validation.Valid;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static org.springframework.http.ResponseEntity.ok;
-
 @RestController
 public class SongPlaylistController extends SongCollectionController {
 
   @Autowired
-  private SongPlaylistValidator songPlaylistValidator;
+  private SongPlaylistDTOValidator songPlaylistDTOValidator;
 
   @GetMapping("/songplaylist/{id}")
   public ResponseEntity<JsonNode> getSongPlaylist(@PathVariable final int id) {
@@ -40,10 +39,10 @@ public class SongPlaylistController extends SongCollectionController {
 
   @PostMapping("/songplaylist")
   public ResponseEntity<JsonNode> createSongPlaylist(
-      @Valid @RequestBody final com.eos.streamus.payloadmodels.SongPlaylist songPlaylistData,
+      @Valid @RequestBody final SongPlaylistDTO songPlaylistDTO,
       BindingResult result
   ) {
-    return createSongCollection(songPlaylistData, result);
+    return createSongCollection(songPlaylistDTO, result);
   }
 
   @DeleteMapping("/songplaylist/{id}")
@@ -59,7 +58,7 @@ public class SongPlaylistController extends SongCollectionController {
 
   @PutMapping("/songplaylist/{id}/tracks")
   public ResponseEntity<JsonNode> addOrMoveTrackInSongPlaylist(@PathVariable final int id,
-                                                                 @Valid @RequestBody final Track trackData) {
+                                                                 @Valid @RequestBody final TrackDTO trackData) {
     return addOrMoveTrackInSongCollection(id, trackData);
   }
 
@@ -70,8 +69,8 @@ public class SongPlaylistController extends SongCollectionController {
   }
 
   @Override
-  protected SongCollectionValidator getSongCollectionValidator() {
-    return songPlaylistValidator;
+  protected SongCollectionDTOValidator getSongCollectionDTOValidator() {
+    return songPlaylistDTOValidator;
   }
 
   @Override
@@ -81,13 +80,13 @@ public class SongPlaylistController extends SongCollectionController {
 
   @Override
   protected SongCollection createSpecificCollection(
-      final com.eos.streamus.payloadmodels.SongCollection songCollectionData,
+      final com.eos.streamus.dto.SongCollectionDTO songCollectionDTO,
       final Connection connection
   ) throws SQLException, NoResultException {
     return new SongPlaylist(
-        songCollectionData.getName(),
+        songCollectionDTO.getName(),
         User.findById(
-            ((com.eos.streamus.payloadmodels.SongPlaylist) songCollectionData).getUserId(),
+            ((SongPlaylistDTO) songCollectionDTO).getUserId(),
             connection
         )
     );

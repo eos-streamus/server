@@ -1,12 +1,16 @@
-package com.eos.streamus.payloadmodels;
+package com.eos.streamus.dto;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
-public class UserData extends Person {
+public class UserDTO extends PersonDTO {
   @NotNull
+  @Email
   private String email;
+
   @NotNull
   private String username;
+
   @NotNull
   private String password;
 

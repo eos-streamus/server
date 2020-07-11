@@ -93,7 +93,7 @@ public class VideoPlaylist extends VideoCollection {
     //#endregion Equals
   }
 
-  //#region Static attributs
+  //#region Static attributes
   private static final String CREATION_FUNCTION_NAME = "createVideoPlaylist";
   private static final String TABLE_NAME = "VideoPlaylist";
   private static final String PRIMARY_KEY_NAME = "idVideoCollection";
@@ -314,7 +314,7 @@ public class VideoPlaylist extends VideoCollection {
   //#region Equals
   @Override
   public int hashCode() {
-    return super.hashCode();
+    return getId();
   }
 
   @Override

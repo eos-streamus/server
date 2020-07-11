@@ -363,7 +363,7 @@ public abstract class SongCollection extends Collection {
   //#region Equals
   @Override
   public int hashCode() {
-    return super.hashCode();
+    return getId();
   }
 
   @Override

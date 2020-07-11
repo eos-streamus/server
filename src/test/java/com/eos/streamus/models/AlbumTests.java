@@ -1,6 +1,5 @@
 package com.eos.streamus.models;
 
-import com.eos.streamus.DatabaseTests;
 import com.eos.streamus.exceptions.NoResultException;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,7 +10,7 @@ import java.sql.SQLException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-public class AlbumTests extends DatabaseTests {
+class AlbumTests extends DatabaseTests {
 
   @Test
   void testAlbum() throws SQLException, NoResultException {

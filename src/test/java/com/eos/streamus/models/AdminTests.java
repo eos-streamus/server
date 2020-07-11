@@ -1,6 +1,5 @@
 package com.eos.streamus.models;
 
-import com.eos.streamus.DatabaseTests;
 import com.eos.streamus.exceptions.NoResultException;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,7 +11,7 @@ import static java.sql.Date.valueOf;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-public class AdminTests extends DatabaseTests {
+class AdminTests extends DatabaseTests {
 
   @Test
   void testAdmin() throws SQLException, NoResultException {

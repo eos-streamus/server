@@ -209,7 +209,7 @@ public class Band extends Artist {
   //#endregion Static attributes
 
   //#region Instance attributes
-  List<Member> members = new ArrayList<>();
+  final List<Member> members = new ArrayList<>();
   //#endregion Instance attributes
 
   //#region Constructors
@@ -340,7 +340,7 @@ public class Band extends Artist {
   //#region Equals
   @Override
   public int hashCode() {
-    return super.hashCode();
+    return getId();
   }
 
   @Override

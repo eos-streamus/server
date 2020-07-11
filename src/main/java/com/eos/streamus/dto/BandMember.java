@@ -1,6 +1,4 @@
-package com.eos.streamus.payloadmodels.validators;
-
-import com.eos.streamus.payloadmodels.Musician;
+package com.eos.streamus.dto;
 
 import javax.validation.constraints.NotNull;
 import java.sql.Date;
@@ -8,7 +6,7 @@ import java.sql.Date;
 public class BandMember {
   private Integer musicianId;
 
-  private Musician musician;
+  private MusicianDTO musician;
 
   @NotNull
   private Date from;
@@ -31,7 +29,7 @@ public class BandMember {
     return musicianId;
   }
 
-  public Musician getMusician() {
+  public MusicianDTO getMusician() {
     return musician;
   }
 

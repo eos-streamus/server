@@ -1,8 +1,8 @@
-package com.eos.streamus.payloadmodels;
+package com.eos.streamus.dto;
 
 import javax.validation.constraints.NotNull;
 
-public class Person {
+public class PersonDTO {
   private Integer id;
 
   @NotNull
@@ -11,7 +11,7 @@ public class Person {
   @NotNull
   private String lastName;
 
-  private Long dateOfBirth;
+  private String dateOfBirth;
 
   public Integer getId() {
     return id;
@@ -25,7 +25,7 @@ public class Person {
     return lastName;
   }
 
-  public Long getDateOfBirth() {
+  public String getDateOfBirth() {
     return dateOfBirth;
   }
 
