@@ -1,6 +1,6 @@
 package com.eos.streamus.utils;
 
-public class Constants {
+public final class Constants {
   private Constants() {}
 
   /** Source: https://emailregex.com/ */
