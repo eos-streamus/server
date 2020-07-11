@@ -7,9 +7,11 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 @Component
-public class UserDTOValidator implements Validator {
+public final class UserDTOValidator implements Validator {
+  /** Minimum password length to accept. */
   @Value("${minPasswordLength}")
   private int minPasswordLength;
+  /** Minimum username length to accept. */
   @Value("${minUsernameLength}")
   private int minUsernameLength;
 
