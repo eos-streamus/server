@@ -17,8 +17,9 @@ import java.io.IOException;
 
 @WebFilter("/*")
 @Component
-public class JwtFilter implements Filter {
+public final class JwtFilter implements Filter {
 
+  /** {@link com.eos.streamus.utils.JwtService} to use to generate tokens. */
   @Autowired
   private JwtService jwtService;
 
