@@ -22,14 +22,15 @@ import static org.springframework.http.ResponseEntity.ok;
 
 public abstract class SongCollectionController implements CommonResponses {
 
+  /** {@link com.eos.streamus.utils.IDatabaseConnector} to use. */
   @Autowired
-  protected IDatabaseConnector databaseConnector;
+  private IDatabaseConnector databaseConnector;
 
   protected abstract SongCollectionDTOValidator getSongCollectionDTOValidator();
 
-  protected abstract JsonSongCollectionWriter jsonSongCollectionWriter(final SongCollection songCollection);
+  protected abstract JsonSongCollectionWriter jsonSongCollectionWriter(SongCollection songCollection);
 
-  public ResponseEntity<JsonNode> getSongCollectionById(@PathVariable final int id) {
+  public final ResponseEntity<JsonNode> getSongCollectionById(@PathVariable final int id) {
     try (Connection connection = databaseConnector.getConnection()) {
       return ok(jsonSongCollectionWriter(SongCollectionDAO.findById(id, connection)).getJson());
     } catch (SQLException sqlException) {
@@ -40,7 +41,7 @@ public abstract class SongCollectionController implements CommonResponses {
     }
   }
 
-  public ResponseEntity<JsonNode> addSongToCollection(final int songCollectionId, final int songId) {
+  public final ResponseEntity<JsonNode> addSongToCollection(final int songCollectionId, final int songId) {
     try (Connection connection = databaseConnector.getConnection()) {
       SongCollection songCollection = SongCollectionDAO.findById(songCollectionId, connection);
       songCollection.addSong(Song.findById(songId, connection));
@@ -54,7 +55,7 @@ public abstract class SongCollectionController implements CommonResponses {
     }
   }
 
-  public ResponseEntity<JsonNode> addOrMoveTrackInSongCollection(final int id, final TrackDTO trackData) {
+  public final ResponseEntity<JsonNode> addOrMoveTrackInSongCollection(final int id, final TrackDTO trackData) {
     try (Connection connection = databaseConnector.getConnection()) {
 
       SongCollection songCollection = SongCollectionDAO.findById(id, connection);
@@ -88,7 +89,7 @@ public abstract class SongCollectionController implements CommonResponses {
     }
   }
 
-  public ResponseEntity<String> deleteSongCollection(final int id) {
+  public final ResponseEntity<String> deleteSongCollection(final int id) {
     try (Connection connection = databaseConnector.getConnection()) {
       SongCollectionDAO.findById(id, connection).delete(connection);
       return ok("SongPlaylist deleted");
@@ -100,7 +101,7 @@ public abstract class SongCollectionController implements CommonResponses {
     }
   }
 
-  public ResponseEntity<JsonNode> deleteSongFromSongCollection(final int songCollectionId, final int songId) {
+  public final ResponseEntity<JsonNode> deleteSongFromSongCollection(final int songCollectionId, final int songId) {
     try (Connection connection = databaseConnector.getConnection()) {
       SongCollection songCollection = SongCollectionDAO.findById(songCollectionId, connection);
       Optional<SongCollection.Track> existingTrack = songCollection.getTracks().stream().filter(
@@ -127,9 +128,9 @@ public abstract class SongCollectionController implements CommonResponses {
       com.eos.streamus.dto.SongCollectionDTO songCollectionData,
       Connection connection) throws SQLException, NoResultException;
 
-  protected ResponseEntity<JsonNode> createSongCollection(
-      com.eos.streamus.dto.SongCollectionDTO songCollectionData,
-      BindingResult result
+  protected final ResponseEntity<JsonNode> createSongCollection(
+      final com.eos.streamus.dto.SongCollectionDTO songCollectionData,
+      final BindingResult result
   ) {
     getSongCollectionDTOValidator().validate(songCollectionData, result);
     if (result.hasErrors()) {

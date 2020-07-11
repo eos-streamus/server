@@ -27,8 +27,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 @RestController
-public class SongPlaylistController extends SongCollectionController {
+public final class SongPlaylistController extends SongCollectionController {
 
+  /** {@link com.eos.streamus.dto.validators.SongPlaylistDTOValidator} to use. */
   @Autowired
   private SongPlaylistDTOValidator songPlaylistDTOValidator;
 
@@ -40,7 +41,7 @@ public class SongPlaylistController extends SongCollectionController {
   @PostMapping("/songplaylist")
   public ResponseEntity<JsonNode> createSongPlaylist(
       @Valid @RequestBody final SongPlaylistDTO songPlaylistDTO,
-      BindingResult result
+      final BindingResult result
   ) {
     return createSongCollection(songPlaylistDTO, result);
   }
