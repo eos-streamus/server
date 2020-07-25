@@ -7,12 +7,16 @@ import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.User;
 import com.eos.streamus.utils.IDatabaseConnector;
 import com.eos.streamus.utils.JwtService;
+import com.eos.streamus.writers.JsonTokenWriter;
 import com.eos.streamus.writers.JsonUserWriter;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +29,8 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 
+//@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 public final class UserController implements CommonResponses {
 
@@ -79,24 +85,24 @@ public final class UserController implements CommonResponses {
   }
 
   @PostMapping("/login")
-  public ResponseEntity<String> login(@RequestBody @Valid final LoginDTO loginDTO, final BindingResult result) {
+  public ResponseEntity<JsonNode> login(@RequestBody @Valid final LoginDTO loginDTO, final BindingResult result) {
     if (result.hasErrors()) {
-      return ResponseEntity.badRequest().body(result.toString());
+      return badRequest(result.toString());
     }
     try (Connection connection = databaseConnector.getConnection()) {
       User user = User.findByEmail(loginDTO.getEmail(), connection);
       if (user == null) {
-        return ResponseEntity.badRequest().body("Invalid email or password");
+        return badRequest("Invalid email or password");
       }
       String password = user.getPassword(connection);
       if (passwordEncoder.matches(loginDTO.getPassword(), password)) {
-        return ResponseEntity.ok(jwtService.createToken(user));
+        return ResponseEntity.ok(new JsonTokenWriter(jwtService.createToken(user)).getJson());
       } else {
-        return ResponseEntity.badRequest().body("Invalid email or password");
+        return badRequest("Invalid email or password");
       }
     } catch (SQLException sqlException) {
       logException(sqlException);
-      return internalServerErrorString();
+      return internalServerError();
     } catch (NoResultException noResultException) {
       return notFound();
     }
