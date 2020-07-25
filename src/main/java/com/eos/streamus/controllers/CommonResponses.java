@@ -22,13 +22,13 @@ import java.util.logging.Logger;
 interface CommonResponses {
 
   default ResponseEntity<JsonNode> badRequest(final String reason) {
-    ObjectNode errorResponse = new ObjectNode(new ErrorObjectNodeFactory());
+    ObjectNode errorResponse = new ObjectNode(new ControllerObjectNodeFactory());
     errorResponse.put("reason", reason);
     return ResponseEntity.badRequest().body(errorResponse);
   }
 
   default ResponseEntity<JsonNode> internalServerError() {
-    ObjectNode errorResponse = new ObjectNode(new ErrorObjectNodeFactory());
+    ObjectNode errorResponse = new ObjectNode(new ControllerObjectNodeFactory());
     errorResponse.put("reason", "Something went wrong");
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
   }
