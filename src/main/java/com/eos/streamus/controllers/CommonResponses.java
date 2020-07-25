@@ -21,6 +21,12 @@ import java.util.logging.Logger;
 
 interface CommonResponses {
 
+  default ResponseEntity<JsonNode> simpleOk(final String message) {
+    ObjectNode response = new ObjectNode(new ControllerObjectNodeFactory());
+    response.put("message", message);
+    return ResponseEntity.ok(response);
+  }
+
   default ResponseEntity<JsonNode> badRequest(final String reason) {
     ObjectNode errorResponse = new ObjectNode(new ControllerObjectNodeFactory());
     errorResponse.put("reason", reason);
