@@ -128,12 +128,12 @@ public final class FilmController implements CommonResponses {
   }
 
   @DeleteMapping("/film/{id}")
-  public ResponseEntity<String> deleteFilm(@PathVariable final int id) {
+  public ResponseEntity<JsonNode> deleteFilm(@PathVariable final int id) {
     try (Connection connection = databaseConnector.getConnection()) {
       return deleteFileAndResource(Film.findById(id, connection), connection);
     } catch (SQLException sqlException) {
       logException(sqlException);
-      return internalServerErrorString();
+      return internalServerError();
     } catch (NoResultException noResultException) {
       return notFound();
     }

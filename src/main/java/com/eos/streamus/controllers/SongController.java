@@ -120,12 +120,12 @@ public final class SongController implements CommonResponses {
   }
 
   @DeleteMapping("/song/{id}")
-  public ResponseEntity<String> deleteSong(@PathVariable("id") final int id) {
+  public ResponseEntity<JsonNode> deleteSong(@PathVariable("id") final int id) {
     try (Connection connection = databaseConnector.getConnection()) {
       return deleteFileAndResource(Song.findById(id, connection), connection);
     } catch (SQLException sqlException) {
       logException(sqlException);
-      return internalServerErrorString();
+      return internalServerError();
     } catch (NoResultException noResultException) {
       return notFound();
     }

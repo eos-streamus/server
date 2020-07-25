@@ -78,16 +78,16 @@ interface CommonResponses {
     return ResponseEntity.notFound().build();
   }
 
-  default ResponseEntity<String> deleteFileAndResource(final Resource resource,
-                                                       final Connection connection) throws SQLException {
+  default ResponseEntity<JsonNode> deleteFileAndResource(final Resource resource,
+                                                         final Connection connection) throws SQLException {
     try {
       Files.delete(FileSystems.getDefault().getPath(resource.getPath()));
     } catch (IOException e) {
       logException(e);
-      return internalServerErrorString();
+      return internalServerError();
     }
     resource.delete(connection);
-    return ResponseEntity.ok("Resource deleted");
+    return simpleOk("Resource deleted");
   }
 
 }
