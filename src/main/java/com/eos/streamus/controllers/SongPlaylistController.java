@@ -59,7 +59,7 @@ public final class SongPlaylistController extends SongCollectionController {
 
   @PutMapping("/songplaylist/{id}/tracks")
   public ResponseEntity<JsonNode> addOrMoveTrackInSongPlaylist(@PathVariable final int id,
-                                                                 @Valid @RequestBody final TrackDTO trackData) {
+                                                               @Valid @RequestBody final TrackDTO trackData) {
     return addOrMoveTrackInSongCollection(id, trackData);
   }
 
