@@ -4,9 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+@SuppressWarnings("CheckStyle")
 @SpringBootApplication
-public final class StreamUsApplication {
-  private StreamUsApplication() {}
+public class StreamUsApplication {
   public static void main(final String[] args) {
     AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
     ctx.register(StreamusApplicationConfiguration.class);
