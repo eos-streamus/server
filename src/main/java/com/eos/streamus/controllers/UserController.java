@@ -109,13 +109,13 @@ public final class UserController implements CommonResponses {
   }
 
   @DeleteMapping("/user/{id}")
-  public ResponseEntity<String> deleteUser(@PathVariable final int id) {
+  public ResponseEntity<JsonNode> deleteUser(@PathVariable final int id) {
     try (Connection connection = databaseConnector.getConnection()) {
       User.findById(id, connection).delete(connection);
-      return ResponseEntity.ok("User deleted");
+      return simpleOk("User deleted");
     } catch (SQLException sqlException) {
       logException(sqlException);
-      return internalServerErrorString();
+      return internalServerError();
     } catch (NoResultException noResultException) {
       return notFound();
     }
