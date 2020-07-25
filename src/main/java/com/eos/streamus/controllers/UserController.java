@@ -10,8 +10,6 @@ import com.eos.streamus.utils.JwtService;
 import com.eos.streamus.writers.JsonTokenWriter;
 import com.eos.streamus.writers.JsonUserWriter;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,7 +27,6 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 
-//@CrossOrigin(origins = "http://localhost:4200")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 public final class UserController implements CommonResponses {
