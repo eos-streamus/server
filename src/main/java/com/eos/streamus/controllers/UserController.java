@@ -7,6 +7,7 @@ import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.User;
 import com.eos.streamus.utils.IDatabaseConnector;
 import com.eos.streamus.utils.JwtService;
+import com.eos.streamus.writers.JsonErrorListWriter;
 import com.eos.streamus.writers.JsonTokenWriter;
 import com.eos.streamus.writers.JsonUserWriter;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -50,11 +51,11 @@ public final class UserController implements CommonResponses {
   @PostMapping("/users")
   public ResponseEntity<JsonNode> register(@RequestBody @Valid final UserDTO userDTO, final BindingResult result) {
     if (result.hasErrors()) {
-      return badRequest(result.toString());
+      return ResponseEntity.badRequest().body(new JsonErrorListWriter(result).getJson());
     }
     userDTOValidator.validate(userDTO, result);
     if (result.hasErrors()) {
-      return badRequest(result.toString());
+      return ResponseEntity.badRequest().body(new JsonErrorListWriter(result).getJson());
     }
 
     try (Connection connection = databaseConnector.getConnection()) {
