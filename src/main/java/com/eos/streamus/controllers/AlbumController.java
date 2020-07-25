@@ -58,7 +58,7 @@ public final class AlbumController extends SongCollectionController {
   }
 
   @DeleteMapping("/album/{id}")
-  public ResponseEntity<String> deleteAlbum(@PathVariable final int id) {
+  public ResponseEntity<JsonNode> deleteAlbum(@PathVariable final int id) {
     return deleteSongCollection(id);
   }
 
