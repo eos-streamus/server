@@ -170,13 +170,13 @@ public final class ArtistController implements CommonResponses {
   }
 
   @DeleteMapping("/artist/{id}")
-  public ResponseEntity<String> deleteArtist(@PathVariable final int id) {
+  public ResponseEntity<JsonNode> deleteArtist(@PathVariable final int id) {
     try (Connection connection = databaseConnector.getConnection()) {
       ArtistDAO.findById(id, connection).delete(connection);
-      return ResponseEntity.ok("Artist deleted");
+      return simpleOk("Artist deleted");
     } catch (SQLException sqlException) {
       logException(sqlException);
-      return internalServerErrorString();
+      return internalServerError();
     } catch (NoResultException noResultException) {
       return notFound();
     }
