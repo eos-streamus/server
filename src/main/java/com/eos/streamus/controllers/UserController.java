@@ -27,7 +27,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 
-@CrossOrigin(origins = "*", allowedHeaders = "*")
+@CrossOrigin(origins = "http://localhost:4200", allowedHeaders = "*")
 @RestController
 public final class UserController implements CommonResponses {
 
