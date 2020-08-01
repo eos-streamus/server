@@ -13,7 +13,6 @@ import com.eos.streamus.writers.JsonTokenWriter;
 import com.eos.streamus.writers.JsonUserWriter;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +26,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.sql.Connection;
 import java.sql.Date;
@@ -36,6 +34,8 @@ import java.sql.SQLException;
 @CrossOrigin(origins = "http://localhost:4200", allowedHeaders = "*")
 @RestController
 public final class UserController implements CommonResponses {
+  /** User id claim name. */
+  private static final String USER_ID = "userId";
 
   /** {@link com.eos.streamus.utils.IDatabaseConnector} to use. */
   @Autowired
@@ -119,12 +119,23 @@ public final class UserController implements CommonResponses {
     if (result.hasErrors()) {
       return ResponseEntity.badRequest().body(new JsonErrorListWriter(result).getJson());
     }
-    try {
-      final Jws<Claims> sessionClaims = jwtService.decode(tokensDTO.getSessionToken());
-      final Jws<Claims> refreshClaims = jwtService.decode(tokensDTO.getRefreshToken());
-      if (refreshClaims.getBody().)
+    try (Connection connection = databaseConnector.getConnection()) {
+      final Claims sessionClaims = jwtService.decode(tokensDTO.getSessionToken()).getBody();
+      final Claims refreshClaims = jwtService.decode(tokensDTO.getRefreshToken()).getBody();
+      if (!sessionClaims.get(USER_ID, Integer.class).equals(refreshClaims.get(USER_ID, Integer.class))) {
+        return badRequest("Invalid tokens, claims do not match");
+      }
+      if (refreshClaims.getExpiration().before(new java.util.Date())) {
+        return badRequest("Refresh token expired, log in again");
+      }
+      User user = User.findById(sessionClaims.get(USER_ID, Integer.class), connection);
+      return ResponseEntity.ok(new JsonTokenWriter(jwtService.createToken(user)).getJson());
     } catch (JwtException e) {
       return badRequest("Invalid tokens");
+    } catch (SQLException e) {
+      return internalServerError();
+    } catch (NoResultException e) {
+      return badRequest("Invalid user");
     }
   }
 
