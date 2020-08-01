@@ -1,6 +1,7 @@
 package com.eos.streamus.controllers;
 
 import com.eos.streamus.dto.LoginDTO;
+import com.eos.streamus.dto.TokensDTO;
 import com.eos.streamus.dto.UserDTO;
 import com.eos.streamus.dto.validators.UserDTOValidator;
 import com.eos.streamus.exceptions.NoResultException;
@@ -11,6 +12,9 @@ import com.eos.streamus.writers.JsonErrorListWriter;
 import com.eos.streamus.writers.JsonTokenWriter;
 import com.eos.streamus.writers.JsonUserWriter;
 import com.fasterxml.jackson.databind.JsonNode;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +27,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.sql.Connection;
 import java.sql.Date;
@@ -85,7 +90,7 @@ public final class UserController implements CommonResponses {
   @PostMapping("/login")
   public ResponseEntity<JsonNode> login(@RequestBody @Valid final LoginDTO loginDTO, final BindingResult result) {
     if (result.hasErrors()) {
-      return badRequest(result.toString());
+      return ResponseEntity.badRequest().body(new JsonErrorListWriter(result).getJson());
     }
     try (Connection connection = databaseConnector.getConnection()) {
       User user = User.findByEmail(loginDTO.getEmail(), connection);
@@ -94,7 +99,9 @@ public final class UserController implements CommonResponses {
       }
       String password = user.getPassword(connection);
       if (passwordEncoder.matches(loginDTO.getPassword(), password)) {
-        return ResponseEntity.ok(new JsonTokenWriter(jwtService.createToken(user)).getJson());
+        return ResponseEntity.ok(
+            new JsonTokenWriter(jwtService.createToken(user)).getJson()
+        );
       } else {
         return badRequest("Invalid email or password");
       }
@@ -103,6 +110,21 @@ public final class UserController implements CommonResponses {
       return internalServerError();
     } catch (NoResultException noResultException) {
       return notFound();
+    }
+  }
+
+  @PostMapping("refresh")
+  public ResponseEntity<JsonNode> refreshTokens(@RequestBody @Valid final TokensDTO tokensDTO,
+                                                final BindingResult result) {
+    if (result.hasErrors()) {
+      return ResponseEntity.badRequest().body(new JsonErrorListWriter(result).getJson());
+    }
+    try {
+      final Jws<Claims> sessionClaims = jwtService.decode(tokensDTO.getSessionToken());
+      final Jws<Claims> refreshClaims = jwtService.decode(tokensDTO.getRefreshToken());
+      if (refreshClaims.getBody().)
+    } catch (JwtException e) {
+      return badRequest("Invalid tokens");
     }
   }
 
