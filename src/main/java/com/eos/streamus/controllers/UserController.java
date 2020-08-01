@@ -119,19 +119,17 @@ public final class UserController implements CommonResponses {
     if (result.hasErrors()) {
       return ResponseEntity.badRequest().body(new JsonErrorListWriter(result).getJson());
     }
-    try (Connection connection = databaseConnector.getConnection()) {
-      final Claims sessionClaims = jwtService.decode(tokensDTO.getSessionToken()).getBody();
-      final Claims refreshClaims = jwtService.decode(tokensDTO.getRefreshToken()).getBody();
-      if (!sessionClaims.get(USER_ID, Integer.class).equals(refreshClaims.get(USER_ID, Integer.class))) {
-        return badRequest("Invalid tokens, claims do not match");
-      }
-      if (refreshClaims.getExpiration().before(new java.util.Date())) {
-        return badRequest("Refresh token expired, log in again");
-      }
-      User user = User.findById(sessionClaims.get(USER_ID, Integer.class), connection);
-      return ResponseEntity.ok(new JsonTokenWriter(jwtService.createToken(user)).getJson());
+    final Claims refreshClaims;
+    try {
+      refreshClaims = jwtService.decode(tokensDTO.getRefreshToken()).getBody();
     } catch (JwtException e) {
+      System.out.println(e.getMessage());
       return badRequest("Invalid tokens");
+    }
+
+    try (Connection connection = databaseConnector.getConnection()) {
+      User user = User.findById(refreshClaims.get(USER_ID, Integer.class), connection);
+      return ResponseEntity.ok(new JsonTokenWriter(jwtService.createToken(user)).getJson());
     } catch (SQLException e) {
       return internalServerError();
     } catch (NoResultException e) {
