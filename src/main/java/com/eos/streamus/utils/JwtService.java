@@ -1,5 +1,6 @@
 package com.eos.streamus.utils;
 
+import com.eos.streamus.dto.TokensDTO;
 import com.eos.streamus.models.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -17,28 +18,38 @@ import java.util.UUID;
 public final class JwtService {
   /** Validity of a generated Json Web Token. */
   @Value("${jwt.validityTimeInMinutes}")
-  private static final long JWT_VALIDITY_MINUTES = 5L;
+  private static final long JWT_VALIDITY_MINUTES = 60L;
 
   /** Secret key for encoding JWTs. */
   @Value("${jwt.secret}")
   private String key;
 
-  public String createToken(final User user) {
-    return Jwts.builder()
-               .signWith(Keys.hmacShaKeyFor(key.getBytes()))
-               .claim("userId", user.getId())
-               .claim("email", user.getEmail())
-               .setId(UUID.randomUUID().toString())
-               .setIssuedAt(Date.from(Instant.now()))
-               .setExpiration(Date.from(Instant.now().plus(JWT_VALIDITY_MINUTES, ChronoUnit.MINUTES)))
-               .compact();
+  public TokensDTO createToken(final User user) {
+    return new TokensDTO(
+        Jwts.builder()
+            .signWith(Keys.hmacShaKeyFor(key.getBytes()))
+            .claim("userId", user.getId())
+            .claim("email", user.getEmail())
+            .setId(UUID.randomUUID().toString())
+            .setIssuedAt(Date.from(Instant.now()))
+            .setExpiration(Date.from(Instant.now().plus(JWT_VALIDITY_MINUTES, ChronoUnit.MINUTES)))
+            .compact(),
+        Jwts.builder()
+            .signWith(Keys.hmacShaKeyFor(key.getBytes()))
+            .claim("userId", user.getId())
+            .claim("email", user.getEmail())
+            .setId(UUID.randomUUID().toString())
+            .setIssuedAt(Date.from(Instant.now()))
+            .setExpiration(Date.from(Instant.now().plus(JWT_VALIDITY_MINUTES, ChronoUnit.MINUTES)))
+            .compact()
+    );
   }
 
   public Jws<Claims> decode(final String jwtToken) {
     return Jwts.parserBuilder()
-        .setSigningKey(Keys.hmacShaKeyFor(key.getBytes()))
-        .build()
-        .parseClaimsJws(jwtToken);
+               .setSigningKey(Keys.hmacShaKeyFor(key.getBytes()))
+               .build()
+               .parseClaimsJws(jwtToken);
   }
 
 }
