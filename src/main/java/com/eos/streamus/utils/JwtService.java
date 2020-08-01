@@ -17,11 +17,12 @@ import java.util.UUID;
 @Service
 public final class JwtService {
   /** Validity of a generated session Json Web Token. */
-  @Value("${jwt.validityTimeInMinutes}")
-  private static final long JWT_VALIDITY_MINUTES = 5L;
+  @Value("${jwt.session.validityTimeInMinutes}")
+  private static long jwtSessionValidityMinutes;
 
   /** Validity of a generated refresh JWT. */
-  private static final long JWT_REFRESH_VALIDITY_MINUTES = 30L;
+  @Value("${jwt.refresh.validityTimeInHours}")
+  private static long jwtRefreshValidityHours;
 
   /** Secret key for encoding JWTs. */
   @Value("${jwt.secret}")
@@ -34,7 +35,7 @@ public final class JwtService {
             .claim("userId", user.getId())
             .setId(UUID.randomUUID().toString())
             .setIssuedAt(Date.from(Instant.now()))
-            .setExpiration(Date.from(Instant.now().plus(JWT_REFRESH_VALIDITY_MINUTES, ChronoUnit.MINUTES)))
+            .setExpiration(Date.from(Instant.now().plus(jwtRefreshValidityHours, ChronoUnit.HOURS)))
             .compact(),
         Jwts.builder()
             .signWith(Keys.hmacShaKeyFor(key.getBytes()))
@@ -42,7 +43,7 @@ public final class JwtService {
             .claim("email", user.getEmail())
             .setId(UUID.randomUUID().toString())
             .setIssuedAt(Date.from(Instant.now()))
-            .setExpiration(Date.from(Instant.now().plus(JWT_VALIDITY_MINUTES, ChronoUnit.MINUTES)))
+            .setExpiration(Date.from(Instant.now().plus(jwtSessionValidityMinutes, ChronoUnit.MINUTES)))
             .compact()
     );
   }
