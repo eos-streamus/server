@@ -1,5 +1,6 @@
 package com.eos.streamus.controllers;
 
+import com.eos.streamus.dto.TokensDTO;
 import com.eos.streamus.filters.JwtFilter;
 import com.eos.streamus.models.User;
 import com.eos.streamus.utils.JwtService;
@@ -15,11 +16,16 @@ import java.text.ParseException;
 
 abstract class JwtSetupControllerTests extends ControllerTests {
 
+  /** Injected JWTService to use. */
   @Autowired
   private JwtService jwtService;
 
+  /** Injected JWTFilter to use. */
   @Autowired
   private JwtFilter jwtFilter;
+
+  /** TokensDTO to use. */
+  private TokensDTO token;
 
   @Override
   @BeforeAll
@@ -27,7 +33,6 @@ abstract class JwtSetupControllerTests extends ControllerTests {
     mockMvc = MockMvcBuilders.webAppContextSetup(context).addFilter(jwtFilter).build();
   }
 
-  private String token;
 
   @BeforeAll
   void createAndLoginUser() throws SQLException, ParseException {
@@ -39,8 +44,8 @@ abstract class JwtSetupControllerTests extends ControllerTests {
   }
 
   @Override
-  protected final ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
-    return mockMvc.perform(builder.header("Authorization", "Bearer " + token));
+  protected final ResultActions perform(final MockHttpServletRequestBuilder builder) throws Exception {
+    return mockMvc.perform(builder.header("Authorization", "Bearer " + token.getSessionToken()));
   }
 
 }
