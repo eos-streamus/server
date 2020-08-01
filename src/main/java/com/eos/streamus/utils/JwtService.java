@@ -16,9 +16,12 @@ import java.util.UUID;
 
 @Service
 public final class JwtService {
-  /** Validity of a generated Json Web Token. */
+  /** Validity of a generated session Json Web Token. */
   @Value("${jwt.validityTimeInMinutes}")
-  private static final long JWT_VALIDITY_MINUTES = 60L;
+  private static final long JWT_VALIDITY_MINUTES = 5L;
+
+  /** Validity of a generated refresh JWT. */
+  private static final long JWT_REFRESH_VALIDITY_MINUTES = 30L;
 
   /** Secret key for encoding JWTs. */
   @Value("${jwt.secret}")
@@ -29,10 +32,9 @@ public final class JwtService {
         Jwts.builder()
             .signWith(Keys.hmacShaKeyFor(key.getBytes()))
             .claim("userId", user.getId())
-            .claim("email", user.getEmail())
             .setId(UUID.randomUUID().toString())
             .setIssuedAt(Date.from(Instant.now()))
-            .setExpiration(Date.from(Instant.now().plus(JWT_VALIDITY_MINUTES, ChronoUnit.MINUTES)))
+            .setExpiration(Date.from(Instant.now().plus(JWT_REFRESH_VALIDITY_MINUTES, ChronoUnit.MINUTES)))
             .compact(),
         Jwts.builder()
             .signWith(Keys.hmacShaKeyFor(key.getBytes()))
