@@ -30,7 +30,8 @@ public final class JwtFilter implements Filter {
       HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
 
       if (httpServletRequest.getRequestURI().contains("/users") ||
-          httpServletRequest.getRequestURI().contains("/login")) {
+          httpServletRequest.getRequestURI().contains("/login") ||
+          httpServletRequest.getRequestURI().contains("/refresh")) {
         filterChain.doFilter(servletRequest, servletResponse);
       } else {
         String jwtTokenHeader = httpServletRequest.getHeader("Authorization");
