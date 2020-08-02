@@ -7,6 +7,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.annotation.Nonnull;
+
 @SuppressWarnings("CheckStyle")
 @Configuration
 public class StreamusApplicationConfiguration {
@@ -19,7 +21,7 @@ public class StreamusApplicationConfiguration {
   public WebMvcConfigurer corsConfigurer() {
     return new WebMvcConfigurer() {
       @Override
-      public void addCorsMappings(CorsRegistry registry) {
+      public void addCorsMappings(@Nonnull CorsRegistry registry) {
         registry.addMapping("/*").allowedOrigins("http://localhost:4200");
       }
     };
