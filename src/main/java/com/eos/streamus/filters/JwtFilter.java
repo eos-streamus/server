@@ -11,9 +11,12 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Optional;
 
 @WebFilter("/*")
 @Component
@@ -33,6 +36,8 @@ public final class JwtFilter implements Filter {
           httpServletRequest.getRequestURI().contains("/login") ||
           httpServletRequest.getRequestURI().contains("/refresh")) {
         filterChain.doFilter(servletRequest, servletResponse);
+      } else if (httpServletRequest.getRequestURI().contains("/stream")) {
+        handleStream(httpServletRequest, servletResponse, filterChain);
       } else {
         String jwtTokenHeader = httpServletRequest.getHeader("Authorization");
         if (jwtTokenHeader == null || !jwtTokenHeader.startsWith("Bearer ")) {
@@ -46,6 +51,23 @@ public final class JwtFilter implements Filter {
             ((HttpServletResponse) servletResponse).sendError(HttpServletResponse.SC_FORBIDDEN);
           }
         }
+      }
+    }
+  }
+
+  private void handleStream(final HttpServletRequest httpServletRequest, final ServletResponse servletResponse,
+                            final FilterChain filterChain) throws IOException, ServletException {
+    Optional<Cookie> sessionCookie = Arrays.stream(httpServletRequest.getCookies())
+                                           .filter(cookie -> cookie.getName().equals("streamusSessionToken"))
+                                           .findFirst();
+    if (sessionCookie.isPresent()) {
+      String value = sessionCookie.get().getValue();
+      try {
+        jwtService.decode(value);
+        filterChain.doFilter(httpServletRequest, servletResponse);
+      } catch (JwtException e) {
+        System.out.println(e.getMessage());
+        ((HttpServletResponse) servletResponse).sendError(HttpServletResponse.SC_UNAUTHORIZED);
       }
     }
   }
