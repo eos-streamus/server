@@ -18,11 +18,11 @@ import java.util.UUID;
 public final class JwtService {
   /** Validity of a generated session Json Web Token. */
   @Value("${jwt.session.validityTimeInMinutes}")
-  private static long jwtSessionValidityMinutes = 5L;
+  private Integer jwtSessionValidityMinutes;
 
   /** Validity of a generated refresh JWT. */
   @Value("${jwt.refresh.validityTimeInHours}")
-  private static long jwtRefreshValidityHours = 24L;
+  private Integer jwtRefreshValidityHours;
 
   /** Secret key for encoding JWTs. */
   @Value("${jwt.secret}")
