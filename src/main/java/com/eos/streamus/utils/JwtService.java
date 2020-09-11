@@ -1,6 +1,7 @@
 package com.eos.streamus.utils;
 
 import com.eos.streamus.dto.TokensDTO;
+import com.eos.streamus.models.Admin;
 import com.eos.streamus.models.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -41,6 +42,7 @@ public final class JwtService {
             .signWith(Keys.hmacShaKeyFor(key.getBytes()))
             .claim("userId", user.getId())
             .claim("email", user.getEmail())
+            .claim("isAdmin", user instanceof Admin)
             .setId(UUID.randomUUID().toString())
             .setIssuedAt(Date.from(Instant.now()))
             .setExpiration(Date.from(Instant.now().plus(jwtSessionValidityMinutes, ChronoUnit.MINUTES)))

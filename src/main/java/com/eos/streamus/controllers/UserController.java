@@ -5,6 +5,7 @@ import com.eos.streamus.dto.TokensDTO;
 import com.eos.streamus.dto.UserDTO;
 import com.eos.streamus.dto.validators.UserDTOValidator;
 import com.eos.streamus.exceptions.NoResultException;
+import com.eos.streamus.models.Admin;
 import com.eos.streamus.models.User;
 import com.eos.streamus.utils.IDatabaseConnector;
 import com.eos.streamus.utils.JwtService;
@@ -93,15 +94,16 @@ public final class UserController implements CommonResponses {
       return ResponseEntity.badRequest().body(new JsonErrorListWriter(result).getJson());
     }
     try (Connection connection = databaseConnector.getConnection()) {
-      User user = User.findByEmail(loginDTO.getEmail(), connection);
+      User user = Admin.findByEmail(loginDTO.getEmail(), connection);
+      if (user == null) {
+        user = User.findByEmail(loginDTO.getEmail(), connection);
+      }
       if (user == null) {
         return badRequest("Invalid email or password");
       }
       String password = user.getPassword(connection);
       if (passwordEncoder.matches(loginDTO.getPassword(), password)) {
-        return ResponseEntity.ok(
-            new JsonTokenWriter(jwtService.createToken(user)).getJson()
-        );
+        return ResponseEntity.ok(new JsonTokenWriter(jwtService.createToken(user)).getJson());
       } else {
         return badRequest("Invalid email or password");
       }
@@ -128,7 +130,12 @@ public final class UserController implements CommonResponses {
     }
 
     try (Connection connection = databaseConnector.getConnection()) {
-      User user = User.findById(refreshClaims.get(USER_ID, Integer.class), connection);
+      User user;
+      try {
+        user = Admin.findById(refreshClaims.get(USER_ID, Integer.class), connection);
+      } catch (NoResultException noResultException) {
+       user = User.findById(refreshClaims.get(USER_ID, Integer.class), connection);
+      }
       return ResponseEntity.ok(new JsonTokenWriter(jwtService.createToken(user)).getJson());
     } catch (SQLException e) {
       return internalServerError();
