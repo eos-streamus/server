@@ -7,6 +7,7 @@ import com.eos.streamus.dto.validators.UserDTOValidator;
 import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.Admin;
 import com.eos.streamus.models.User;
+import com.eos.streamus.models.UserDAO;
 import com.eos.streamus.utils.IDatabaseConnector;
 import com.eos.streamus.utils.JwtService;
 import com.eos.streamus.writers.JsonErrorListWriter;
@@ -130,12 +131,7 @@ public final class UserController implements CommonResponses {
     }
 
     try (Connection connection = databaseConnector.getConnection()) {
-      User user;
-      try {
-        user = Admin.findById(refreshClaims.get(USER_ID, Integer.class), connection);
-      } catch (NoResultException noResultException) {
-       user = User.findById(refreshClaims.get(USER_ID, Integer.class), connection);
-      }
+      User user = UserDAO.findById(refreshClaims.get(USER_ID, Integer.class), connection);
       return ResponseEntity.ok(new JsonTokenWriter(jwtService.createToken(user)).getJson());
     } catch (SQLException e) {
       return internalServerError();
