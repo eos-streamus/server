@@ -188,6 +188,37 @@ public final class ResourceActivity extends Activity {
       }
     }
   }
+
+  public static ResourceActivity findByUserAndResourceIds(final Integer userId, final Integer resourceId, final Connection connection) throws SQLException, NoResultException {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(
+        String.format(
+            "select * from %s inner join %s on %s.%s = %s.%s where %s = ? and %s = ?",
+            TABLE_NAME,
+            UserActivity.TABLE_NAME,
+            TABLE_NAME,
+            PRIMARY_KEY_NAME,
+            UserActivity.TABLE_NAME,
+            UserActivity.ACTIVITY_ID_COLUMN,
+            RESOURCE_ID_COLUMN,
+            UserActivity.USER_ID_COLUMN
+        )
+    )) {
+      preparedStatement.setInt(1, userId);
+      preparedStatement.setInt(2, resourceId);
+      try (ResultSet resultSet = preparedStatement.executeQuery()) {
+        if (!resultSet.next()) {
+          return null;
+        }
+        ResourceActivity resourceActivity = new ResourceActivity(
+            resultSet.getInt(PRIMARY_KEY_NAME),
+            ResourceDAO.findById(resultSet.getInt(RESOURCE_ID_COLUMN), connection),
+            resultSet.getTimestamp(STARTED_AT_COLUMN)
+        );
+        resourceActivity.setPausedAt(resultSet.getInt(PAUSED_AT_COLUMN));
+        return resourceActivity;
+      }
+    }
+  }
   //#endregion Database operations
 
   //#region Equals
