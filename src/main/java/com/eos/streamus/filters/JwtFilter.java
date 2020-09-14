@@ -39,18 +39,23 @@ public final class JwtFilter implements Filter {
       } else if (httpServletRequest.getRequestURI().contains("/stream")) {
         handleStream(httpServletRequest, servletResponse, filterChain);
       } else {
-        String jwtTokenHeader = httpServletRequest.getHeader("Authorization");
-        if (jwtTokenHeader == null || !jwtTokenHeader.startsWith("Bearer ")) {
-          ((HttpServletResponse) servletResponse).sendError(HttpServletResponse.SC_FORBIDDEN);
-        } else {
-          String jwtToken = jwtTokenHeader.substring(7);
-          try {
-            jwtService.decode(jwtToken);
-            filterChain.doFilter(servletRequest, servletResponse);
-          } catch (JwtException e) {
-            ((HttpServletResponse) servletResponse).sendError(HttpServletResponse.SC_FORBIDDEN);
-          }
-        }
+        handleStandardRequest(httpServletRequest, servletResponse, filterChain);
+      }
+    }
+  }
+
+  private void handleStandardRequest(final HttpServletRequest httpServletRequest, final ServletResponse servletResponse,
+                                     final FilterChain filterChain) throws IOException, ServletException {
+    String jwtTokenHeader = httpServletRequest.getHeader("Authorization");
+    if (jwtTokenHeader == null || !jwtTokenHeader.startsWith("Bearer ")) {
+      ((HttpServletResponse) servletResponse).sendError(HttpServletResponse.SC_FORBIDDEN);
+    } else {
+      String jwtToken = jwtTokenHeader.substring(7);
+      try {
+        jwtService.decode(jwtToken);
+        filterChain.doFilter(httpServletRequest, servletResponse);
+      } catch (JwtException e) {
+        ((HttpServletResponse) servletResponse).sendError(HttpServletResponse.SC_FORBIDDEN);
       }
     }
   }

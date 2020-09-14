@@ -318,8 +318,9 @@ class UserControllerTests extends ControllerTests {
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectNode.toPrettyString());
     MockHttpServletResponse response = perform(builder).andExpect(status().is(200)).andReturn().getResponse();
-    String token = response.getContentAsString();
-    Jws<Claims> claimsJws = jwtService.decode(token);
+    final String sessionToken = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString())
+                                                             .get("sessionToken").asText();
+    final Jws<Claims> claimsJws = jwtService.decode(sessionToken);
     assertEquals(claimsJws.getBody().get("email", String.class), user.getEmail());
   }
 
@@ -438,8 +439,10 @@ class UserControllerTests extends ControllerTests {
     builder = post("/login")
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectNode.toPrettyString());
-    String token = perform(builder).andExpect(status().is(200)).andReturn().getResponse().getContentAsString();
-    jwtService.decode(token);
+    MockHttpServletResponse response = perform(builder).andExpect(status().is(200)).andReturn().getResponse();
+    final String sessionToken = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString())
+                                                             .get("sessionToken").asText();
+    jwtService.decode(sessionToken);
   }
 
   @Test
