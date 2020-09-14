@@ -1,6 +1,7 @@
 package com.eos.streamus.controllers;
 
 import com.eos.streamus.exceptions.NoResultException;
+import com.eos.streamus.models.Activity;
 import com.eos.streamus.models.Film;
 import com.eos.streamus.models.Resource;
 import com.eos.streamus.models.ResourceActivity;
@@ -136,10 +137,42 @@ public final class FilmController implements CommonResponses {
           resource.getId(),
           connection
       );
-      if (resourceActivity == null) {
+      if (resourceActivity == null || resourceActivity.getPausedAt() >= resource.getDuration()) {
         resourceActivity = new ResourceActivity(resource, user);
         resourceActivity.save(connection);
+        resourceActivity.start();
+        resourceActivity.save(connection);
       }
+      return ResponseEntity.ok(new JsonResourceActivityWriter(resourceActivity).getJson());
+    } catch (SQLException | NoResultException sqlException) {
+      logException(sqlException);
+      return internalServerError();
+    }
+  }
+
+  @PostMapping("/activity/{id}/pause/{time}")
+  public ResponseEntity<JsonNode> pauseActivity(@RequestHeader final HttpHeaders headers,
+                                                @PathVariable final int id,
+                                                @PathVariable final int time) {
+    try (Connection connection = databaseConnector.getConnection()) {
+      String token = headers.getFirst("Authorization").substring(7);
+      User user = User.findById(this.jwtService.decode(token).getBody().get("userId", Integer.class), connection);
+      ResourceActivity resourceActivity = ResourceActivity.findById(id, connection);
+      if (resourceActivity == null) {
+        return notFound();
+      }
+      boolean containedAndIsOwner = false;
+      for (Activity.UserActivity userActivity : resourceActivity.getUsers()) {
+        if (user.equals(userActivity.getUser()) && userActivity.isManager()) {
+          containedAndIsOwner = true;
+          break;
+        }
+      }
+      if (!containedAndIsOwner) {
+        return badRequest("Unauthorized");
+      }
+      resourceActivity.setPausedAt(time);
+      resourceActivity.save(connection);
       return ResponseEntity.ok(new JsonResourceActivityWriter(resourceActivity).getJson());
     } catch (SQLException | NoResultException sqlException) {
       logException(sqlException);
