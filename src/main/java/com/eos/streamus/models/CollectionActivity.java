@@ -41,7 +41,7 @@ public class CollectionActivity extends Activity {
   //#endregion Instance attributes
 
   //#region Constructors
-  protected CollectionActivity(final User creator, final Collection collection) {
+  public CollectionActivity(final User creator, final Collection collection) {
     super(creator);
     if (collection == null) {
       throw new NullPointerException("Collection cannot be null");
@@ -64,6 +64,10 @@ public class CollectionActivity extends Activity {
   //#endregion Constructors
 
   //#region Getters and Setters
+  public final Collection getCollection() {
+    return collection;
+  }
+
   @Override
   public final String creationFunctionName() {
     return null;
@@ -161,6 +165,40 @@ public class CollectionActivity extends Activity {
         return collectionActivity;
       }
     }
+  }
+
+  public static CollectionActivity findByUserAndCollectionIds(final Integer userId, final Integer collectionId,
+                                                              final Connection connection) throws SQLException {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(
+        String.format(
+            "select %s.%s from %s inner join %s on %s.%s = %s.%s where %s.%s = ? and %s.%s = ?",
+            TABLE_NAME,
+            PRIMARY_KEY_NAME,
+            TABLE_NAME,
+            UserActivity.TABLE_NAME,
+            TABLE_NAME,
+            PRIMARY_KEY_NAME,
+            UserActivity.TABLE_NAME,
+            UserActivity.ACTIVITY_ID_COLUMN,
+            TABLE_NAME,
+            COLLECTION_ID,
+            UserActivity.TABLE_NAME,
+            UserActivity.USER_ID_COLUMN
+        )
+    )) {
+      preparedStatement.setInt(1, collectionId);
+      preparedStatement.setInt(2, userId);
+      try (ResultSet resultSet = preparedStatement.executeQuery()) {
+        if (resultSet.next()) {
+          try {
+            return CollectionActivity.findById(resultSet.getInt(1), connection);
+          } catch (NoResultException noResultException) {
+            // Won't happen
+          }
+        }
+      }
+    }
+    return null;
   }
   //#endregion Database operations
 
