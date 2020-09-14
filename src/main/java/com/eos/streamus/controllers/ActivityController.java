@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Objects;
 
 @RestController
 public final class ActivityController implements CommonResponses {
@@ -35,7 +36,7 @@ public final class ActivityController implements CommonResponses {
   public ResponseEntity<JsonNode> getOrCreateActivity(@RequestHeader final HttpHeaders headers,
                                                       @PathVariable("resourceId") final int resourceId) {
     try (Connection connection = databaseConnector.getConnection()) {
-      String token = headers.getFirst("Authorization").substring(7);
+      String token = Objects.requireNonNull(headers.getFirst("Authorization")).substring(7);
       User user = User.findById(this.jwtService.decode(token).getBody().get("userId", Integer.class), connection);
       Resource resource = ResourceDAO.findById(resourceId, connection);
       ResourceActivity resourceActivity = ResourceActivity.findByUserAndResourceIds(
@@ -61,9 +62,9 @@ public final class ActivityController implements CommonResponses {
                                                 @PathVariable final int id,
                                                 @PathVariable final int time) {
     try (Connection connection = databaseConnector.getConnection()) {
-      String token = headers.getFirst("Authorization").substring(7);
-      User user = User.findById(this.jwtService.decode(token).getBody().get("userId", Integer.class), connection);
-      ResourceActivity resourceActivity = ResourceActivity.findById(id, connection);
+      final String token = Objects.requireNonNull(headers.getFirst("Authorization")).substring(7);
+      final User user = User.findById(this.jwtService.decode(token).getBody().get("userId", Integer.class), connection);
+      final ResourceActivity resourceActivity = ResourceActivity.findById(id, connection);
       if (resourceActivity == null) {
         return notFound();
       }
