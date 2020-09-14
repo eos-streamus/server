@@ -6,6 +6,7 @@ import com.eos.streamus.models.User;
 import com.eos.streamus.utils.JwtService;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -26,6 +27,11 @@ abstract class JwtSetupControllerTests extends ControllerTests {
 
   /** TokensDTO to use. */
   private TokensDTO token;
+
+  /** @return Tokens. */
+  protected final TokensDTO getToken() {
+    return token;
+  }
 
   @Override
   @BeforeAll
