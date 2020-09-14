@@ -192,7 +192,7 @@ public final class ResourceActivity extends Activity {
   public static ResourceActivity findByUserAndResourceIds(final Integer userId, final Integer resourceId, final Connection connection) throws SQLException, NoResultException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         String.format(
-            "select * from %s inner join %s on %s.%s = %s.%s where %s = ? and %s = ?",
+            "select * from %s inner join %s on %s.%s = %s.%s where %s = ? and %s = ? order by %s desc",
             TABLE_NAME,
             UserActivity.TABLE_NAME,
             TABLE_NAME,
@@ -200,11 +200,12 @@ public final class ResourceActivity extends Activity {
             UserActivity.TABLE_NAME,
             UserActivity.ACTIVITY_ID_COLUMN,
             RESOURCE_ID_COLUMN,
-            UserActivity.USER_ID_COLUMN
+            UserActivity.USER_ID_COLUMN,
+            STARTED_AT_COLUMN
         )
     )) {
-      preparedStatement.setInt(1, userId);
-      preparedStatement.setInt(2, resourceId);
+      preparedStatement.setInt(1, resourceId);
+      preparedStatement.setInt(2, userId);
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
         if (!resultSet.next()) {
           return null;
