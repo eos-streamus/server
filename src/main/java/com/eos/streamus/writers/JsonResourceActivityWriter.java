@@ -13,7 +13,9 @@ public class JsonResourceActivityWriter extends JsonObjectWriter {
 
   @Override
   protected JsonNode getSpecificJson(final ObjectNode objectNode) {
-    return objectNode.put("pausedAt", resourceActivity.getPausedAt());
+    return objectNode
+        .put("id", resourceActivity.getId())
+        .put("pausedAt", resourceActivity.getPausedAt());
   }
 
 }
