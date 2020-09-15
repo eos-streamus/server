@@ -24,7 +24,7 @@ public abstract class SongCollectionController implements CommonResponses {
 
   /** {@link com.eos.streamus.utils.IDatabaseConnector} to use. */
   @Autowired
-  private IDatabaseConnector databaseConnector;
+  protected IDatabaseConnector databaseConnector;
 
   protected abstract SongCollectionDTOValidator getSongCollectionDTOValidator();
 

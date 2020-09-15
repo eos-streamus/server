@@ -87,7 +87,7 @@ public final class SongController implements CommonResponses {
     try (Connection connection = databaseConnector.getConnection()) {
       multipartFile.transferTo(storedFile);
       FileInfo fileInfo = ShellUtils.getResourceInfo(storedFile.getPath());
-      if (!fileInfo.isAudioOnly()) {
+      if (!fileInfo.isAudio()) {
         Files.delete(storedFile.toPath());
         return badRequest("file is not audio");
       }

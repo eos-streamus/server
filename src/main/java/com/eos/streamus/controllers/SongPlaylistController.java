@@ -8,6 +8,7 @@ import com.eos.streamus.models.User;
 import com.eos.streamus.dto.SongPlaylistDTO;
 import com.eos.streamus.dto.TrackDTO;
 import com.eos.streamus.dto.validators.SongPlaylistDTOValidator;
+import com.eos.streamus.writers.JsonSongCollectionListWriter;
 import com.eos.streamus.writers.JsonSongCollectionWriter;
 import com.eos.streamus.writers.JsonSongPlaylistWriter;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -44,6 +45,16 @@ public final class SongPlaylistController extends SongCollectionController {
       final BindingResult result
   ) {
     return createSongCollection(songPlaylistDTO, result);
+  }
+
+  @GetMapping("/songplaylists")
+  public ResponseEntity<JsonNode> getAllSongPlaylists() {
+    try (Connection connection = databaseConnector.getConnection()) {
+      return ResponseEntity.ok(new JsonSongCollectionListWriter(SongPlaylist.all(connection)).getJson());
+    } catch (SQLException sqlException) {
+      logException(sqlException);
+      return internalServerError();
+    }
   }
 
   @DeleteMapping("/songplaylist/{id}")
