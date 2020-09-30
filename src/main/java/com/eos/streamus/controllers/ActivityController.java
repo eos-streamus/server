@@ -76,6 +76,7 @@ public final class ActivityController implements CommonResponses {
       if (collectionActivity == null) {
         collectionActivity = new CollectionActivity(user, collection);
         collectionActivity.save(connection);
+        collectionActivity.continueOrNext(connection);
       }
       return ResponseEntity.ok(new JsonCollectionActivityWriter(collectionActivity).getJson());
     } catch (NoResultException noResultException) {
