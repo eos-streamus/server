@@ -106,7 +106,7 @@ public final class SongController implements CommonResponses {
 
   }
 
-  @GetMapping("/song/{id}")
+  @GetMapping("/song/{id}/stream")
   public ResponseEntity<ResourceRegion> getAudio(@RequestHeader final HttpHeaders headers,
                                                  @PathVariable("id") final int id) {
     try (Connection connection = databaseConnector.getConnection()) {
