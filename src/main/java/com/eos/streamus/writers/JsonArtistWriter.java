@@ -13,6 +13,9 @@ abstract class JsonArtistWriter extends JsonObjectWriter {
     this.artist = artist;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   protected JsonNode getSpecificJson(final ObjectNode objectNode) {
     objectNode.put("id", artist.getId());
