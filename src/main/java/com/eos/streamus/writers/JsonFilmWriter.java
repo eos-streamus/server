@@ -9,6 +9,9 @@ public class JsonFilmWriter extends JsonResourceWriter {
     super(film);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   protected ObjectNode addSpecificJsonAttributes(final ObjectNode objectNode) {
     return objectNode;
