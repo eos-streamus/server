@@ -13,6 +13,9 @@ public class JsonAlbumListWriter extends JsonArrayWriter {
     this.albums = albums;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   protected JsonNode getSpecificArrayJson(final ArrayNode arrayNode) {
     for (Album album : albums) {
