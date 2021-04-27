@@ -12,54 +12,84 @@ import java.util.logging.Logger;
 
 public abstract class Artist implements SavableDeletableEntity {
   //#region Static attributes
+  /** Table name in the database. */
   public static final String TABLE_NAME = "Artist";
+  /** Primary key name in the database. */
   public static final String PRIMARY_KEY_NAME = "id";
+  /** Name column in the database. */
   public static final String NAME_COLUMN = "name";
+  /** Album artist table name in the database. */
   public static final String ALBUM_ARTIST_TABLE_NAME = "AlbumArtist";
+  /** Album artist album id in the database. */
   public static final String ALBUM_ARTIST_ALBUM_ID = "idAlbum";
+  /** Album artist artist id in the database. */
   public static final String ALBUM_ARTIST_ARTIST_ID = "idArtist";
   //#endregion Static attributes
 
   //#region Instance attributes
+  /** Id of this Artist. */
   private Integer id;
+  /** Name of this Artist. */
   private String name;
+  /** List of contributing {@link Album}s. */
   private final List<Album> albums = new ArrayList<>();
   //#endregion Instance attributes
 
   //#region Constructors
-  protected Artist(Integer id, String name) {
+  protected Artist(final Integer id, final String name) {
     this.id = id;
     this.name = name;
   }
 
-  protected Artist(String name) {
+  protected Artist(final String name) {
     this.name = name;
   }
   //#endregion Constructors
 
   //#region Getters and Setters
+
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public Integer getId() {
     return id;
   }
 
-  protected void setId(Integer id) {
+  /**
+   * Set the Id of this Artist.
+   *
+   * @param id Id to set.
+   */
+  protected void setId(final Integer id) {
     this.id = id;
   }
 
+  /** @return Artist's name. */
   public String getName() {
     return name;
   }
 
-  public void setName(String name) {
+  /**
+   * Set the name of this Artist.
+   *
+   * @param name Name of the Artist.
+   */
+  public void setName(final String name) {
     this.name = name;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public String tableName() {
     return TABLE_NAME;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public String primaryKeyName() {
     return PRIMARY_KEY_NAME;
@@ -71,8 +101,12 @@ public abstract class Artist implements SavableDeletableEntity {
   //#endregion Getters and Setters
 
   //#region Database operations
+
+  /**
+   * {@inheritDoc}
+   */
   @Override
-  public void save(Connection connection) throws SQLException {
+  public void save(final Connection connection) throws SQLException {
     if (this.getId() == null) {
       throw new NullPointerException("Artist#save can only be called on update");
     }
@@ -87,7 +121,13 @@ public abstract class Artist implements SavableDeletableEntity {
     }
   }
 
-  public void fetchAlbums(Connection connection) throws SQLException {
+  /**
+   * Fetches the Artist's {@link Album}s from the database.
+   *
+   * @param connection {@link Connection} to use to perform the operation.
+   * @throws SQLException If an error occurred while performing the database operation.
+   */
+  public void fetchAlbums(final Connection connection) throws SQLException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         String.format(
             "select * from %s where %s = ?", ALBUM_ARTIST_TABLE_NAME, ALBUM_ARTIST_ARTIST_ID
@@ -109,6 +149,9 @@ public abstract class Artist implements SavableDeletableEntity {
   //#endregion Database operations
 
   //#region String representations
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public String toString() {
     return String.format(
@@ -121,13 +164,24 @@ public abstract class Artist implements SavableDeletableEntity {
   //#endregion
 
   //#region Equals
+  /** @return This Artist's hashCode, i.e. its id. */
   @Override
   public int hashCode() {
     return id;
   }
 
+  /**
+   * Returns whether the given Object is equal.
+   * Will be equal if:
+   * - Not null
+   * - Same class
+   * - Same name (equal or both null)
+   * - Same ids
+   * @param obj Object to compare.
+   * @return True if all conditions are met.
+   */
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(final Object obj) {
     if (obj == null) {
       return false;
     }
