@@ -13,22 +13,50 @@ import java.util.stream.Collectors;
 public class Series extends VideoCollection {
   public class Episode extends Video {
     //#region Static attributes
+    /**
+     * Table name in the database.
+     */
     public static final String TABLE_NAME = "Episode";
+    /**
+     * Primary key name in the database.
+     */
     public static final String PRIMARY_KEY_NAME = "idVideo";
+    /**
+     * Season number column name in the database.
+     */
     public static final String SEASON_NUMBER_COLUMN = "seasonNumber";
+    /**
+     * Episode number column name in the database.
+     */
     public static final String EPISODE_NUMBER_COLUMN = "episodeNumber";
+    /**
+     * Creation function name in the database.
+     */
     public static final String CREATION_FUNCTION_NAME = "createEpisode";
+    /**
+     * View name in the database.
+     */
     public static final String VIEW_NAME = "vEpisode";
+    /**
+     * Series id column name in the database.
+     */
     public static final String SERIES_ID_COLUMN = "idSeries";
     //#endregion Static attributes
 
     //#region Instance attributes
+    /**
+     * Season number.
+     */
     private final short seasonNumber;
+    /**
+     * Episode number.
+     */
     private final short episodeNumber;
     //#endregion Instance attributes
 
     //#region Constructors
-    Episode(Integer id, String path, String name, Timestamp createdAt, Integer duration, final short seasonNumber,
+    Episode(final Integer id, final String path, final String name, final Timestamp createdAt,
+            final Integer duration, final short seasonNumber,
             final short episodeNumber) {
       super(id, path, name, createdAt, duration);
       this.seasonNumber = seasonNumber;
@@ -36,41 +64,61 @@ public class Series extends VideoCollection {
       Series.this.episodes.add(this);
     }
 
-    public Episode(String path, String name, Integer duration, final short seasonNumber, final short episodeNumber) {
+    public Episode(final String path, final String name, final Integer duration,
+                   final short seasonNumber, final short episodeNumber) {
       super(path, name, duration);
       this.seasonNumber = seasonNumber;
       this.episodeNumber = episodeNumber;
       Series.this.episodes.add(this);
     }
 
-    public Episode(String path, String name, Integer duration, final short seasonNumber) {
+    public Episode(final String path, final String name, final Integer duration, final short seasonNumber) {
       this(path, name, duration, seasonNumber, (short) (Series.this.getNumberOfEpisodesInSeason(seasonNumber) + 1));
     }
     //#endregion Constructors
 
     //#region Getters and Setters
+
+    /**
+     * @return SeasonNumber.
+     */
     public short getSeasonNumber() {
       return seasonNumber;
     }
 
+    /**
+     * @return EpisodeNumber.
+     */
     public short getEpisodeNumber() {
       return episodeNumber;
     }
 
+    /**
+     * @return Series.
+     */
     public Series getSeries() {
       return Series.this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String tableName() {
       return TABLE_NAME;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String primaryKeyName() {
       return PRIMARY_KEY_NAME;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String creationFunctionName() {
       return CREATION_FUNCTION_NAME;
@@ -78,8 +126,12 @@ public class Series extends VideoCollection {
     //#endregion Getters and Setters
 
     //#region Database operations
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void save(Connection connection) throws SQLException {
+    public void save(final Connection connection) throws SQLException {
       if (Series.this.getId() == null) {
         throw new NotPersistedException("Episode series not persisted");
       }
@@ -87,12 +139,13 @@ public class Series extends VideoCollection {
         try (PreparedStatement preparedStatement = connection.prepareStatement(String.format(
             "select * from %s(?::varchar(1041), ?::varchar(200), ?, ?, ?::smallint, ?::smallint);",
             CREATION_FUNCTION_NAME))) {
-          preparedStatement.setString(1, getPath());
-          preparedStatement.setString(2, getName());
-          preparedStatement.setInt(3, getDuration());
-          preparedStatement.setInt(4, Series.this.getId());
-          preparedStatement.setShort(5, seasonNumber);
-          preparedStatement.setShort(6, episodeNumber);
+          int columnNumber = 0;
+          preparedStatement.setString(++columnNumber, getPath());
+          preparedStatement.setString(++columnNumber, getName());
+          preparedStatement.setInt(++columnNumber, getDuration());
+          preparedStatement.setInt(++columnNumber, Series.this.getId());
+          preparedStatement.setShort(++columnNumber, seasonNumber);
+          preparedStatement.setShort(++columnNumber, episodeNumber);
           try (ResultSet resultSet = preparedStatement.executeQuery()) {
             resultSet.next();
             setId(resultSet.getInt(Collection.PRIMARY_KEY_NAME));
@@ -106,6 +159,10 @@ public class Series extends VideoCollection {
     //#endregion Database operations
 
     //#region String representations
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
       return String.format(
@@ -122,66 +179,100 @@ public class Series extends VideoCollection {
     //#endregion String representations
 
     //#region Equals
+
+    /**
+     * @return Hashcode, i.e. id.
+     */
     @Override
     public int hashCode() {
       return getId();
     }
 
+    /**
+     * Returns whether the given Object is equal.
+     * Equal if:
+     * - Same {@link Series} id.
+     * - Same episode and season numbers.
+     *
+     * @param o Object to compare.
+     * @return True if all conditions are met.
+     */
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
       if (!super.equals(o)) {
         return false;
       }
       Episode episode = (Episode) o;
       return
           episode.getSeries().getId().equals(Series.this.getId()) &&
-          // Don't compare Series instances to avoid infinite recursion
-          episode.seasonNumber == seasonNumber &&
-          episode.episodeNumber == episodeNumber;
+              // Don't compare Series instances to avoid infinite recursion
+              episode.seasonNumber == seasonNumber &&
+              episode.episodeNumber == episodeNumber;
     }
     //#endregion Equals
   }
 
   //#region Static attributes
+  /** Table name in the database. */
   public static final String TABLE_NAME = "Series";
+  /** Primary key name in the database. */
   public static final String PRIMARY_KEY_NAME = "idVideoCollection";
+  /** View name in the database. */
   public static final String VIEW_NAME = "vSeries";
+  /** Creation function name in the database. */
   public static final String CREATION_FUNCTION_NAME = "createSeries";
+  /** Episode id view_column in the database. */
   public static final String EPISODE_ID_VIEW_COLUMN = "idEpisode";
+  /** Episode created at column in the database. */
   public static final String EPISODE_CREATED_AT_COLUMN = "episodeCreatedAt";
+  /** Episode name column in the database. */
   public static final String EPISODE_NAME_COLUMN = "episodeName";
   //#endregion
 
   //#region Instance attributes
-  final List<Episode> episodes = new ArrayList<>();
+  /** List of {@link Episode}s. */
+  private final List<Episode> episodes = new ArrayList<>();
   //#endregion
 
   //#region Constructors
-  private Series(Integer id, String name, Timestamp createdAt, Timestamp updatedAt) {
+  private Series(final Integer id, final String name, final Timestamp createdAt, final Timestamp updatedAt) {
     super(id, name, createdAt, updatedAt);
   }
 
-  public Series(String name) {
+  public Series(final String name) {
     super(name);
   }
   //#endregion Constructors
 
   //#region Getters and Setters
+
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public String tableName() {
     return TABLE_NAME;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public String creationFunctionName() {
     return CREATION_FUNCTION_NAME;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public String primaryKeyName() {
     return PRIMARY_KEY_NAME;
   }
 
+  /**
+   * @return Series-specific content.
+   */
   @Override
   protected List<Pair<Integer, Resource>> getSpecificContent() {
     List<Pair<Integer, Resource>> content = new ArrayList<>();
@@ -195,6 +286,7 @@ public class Series extends VideoCollection {
     return content;
   }
 
+  /** @return Number of seasons. */
   public short getNumberOfSeasons() {
     List<Short> distinctSeasonNumbers = new ArrayList<>();
     for (Episode episode : episodes) {
@@ -205,11 +297,23 @@ public class Series extends VideoCollection {
     return (short) distinctSeasonNumbers.size();
   }
 
+  /**
+   * Returns number of episodes for given season id.
+   *
+   * @param seasonNumber Season number.
+   * @return Number of episodes.
+   */
   public short getNumberOfEpisodesInSeason(final short seasonNumber) {
     return (short) episodes.stream().filter(e -> e.seasonNumber == seasonNumber).count();
   }
 
-  public List<Episode> getSeason(short seasonNumber) {
+  /**
+   * Get episodes in given season number.
+   *
+   * @param seasonNumber Season number.s
+   * @return List of {@link Episode}s in season.
+   */
+  public List<Episode> getSeason(final short seasonNumber) {
     return
         episodes
             .stream()
@@ -220,8 +324,12 @@ public class Series extends VideoCollection {
   //#endregion Getters and Setters
 
   //#region Database operations
+
+  /**
+   * {@inheritDoc}
+   */
   @Override
-  public void save(Connection connection) throws SQLException {
+  public void save(final Connection connection) throws SQLException {
     if (this.getId() == null) {
       try (PreparedStatement preparedStatement = connection
           .prepareStatement(String.format("select * from %s(?::varchar(200))", CREATION_FUNCTION_NAME))) {
@@ -251,7 +359,16 @@ public class Series extends VideoCollection {
     }
   }
 
-  public static Series findById(int id, Connection connection) throws SQLException, NoResultException {
+  /**
+   * Find a Series by id.
+   *
+   * @param id Id of Series.
+   * @param connection {@link Connection} to use to perform the operation.
+   * @throws SQLException If an error occurred while performing the database operation.
+   * @throws NoResultException if no Series by this id was found.
+   * @return Found Series.
+   */
+  public static Series findById(final int id, final Connection connection) throws SQLException, NoResultException {
     try (PreparedStatement preparedStatement = connection
         .prepareStatement(String.format("select * from %s where %s = ?;", VIEW_NAME, Collection.PRIMARY_KEY_NAME))) {
       preparedStatement.setInt(1, id);
@@ -297,13 +414,24 @@ public class Series extends VideoCollection {
   //#endregion Database operations
 
   //#region Equals
+  /** @return HashCode, i.e. id. */
   @Override
   public int hashCode() {
     return getId();
   }
 
+  /**
+   * Returns whether the given Object is equal to this SongCollection.
+   * Will be equal if:
+   * - All {@link Collection}'s equality conditions are met.
+   * - Same number of seasons.
+   * - Same episodes.
+   *
+   * @param o Object to compare
+   * @return True if all conditions are met.
+   */
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     if (!super.equals(o)) {
       return false;
     }
