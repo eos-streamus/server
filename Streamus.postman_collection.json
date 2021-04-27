@@ -1,0 +1,721 @@
+{
+	"info": {
+		"_postman_id": "9a809483-c81d-49ff-b108-903d8774375a",
+		"name": "Streamus",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Films",
+			"item": [
+				{
+					"name": "Upload new film",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjI4NjksImVtYWlsIjoiaGVucmlrLmFrZXNzb25Ab3V0bG9vay5jb20iLCJpc0FkbWluIjpmYWxzZSwianRpIjoiMDFlYzJiZjEtNjE2My00NmJlLWEwM2EtM2JkYWExMGFiZTcwIiwiaWF0IjoxNjAwMDIyMTIwLCJleHAiOjE2MDAwMjIxODB9.DVtLm9ZTx6uGok3AKqez-9fH2oJWdtjtpOTTarNzdUo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjI4NjksImVtYWlsIjoiaGVucmlrLmFrZXNzb25Ab3V0bG9vay5jb20iLCJpc0FkbWluIjpmYWxzZSwianRpIjoiMjY2ODE5MTEtN2FmMy00ZjJkLThjNWItNzU3OWZlNWIyZDc0IiwiaWF0IjoxNjAwMDE5MzQ1LCJleHAiOjE2MDAwMTk0MDV9.Un_mF2wjbq7xQopVKA0OInsdq_DSs52OzFzTnXB0khE",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/Henrik/Downloads/Dwelling In The Fuchun Mountains (2019) [720p] [BluRay] [YTS.MX]/Dwelling.In.The.Fuchun.Mountains.2019.720p.BluRay.x264.AAC-[YTS.MX].mp4"
+								},
+								{
+									"key": "name",
+									"value": "Dwelling In The Fuchun Mountains",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/film",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"film"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all films",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjE5NzAsImVtYWlsIjoiaGVucmlrLmFrZXNzb240QG91dGxvb2suY29tIiwianRpIjoiMTk1ZDA0OGQtNDY2Ny00ZGY4LWI1Y2EtZjM0YTQ2YjQzNzI5IiwiaWF0IjoxNTk0MjA3NTc0LCJleHAiOjE1OTQyMDc4NzR9._P5D07SghorsOAmzOkN8xV1vXb4xYlPMhOxSj4jVDQY",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/films?=",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"films"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete film by id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/film/1230",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"film",
+								"1230"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "8ccb68ad-6332-4c84-b513-3f51c678b52e",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "b4be3d28-6696-40ee-ba9c-ff55e05e6908",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Songs",
+			"item": [
+				{
+					"name": "Upload new song",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjIwMzUsImVtYWlsIjoiaGVucmlrLmFrZXNzb25Ab3V0bG9vay5jb20iLCJqdGkiOiI3Y2EyNTk4My03ZDI3LTQ0YzktOTgxYy00YmM1NDZjMTE0MGIiLCJpYXQiOjE1OTQyMDgxODcsImV4cCI6MTU5NDIwODQ4N30.xxJD8uzLPkBFkBwhviH8Xrva1KMPHRfo4LACdBR91qs",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/Henrik/Documents/Projects/eos-streamus/server/src/test/resources/sample-audio.mp3"
+								},
+								{
+									"key": "name",
+									"value": "Convicted in Life",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/song",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"song"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete song by id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/song/1239",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"song",
+								"1239"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get song",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjIwMzUsImVtYWlsIjoiaGVucmlrLmFrZXNzb25Ab3V0bG9vay5jb20iLCJqdGkiOiI3Y2EyNTk4My03ZDI3LTQ0YzktOTgxYy00YmM1NDZjMTE0MGIiLCJpYXQiOjE1OTQyMDgxODcsImV4cCI6MTU5NDIwODQ4N30.xxJD8uzLPkBFkBwhviH8Xrva1KMPHRfo4LACdBR91qs",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{host}}/song/14163",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"song",
+								"14163"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Artists",
+			"item": [
+				{
+					"name": "Get all artists",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/artists",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"artists"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get specific Artist",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/artist/1",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"artist",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create new band",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Test band\"\n}"
+						},
+						"url": {
+							"raw": "{{host}}/band",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"band"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create musician",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Ihsahn\",\n\t\"person\": {\n\t\t\"firstName\": \"Vegard Sverre\",\n\t\t\"lastName\": \"Tveitan\"\n\t}\n}"
+						},
+						"url": {
+							"raw": "{{host}}/musician",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"musician"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add band member",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"musicianId\": 144,\n\t\"from\": \"1994-01-01\"\n}"
+						},
+						"url": {
+							"raw": "{{host}}/band/138/members",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"band",
+								"138",
+								"members"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get artist discography",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/artist/138/discography",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"artist",
+								"138",
+								"discography"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete artist by id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/artist/33233",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"artist",
+								"33233"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Collections",
+			"item": [
+				{
+					"name": "Create album",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Test album!\",\r\n    \"artistIds\": [412, 297],\r\n    \"tracks\": [\r\n        {\r\n            \"trackNumber\": 1,\r\n            \"songId\": 1255\r\n        },\r\n        {\r\n            \"trackNumber\": 2,\r\n            \"songId\": 1256\r\n        },\r\n        {\r\n            \"trackNumber\": 3,\r\n            \"songId\": 1257\r\n        },\r\n        {\r\n            \"trackNumber\": 4,\r\n            \"songId\": 1258\r\n        },\r\n        {\r\n            \"trackNumber\": 5,\r\n            \"songId\": 1259\r\n        }\r\n    ],\r\n    \"releaseDate\": \"2020-06-13\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/albums",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"albums"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete album",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/songcollection/3192",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"songcollection",
+								"3192"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create new SongPlaylist",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Test song playlist\",\r\n    \"userId\": 963,\r\n    \"tracks\": [\r\n        {\r\n            \"trackNumber\": 1,\r\n            \"songId\": 1255\r\n        },\r\n        {\r\n            \"trackNumber\": 2,\r\n            \"songId\": 1256\r\n        },\r\n        {\r\n            \"trackNumber\": 3,\r\n            \"songId\": 1257\r\n        },\r\n        {\r\n            \"trackNumber\": 4,\r\n            \"songId\": 1258\r\n        },\r\n        {\r\n            \"trackNumber\": 5,\r\n            \"songId\": 1259\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/songplaylist",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"songplaylist"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get SongPlaylist by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/songcollection/665",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"songcollection",
+								"665"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete SongPlaylist by id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/songcollection/619",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"songcollection",
+								"619"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add song to SongPlaylist",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/songcollection/620/6668",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"songcollection",
+								"620",
+								"6668"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Insert song in playlist",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"trackNumber\": 7,\r\n    \"songId\": 6657\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/songcollection/665/tracks",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"songcollection",
+								"665",
+								"tracks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete track from SongPlaylist",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/songcollection/665/1257",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"songcollection",
+								"665",
+								"1257"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Create user",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"henrik.akesson\",\r\n    \"email\": \"henrik.akesson@outlook.com\",\r\n    \"firstName\": \"Henrik\",\r\n    \"lastName\": \"Akesson\",\r\n    \"dateOfBirth\": \"2000-01-01\",\r\n    \"password\": \"foobarfoo\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/users",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"henrik.akesson@outlook.com\",\r\n    \"password\": \"foobarfoo\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/login",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete user",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/user/1875",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"1875"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\": \"Henriks\",\r\n    \"lastName\": \"Akessons\",\r\n    \"username\": \"henrik\",\r\n    \"dateOfBirth\": 1593974345,\r\n    \"createdAt\": \"2020-07-05 21:59:29\",\r\n    \"updatedAt\": \"2020-07-05 21:59:29\",\r\n    \"email\": \"henrik.akesson3@outlook.com\",\r\n    \"password\": \"3oijoijoij\",\r\n    \"updatedPassword\": \"foobarfoo\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/user/1877",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"1877"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjI4NjksImVtYWlsIjoiaGVucmlrLmFrZXNzb25Ab3V0bG9vay5jb20iLCJqdGkiOiIxNTg5ZWU1Zi05M2NmLTQ3NWUtOWIxZS0xNmUwNzFkNTdkNGMiLCJpYXQiOjE1OTY0MTEwODksImV4cCI6MTU5NjQxMTM4OX0.c_XtklhaJ4g4ENdLQAMBHxoPNsiMuV6_FI4Gq88bsoI",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "82d96ead-83b2-4ec6-a9f1-11dc368df246",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "ed656f7b-c7f2-4712-bdc6-3490149467dc",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
