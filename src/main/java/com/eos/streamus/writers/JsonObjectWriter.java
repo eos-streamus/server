@@ -13,5 +13,11 @@ abstract class JsonObjectWriter implements JsonWriter {
     return getSpecificJson(objectNode);
   }
 
+  /**
+   * Adds specific properties to the given {@link ObjectNode}.
+   *
+   * @param objectNode ObjectNode to add specific properties to.
+   * @return Updated ObjectNode
+   */
   protected abstract JsonNode getSpecificJson(ObjectNode objectNode);
 }
