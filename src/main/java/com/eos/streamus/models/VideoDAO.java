@@ -7,11 +7,21 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class VideoDAO {
+public final class VideoDAO {
+  private VideoDAO() {
+  }
 
-  private VideoDAO() {}
-
-  public static synchronized Video findById(Integer id, Connection connection) throws NoResultException, SQLException {
+  /**
+   * Finds a {@link Video} by id.
+   *
+   * @param id         Id of {@link Video} to find.
+   * @param connection {@link Connection} to use to perform the operation.
+   * @return Found {@link Video}
+   * @throws NoResultException if no {@link Video} by this id was found in database.
+   * @throws SQLException      If an error occurred while performing the database operation.
+   */
+  public static synchronized Video findById(final Integer id, final Connection connection)
+      throws NoResultException, SQLException {
     // Ignore NoResultException later
     try {
       return Film.findById(id, connection);
