@@ -8,7 +8,9 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class JsonSeriesWriter extends JsonCollectionWriter {
-
+  /**
+   * {@link Series} to write.
+   */
   private final Series series;
 
   protected JsonSeriesWriter(final Series series) {
@@ -16,6 +18,9 @@ public class JsonSeriesWriter extends JsonCollectionWriter {
     this.series = series;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   protected JsonNode getSpecificCollectionJson(final ObjectNode objectNode) {
     ArrayNode episodes = objectNode.putArray("episodes");
