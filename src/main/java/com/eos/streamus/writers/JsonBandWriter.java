@@ -10,9 +10,12 @@ import java.text.SimpleDateFormat;
 
 public class JsonBandWriter extends JsonArtistWriter {
   private static class JsonBandMemberWriter extends JsonMusicianWriter {
+    /**
+     * {@link com.eos.streamus.models.Band .com.eos.streamus.models.Band.Member} to write.
+     */
     private final Band.Member member;
 
-    public JsonBandMemberWriter(final Band.Member member) {
+    JsonBandMemberWriter(final Band.Member member) {
       super(member.getMusician());
       this.member = member;
     }
@@ -30,6 +33,9 @@ public class JsonBandWriter extends JsonArtistWriter {
 
   }
 
+  /**
+   * {@link com.eos.streamus.models.Band} to write.
+   */
   private final Band band;
 
   public JsonBandWriter(final Band band) {
@@ -37,6 +43,9 @@ public class JsonBandWriter extends JsonArtistWriter {
     this.band = band;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   protected JsonNode addSpecificArtistJson(final ObjectNode objectNode) {
     ArrayNode members = objectNode.putArray("members");
