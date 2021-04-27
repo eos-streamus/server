@@ -103,7 +103,13 @@ public class Album extends SongCollection {
   //#endregion Constructors
 
   //#region Accessors
-  public void addArtist(Artist artist) {
+
+  /**
+   * Add an {@link Artist} as contributor to the Album.
+   *
+   * @param artist {@link Artist} to add.
+   */
+  public void addArtist(final Artist artist) {
     if (artist == null) {
       throw new NullPointerException();
     }
