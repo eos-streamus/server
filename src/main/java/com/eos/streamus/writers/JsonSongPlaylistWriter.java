@@ -11,6 +11,9 @@ public class JsonSongPlaylistWriter extends JsonSongCollectionWriter {
     this.songPlaylist = songPlaylist;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   protected JsonNode getSpecificCollectionJson(final ObjectNode objectNode) {
     super.getSpecificCollectionJson(objectNode);
