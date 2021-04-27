@@ -6,34 +6,57 @@ import java.sql.*;
 
 public class Admin extends User {
   //#region Static Attributes
+  /**
+   * Table name in database.
+   */
   private static final String TABLE_NAME = "Admin";
+  /**
+   * Primary key name in database.
+   */
   private static final String PRIMARY_KEY_NAME = "idUser";
+  /**
+   * Creation function name in database.
+   */
   private static final String CREATION_FUNCTION_NAME = "createAdmin";
+  /**
+   * View name in database.
+   */
   private static final String VIEW_NAME = "vadmin";
   //#endregion Static Attributes
 
   //#region Constructors
-  private Admin(Integer id, String firstName, String lastName, Date dateOfBirth, Timestamp createdAt, // NOSONAR
-                Timestamp updatedAt, String email, String username) {
+  private Admin(final Integer id, final String firstName, final String lastName, final Date dateOfBirth, // NOSONAR
+                final Timestamp createdAt, final Timestamp updatedAt, final String email, final String username) {
     super(id, firstName, lastName, dateOfBirth, createdAt, updatedAt, email, username);
   }
 
-  public Admin(String firstName, String lastName, Date dateOfBirth, String email, String username) {
+  public Admin(final String firstName, final String lastName, final Date dateOfBirth,
+               final String email, final String username) {
     super(firstName, lastName, dateOfBirth, email, username);
   }
   //#endregion Constructors
 
   //#region Getters and Setters
+
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public String tableName() {
     return TABLE_NAME;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public String creationFunctionName() {
     return CREATION_FUNCTION_NAME;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public String primaryKeyName() {
     return PRIMARY_KEY_NAME;
@@ -41,8 +64,13 @@ public class Admin extends User {
   //#endregion Getters and Setters
 
   //#region Database operations
+
+
+  /**
+   * {@inheritDoc}
+   */
   @Override
-  public void save(Connection connection) throws SQLException {
+  public void save(final Connection connection) throws SQLException {
     if (getId() == null) {
       try (PreparedStatement preparedStatement = connection.prepareStatement(
           String.format(
@@ -50,11 +78,12 @@ public class Admin extends User {
               CREATION_FUNCTION_NAME
           )
       )) {
-        preparedStatement.setString(1, getFirstName());
-        preparedStatement.setString(2, getLastName());
-        preparedStatement.setDate(3, getDateOfBirth());
-        preparedStatement.setString(4, getEmail());
-        preparedStatement.setString(5, getUsername());
+        int columnNumber = 0;
+        preparedStatement.setString(++columnNumber, getFirstName());
+        preparedStatement.setString(++columnNumber, getLastName());
+        preparedStatement.setDate(++columnNumber, getDateOfBirth());
+        preparedStatement.setString(++columnNumber, getEmail());
+        preparedStatement.setString(++columnNumber, getUsername());
         try (ResultSet resultSet = preparedStatement.executeQuery()) {
           resultSet.next();
           setId(resultSet.getInt(Person.ID_COLUMN));
@@ -67,7 +96,17 @@ public class Admin extends User {
     }
   }
 
-  public static Admin findById(Integer id, Connection connection) throws SQLException, NoResultException {
+
+  /**
+   * Attempts to find an Admin by id.
+   *
+   * @param id Id of Admin to find.
+   * @param connection {@link Connection} to use to perform the operation.
+   * @throws SQLException If an error occurred while performing the database operation.
+   * @throws NoResultException If no Admin by this id was found in database.
+   * @return Found Admin.
+   */
+  public static Admin findById(final Integer id, final Connection connection) throws SQLException, NoResultException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         String.format(
             "select * from %s where %s = ?;", VIEW_NAME, Person.ID_COLUMN
