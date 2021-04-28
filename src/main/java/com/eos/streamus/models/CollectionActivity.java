@@ -57,6 +57,7 @@ public class CollectionActivity extends Activity {
    */
   private final List<Pair<Integer, Pair<Resource, ResourceActivity>>> resourceActivities;
 
+  /** @return {@link Collection} of Activity. */
   public Collection getCollection() {
     return collection;
   }

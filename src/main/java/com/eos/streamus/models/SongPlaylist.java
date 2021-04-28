@@ -133,11 +133,11 @@ public final class SongPlaylist extends SongCollection {
 
   public static List<SongPlaylist> all(final Connection connection) throws SQLException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
-      String.format(
-        "select distinct %s from %s",
-        "idSongCollection",
-        "songplaylist"
-      )
+        String.format(
+            "select distinct %s from %s",
+            "idSongCollection",
+            "songplaylist"
+        )
     )) {
       List<SongPlaylist> playlists = new ArrayList<>();
       try (ResultSet resultSet = preparedStatement.executeQuery()) {

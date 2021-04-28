@@ -52,13 +52,13 @@ public final class Album extends SongCollection {
 
   /** {@inheritDoc} */
   @Override
-  public final String creationFunctionName() {
+  public String creationFunctionName() {
     return CREATION_FUNCTION_NAME;
   }
 
   /** {@inheritDoc} */
   @Override
-  public final String tableName() {
+  public String tableName() {
     return TABLE_NAME;
   }
   //#endregion Constructors
@@ -84,7 +84,7 @@ public final class Album extends SongCollection {
 
   /** {@inheritDoc} */
   @Override
-  public final String primaryKeyName() {
+  public String primaryKeyName() {
     return PRIMARY_KEY_NAME;
   }
   //#endregion Accessors
@@ -190,7 +190,7 @@ public final class Album extends SongCollection {
 
   /** @return This Album's hashCode, i.e. its id. */
   @Override
-  public final int hashCode() {
+  public int hashCode() {
     return getId();
   }
 

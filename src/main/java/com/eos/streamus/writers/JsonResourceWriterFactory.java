@@ -6,10 +6,10 @@ import com.eos.streamus.models.Series;
 import com.eos.streamus.models.Song;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class JsonResourceWriterFactory {
+public final class JsonResourceWriterFactory {
   private JsonResourceWriterFactory() {}
 
-  public static JsonResourceWriter getWriterFor(Resource resource) {
+  public static JsonResourceWriter getWriterFor(final Resource resource) {
     if (resource instanceof Song) {
       return new JsonSongWriter(resource);
     } else if (resource instanceof Film) {

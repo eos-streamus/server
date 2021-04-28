@@ -8,7 +8,6 @@ import com.eos.streamus.models.User;
 import com.eos.streamus.dto.SongPlaylistDTO;
 import com.eos.streamus.dto.TrackDTO;
 import com.eos.streamus.dto.validators.SongPlaylistDTOValidator;
-import com.eos.streamus.writers.JsonSongCollectionListWriter;
 import com.eos.streamus.writers.JsonSongCollectionWriter;
 import com.eos.streamus.writers.JsonSongPlaylistWriter;
 import com.fasterxml.jackson.databind.JsonNode;

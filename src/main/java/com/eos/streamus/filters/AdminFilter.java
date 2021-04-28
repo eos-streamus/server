@@ -13,6 +13,7 @@ import java.io.IOException;
 @WebFilter()
 @Component
 public class AdminFilter implements Filter {
+  /** {@inheritDoc} */
   @Override
   public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse,
                        final FilterChain filterChain) throws IOException, ServletException {

@@ -54,7 +54,7 @@ public final class JwtFilter implements Filter {
     if (jwtTokenHeader == null || !jwtTokenHeader.startsWith("Bearer ")) {
       ((HttpServletResponse) servletResponse).sendError(HttpServletResponse.SC_FORBIDDEN);
     } else {
-      String jwtToken = jwtTokenHeader.substring(7);
+      String jwtToken = jwtTokenHeader.substring(TOKEN_OFFSET);
       try {
         jwtService.decode(jwtToken);
         filterChain.doFilter(httpServletRequest, servletResponse);

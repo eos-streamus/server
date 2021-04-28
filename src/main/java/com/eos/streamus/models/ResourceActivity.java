@@ -223,7 +223,9 @@ public final class ResourceActivity extends Activity {
     }
   }
 
-  public static ResourceActivity findByUserAndResourceIds(final Integer userId, final Integer resourceId, final Connection connection) throws SQLException, NoResultException {
+  public static ResourceActivity findByUserAndResourceIds(final Integer userId, final Integer resourceId,
+                                                          final Connection connection)
+      throws SQLException, NoResultException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         String.format(
             "select * from %s inner join %s on %s.%s = %s.%s where %s = ? and %s = ? order by %s desc",
