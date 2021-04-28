@@ -22,9 +22,7 @@ import java.util.Optional;
 import static org.springframework.http.ResponseEntity.ok;
 
 public abstract class SongCollectionController implements CommonResponses {
-  /**
-   * {@link IDatabaseConnector} to use.
-   */
+  /** {@link IDatabaseConnector} to use. */
   @Autowired
   private IDatabaseConnector databaseConnector;
 
