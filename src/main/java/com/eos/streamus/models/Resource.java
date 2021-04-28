@@ -4,52 +4,30 @@ import java.sql.*;
 
 public abstract class Resource implements SavableDeletableEntity {
   //#region Static attributes
-  /**
-   * Table name in database.
-   */
+  /** Table name in database. */
   public static final String TABLE_NAME = "Resource";
-  /**
-   * Id column name in database.
-   */
+  /** Id column name in database. */
   protected static final String ID_COLUMN = "id";
-  /**
-   * Path column name in database.
-   */
+  /** Path column name in database. */
   public static final String PATH_COLUMN = "path";
-  /**
-   * Name column name in database.
-   */
+  /** Name column name in database. */
   protected static final String NAME_COLUMN = "name";
-  /**
-   * Duration column name in database.
-   */
+  /** Duration column name in database. */
   protected static final String DURATION_COLUMN = "duration";
-  /**
-   * Created at column name in database.
-   */
+  /** Created at column name in database. */
   protected static final String CREATED_AT_COLUMN = "createdAt";
   //#endregion Static attributes
 
   //#region Instance attributes
-  /**
-   * Id of the Resource.
-   */
+  /** Id of the Resource. */
   private Integer id;
-  /**
-   * Path of the Resource.
-   */
+  /** Path of the Resource. */
   private String path;
-  /**
-   * Name of the Resource.
-   */
+  /** Name of the Resource. */
   private String name;
-  /**
-   * CreatedAt of the Resource.
-   */
+  /** CreatedAt of the Resource. */
   private Timestamp createdAt;
-  /**
-   * Duration of the Resource.
-   */
+  /** Duration of the Resource. */
   private Integer duration;
   //#endregion Instance attributes
 
@@ -84,9 +62,7 @@ public abstract class Resource implements SavableDeletableEntity {
     this.id = id;
   }
 
-  /**
-   * @return Path of resource.
-   */
+  /** @return Path of resource. */
   public String getPath() {
     return path;
   }
@@ -100,9 +76,7 @@ public abstract class Resource implements SavableDeletableEntity {
     this.path = path;
   }
 
-  /**
-   * @return Name of resource.
-   */
+  /** @return Name of resource. */
   public String getName() {
     return name;
   }
@@ -116,9 +90,7 @@ public abstract class Resource implements SavableDeletableEntity {
     this.name = name;
   }
 
-  /**
-   * @return Created at timestamp.
-   */
+  /** @return Created at timestamp. */
   public Timestamp getCreatedAt() {
     return createdAt;
   }
@@ -132,9 +104,7 @@ public abstract class Resource implements SavableDeletableEntity {
     this.createdAt = timestamp;
   }
 
-  /**
-   * @return Duration of the resource.
-   */
+  /** @return Duration of the resource. */
   public Integer getDuration() {
     return duration;
   }
@@ -162,7 +132,6 @@ public abstract class Resource implements SavableDeletableEntity {
   //#endregion Getters and Setters
 
   //#region Database operations
-
 
   /** {@inheritDoc} */
   @Override
@@ -219,9 +188,7 @@ public abstract class Resource implements SavableDeletableEntity {
 
   //#region Equals
 
-  /**
-   * @return instance hashcode, i.e. its id.
-   */
+  /** @return instance hashcode, i.e. its id. */
   @Override
   public int hashCode() {
     return id;
