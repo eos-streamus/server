@@ -9,9 +9,7 @@ import java.io.File;
 @Service
 @Scope(value = "singleton")
 public class ResourcePathResolver implements IResourcePathResolver {
-  /**
-   * Resource storage path.
-   */
+  /** Resource storage path. */
   @Value("${resourcePath}")
   private String resourcePath;
 
