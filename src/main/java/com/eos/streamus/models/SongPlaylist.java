@@ -29,13 +29,13 @@ public final class SongPlaylist extends SongCollection {
 
   //#region Constructors
   private SongPlaylist(final Integer id, final String name, final Timestamp createdAt,
-                       final Timestamp updatedAt, final User user, final Track... tracks) {
-    super(id, name, createdAt, updatedAt, tracks);
+                       final Timestamp updatedAt, final User user) {
+    super(id, name, createdAt, updatedAt);
     this.user = user;
   }
 
-  public SongPlaylist(final String name, final User user, final Track... tracks) {
-    super(name, tracks);
+  public SongPlaylist(final String name, final User user) {
+    super(name);
     this.user = user;
   }
   //#endregion Constructors

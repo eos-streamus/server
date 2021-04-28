@@ -208,18 +208,12 @@ public abstract class SongCollection extends Collection {
 
   //#region Constructors
   protected SongCollection(final Integer id, final String name, final Timestamp createdAt,
-                           final Timestamp updatedAt, final Track... tracks) {
+                           final Timestamp updatedAt) {
     super(id, name, createdAt, updatedAt);
-    initTracks(tracks);
   }
 
-  protected SongCollection(final String name, final Track... tracks) {
+  protected SongCollection(final String name) {
     super(name);
-    initTracks(tracks);
-  }
-
-  private void initTracks(final Track... tracks) {
-    this.tracks.addAll(Arrays.asList(tracks));
   }
   //#endregion Constructors
 

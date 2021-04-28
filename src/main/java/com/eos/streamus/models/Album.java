@@ -75,13 +75,13 @@ public class Album extends SongCollection {
 
   //#region Constructors
   private Album(final Integer id, final String name, final Date releaseDate,
-                final Timestamp createdAt, final Timestamp updatedAt, final Track... tracks) {
-    super(id, name, createdAt, updatedAt, tracks);
+                final Timestamp createdAt, final Timestamp updatedAt) {
+    super(id, name, createdAt, updatedAt);
     this.releaseDate = releaseDate;
   }
 
-  public Album(final String name, final Date releaseDate, final Track... tracks) {
-    super(name, tracks);
+  public Album(final String name, final Date releaseDate) {
+    super(name);
     this.releaseDate = releaseDate;
   }
 
