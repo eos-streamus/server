@@ -210,7 +210,6 @@ public class User extends Person {
    * @param connection Database connection to use to perform the operation.
    * @return Found User.
    * @throws SQLException      If an error occurred while performing the operation.
-   * @throws NoResultException If no User by this email was found.
    */
   public static User findByEmail(final String email, final Connection connection) throws SQLException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
