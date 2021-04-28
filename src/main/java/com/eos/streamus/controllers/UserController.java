@@ -28,20 +28,39 @@ import java.sql.SQLException;
 @RestController
 public class UserController implements CommonResponses {
 
+  /**
+   * {@link IDatabaseConnector} to use.
+   */
   @Autowired
   private IDatabaseConnector databaseConnector;
 
+  /**
+   * {@link UserDTOValidator} to use.
+   */
   @Autowired
   private UserDTOValidator userDTOValidator;
 
+  /**
+   * {@link PasswordEncoder} to use.
+   */
   @Autowired
   private PasswordEncoder passwordEncoder;
 
+  /**
+   * {@link JwtService} to use.
+   */
   @Autowired
   private JwtService jwtService;
 
+  /**
+   * Register a new User.
+   *
+   * @param userDTO User data.
+   * @param result  Validation BindingResult.
+   * @return Created User data in JSON.
+   */
   @PostMapping("/users")
-  public ResponseEntity<JsonNode> register(@RequestBody @Valid final UserDTO userDTO, BindingResult result) {
+  public ResponseEntity<JsonNode> register(@RequestBody @Valid final UserDTO userDTO, final BindingResult result) {
     if (result.hasErrors()) {
       return badRequest(result.toString());
     }
@@ -74,8 +93,15 @@ public class UserController implements CommonResponses {
     }
   }
 
+  /**
+   * Login a User.
+   *
+   * @param loginDTO Login credentials.
+   * @param result   BindingResult to validate credentials with.
+   * @return Token to use for future requests if successful login.
+   */
   @PostMapping("/login")
-  public ResponseEntity<String> login(@RequestBody @Valid final LoginDTO loginDTO, BindingResult result) {
+  public ResponseEntity<String> login(@RequestBody @Valid final LoginDTO loginDTO, final BindingResult result) {
     if (result.hasErrors()) {
       return ResponseEntity.badRequest().body(result.toString());
     }
@@ -98,6 +124,12 @@ public class UserController implements CommonResponses {
     }
   }
 
+  /**
+   * Delete an User by id.
+   *
+   * @param id Id of User to delete.
+   * @return Confirmation message.
+   */
   @DeleteMapping("/user/{id}")
   public ResponseEntity<String> deleteUser(@PathVariable final int id) {
     try (Connection connection = databaseConnector.getConnection()) {
@@ -111,10 +143,18 @@ public class UserController implements CommonResponses {
     }
   }
 
+  /**
+   * Update an User by id.
+   *
+   * @param id      Id of User to update.
+   * @param userDTO Updated User data.
+   * @param result  BindingResult to validate data with.
+   * @return Updated User data in JSON format.
+   */
   @PutMapping("/user/{id}")
   public ResponseEntity<JsonNode> updateUser(@PathVariable final int id,
                                              @RequestBody @Valid final UserDTO userDTO,
-                                             BindingResult result) {
+                                             final BindingResult result) {
     if (result.hasErrors()) {
       return badRequest(result.toString());
     }
