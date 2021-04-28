@@ -3,6 +3,7 @@ package com.eos.streamus.models;
 import com.eos.streamus.exceptions.NoResultException;
 
 import java.sql.*;
+import java.util.Objects;
 
 public class Person implements SavableDeletableEntity {
   //#region Static attributes
@@ -73,9 +74,29 @@ public class Person implements SavableDeletableEntity {
   }
 
   public Person(final String firstName, final String lastName, final Date dateOfBirth) {
+    Objects.requireNonNull(firstName);
+    Objects.requireNonNull(lastName);
+    Objects.requireNonNull(dateOfBirth);
     this.firstName = firstName;
     this.lastName = lastName;
     this.dateOfBirth = dateOfBirth;
+  }
+
+  public Person(final PersonBuilder builder) {
+    Objects.requireNonNull(builder);
+    Objects.requireNonNull(builder.getFirstName());
+    Objects.requireNonNull(builder.getLastName());
+    Objects.requireNonNull(builder.getDateOfBirth());
+    this.firstName = builder.getFirstName();
+    this.lastName = builder.getLastName();
+    this.dateOfBirth = builder.getDateOfBirth();
+    if (builder.getId() != null) {
+      this.id = builder.getId();
+      if (builder.hasTimestamps()) {
+        this.createdAt = builder.getCreatedAt();
+        this.updatedAt = builder.getUpdatedAt();
+      }
+    }
   }
   //#endregion Constructors
 
@@ -274,14 +295,13 @@ public class Person implements SavableDeletableEntity {
         if (!resultSet.next()) {
           throw new NoResultException();
         }
-        return new Person(
-            resultSet.getInt(ID_COLUMN),
+        return new PersonBuilder(
             resultSet.getString(FIRST_NAME_COLUMN),
             resultSet.getString(LAST_NAME_COLUMN),
-            resultSet.getDate(DATE_OF_BIRTH_COLUMN),
-            resultSet.getTimestamp(CREATED_AT_COLUMN),
-            resultSet.getTimestamp(UPDATED_AT_COLUMN)
-        );
+            resultSet.getDate(DATE_OF_BIRTH_COLUMN)
+        ).withId(resultSet.getInt(ID_COLUMN))
+            .withTimestamps(resultSet.getTimestamp(CREATED_AT_COLUMN), resultSet.getTimestamp(UPDATED_AT_COLUMN))
+            .build();
       }
     }
   }

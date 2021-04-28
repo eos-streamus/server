@@ -34,6 +34,10 @@ public class Admin extends User {
                final String email, final String username) {
     super(firstName, lastName, dateOfBirth, email, username);
   }
+
+  public Admin(final PersonBuilder builder) {
+    super(builder);
+  }
   //#endregion Constructors
 
   //#region Getters and Setters

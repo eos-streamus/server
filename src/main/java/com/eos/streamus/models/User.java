@@ -3,6 +3,7 @@ package com.eos.streamus.models;
 import com.eos.streamus.exceptions.NoResultException;
 
 import java.sql.*;
+import java.util.Objects;
 
 public class User extends Person {
   //#region Static attributes
@@ -60,6 +61,14 @@ public class User extends Person {
     super(firstName, lastName, dateOfBirth);
     this.email = email;
     this.username = username;
+  }
+
+  User(final PersonBuilder builder) {
+    super(builder);
+    Objects.requireNonNull(builder.getEmail());
+    Objects.requireNonNull(builder.getUsername());
+    this.email = builder.getEmail();
+    this.username = builder.getUsername();
   }
   //#endregion Constructors
 
