@@ -6,21 +6,13 @@ import java.sql.*;
 
 public class Admin extends User {
   //#region Static Attributes
-  /**
-   * Table name in database.
-   */
+  /** Table name in database. */
   private static final String TABLE_NAME = "Admin";
-  /**
-   * Primary key name in database.
-   */
+  /** Primary key name in database. */
   private static final String PRIMARY_KEY_NAME = "idUser";
-  /**
-   * Creation function name in database.
-   */
+  /** Creation function name in database. */
   private static final String CREATION_FUNCTION_NAME = "createAdmin";
-  /**
-   * View name in database.
-   */
+  /** View name in database. */
   private static final String VIEW_NAME = "vadmin";
   //#endregion Static Attributes
 
