@@ -8,21 +8,13 @@ import java.util.List;
 
 public class Film extends Video {
   //#region Static attributes
-  /**
-   * Table name in the database.
-   */
+  /** Table name in the database. */
   private static final String TABLE_NAME = "Film";
-  /**
-   * View name in the database.
-   */
+  /** View name in the database. */
   private static final String VIEW_NAME = "vFilm";
-  /**
-   * Creation function name in the database.
-   */
+  /** Creation function name in the database. */
   private static final String CREATION_FUNCTION_NAME = "createFilm";
-  /**
-   * Primary key name in the database.
-   */
+  /** Primary key name in the database. */
   private static final String PRIMARY_KEY_NAME = "idVideo";
   //#endregion Static attributes
 
