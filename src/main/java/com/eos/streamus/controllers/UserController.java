@@ -29,27 +29,19 @@ import java.sql.SQLException;
 @RestController
 public class UserController implements CommonResponses {
 
-  /**
-   * {@link IDatabaseConnector} to use.
-   */
+  /** {@link IDatabaseConnector} to use. */
   @Autowired
   private IDatabaseConnector databaseConnector;
 
-  /**
-   * {@link UserDTOValidator} to use.
-   */
+  /** {@link UserDTOValidator} to use. */
   @Autowired
   private UserDTOValidator userDTOValidator;
 
-  /**
-   * {@link PasswordEncoder} to use.
-   */
+  /** {@link PasswordEncoder} to use. */
   @Autowired
   private PasswordEncoder passwordEncoder;
 
-  /**
-   * {@link JwtService} to use.
-   */
+  /** {@link JwtService} to use. */
   @Autowired
   private JwtService jwtService;
 
