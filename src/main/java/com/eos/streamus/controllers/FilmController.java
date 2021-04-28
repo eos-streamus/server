@@ -28,20 +28,36 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.UUID;
 
 @RestController
 public class FilmController implements CommonResponses {
+  /**
+   * Max video chunk size (1GB).
+   */
   private static final long MAX_VIDEO_CHUNK_SIZE = (long) 1024 * 1024;
+  /**
+   * Allowed Video Mime types.
+   */
   private static final String[] VIDEO_MIME_TYPES = {
       "video/x-flv", "video/mp4", "video/MP2T", "video/3gpp", "video/quicktime", "video/x-msvideo", "video/x-ms-wmv"
   };
 
+  /**
+   * {@link IResourcePathResolver} to use.
+   */
   @Autowired
   private IResourcePathResolver resourcePathResolver;
+  /**
+   * {@link IDatabaseConnector} to use.
+   */
   @Autowired
   private IDatabaseConnector databaseConnector;
 
+  /**
+   * @return All films in JSON data.
+   */
   @GetMapping("/films")
   public ResponseEntity<JsonNode> allFilms() {
     try (Connection connection = databaseConnector.getConnection()) {
@@ -52,27 +68,31 @@ public class FilmController implements CommonResponses {
     }
   }
 
+  /**
+   * Create a new Film.
+   *
+   * @param file Video file.
+   * @param name Film name.
+   * @return Saved Film data in JSON format (excluding file).
+   */
   @PostMapping("/film")
-  public ResponseEntity<JsonNode> postFilm(@RequestParam("file") MultipartFile file,
-                                           @RequestParam("name") String name) {
+  public ResponseEntity<JsonNode> postFilm(@RequestParam("file") final MultipartFile file,
+                                           @RequestParam("name") final String name) {
     if (file.getContentType() == null) {
       return badRequest("No specified mime type");
     }
-    boolean acceptableMimeType = false;
-    for (String type : VIDEO_MIME_TYPES) {
-      if (file.getContentType().equals(type)) {
-        acceptableMimeType = true;
-        break;
-      }
+    if (file.getContentType() == null) {
+      return badRequest("Invalid Mime type.");
     }
-    if (!acceptableMimeType) {
+
+    if (Arrays.stream(VIDEO_MIME_TYPES).noneMatch(type -> type.equals(file.getContentType()))) {
       return badRequest(String.format("Invalid mime type : %s", file.getContentType()));
     }
 
     String path = String.format(
         "%s%s.%s",
         resourcePathResolver.getVideoDir(),
-        UUID.randomUUID().toString(),
+        UUID.randomUUID(),
         FilenameUtils.getExtension(file.getOriginalFilename())
     );
 
@@ -98,8 +118,14 @@ public class FilmController implements CommonResponses {
     }
   }
 
+  /**
+   * Get a Film by id.
+   *
+   * @param id Id of Film.
+   * @return Film data in JSON.
+   */
   @GetMapping("/film/{id}")
-  public ResponseEntity<JsonNode> getFilm(@PathVariable("id") int id) {
+  public ResponseEntity<JsonNode> getFilm(@PathVariable("id") final int id) {
     try (Connection connection = databaseConnector.getConnection()) {
       return ResponseEntity.ok().body(new JsonFilmWriter(Film.findById(id, connection)).getJson());
     } catch (SQLException sqlException) {
@@ -110,8 +136,16 @@ public class FilmController implements CommonResponses {
     }
   }
 
+  /**
+   * Get a stream of a Film.
+   *
+   * @param headers HttpHeaders of request, containing range.
+   * @param id      Id of film
+   * @return a ResourceRegion to stream.
+   */
   @GetMapping("/film/{id}/stream")
-  public ResponseEntity<ResourceRegion> streamFilm(@RequestHeader HttpHeaders headers, @PathVariable("id") int id) {
+  public ResponseEntity<ResourceRegion> streamFilm(@RequestHeader final HttpHeaders headers,
+                                                   @PathVariable("id") final int id) {
     try (Connection connection = databaseConnector.getConnection()) {
       return streamResource(Film.findById(id, connection), headers.getRange(), MAX_VIDEO_CHUNK_SIZE);
     } catch (NoResultException noResultException) {
@@ -122,6 +156,12 @@ public class FilmController implements CommonResponses {
     }
   }
 
+  /**
+   * Delete a Film by id.
+   *
+   * @param id Id of Film to delete.
+   * @return Confirmation message.
+   */
   @DeleteMapping("/film/{id}")
   public ResponseEntity<String> deleteFilm(@PathVariable final int id) {
     try (Connection connection = databaseConnector.getConnection()) {
