@@ -25,7 +25,7 @@ public class Admin extends User {
   //#endregion Static Attributes
 
   //#region Constructors
-  public Admin(final PersonBuilder builder) {
+  Admin(final PersonBuilder builder) {
     super(builder);
   }
   //#endregion Constructors
