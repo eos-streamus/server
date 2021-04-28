@@ -77,7 +77,7 @@ public class AlbumController extends SongCollectionController {
    * @param trackDTO Data of track.
    * @return Updated Album in JSON format.
    */
-  @PutMapping("/album/{id}")
+  @PutMapping("/album/{albumId}")
   public ResponseEntity<JsonNode> addOrMoveTrackInAlbum(@PathVariable final int albumId,
                                                         @Valid @RequestBody final TrackDTO trackDTO) {
     return addOrMoveTrackInSongCollection(albumId, trackDTO);
