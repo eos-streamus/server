@@ -79,14 +79,14 @@ public abstract class SongCollectionController implements CommonResponses {
   /**
    * Add or move a Track in a SongCollection.
    *
-   * @param id        Id of SongCollection.
+   * @param songCollectionId        Id of SongCollection.
    * @param trackData Data of Track (new or existing)
    * @return Updated SongCollection data in JSON.
    */
-  public ResponseEntity<JsonNode> addOrMoveTrackInSongCollection(final int id, final TrackDTO trackData) {
+  public ResponseEntity<JsonNode> addOrMoveTrackInSongCollection(final int songCollectionId, final TrackDTO trackData) {
     try (Connection connection = databaseConnector.getConnection()) {
 
-      SongCollection songCollection = SongCollectionDAO.findById(id, connection);
+      SongCollection songCollection = SongCollectionDAO.findById(songCollectionId, connection);
 
       Song song = Song.findById(trackData.getSongId(), connection);
 
