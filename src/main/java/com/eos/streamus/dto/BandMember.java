@@ -4,29 +4,19 @@ import javax.validation.constraints.NotNull;
 import java.sql.Date;
 
 public class BandMember {
-  /**
-   * Id of Musician.
-   */
+  /** Id of Musician. */
   private Integer musicianId;
-  /**
-   * Musician DTO representing member.
-   */
+  /** Musician DTO representing member. */
   private MusicianDTO musician;
 
-  /**
-   * From date.
-   */
+  /** From date. */
   @NotNull
   private Date from;
 
-  /**
-   * To date.
-   */
+  /** To date. */
   private Date to;
 
-  /**
-   * @return From date.
-   */
+  /** @return From date. */
   public Date getFrom() {
     return from;
   }
@@ -40,23 +30,17 @@ public class BandMember {
     this.from = from;
   }
 
-  /**
-   * @return To date.
-   */
+  /** @return To date. */
   public Date getTo() {
     return to;
   }
 
-  /**
-   * @return Musician id.
-   */
+  /** @return Musician id. */
   public Integer getMusicianId() {
     return musicianId;
   }
 
-  /**
-   * @return Band member's {@link MusicianDTO}.
-   */
+  /** @return Band member's {@link MusicianDTO}. */
   public MusicianDTO getMusician() {
     return musician;
   }
