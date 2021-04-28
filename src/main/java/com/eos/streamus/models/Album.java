@@ -8,68 +8,38 @@ import java.util.List;
 
 public class Album extends SongCollection {
   //#region Static attributes
-  /**
-   * Creation_function_name in the database.
-   */
+  /** Creation_function_name in the database. */
   private static final String CREATION_FUNCTION_NAME = "createAlbum";
-  /**
-   * Table name in the database.
-   */
+  /** Table name in the database. */
   private static final String TABLE_NAME = "Album";
-  /**
-   * Primary key name in the database.
-   */
+  /** Primary key name in the database. */
   private static final String PRIMARY_KEY_NAME = "idSongCollection";
-  /**
-   * Release date column in the database.
-   */
+  /** Release date column in the database. */
   private static final String RELEASE_DATE_COLUMN = "releaseDate";
-  /**
-   * Album artist table name in the database.
-   */
+  /** Album artist table name in the database. */
   private static final String ALBUM_ARTIST_TABLE_NAME = "AlbumArtist";
-  /**
-   * Album artist artist id column in the database.
-   */
+  /** Album artist artist id column in the database. */
   private static final String ALBUM_ARTIST_ARTIST_ID_COLUMN = "idArtist";
-  /**
-   * Album artist album id column in the database.
-   */
+  /** Album artist album id column in the database. */
   private static final String ALBUM_ARTIST_ALBUM_ID_COLUMN = "idAlbum";
-  /**
-   * View name in the database.
-   */
+  /** View name in the database. */
   private static final String VIEW_NAME = "vAlbum";
-  /**
-   * View id in the database.
-   */
+  /** View id in the database. */
   private static final String VIEW_ID = "id";
-  /**
-   * View song id in the database.
-   */
+  /** View song id in the database. */
   private static final String VIEW_SONG_ID = "idSong";
-  /**
-   * Track number column in the database.
-   */
+  /** Track number column in the database. */
   private static final String TRACK_NUMBER_COLUMN = "trackNumber";
-  /**
-   * View song name column in the database.
-   */
+  /** View song name column in the database. */
   private static final String VIEW_SONG_NAME_COLUMN = "songName";
-  /**
-   * Song created at column in the database.
-   */
+  /** Song created at column in the database. */
   private static final String SONG_CREATED_AT_COLUMN = "songCreatedAt";
   //#endregion Static attributes
 
   //#region Instance attributes
-  /**
-   * List of contributing {@link Artist}s of this Album.
-   */
+  /** List of contributing {@link Artist}s of this Album. */
   private final List<Artist> artists = new ArrayList<>();
-  /**
-   * Release date of this Album.
-   */
+  /** Release date of this Album. */
   private final Date releaseDate;
   //#endregion Instance attributes
 
@@ -107,9 +77,7 @@ public class Album extends SongCollection {
     artists.add(artist);
   }
 
-  /**
-   * @return List of contributing {@link Artist}s of this Album.
-   */
+  /** @return List of contributing {@link Artist}s of this Album. */
   public List<Artist> getArtists() {
     return artists;
   }
@@ -220,9 +188,7 @@ public class Album extends SongCollection {
 
   //#region Equals
 
-  /**
-   * @return This Album's hashCode, i.e. its id.
-   */
+  /** @return This Album's hashCode, i.e. its id. */
   @Override
   public int hashCode() {
     return getId();
