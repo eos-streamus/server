@@ -34,9 +34,7 @@ public abstract class SongCollection extends Collection {
 
     //#region Getters and Setters
 
-    /**
-     * @return This Track's number.
-     */
+    /** @return This Track's number. */
     public Integer getTrackNumber() {
       return getKey();
     }
@@ -50,9 +48,7 @@ public abstract class SongCollection extends Collection {
       this.setKey(trackNumber);
     }
 
-    /**
-     * @return Track song.
-     */
+    /** @return Track song. */
     public Song getSong() {
       return getValue();
     }
@@ -154,9 +150,7 @@ public abstract class SongCollection extends Collection {
 
     //#region Equals
 
-    /**
-     * @return Track's hashcode, combined from track number and song hashcode.
-     */
+    /** @return Track's hashcode, combined from track number and song hashcode. */
     @Override
     public int hashCode() {
       return Objects.hash(getKey(), getValue().hashCode());
