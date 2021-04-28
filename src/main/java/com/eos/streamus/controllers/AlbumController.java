@@ -28,9 +28,7 @@ import java.sql.SQLException;
 
 @Controller
 public class AlbumController extends SongCollectionController {
-  /**
-   * {@link AlbumDTOValidator} to use to validate incoming requests.
-   */
+  /** {@link AlbumDTOValidator} to use to validate incoming requests. */
   @Autowired
   private AlbumDTOValidator albumDTOValidator;
 
@@ -94,9 +92,7 @@ public class AlbumController extends SongCollectionController {
     return deleteSongCollection(id);
   }
 
-  /**
-   * @return {@link com.eos.streamus.dto.validators.SongCollectionDTOValidator}.
-   */
+  /** @return {@link com.eos.streamus.dto.validators.SongCollectionDTOValidator}. */
   @Override
   protected SongCollectionDTOValidator getSongCollectionDTOValidator() {
     return albumDTOValidator;
