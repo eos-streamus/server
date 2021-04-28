@@ -130,36 +130,22 @@ public class VideoPlaylist extends VideoCollection {
   }
 
   //#region Static attributes
-  /**
-   * Table name in database.
-   */
+  /** Table name in database. */
   private static final String TABLE_NAME = "VideoPlaylist";
-  /**
-   * Primary key name in database.
-   */
+  /** Primary key name in database. */
   private static final String PRIMARY_KEY_NAME = "idVideoCollection";
-  /**
-   * User id column in database.
-   */
+  /** User id column in database. */
   private static final String USER_ID_COLUMN = "idUser";
-  /**
-   * View name in database.
-   */
+  /** View name in database. */
   private static final String VIEW_NAME = "VVideoPlaylist";
-  /**
-   * Creation function name in database.
-   */
+  /** Creation function name in database. */
   private static final String CREATION_FUNCTION_NAME = "createVideoPlaylist";
   //#endregion Static attributes
 
   //#region Instance attributes
-  /**
-   * Creator {@link User} of this VideoPlaylist.
-   */
+  /** Creator {@link User} of this VideoPlaylist. */
   private final User user;
-  /**
-   * List of VideoPlaylistVideos of this playlist.
-   */
+  /** List of VideoPlaylistVideos of this playlist. */
   private final List<VideoPlaylistVideo> videos = new ArrayList<>();
   //#endregion Instance attributes
 
@@ -190,9 +176,7 @@ public class VideoPlaylist extends VideoCollection {
     return PRIMARY_KEY_NAME;
   }
 
-  /**
-   * @return VideoPlaylist specific content of this Collection.
-   */
+  /** @return VideoPlaylist specific content of this Collection. */
   @Override
   protected List<Pair<Integer, Resource>> getSpecificContent() {
     List<Pair<Integer, Resource>> content = new ArrayList<>();
@@ -202,9 +186,7 @@ public class VideoPlaylist extends VideoCollection {
     return content;
   }
 
-  /**
-   * @return {@link VideoPlaylistVideo} of this playlist.
-   */
+  /** @return {@link VideoPlaylistVideo} of this playlist. */
   public List<VideoPlaylistVideo> getVideos() {
     return videos;
   }
