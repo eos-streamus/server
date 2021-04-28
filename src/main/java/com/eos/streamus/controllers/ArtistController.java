@@ -1,11 +1,7 @@
 package com.eos.streamus.controllers;
 
 import com.eos.streamus.exceptions.NoResultException;
-import com.eos.streamus.models.Artist;
-import com.eos.streamus.models.ArtistDAO;
-import com.eos.streamus.models.Band;
-import com.eos.streamus.models.Musician;
-import com.eos.streamus.models.Person;
+import com.eos.streamus.models.*;
 import com.eos.streamus.dto.BandMember;
 import com.eos.streamus.dto.validators.BandMemberDTOValidator;
 import com.eos.streamus.dto.validators.MusicianDTOValidator;
@@ -152,11 +148,11 @@ public class ArtistController implements CommonResponses {
         if (dataPerson.getId() != null) {
           person = Person.findById(dataPerson.getId(), connection);
         } else {
-          person = new Person(
+          person = new PersonBuilder(
               dataPerson.getFirstName(),
               dataPerson.getLastName(),
               dataPerson.getDateOfBirth() == null ? null : Date.valueOf(dataPerson.getDateOfBirth())
-          );
+          ).build();
           person.save(connection);
         }
         musician = data.getName() != null ? new Musician(data.getName(), person) : new Musician(person);
@@ -251,9 +247,11 @@ public class ArtistController implements CommonResponses {
       } else {
         com.eos.streamus.dto.PersonDTO personDTO = member.getMusician().getPerson();
         Person person = new Person(
-            personDTO.getFirstName(),
-            personDTO.getLastName(),
-            Date.valueOf(personDTO.getDateOfBirth())
+            new PersonBuilder(
+                personDTO.getFirstName(),
+                personDTO.getLastName(),
+                Date.valueOf(personDTO.getDateOfBirth())
+            )
         );
         musician = member.getMusician().getName() == null ?
             new Musician(person)

@@ -16,7 +16,7 @@ class PersonTests extends DatabaseTests {
   void testPersonCRUD() throws SQLException, NoResultException {
     try (Connection connection = databaseConnector.getConnection()) {
       // Create
-      Person person = new Person("John", "Doe", randomDate());
+      Person person = new PersonBuilder("John", "Doe", randomDate()).build();
       person.save(connection);
 
       // Read

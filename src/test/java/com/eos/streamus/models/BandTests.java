@@ -43,27 +43,39 @@ class BandTests extends DatabaseTests {
       Band pinkFloyd = new Band("Pink Floyd");
       pinkFloyd.save(connection);
 
-      Musician sydBarrett = new Musician(new Person("Syd", "Barrett", valueOf("1946-01-06")));
+      Musician sydBarrett = new Musician(
+          new PersonBuilder("Syd", "Barrett", valueOf("1946-01-06")).build()
+      );
       sydBarrett.save(connection);
       artists.add(sydBarrett);
 
-      Musician nickMason = new Musician(new Person("Nick", "Mason", valueOf("1944-01-27")));
+      Musician nickMason = new Musician(
+          new PersonBuilder("Nick", "Mason", valueOf("1944-01-27")).build()
+      );
       nickMason.save(connection);
       artists.add(nickMason);
 
-      Musician bobClose = new Musician(new Person("Bob", "Close", valueOf("1945-01-01")));
+      Musician bobClose = new Musician(
+          new PersonBuilder("Bob", "Close", valueOf("1945-01-01")).build()
+      );
       bobClose.save(connection);
       artists.add(bobClose);
 
-      Musician rogerWaters = new Musician(new Person("Roger", "Waters", valueOf("1943-09-06")));
+      Musician rogerWaters = new Musician(
+          new PersonBuilder("Roger", "Waters", valueOf("1943-09-06")).build()
+      );
       rogerWaters.save(connection);
       artists.add(rogerWaters);
 
-      Musician richardWright = new Musician(new Person("Richard", "Wright", valueOf("1943-07-28")));
+      Musician richardWright = new Musician(
+          new PersonBuilder("Richard", "Wright", valueOf("1943-07-28")).build()
+      );
       richardWright.save(connection);
       artists.add(richardWright);
 
-      Musician davidGilmour = new Musician(new Person("David", "Gilmour", valueOf("1946-03-06")));
+      Musician davidGilmour = new Musician(
+          new PersonBuilder("David", "Gilmour", valueOf("1946-03-06")).build()
+      );
       davidGilmour.save(connection);
       artists.add(davidGilmour);
 
@@ -84,7 +96,9 @@ class BandTests extends DatabaseTests {
       Band testBand = new Band("Test");
       testBand.save(connection);
 
-      Musician musician = new Musician(new Person("Test", "Person", valueOf("1990-01-01")));
+      Musician musician = new Musician(
+          new PersonBuilder("Test", "Person", valueOf("1990-01-01")).build()
+      );
       musician.save(connection);
 
       testBand.addMember(musician, valueOf("2000-01-01"), valueOf("2010-01-01"));

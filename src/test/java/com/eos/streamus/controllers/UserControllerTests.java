@@ -1,5 +1,6 @@
 package com.eos.streamus.controllers;
 
+import com.eos.streamus.models.PersonBuilder;
 import com.eos.streamus.models.User;
 import com.eos.streamus.utils.JwtService;
 import com.eos.streamus.writers.JsonUserWriter;
@@ -56,7 +57,7 @@ class UserControllerTests extends ControllerTests {
   @Test
   void signingUpWithValidUserDataShouldWork() throws Exception {
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
-    final String email = UUID.randomUUID().toString() + "@streamus.com";
+    final String email = UUID.randomUUID() + "@streamus.com";
     objectNode.put("email", email);
     objectNode.put("username", randomStringOfLength(minUsernameLength));
     objectNode.put("firstName", "John");
@@ -70,17 +71,18 @@ class UserControllerTests extends ControllerTests {
     try (Connection connection = databaseConnector.getConnection()) {
       User user = User.findByEmail(email, connection);
       assertEquals(new JsonUserWriter(user).getJson(),
-                   new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString()));
+          new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString()));
     }
   }
 
   @Test
   void signingUpWithAnAlreadyUsedEmailShouldReturnBadRequest() throws Exception {
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
-    final String email = UUID.randomUUID().toString() + "@streamus.com";
+    final String email = UUID.randomUUID() + "@streamus.com";
 
     try (Connection connection = databaseConnector.getConnection()) {
-      new User("John", "Doe", java.sql.Date.valueOf("2000-01-01"), email, "john_doe")
+      new PersonBuilder("John", "Doe", Date.valueOf("2000-01-01"))
+          .asUser(email, "john_doe").build()
           .save(connection);
     }
 
@@ -113,7 +115,7 @@ class UserControllerTests extends ControllerTests {
   @Test
   void signingUpWithMissingUsernameShouldReturnBadRequest() throws Exception {
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
-    final String email = UUID.randomUUID().toString() + "@streamus.com";
+    final String email = UUID.randomUUID() + "@streamus.com";
     objectNode.put("email", email);
     objectNode.put("firstName", "John");
     objectNode.put("lastName", "Doe");
@@ -128,7 +130,7 @@ class UserControllerTests extends ControllerTests {
   @Test
   void signingUpWithMissingFirstNameShouldReturnBadRequest() throws Exception {
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
-    final String email = UUID.randomUUID().toString() + "@streamus.com";
+    final String email = UUID.randomUUID() + "@streamus.com";
     objectNode.put("email", email);
     objectNode.put("username", randomStringOfLength(minUsernameLength));
     objectNode.put("lastName", "Doe");
@@ -143,7 +145,7 @@ class UserControllerTests extends ControllerTests {
   @Test
   void signingUpWithMissingLastNameShouldReturnBadRequest() throws Exception {
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
-    final String email = UUID.randomUUID().toString() + "@streamus.com";
+    final String email = UUID.randomUUID() + "@streamus.com";
     objectNode.put("email", email);
     objectNode.put("username", randomStringOfLength(minUsernameLength));
     objectNode.put("firstName", "John");
@@ -158,7 +160,7 @@ class UserControllerTests extends ControllerTests {
   @Test
   void signingUpWithMissingDateOfBirthShouldReturnBadRequest() throws Exception {
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
-    final String email = UUID.randomUUID().toString() + "@streamus.com";
+    final String email = UUID.randomUUID() + "@streamus.com";
     objectNode.put("email", email);
     objectNode.put("username", randomStringOfLength(minUsernameLength));
     objectNode.put("firstName", "John");
@@ -173,7 +175,7 @@ class UserControllerTests extends ControllerTests {
   @Test
   void signingUpWithMissingPasswordShouldReturnBadRequest() throws Exception {
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
-    final String email = UUID.randomUUID().toString() + "@streamus.com";
+    final String email = UUID.randomUUID() + "@streamus.com";
     objectNode.put("email", email);
     objectNode.put("username", randomStringOfLength(minUsernameLength));
     objectNode.put("firstName", "John");
@@ -188,7 +190,7 @@ class UserControllerTests extends ControllerTests {
   @Test
   void signingUpWithPasswordTooShortShouldReturnBadRequest() throws Exception {
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
-    final String email = UUID.randomUUID().toString() + "@streamus.com";
+    final String email = UUID.randomUUID() + "@streamus.com";
     objectNode.put("email", email);
     objectNode.put("username", randomStringOfLength(minUsernameLength));
     objectNode.put("firstName", "John");
@@ -204,7 +206,7 @@ class UserControllerTests extends ControllerTests {
   @Test
   void signingUpWithUsernameTooShortShouldReturnBadRequest() throws Exception {
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
-    final String email = UUID.randomUUID().toString() + "@streamus.com";
+    final String email = UUID.randomUUID() + "@streamus.com";
     objectNode.put("email", email);
     objectNode.put("username", randomStringOfLength(minUsernameLength));
     objectNode.put("firstName", "John");
@@ -236,7 +238,7 @@ class UserControllerTests extends ControllerTests {
   @Test
   void signingUpWithInvalidFirstNameShouldReturnBadRequest() throws Exception {
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
-    final String email = UUID.randomUUID().toString() + "@streamus.com";
+    final String email = UUID.randomUUID() + "@streamus.com";
     objectNode.put("email", email);
     objectNode.put("username", randomStringOfLength(minUsernameLength));
     objectNode.put("firstName", "");
@@ -252,7 +254,7 @@ class UserControllerTests extends ControllerTests {
   @Test
   void signingUpWithInvalidLastNameShouldReturnBadRequest() throws Exception {
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
-    final String email = UUID.randomUUID().toString() + "@streamus.com";
+    final String email = UUID.randomUUID() + "@streamus.com";
     objectNode.put("email", email);
     objectNode.put("username", randomStringOfLength(minUsernameLength));
     objectNode.put("firstName", "John");
@@ -268,7 +270,7 @@ class UserControllerTests extends ControllerTests {
   @Test
   void signingUpWithANonDateDateOfBirthShouldReturnBadRequest() throws Exception {
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
-    final String email = UUID.randomUUID().toString() + "@streamus.com";
+    final String email = UUID.randomUUID() + "@streamus.com";
     objectNode.put("username", randomStringOfLength(minUsernameLength));
     objectNode.put("firstName", "John");
     objectNode.put("email", email);
@@ -284,7 +286,7 @@ class UserControllerTests extends ControllerTests {
   @Test
   void signingUpWithDateOfBirthInTheFutureShouldReturnBadRequest() throws Exception {
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
-    final String email = UUID.randomUUID().toString() + "@streamus.com";
+    final String email = UUID.randomUUID() + "@streamus.com";
     objectNode.put("email", email);
     objectNode.put("username", randomStringOfLength(minUsernameLength));
     objectNode.put("firstName", "John");
@@ -304,8 +306,8 @@ class UserControllerTests extends ControllerTests {
     User user;
     String password;
     try (Connection connection = databaseConnector.getConnection()) {
-      user = new User("John", "Doe", Date.valueOf("2000-01-01"), randomStringOfLength(5) + "@streamus.com",
-                      randomStringOfLength(minUsernameLength));
+      user = (User) new PersonBuilder("John", "Doe", Date.valueOf("2000-01-01"))
+          .asUser(randomStringOfLength(5) + "@streamus.com", randomStringOfLength(minUsernameLength)).build();
       user.save(connection);
       password = randomStringOfLength(minPasswordLength);
       user.upsertPassword(passwordEncoder.encode(password), connection);
@@ -328,8 +330,8 @@ class UserControllerTests extends ControllerTests {
     User user;
     String password;
     try (Connection connection = databaseConnector.getConnection()) {
-      user = new User("John", "Doe", Date.valueOf("2000-01-01"), randomStringOfLength(5) + "@streamus.com",
-                      randomStringOfLength(minUsernameLength));
+      user = (User) new PersonBuilder("John", "Doe", Date.valueOf("2000-01-01"))
+          .asUser(randomStringOfLength(5) + "@streamus.com", randomStringOfLength(minUsernameLength)).build();
       user.save(connection);
       password = randomStringOfLength(minPasswordLength);
       user.upsertPassword(passwordEncoder.encode(password), connection);
@@ -349,8 +351,8 @@ class UserControllerTests extends ControllerTests {
     User user;
     String password;
     try (Connection connection = databaseConnector.getConnection()) {
-      user = new User("John", "Doe", Date.valueOf("2000-01-01"), randomStringOfLength(5) + "@streamus.com",
-                      randomStringOfLength(minUsernameLength));
+      user = (User) new PersonBuilder("John", "Doe", Date.valueOf("2000-01-01"))
+          .asUser(randomStringOfLength(5) + "@streamus.com", randomStringOfLength(minUsernameLength)).build();
       user.save(connection);
       password = randomStringOfLength(minPasswordLength);
       user.upsertPassword(passwordEncoder.encode(password), connection);
@@ -370,8 +372,8 @@ class UserControllerTests extends ControllerTests {
     User user;
     String password;
     try (Connection connection = databaseConnector.getConnection()) {
-      user = new User("John", "Doe", Date.valueOf("2000-01-01"), randomStringOfLength(5) + "@streamus.com",
-                      randomStringOfLength(minUsernameLength));
+      user = (User) new PersonBuilder("John", "Doe", Date.valueOf("2000-01-01"))
+          .asUser(randomStringOfLength(5) + "@streamus.com", randomStringOfLength(minUsernameLength)).build();
       user.save(connection);
       password = randomStringOfLength(minPasswordLength);
       user.upsertPassword(passwordEncoder.encode(password), connection);
@@ -390,8 +392,8 @@ class UserControllerTests extends ControllerTests {
     User user;
     String password;
     try (Connection connection = databaseConnector.getConnection()) {
-      user = new User("John", "Doe", Date.valueOf("2000-01-01"), randomStringOfLength(5) + "@streamus.com",
-                      randomStringOfLength(minUsernameLength));
+      user = (User) new PersonBuilder("John", "Doe", Date.valueOf("2000-01-01"))
+          .asUser(randomStringOfLength(5) + "@streamus.com", randomStringOfLength(minUsernameLength)).build();
       user.save(connection);
       password = randomStringOfLength(minPasswordLength);
       user.upsertPassword(passwordEncoder.encode(password), connection);
@@ -410,8 +412,8 @@ class UserControllerTests extends ControllerTests {
     User user;
     String password;
     try (Connection connection = databaseConnector.getConnection()) {
-      user = new User("John", "Doe", date("2000-01-01"), randomStringOfLength(10) + "@streamus.com",
-                      randomStringOfLength(minUsernameLength));
+      user = (User) new PersonBuilder("John", "Doe", date("2000-01-01"))
+          .asUser(randomStringOfLength(10) + "@streamus.com", randomStringOfLength(minUsernameLength)).build();
       user.save(connection);
       password = randomStringOfLength(minPasswordLength);
       user.upsertPassword(passwordEncoder.encode(password), connection);
@@ -447,8 +449,8 @@ class UserControllerTests extends ControllerTests {
     User user;
     String password;
     try (Connection connection = databaseConnector.getConnection()) {
-      user = new User("John", "Doe", date("2000-01-01"), randomStringOfLength(10) + "@streamus.com",
-                      randomStringOfLength(minUsernameLength));
+      user = (User) new PersonBuilder("John", "Doe", date("2000-01-01"))
+          .asUser(randomStringOfLength(10) + "@streamus.com", randomStringOfLength(minUsernameLength)).build();
       user.save(connection);
       password = randomStringOfLength(minPasswordLength);
       user.upsertPassword(passwordEncoder.encode(password), connection);
@@ -488,20 +490,21 @@ class UserControllerTests extends ControllerTests {
     String password;
     String email = randomStringOfLength(10) + "@streamus.com";
     try (Connection connection = databaseConnector.getConnection()) {
-      user = new User("John", "Doe", date("2000-01-01"), randomStringOfLength(10) + "@streamus.com",
-                      randomStringOfLength(minUsernameLength));
+      user = (User) new PersonBuilder("John", "Doe", date("2000-01-01"))
+          .asUser(randomStringOfLength(10) + "@streamus.com", randomStringOfLength(minUsernameLength)).build();
       user.save(connection);
       password = randomStringOfLength(minPasswordLength);
       user.upsertPassword(passwordEncoder.encode(password), connection);
 
       // Used email user
-      new User(
+      new PersonBuilder(
           "John",
           "Doe",
-          date("2000-01-01"),
+          date("2000-01-01")
+      ).asUser(
           email,
           randomStringOfLength(minUsernameLength)
-      ).save(connection);
+      ).build().save(connection);
     }
 
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
@@ -523,8 +526,8 @@ class UserControllerTests extends ControllerTests {
     User user;
     String password;
     try (Connection connection = databaseConnector.getConnection()) {
-      user = new User("John", "Doe", date("2000-01-01"), randomStringOfLength(10) + "@streamus.com",
-                      randomStringOfLength(minUsernameLength));
+      user = (User) new PersonBuilder("John", "Doe", date("2000-01-01"))
+          .asUser(randomStringOfLength(10) + "@streamus.com", randomStringOfLength(minUsernameLength)).build();
       user.save(connection);
       password = randomStringOfLength(minPasswordLength);
       user.upsertPassword(passwordEncoder.encode(password), connection);
@@ -550,8 +553,8 @@ class UserControllerTests extends ControllerTests {
     User user;
     String password;
     try (Connection connection = databaseConnector.getConnection()) {
-      user = new User("John", "Doe", date("2000-01-01"), randomStringOfLength(10) + "@streamus.com",
-                      randomStringOfLength(minUsernameLength));
+      user = (User) new PersonBuilder("John", "Doe", date("2000-01-01"))
+          .asUser(randomStringOfLength(10) + "@streamus.com", randomStringOfLength(minUsernameLength)).build();
       user.save(connection);
       password = randomStringOfLength(minPasswordLength);
       user.upsertPassword(passwordEncoder.encode(password), connection);
@@ -575,8 +578,8 @@ class UserControllerTests extends ControllerTests {
     User user;
     String password;
     try (Connection connection = databaseConnector.getConnection()) {
-      user = new User("John", "Doe", date("2000-01-01"), randomStringOfLength(10) + "@streamus.com",
-                      randomStringOfLength(minUsernameLength));
+      user = (User) new PersonBuilder("John", "Doe", date("2000-01-01"))
+          .asUser(randomStringOfLength(10) + "@streamus.com", randomStringOfLength(minUsernameLength)).build();
       user.save(connection);
       password = randomStringOfLength(minPasswordLength);
       user.upsertPassword(passwordEncoder.encode(password), connection);
@@ -600,8 +603,8 @@ class UserControllerTests extends ControllerTests {
     User user;
     String password;
     try (Connection connection = databaseConnector.getConnection()) {
-      user = new User("John", "Doe", date("2000-01-01"), randomStringOfLength(10) + "@streamus.com",
-                      randomStringOfLength(minUsernameLength));
+      user = (User) new PersonBuilder("John", "Doe", date("2000-01-01"))
+          .asUser(randomStringOfLength(10) + "@streamus.com", randomStringOfLength(minUsernameLength)).build();
       user.save(connection);
       password = randomStringOfLength(minPasswordLength);
       user.upsertPassword(passwordEncoder.encode(password), connection);
@@ -625,8 +628,8 @@ class UserControllerTests extends ControllerTests {
     User user;
     String password;
     try (Connection connection = databaseConnector.getConnection()) {
-      user = new User("John", "Doe", date("2000-01-01"), randomStringOfLength(10) + "@streamus.com",
-                      randomStringOfLength(minUsernameLength));
+      user = (User) new PersonBuilder("John", "Doe", date("2000-01-01"))
+          .asUser(randomStringOfLength(10) + "@streamus.com", randomStringOfLength(minUsernameLength)).build();
       user.save(connection);
       password = randomStringOfLength(minPasswordLength);
       user.upsertPassword(passwordEncoder.encode(password), connection);
@@ -650,8 +653,8 @@ class UserControllerTests extends ControllerTests {
     User user;
     String password;
     try (Connection connection = databaseConnector.getConnection()) {
-      user = new User("John", "Doe", date("2000-01-01"), randomStringOfLength(10) + "@streamus.com",
-                      randomStringOfLength(minUsernameLength));
+      user = (User) new PersonBuilder("John", "Doe", date("2000-01-01"))
+          .asUser(randomStringOfLength(10) + "@streamus.com", randomStringOfLength(minUsernameLength)).build();
       user.save(connection);
       password = randomStringOfLength(minPasswordLength);
       user.upsertPassword(passwordEncoder.encode(password), connection);
@@ -675,8 +678,8 @@ class UserControllerTests extends ControllerTests {
     User user;
     String password;
     try (Connection connection = databaseConnector.getConnection()) {
-      user = new User("John", "Doe", date("2000-01-01"), randomStringOfLength(10) + "@streamus.com",
-                      randomStringOfLength(minUsernameLength));
+      user = (User) new PersonBuilder("John", "Doe", date("2000-01-01"))
+          .asUser(randomStringOfLength(10) + "@streamus.com", randomStringOfLength(minUsernameLength)).build();
       user.save(connection);
       password = randomStringOfLength(minPasswordLength);
       user.upsertPassword(passwordEncoder.encode(password), connection);

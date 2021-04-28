@@ -19,8 +19,7 @@ class ActivityTests extends DatabaseTests {
       Song song = new Song(randomString(), randomString(), 100);
       song.save(connection);
 
-      User user = new User(randomString(), randomString(), randomDate(), randomString() + "@" + randomString(),
-                           randomString());
+      User user = randomUser();
       user.save(connection);
 
       ResourceActivity resourceActivity = new ResourceActivity(song, user);

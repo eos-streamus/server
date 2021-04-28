@@ -49,20 +49,6 @@ public class User extends Person {
   //#endregion Instance attributes
 
   //#region Constructors
-  protected User(final Integer id, final String firstName, final String lastName, final Date dateOfBirth, // NOSONAR
-                 final Timestamp createdAt, final Timestamp updatedAt, final String email, final String username) {
-    super(id, firstName, lastName, dateOfBirth, createdAt, updatedAt);
-    this.email = email;
-    this.username = username;
-  }
-
-  public User(final String firstName, final String lastName, final Date dateOfBirth,
-              final String email, final String username) {
-    super(firstName, lastName, dateOfBirth);
-    this.email = email;
-    this.username = username;
-  }
-
   User(final PersonBuilder builder) {
     super(builder);
     Objects.requireNonNull(builder.getEmail());
@@ -198,16 +184,17 @@ public class User extends Person {
         if (!resultSet.next()) {
           throw new NoResultException();
         }
-        return new User(
-            resultSet.getInt(ID_COLUMN),
-            resultSet.getString(FIRST_NAME_COLUMN),
+        return (User) new PersonBuilder(resultSet.getString(FIRST_NAME_COLUMN),
             resultSet.getString(LAST_NAME_COLUMN),
-            resultSet.getDate(DATE_OF_BIRTH_COLUMN),
-            resultSet.getTimestamp(CREATED_AT_COLUMN),
-            resultSet.getTimestamp(UPDATED_AT_COLUMN),
-            resultSet.getString(EMAIL_COLUMN),
-            resultSet.getString(USERNAME_COLUMN)
-        );
+            resultSet.getDate(DATE_OF_BIRTH_COLUMN))
+            .withId(resultSet.getInt(ID_COLUMN))
+            .withTimestamps(resultSet.getTimestamp(CREATED_AT_COLUMN),
+                resultSet.getTimestamp(UPDATED_AT_COLUMN))
+            .asUser(
+                resultSet.getString(EMAIL_COLUMN),
+                resultSet.getString(USERNAME_COLUMN)
+            )
+            .build();
       }
     }
   }
@@ -218,7 +205,7 @@ public class User extends Person {
    * @param email      Email of the User to find.
    * @param connection Database connection to use to perform the operation.
    * @return Found User.
-   * @throws SQLException      If an error occurred while performing the operation.
+   * @throws SQLException If an error occurred while performing the operation.
    */
   public static User findByEmail(final String email, final Connection connection) throws SQLException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
@@ -231,16 +218,17 @@ public class User extends Person {
       preparedStatement.setString(1, email);
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
         if (resultSet.next()) {
-          return new User(
-              resultSet.getInt(ID_COLUMN),
-              resultSet.getString(FIRST_NAME_COLUMN),
+          return (User) new PersonBuilder(resultSet.getString(FIRST_NAME_COLUMN),
               resultSet.getString(LAST_NAME_COLUMN),
-              resultSet.getDate(DATE_OF_BIRTH_COLUMN),
-              resultSet.getTimestamp(CREATED_AT_COLUMN),
-              resultSet.getTimestamp(UPDATED_AT_COLUMN),
-              resultSet.getString(EMAIL_COLUMN),
-              resultSet.getString(USERNAME_COLUMN)
-          );
+              resultSet.getDate(DATE_OF_BIRTH_COLUMN))
+              .withId(resultSet.getInt(ID_COLUMN))
+              .withTimestamps(resultSet.getTimestamp(CREATED_AT_COLUMN),
+                  resultSet.getTimestamp(UPDATED_AT_COLUMN))
+              .asUser(
+                  resultSet.getString(EMAIL_COLUMN),
+                  resultSet.getString(USERNAME_COLUMN)
+              )
+              .build();
         }
         return null;
       }
@@ -250,7 +238,7 @@ public class User extends Person {
   /**
    * Update or set the password of the User.
    *
-   * @param password Password to update or set.
+   * @param password   Password to update or set.
    * @param connection {@link Connection} to use to perform the operation.
    * @throws SQLException If an error occurred while performing the database operation.
    */
@@ -276,9 +264,9 @@ public class User extends Person {
    * Get the password of the User.
    *
    * @param connection {@link Connection} to use to perform the operation.
-   * @throws SQLException If an error occurred while performing the database operation.
-   * @throws NoResultException If the User has no saved password.
    * @return The password of the User.
+   * @throws SQLException      If an error occurred while performing the database operation.
+   * @throws NoResultException If the User has no saved password.
    */
   public String getPassword(final Connection connection) throws SQLException, NoResultException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
@@ -302,7 +290,10 @@ public class User extends Person {
   //#endregion Database operations
 
   //#region Equals
-  /** @return hashCode of this User, which is the id. */
+
+  /**
+   * @return hashCode of this User, which is the id.
+   */
   @Override
   public int hashCode() {
     return getId();

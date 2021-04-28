@@ -25,16 +25,6 @@ public class Admin extends User {
   //#endregion Static Attributes
 
   //#region Constructors
-  private Admin(final Integer id, final String firstName, final String lastName, final Date dateOfBirth, // NOSONAR
-                final Timestamp createdAt, final Timestamp updatedAt, final String email, final String username) {
-    super(id, firstName, lastName, dateOfBirth, createdAt, updatedAt, email, username);
-  }
-
-  public Admin(final String firstName, final String lastName, final Date dateOfBirth,
-               final String email, final String username) {
-    super(firstName, lastName, dateOfBirth, email, username);
-  }
-
   public Admin(final PersonBuilder builder) {
     super(builder);
   }
@@ -104,11 +94,11 @@ public class Admin extends User {
   /**
    * Attempts to find an Admin by id.
    *
-   * @param id Id of Admin to find.
+   * @param id         Id of Admin to find.
    * @param connection {@link Connection} to use to perform the operation.
-   * @throws SQLException If an error occurred while performing the database operation.
-   * @throws NoResultException If no Admin by this id was found in database.
    * @return Found Admin.
+   * @throws SQLException      If an error occurred while performing the database operation.
+   * @throws NoResultException If no Admin by this id was found in database.
    */
   public static Admin findById(final Integer id, final Connection connection) throws SQLException, NoResultException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
@@ -121,16 +111,19 @@ public class Admin extends User {
         if (!resultSet.next()) {
           throw new NoResultException();
         }
-        return new Admin(
-            id,
+        return (Admin) new PersonBuilder(
             resultSet.getString(Person.FIRST_NAME_COLUMN),
             resultSet.getString(Person.LAST_NAME_COLUMN),
-            resultSet.getDate(Person.DATE_OF_BIRTH_COLUMN),
-            resultSet.getTimestamp(Person.CREATED_AT_COLUMN),
-            resultSet.getTimestamp(Person.UPDATED_AT_COLUMN),
+            resultSet.getDate(Person.DATE_OF_BIRTH_COLUMN)
+        ).asAdmin(
             resultSet.getString(User.EMAIL_COLUMN),
             resultSet.getString(User.USERNAME_COLUMN)
-        );
+        ).withId(
+            id
+        ).withTimestamps(
+            resultSet.getTimestamp(Person.CREATED_AT_COLUMN),
+            resultSet.getTimestamp(Person.UPDATED_AT_COLUMN)
+        ).build();
       }
     }
   }

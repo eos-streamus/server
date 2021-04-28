@@ -65,23 +65,6 @@ public class Person implements SavableDeletableEntity {
   //#endregion Instance attributes
 
   //#region Constructors
-  protected Person(final Integer id, final String firstName, final String lastName,
-                   final Date dateOfBirth, final Timestamp createdAt, final Timestamp updatedAt) {
-    this(firstName, lastName, dateOfBirth);
-    this.id = id;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
-  }
-
-  public Person(final String firstName, final String lastName, final Date dateOfBirth) {
-    Objects.requireNonNull(firstName);
-    Objects.requireNonNull(lastName);
-    Objects.requireNonNull(dateOfBirth);
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.dateOfBirth = dateOfBirth;
-  }
-
   public Person(final PersonBuilder builder) {
     Objects.requireNonNull(builder);
     Objects.requireNonNull(builder.getFirstName());

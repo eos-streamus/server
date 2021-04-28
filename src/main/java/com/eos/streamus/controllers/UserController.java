@@ -4,6 +4,7 @@ import com.eos.streamus.dto.LoginDTO;
 import com.eos.streamus.dto.UserDTO;
 import com.eos.streamus.dto.validators.UserDTOValidator;
 import com.eos.streamus.exceptions.NoResultException;
+import com.eos.streamus.models.PersonBuilder;
 import com.eos.streamus.models.User;
 import com.eos.streamus.utils.IDatabaseConnector;
 import com.eos.streamus.utils.JwtService;
@@ -74,13 +75,14 @@ public class UserController implements CommonResponses {
         return badRequest("Invalid email");
       }
 
-      User user = new User(
+      User user = (User) new PersonBuilder(
           userDTO.getFirstName(),
           userDTO.getLastName(),
-          Date.valueOf(userDTO.getDateOfBirth()),
+          Date.valueOf(userDTO.getDateOfBirth())
+      ).asUser(
           userDTO.getEmail(),
           userDTO.getUsername()
-      );
+      ).build();
       connection.setAutoCommit(false);
       String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
       user.save(connection);

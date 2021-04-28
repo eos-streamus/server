@@ -36,7 +36,9 @@ class MusicianTests extends DatabaseTests {
   @Test
   void testNotNamedMusicianWithPerson() throws SQLException, NoResultException {
     try (Connection connection = databaseConnector.getConnection()) {
-      Person person = new Person("Test firstname", "Test lastname", java.sql.Date.valueOf("1980-01-01"));
+      Person person = new PersonBuilder(
+          "Test firstname", "Test lastname", java.sql.Date.valueOf("1980-01-01")
+      ).build();
       person.save(connection);
       Musician musician = new Musician(person);
       musician.save(connection);
@@ -55,7 +57,9 @@ class MusicianTests extends DatabaseTests {
   @Test
   void testNamedMusicianWithPerson() throws SQLException, NoResultException {
     try (Connection connection = databaseConnector.getConnection()) {
-      Person person = new Person("Test firstname", "Test lastname", java.sql.Date.valueOf("1980-01-01"));
+      Person person = new PersonBuilder(
+          "Test firstname", "Test lastname", java.sql.Date.valueOf("1980-01-01")
+      ).build();
       person.save(connection);
       Musician musician = new Musician("Test musician", person);
       musician.save(connection);
