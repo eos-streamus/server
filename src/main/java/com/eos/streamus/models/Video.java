@@ -4,13 +4,9 @@ import java.sql.Timestamp;
 
 public abstract class Video extends Resource {
   //#region Static attributes
-  /**
-   * Table name in database.
-   */
+  /** Table name in database. */
   private static final String TABLE_NAME = "Video";
-  /**
-   * Primary key column name in database.
-   */
+  /** Primary key column name in database. */
   private static final String PRIMARY_KEY_NAME = "idResource";
   //#endregion Static attributes
 
