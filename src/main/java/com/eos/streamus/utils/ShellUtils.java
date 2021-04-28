@@ -11,9 +11,7 @@ public final class ShellUtils {
   private ShellUtils() {
   }
 
-  /**
-   * Ffprobe command to run to get file information.
-   */
+  /** Ffprobe command to run to get file information. */
   private static final String FFPROBE_COMMAND = "ffprobe -v quiet -print_format json -show_format -show_streams";
 
   public static FileInfo getResourceInfo(final String path) throws IOException {
