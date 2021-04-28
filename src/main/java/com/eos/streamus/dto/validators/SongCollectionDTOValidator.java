@@ -17,9 +17,7 @@ import java.util.Comparator;
 
 @Component
 public abstract class SongCollectionDTOValidator implements Validator {
-  /**
-   * {@link IDatabaseConnector} to use to validate data.
-   */
+  /** {@link IDatabaseConnector} to use to validate data. */
   @Autowired
   private IDatabaseConnector databaseConnector;
 
