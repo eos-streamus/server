@@ -26,8 +26,18 @@ public class UserDTOValidator implements Validator {
 
   /** {@inheritDoc} */
   @Override
-  public void validate(@NonNull final Object o, @NonNull final Errors errors) {
+  public void validate(@NonNull final Object o, @NonNull final Errors errorsObject) {
+    BindingResult errors = (BindingResult) errorsObject;
     UserDTO userDTO = (UserDTO) o;
+    if (userDTO.getUsername().isBlank()) {
+      errors.reject("Username is empty");
+    }
+    if (userDTO.getUsername().trim().length() < minUsernameLength) {
+      errors.reject("Username not long enough");
+    }
+
+    checkDateOfBirth(userDTO, errors);
+    checkPassword(userDTO, errors);
 
     if (userDTO.getFirstName() == null || userDTO.getFirstName().isBlank()) {
       errors.addError(new ObjectError("firstName", "First name must be defined"));
@@ -45,18 +55,7 @@ public class UserDTOValidator implements Validator {
     }
   }
 
-  @Override
-  public void validate(final Object o, final Errors errorsObject) {
-    BindingResult errors = (BindingResult) errorsObject;
-    UserDTO userDTO = (UserDTO) o;
-
-    checkNullAndBlank(userDTO, errors);
-
-    checkDateOfBirth(userDTO, errors);
-    checkPassword(userDTO, errors);
-  }
-
-  private void checkDateOfBirth(final UserDTO userDTO, final Errors errors) {
+  private void checkDateOfBirth(final UserDTO userDTO, final BindingResult errors) {
     if (userDTO.getDateOfBirth() != null) {
       try {
         if (java.sql.Date.valueOf(userDTO.getDateOfBirth()).after(new java.sql.Date(System.currentTimeMillis()))) {
@@ -70,7 +69,7 @@ public class UserDTOValidator implements Validator {
     }
   }
 
-  private void checkPassword(final UserDTO userDTO, final Errors errors) {
+  private void checkPassword(final UserDTO userDTO, final BindingResult errors) {
     if (userDTO.getPassword().isBlank()) {
       errors.addError(new ObjectError("password", "Password cannot be empty"));
     } else if (userDTO.getPassword().trim().length() < minPasswordLength) {

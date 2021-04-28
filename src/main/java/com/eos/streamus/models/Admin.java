@@ -26,19 +26,19 @@ public final class Admin extends User {
 
   /** {@inheritDoc} */
   @Override
-  public final String tableName() {
+  public String tableName() {
     return TABLE_NAME;
   }
 
   /** {@inheritDoc} */
   @Override
-  public final String creationFunctionName() {
+  public String creationFunctionName() {
     return CREATION_FUNCTION_NAME;
   }
 
   /** {@inheritDoc} */
   @Override
-  public final String primaryKeyName() {
+  public String primaryKeyName() {
     return PRIMARY_KEY_NAME;
   }
   //#endregion Getters and Setters
@@ -123,16 +123,19 @@ public final class Admin extends User {
       preparedStatement.setString(1, email);
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
         if (resultSet.next()) {
-          return new Admin(
-              resultSet.getInt(ID_COLUMN),
+          return (Admin) new PersonBuilder(
               resultSet.getString(FIRST_NAME_COLUMN),
               resultSet.getString(LAST_NAME_COLUMN),
-              resultSet.getDate(DATE_OF_BIRTH_COLUMN),
+              resultSet.getDate(DATE_OF_BIRTH_COLUMN)
+          ).withId(
+              resultSet.getInt(ID_COLUMN)
+          ).withTimestamps(
               resultSet.getTimestamp(CREATED_AT_COLUMN),
-              resultSet.getTimestamp(UPDATED_AT_COLUMN),
+              resultSet.getTimestamp(UPDATED_AT_COLUMN)
+          ).asAdmin(
               resultSet.getString(EMAIL_COLUMN),
               resultSet.getString(USERNAME_COLUMN)
-          );
+          ).build();
         }
         return null;
       }

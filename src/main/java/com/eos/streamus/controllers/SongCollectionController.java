@@ -121,7 +121,7 @@ public abstract class SongCollectionController implements CommonResponses {
    * @param id Id of SongCollection to delete.
    * @return Confirmation message.
    */
-  public ResponseEntity<String> deleteSongCollection(final int id) {
+  public ResponseEntity<JsonNode> deleteSongCollection(final int id) {
     try (Connection connection = databaseConnector.getConnection()) {
       SongCollectionDAO.findById(id, connection).delete(connection);
       return simpleOk("SongPlaylist deleted");

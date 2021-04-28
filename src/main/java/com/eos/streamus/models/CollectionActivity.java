@@ -56,6 +56,11 @@ public class CollectionActivity extends Activity {
    * ResourceActivities.
    */
   private final List<Pair<Integer, Pair<Resource, ResourceActivity>>> resourceActivities;
+
+  public Collection getCollection() {
+    return collection;
+  }
+
   /**
    * Collection of activity.
    */
@@ -63,7 +68,7 @@ public class CollectionActivity extends Activity {
   //#endregion Instance attributes
 
   //#region Constructors
-  protected CollectionActivity(final User creator, final Collection collection) {
+  public CollectionActivity(final User creator, final Collection collection) {
     super(creator);
     if (collection == null) {
       throw new NullPointerException("Collection cannot be null");

@@ -29,10 +29,17 @@ import java.util.Objects;
 
 @RestController
 public final class ActivityController implements CommonResponses {
+  /** JWT Token offset in Bearer string. */
+  private static final int TOKEN_OFFSET = 7;
+  /** Authorization header name. */
+  private static final String AUTHORIZATION = "Authorization";
+  /** User id. */
+  private static final String USER_ID = "userId";
   /** {@link com.eos.streamus.utils.IDatabaseConnector} to use. */
   @Autowired
   private IDatabaseConnector databaseConnector;
 
+  /** {@link com.eos.streamus.utils.JwtService} to use. */
   @Autowired
   private JwtService jwtService;
 
@@ -40,8 +47,8 @@ public final class ActivityController implements CommonResponses {
   public ResponseEntity<JsonNode> getOrCreateActivity(@RequestHeader final HttpHeaders headers,
                                                       @PathVariable("resourceId") final int resourceId) {
     try (Connection connection = databaseConnector.getConnection()) {
-      String token = Objects.requireNonNull(headers.getFirst("Authorization")).substring(7);
-      User user = User.findById(this.jwtService.decode(token).getBody().get("userId", Integer.class), connection);
+      String token = Objects.requireNonNull(headers.getFirst(AUTHORIZATION)).substring(TOKEN_OFFSET);
+      User user = User.findById(this.jwtService.decode(token).getBody().get(USER_ID, Integer.class), connection);
       Resource resource = ResourceDAO.findById(resourceId, connection);
       ResourceActivity resourceActivity = ResourceActivity.findByUserAndResourceIds(
           user.getId(),
@@ -65,8 +72,8 @@ public final class ActivityController implements CommonResponses {
   public ResponseEntity<JsonNode> getOrCreateCollectionActivity(@RequestHeader final HttpHeaders headers,
                                                                 @PathVariable("collectionId") final int collectionId) {
     try (Connection connection = databaseConnector.getConnection()) {
-      final String token = Objects.requireNonNull(headers.getFirst("Authorization")).substring(7);
-      final User user = User.findById(this.jwtService.decode(token).getBody().get("userId", Integer.class), connection);
+      final String token = Objects.requireNonNull(headers.getFirst(AUTHORIZATION)).substring(TOKEN_OFFSET);
+      final User user = User.findById(this.jwtService.decode(token).getBody().get(USER_ID, Integer.class), connection);
       final Collection collection = CollectionDAO.findById(collectionId, connection);
       CollectionActivity collectionActivity = CollectionActivity.findByUserAndCollectionIds(
           user.getId(),
@@ -92,8 +99,8 @@ public final class ActivityController implements CommonResponses {
                                                 @PathVariable final int id,
                                                 @PathVariable final int time) {
     try (Connection connection = databaseConnector.getConnection()) {
-      final String token = Objects.requireNonNull(headers.getFirst("Authorization")).substring(7);
-      final User user = User.findById(this.jwtService.decode(token).getBody().get("userId", Integer.class), connection);
+      final String token = Objects.requireNonNull(headers.getFirst(AUTHORIZATION)).substring(TOKEN_OFFSET);
+      final User user = User.findById(this.jwtService.decode(token).getBody().get(USER_ID, Integer.class), connection);
       final ResourceActivity resourceActivity = ResourceActivity.findById(id, connection);
       if (resourceActivity == null) {
         return notFound();
