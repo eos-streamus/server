@@ -7,60 +7,34 @@ import java.util.Objects;
 
 public class Person implements SavableDeletableEntity {
   //#region Static attributes
-  /**
-   * Table name in database.
-   */
+  /** Table name in database. */
   public static final String TABLE_NAME = "Person";
-  /**
-   * Id column name.
-   */
+  /** Id column name. */
   protected static final String ID_COLUMN = "id";
-  /**
-   * First name column name.
-   */
+  /** First name column name. */
   protected static final String FIRST_NAME_COLUMN = "firstName";
-  /**
-   * Last name column name.
-   */
+  /** Last name column name. */
   protected static final String LAST_NAME_COLUMN = "lastName";
-  /**
-   * Date of birth column name.
-   */
+  /** Date of birth column name. */
   protected static final String DATE_OF_BIRTH_COLUMN = "dateOfBirth";
-  /**
-   * Created at timestamp column name.
-   */
+  /** Created at timestamp column name. */
   protected static final String CREATED_AT_COLUMN = "createdAt";
-  /**
-   * Updated at timestamp column name.
-   */
+  /** Updated at timestamp column name. */
   protected static final String UPDATED_AT_COLUMN = "updatedAt";
   //#endregion Static attributes
 
   //#region Instance attributes
-  /**
-   * Id of this instance.
-   */
+  /** Id of this instance. */
   private Integer id;
-  /**
-   * First name of this Person.
-   */
+  /** First name of this Person. */
   private String firstName;
-  /**
-   * Last name of this Person.
-   */
+  /** Last name of this Person. */
   private String lastName;
-  /**
-   * Date of birth of this Person.
-   */
+  /** Date of birth of this Person. */
   private Date dateOfBirth;
-  /**
-   * Created at timestamp of this Person.
-   */
+  /** Created at timestamp of this Person. */
   private Timestamp createdAt;
-  /**
-   * Updated at timestamp of this Person.
-   */
+  /** Updated at timestamp of this Person. */
   private Timestamp updatedAt;
   //#endregion Instance attributes
 
@@ -118,9 +92,7 @@ public class Person implements SavableDeletableEntity {
     this.id = id;
   }
 
-  /**
-   * @return First name of this Person.
-   */
+  /** @return First name of this Person. */
   public String getFirstName() {
     return firstName;
   }
@@ -134,9 +106,7 @@ public class Person implements SavableDeletableEntity {
     this.firstName = firstName;
   }
 
-  /**
-   * @return Last name of this Person.
-   */
+  /** @return Last name of this Person. */
   public String getLastName() {
     return lastName;
   }
@@ -150,9 +120,7 @@ public class Person implements SavableDeletableEntity {
     this.lastName = lastName;
   }
 
-  /**
-   * @return {@link Date} of birth of this Person.
-   */
+  /** @return {@link Date} of birth of this Person. */
   public Date getDateOfBirth() {
     return dateOfBirth;
   }
@@ -166,9 +134,7 @@ public class Person implements SavableDeletableEntity {
     this.dateOfBirth = dateOfBirth;
   }
 
-  /**
-   * @return This Person's created at timestamp.
-   */
+  /** @return This Person's created at timestamp. */
   public Timestamp getCreatedAt() {
     return createdAt;
   }
@@ -182,9 +148,7 @@ public class Person implements SavableDeletableEntity {
     this.createdAt = createdAt;
   }
 
-  /**
-   * @return This Person's updated at timestamp.
-   */
+  /** @return This Person's updated at timestamp. */
   public Timestamp getUpdatedAt() {
     return updatedAt;
   }
