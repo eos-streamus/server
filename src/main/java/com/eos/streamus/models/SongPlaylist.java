@@ -6,24 +6,16 @@ import java.sql.*;
 
 public final class SongPlaylist extends SongCollection {
   //#region Static attributes
-  /**
-   * Creation function name in the database.
-   */
+  /** Creation function name in the database. */
   private static final String CREATION_FUNCTION_NAME = "createSongPlaylist";
-  /**
-   * View name in the database.
-   */
+  /** View name in the database. */
   private static final String VIEW_NAME = "vSongPlaylist";
-  /**
-   * User id column in the database.
-   */
+  /** User id column in the database. */
   private static final String USER_ID_COLUMN = "idUser";
   //#endregion Static attributes
 
   //#region Instance attributes
-  /**
-   * Owner {@link User} of this SongPlaylist.
-   */
+  /** Owner {@link User} of this SongPlaylist. */
   private final User user;
   //#endregion Instance attributes
 
@@ -42,9 +34,7 @@ public final class SongPlaylist extends SongCollection {
     return CREATION_FUNCTION_NAME;
   }
 
-  /**
-   * @return {@link User} that owns this SongPlaylist.
-   */
+  /** @return {@link User} that owns this SongPlaylist. */
   public User getUser() {
     return user;
   }
