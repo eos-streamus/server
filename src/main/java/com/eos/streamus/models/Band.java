@@ -11,40 +11,24 @@ import java.util.Objects;
 public class Band extends Artist {
   public class Member implements SavableDeletable {
     //#region Static attributes
-    /**
-     * Table name in the database.
-     */
+    /** Table name in the database. */
     public static final String TABLE_NAME = "BandMusician";
-    /**
-     * Band id column name in the database.
-     */
+    /** Band id column name in the database. */
     public static final String BAND_ID_COLUMN = "idBand";
-    /**
-     * Musician id column name in the database.
-     */
+    /** Musician id column name in the database. */
     public static final String MUSICIAN_ID_COLUMN = "idMusician";
-    /**
-     * From column name in the database.
-     */
+    /** From column name in the database. */
     public static final String FROM_COLUMN = "memberFrom";
-    /**
-     * To column name in the database.
-     */
+    /** To column name in the database. */
     public static final String TO_COLUMN = "memberTo";
     //#endregion Static attributes
 
     //#region Instance attributes
-    /**
-     * Member {@link Musician}.
-     */
+    /** Member {@link Musician}. */
     private final Musician musician;
-    /**
-     * Membership start date.
-     */
+    /** Membership start date. */
     private final Date from;
-    /**
-     * Membership end date.
-     */
+    /** Membership end date. */
     private Date to;
     //#endregion Instance attributes
 
@@ -75,16 +59,12 @@ public class Band extends Artist {
       return from;
     }
 
-    /**
-     * @return Id.
-     */
+    /** @return Id. */
     public Date getTo() {
       return to;
     }
 
-    /**
-     * @return This Member's {@link Band}.
-     */
+    /** @return This Member's {@link Band}. */
     public Band getBand() {
       return Band.this;
     }
@@ -257,36 +237,22 @@ public class Band extends Artist {
   }
 
   //#region Static attributes
-  /**
-   * Table name in the database.
-   */
+  /** Table name in the database. */
   public static final String TABLE_NAME = "Band";
-  /**
-   * Primary key name in the database.
-   */
+  /** Primary key name in the database. */
   public static final String PRIMARY_KEY_NAME = "idArtist";
-  /**
-   * Creation function name in the database.
-   */
+  /** Creation function name in the database. */
   public static final String CREATION_FUNCTION_NAME = "createBand";
-  /**
-   * View name in the database.
-   */
+  /** View name in the database. */
   public static final String VIEW_NAME = "vBand";
-  /**
-   * View id column in the database.
-   */
+  /** View id column in the database. */
   public static final String VIEW_ID_COLUMN = "id";
-  /**
-   * View name column in the database.
-   */
+  /** View name column in the database. */
   public static final String VIEW_NAME_COLUMN = "name";
   //#endregion Static attributes
 
   //#region Instance attributes
-  /**
-   * List of Band members.
-   */
+  /** List of Band members. */
   private final List<Member> members = new ArrayList<>();
   //#endregion Instance attributes
 
@@ -323,9 +289,7 @@ public class Band extends Artist {
     return CREATION_FUNCTION_NAME;
   }
 
-  /**
-   * @return List of {@link Member}s.
-   */
+  /** @return List of {@link Member}s. */
   public List<Member> getMembers() {
     return members;
   }
@@ -459,9 +423,7 @@ public class Band extends Artist {
 
   //#region Equals
 
-  /**
-   * @return Band's hashcode, i.e. its id.
-   */
+  /** @return Band's hashcode, i.e. its id. */
   @Override
   public int hashCode() {
     return getId();
