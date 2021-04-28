@@ -132,9 +132,7 @@ public final class SongPlaylist extends SongCollection {
 
   //#region Equals
 
-  /**
-   * @return HashCode of this SongPlaylist, i.e. its id.
-   */
+  /** @return HashCode of this SongPlaylist, i.e. its id. */
   @Override
   public int hashCode() {
     return getId();
