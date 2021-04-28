@@ -30,25 +30,17 @@ import java.util.List;
 
 @RestController
 public class ArtistController implements CommonResponses {
-  /**
-   * {@link IDatabaseConnector} to use.
-   */
+  /** {@link IDatabaseConnector} to use. */
   @Autowired
   private IDatabaseConnector databaseConnector;
-  /**
-   * {@link MusicianDTOValidator} to use.
-   */
+  /** {@link MusicianDTOValidator} to use. */
   @Autowired
   private MusicianDTOValidator musicianDTOValidator;
-  /**
-   * {@link BandMemberDTOValidator} to use.
-   */
+  /** {@link BandMemberDTOValidator} to use. */
   @Autowired
   private BandMemberDTOValidator bandMemberDTOValidator;
 
-  /**
-   * @return All artists in Json format.
-   */
+  /** @return All artists in Json format. */
   @GetMapping("/artists")
   public ResponseEntity<JsonNode> allArtists() {
     List<Artist> allArtists;
