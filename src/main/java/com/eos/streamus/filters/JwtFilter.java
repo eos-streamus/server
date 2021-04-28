@@ -19,15 +19,11 @@ import java.io.IOException;
 @Component
 public class JwtFilter implements Filter {
 
-  /**
-   * {@link com.eos.streamus.utils.JwtService} to use.
-   */
+  /** {@link com.eos.streamus.utils.JwtService} to use. */
   @Autowired
   private JwtService jwtService;
 
-  /**
-   * Token offset in bearer String.
-   */
+  /** Token offset in bearer String. */
   private static final int TOKEN_OFFSET = 7;
 
   /** {@inheritDoc} */
