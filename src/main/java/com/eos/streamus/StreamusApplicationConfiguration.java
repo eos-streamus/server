@@ -9,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.annotation.Nonnull;
 
-@SuppressWarnings("CheckStyle")
+//CS BEGIN QUERY
 @Configuration
 public class StreamusApplicationConfiguration {
   /** @return {@link PasswordEncoder} to use. */
@@ -29,3 +29,4 @@ public class StreamusApplicationConfiguration {
   }
 
 }
+//CS END QUERY
