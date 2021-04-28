@@ -11,7 +11,81 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Series extends VideoCollection {
-  public class Episode extends Video {
+  public final class EpisodeBuilder implements Builder<Episode> {
+    /**
+     * Path.
+     */
+    private final String path;
+    /**
+     * Name.
+     */
+    private final String name;
+    /**
+     * Duration.
+     */
+    private final Integer duration;
+    /**
+     * SeasonNumber.
+     */
+    private final short seasonNumber;
+    /**
+     * Id.
+     */
+    private Integer id;
+    /**
+     * Created at.
+     */
+    private Timestamp createdAt;
+    /**
+     * Episode number.
+     */
+    private short episodeNumber;
+
+    public EpisodeBuilder(final String path, final String name, final Integer duration, final short seasonNumber) {
+      this.path = path;
+      this.name = name;
+      this.duration = duration;
+      this.seasonNumber = seasonNumber;
+    }
+
+    public EpisodeBuilder(final String path, final String name, final Integer duration,
+                          final short seasonNumber, final short episodeNumber) {
+      this(path, name, duration, seasonNumber);
+      withEpisodeNumber(episodeNumber);
+    }
+
+    public EpisodeBuilder withId(final Integer id) {
+      this.id = id;
+      return this;
+    }
+
+    public EpisodeBuilder createdAt(final Timestamp createdAt) {
+      this.createdAt = createdAt;
+      return this;
+    }
+
+    public EpisodeBuilder withEpisodeNumber(final short episodeNumber) {
+      this.episodeNumber = episodeNumber;
+      return this;
+    }
+
+    @Override
+    public Episode build() {
+      Episode episode;
+      if (episodeNumber != 0) {
+        episode = new Episode(path, name, duration, seasonNumber, episodeNumber);
+      } else {
+        episode = new Episode(path, name, duration, seasonNumber);
+      }
+      if (id != null) {
+        episode.setId(id);
+        episode.setCreatedAt(createdAt);
+      }
+      return episode;
+    }
+  }
+
+  public final class Episode extends Video {
     //#region Static attributes
     /**
      * Table name in the database.
@@ -55,24 +129,15 @@ public class Series extends VideoCollection {
     //#endregion Instance attributes
 
     //#region Constructors
-    Episode(final Integer id, final String path, final String name, final Timestamp createdAt,
-            final Integer duration, final short seasonNumber,
-            final short episodeNumber) {
-      super(id, path, name, createdAt, duration);
-      this.seasonNumber = seasonNumber;
-      this.episodeNumber = episodeNumber;
-      Series.this.episodes.add(this);
-    }
-
-    public Episode(final String path, final String name, final Integer duration,
-                   final short seasonNumber, final short episodeNumber) {
+    private Episode(final String path, final String name, final Integer duration,
+                    final short seasonNumber, final short episodeNumber) {
       super(path, name, duration);
       this.seasonNumber = seasonNumber;
       this.episodeNumber = episodeNumber;
       Series.this.episodes.add(this);
     }
 
-    public Episode(final String path, final String name, final Integer duration, final short seasonNumber) {
+    private Episode(final String path, final String name, final Integer duration, final short seasonNumber) {
       this(path, name, duration, seasonNumber, (short) (Series.this.getNumberOfEpisodesInSeason(seasonNumber) + 1));
     }
     //#endregion Constructors
@@ -398,25 +463,23 @@ public class Series extends VideoCollection {
         // Handle episodes
         int firstEpisodeNumber = resultSet.getInt(EPISODE_ID_VIEW_COLUMN);
         if (!resultSet.wasNull()) {
-          series.new Episode(
-              firstEpisodeNumber,
+          series.new EpisodeBuilder(
               resultSet.getString(Resource.PATH_COLUMN),
               resultSet.getString(EPISODE_NAME_COLUMN),
-              resultSet.getTimestamp(EPISODE_CREATED_AT_COLUMN),
               resultSet.getInt(Resource.DURATION_COLUMN),
-              resultSet.getShort(Episode.SEASON_NUMBER_COLUMN),
-              resultSet.getShort(Episode.EPISODE_NUMBER_COLUMN)
-          );
+              resultSet.getShort(Episode.SEASON_NUMBER_COLUMN)
+          ).withId(firstEpisodeNumber)
+              .withEpisodeNumber(resultSet.getShort(Episode.EPISODE_NUMBER_COLUMN))
+              .createdAt(resultSet.getTimestamp(EPISODE_CREATED_AT_COLUMN)).build();
           while (resultSet.next()) {
-            series.new Episode(
-                resultSet.getInt(EPISODE_ID_VIEW_COLUMN),
+            series.new EpisodeBuilder(
                 resultSet.getString(Resource.PATH_COLUMN),
                 resultSet.getString(EPISODE_NAME_COLUMN),
-                resultSet.getTimestamp(EPISODE_CREATED_AT_COLUMN),
                 resultSet.getInt(Resource.DURATION_COLUMN),
-                resultSet.getShort(Episode.SEASON_NUMBER_COLUMN),
-                resultSet.getShort(Episode.EPISODE_NUMBER_COLUMN)
-            );
+                resultSet.getShort(Episode.SEASON_NUMBER_COLUMN)
+            ).withId(resultSet.getInt(EPISODE_ID_VIEW_COLUMN))
+                .withEpisodeNumber(resultSet.getShort(Episode.EPISODE_NUMBER_COLUMN))
+                .createdAt(resultSet.getTimestamp(EPISODE_CREATED_AT_COLUMN)).build();
           }
         }
         return series;

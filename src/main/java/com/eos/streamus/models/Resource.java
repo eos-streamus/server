@@ -217,6 +217,7 @@ public abstract class Resource implements SavableDeletableEntity {
   //#endregion Database operations
 
   //#region String representations
+
   /**
    * {@inheritDoc}
    */
@@ -227,7 +228,10 @@ public abstract class Resource implements SavableDeletableEntity {
   //#endregion String representations
 
   //#region Equals
-  /** @return instance hashcode, i.e. its id. */
+
+  /**
+   * @return instance hashcode, i.e. its id.
+   */
   @Override
   public int hashCode() {
     return id;
@@ -243,6 +247,7 @@ public abstract class Resource implements SavableDeletableEntity {
    * - Same name
    * - Same duration
    * - Same created at
+   *
    * @param o Object to compare.
    * @return True if all conditions above are met.
    */

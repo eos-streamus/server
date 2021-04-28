@@ -6,21 +6,25 @@ import java.sql.*;
 
 public class Song extends Resource implements SavableDeletableEntity {
   //#region Static attributes
-  /** Table name in database. */
+  /**
+   * Table name in database.
+   */
   private static final String TABLE_NAME = "Song";
-  /** Primary key name in database. */
+  /**
+   * Primary key name in database.
+   */
   private static final String PRIMARY_KEY_NAME = "idResource";
-  /** Creation function name in database. */
+  /**
+   * Creation function name in database.
+   */
   private static final String CREATION_FUNCTION_NAME = "createSong";
-  /** View name in database. */
+  /**
+   * View name in database.
+   */
   private static final String VIEW_NAME = "vSong";
   //#endregion Static attributes
 
   //#region Constructors
-  Song(final Integer id, final String path, final String name, final Timestamp createdAt, final int duration) {
-    super(id, path, name, createdAt, duration);
-  }
-
   public Song(final String path, final String name, final int duration) {
     super(path, name, duration);
   }
@@ -54,14 +58,15 @@ public class Song extends Resource implements SavableDeletableEntity {
   //#endregion Getters and Setters
 
   //#region Database operations
+
   /**
    * Finds a Song by a given id in the database.
    *
-   * @param id Id of the Song to find.
+   * @param id         Id of the Song to find.
    * @param connection {@link Connection} to use to perform the operation.
-   * @throws SQLException If an error occurred while performing the database operation.
-   * @throws NoResultException if no Song by this id was found.
    * @return Found Song.
+   * @throws SQLException      If an error occurred while performing the database operation.
+   * @throws NoResultException if no Song by this id was found.
    */
   public static Song findById(final int id, final Connection connection) throws SQLException, NoResultException {
     try (PreparedStatement statement = connection.prepareStatement(
@@ -72,13 +77,14 @@ public class Song extends Resource implements SavableDeletableEntity {
         if (!rs.next()) {
           throw new NoResultException();
         }
-        return new Song(
-            rs.getInt("id"),
+        Song song = new Song(
             rs.getString("path"),
             rs.getString("name"),
-            rs.getTimestamp("createdAt"),
             rs.getInt("duration")
         );
+        song.setId(rs.getInt("id"));
+        song.setCreatedAt(rs.getTimestamp("createdAt"));
+        return song;
       }
     }
   }

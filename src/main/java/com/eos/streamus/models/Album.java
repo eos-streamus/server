@@ -198,16 +198,14 @@ public class Album extends SongCollection {
         album.setUpdatedAt(resultSet.getTimestamp(Collection.UPDATED_AT_COLUMN));
         do {
           if (resultSet.getInt(VIEW_SONG_ID) != 0) {
-            album.addTrack(album.new Track(
-                resultSet.getInt(TRACK_NUMBER_COLUMN),
-                new Song(
-                    resultSet.getInt(VIEW_SONG_ID),
-                    resultSet.getString(Resource.PATH_COLUMN),
-                    resultSet.getString(VIEW_SONG_NAME_COLUMN),
-                    resultSet.getTimestamp(SONG_CREATED_AT_COLUMN),
-                    resultSet.getInt(Resource.DURATION_COLUMN)
-                )
-            ));
+            Song song = new Song(
+                resultSet.getString(Resource.PATH_COLUMN),
+                resultSet.getString(VIEW_SONG_NAME_COLUMN),
+                resultSet.getInt(Resource.DURATION_COLUMN)
+            );
+            song.setId(resultSet.getInt(VIEW_SONG_ID));
+            song.setCreatedAt(resultSet.getTimestamp(SONG_CREATED_AT_COLUMN));
+            album.addTrack(album.new Track(resultSet.getInt(TRACK_NUMBER_COLUMN), song));
           }
         } while (resultSet.next());
       }
