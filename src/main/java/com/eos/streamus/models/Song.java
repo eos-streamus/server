@@ -6,21 +6,13 @@ import java.sql.*;
 
 public class Song extends Resource implements SavableDeletableEntity {
   //#region Static attributes
-  /**
-   * Table name in database.
-   */
+  /** Table name in database. */
   private static final String TABLE_NAME = "Song";
-  /**
-   * Primary key name in database.
-   */
+  /** Primary key name in database. */
   private static final String PRIMARY_KEY_NAME = "idResource";
-  /**
-   * Creation function name in database.
-   */
+  /** Creation function name in database. */
   private static final String CREATION_FUNCTION_NAME = "createSong";
-  /**
-   * View name in database.
-   */
+  /** View name in database. */
   private static final String VIEW_NAME = "vSong";
   //#endregion Static attributes
 
