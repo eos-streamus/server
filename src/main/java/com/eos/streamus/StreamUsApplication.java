@@ -3,9 +3,9 @@ package com.eos.streamus;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
+//CS BEGIN QUERY
 @SpringBootApplication
-public final class StreamUsApplication {
+public class StreamUsApplication {
   private StreamUsApplication() {}
 
   public static void main(final String[] args) {
@@ -16,3 +16,4 @@ public final class StreamUsApplication {
   }
 
 }
+//CS END QUERY
