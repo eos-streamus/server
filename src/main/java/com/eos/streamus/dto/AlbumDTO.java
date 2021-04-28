@@ -5,27 +5,19 @@ import java.util.Date;
 import java.util.List;
 
 public class AlbumDTO extends SongCollectionDTO {
-  /**
-   * Ids of contributing {@link com.eos.streamus.models.Artist}s.
-   */
+  /** Ids of contributing {@link com.eos.streamus.models.Artist}s. */
   @NotNull
   private List<Integer> artistIds;
-  /**
-   * Release date of {@link com.eos.streamus.models.Album}.
-   */
+  /** Release date of {@link com.eos.streamus.models.Album}. */
   @NotNull
   private Date releaseDate;
 
-  /**
-   * @return List of Artist ids of the Album.
-   */
+  /** @return List of Artist ids of the Album. */
   public List<Integer> getArtistIds() {
     return artistIds;
   }
 
-  /**
-   * @return Release date of Album.
-   */
+  /** @return Release date of Album. */
   public Date getReleaseDate() {
     return releaseDate;
   }
