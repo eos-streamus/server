@@ -4,13 +4,9 @@ import java.sql.Timestamp;
 
 public abstract class VideoCollection extends Collection {
   //#region Static attributes
-  /**
-   * Table name in database.
-   */
+  /** Table name in database. */
   protected static final String TABLE_NAME = "VideoCollection";
-  /**
-   * Primary key column name in database.
-   */
+  /** Primary key column name in database. */
   protected static final String PRIMARY_KEY_NAME = "idCollection";
   //#endregion Static attributes
 
