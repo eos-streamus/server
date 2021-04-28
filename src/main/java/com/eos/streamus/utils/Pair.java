@@ -3,13 +3,9 @@ package com.eos.streamus.utils;
 import java.util.Objects;
 
 public class Pair<K, V> {
-  /**
-   * Key of Pair.
-   */
+  /** Key of Pair. */
   private K key;
-  /**
-   * Value of Pair.
-   */
+  /** Value of Pair. */
   private V value;
 
   public Pair(final K key, final V value) {
@@ -17,16 +13,12 @@ public class Pair<K, V> {
     this.value = value;
   }
 
-  /**
-   * @return Key of Pair.
-   */
+  /** @return Key of Pair. */
   public K getKey() {
     return key;
   }
 
-  /**
-   * @return Value of Pair.
-   */
+  /** @return Value of Pair. */
   public V getValue() {
     return value;
   }
@@ -49,9 +41,7 @@ public class Pair<K, V> {
     this.value = value;
   }
 
-  /**
-   * @return HashCode combined from key hashCode and value hashCode.
-   */
+  /** @return HashCode combined from key hashCode and value hashCode. */
   @Override
   public int hashCode() {
     return Objects.hash(key.hashCode(), value.hashCode());
