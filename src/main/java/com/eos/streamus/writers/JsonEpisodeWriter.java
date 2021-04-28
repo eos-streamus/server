@@ -4,6 +4,7 @@ import com.eos.streamus.models.Series;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class JsonEpisodeWriter extends JsonResourceWriter {
+  /** {@link com.eos.streamus.models.Series .com.eos.streamus.models.Series.Episode} to write. */
   private final Series.Episode episode;
 
   public JsonEpisodeWriter(final Series.Episode episode) {
@@ -11,6 +12,7 @@ public class JsonEpisodeWriter extends JsonResourceWriter {
     this.episode = episode;
   }
 
+  /** {@inheritDoc} */
   @Override
   protected ObjectNode addSpecificJsonAttributes(final ObjectNode objectNode) {
     return objectNode

@@ -19,9 +19,14 @@ import java.io.IOException;
 @Component
 public class JwtFilter implements Filter {
 
+  /** {@link com.eos.streamus.utils.JwtService} to use. */
   @Autowired
   private JwtService jwtService;
 
+  /** Token offset in bearer String. */
+  private static final int TOKEN_OFFSET = 7;
+
+  /** {@inheritDoc} */
   @Override
   public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse,
                        final FilterChain filterChain) throws IOException, ServletException {
@@ -36,7 +41,7 @@ public class JwtFilter implements Filter {
         if (jwtTokenHeader == null || !jwtTokenHeader.startsWith("Bearer ")) {
           ((HttpServletResponse) servletResponse).sendError(HttpServletResponse.SC_FORBIDDEN);
         } else {
-          String jwtToken = jwtTokenHeader.substring(7);
+          String jwtToken = jwtTokenHeader.substring(TOKEN_OFFSET);
           try {
             jwtService.decode(jwtToken);
             filterChain.doFilter(servletRequest, servletResponse);

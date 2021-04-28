@@ -7,12 +7,14 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import java.util.List;
 
 public class JsonSongCollectionListWriter extends JsonArrayWriter {
+  /** {@link SongCollection} subclass instance to write. */
   private final List<? extends SongCollection> collections;
 
   public JsonSongCollectionListWriter(final List<? extends SongCollection> collections) {
     this.collections = collections;
   }
 
+  /** {@inheritDoc} */
   @Override
   protected JsonNode getSpecificArrayJson(final ArrayNode arrayNode) {
     for (SongCollection collection : collections) {

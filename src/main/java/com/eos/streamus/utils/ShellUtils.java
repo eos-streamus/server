@@ -7,9 +7,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class ShellUtils {
-  private ShellUtils() {}
+public final class ShellUtils {
+  private ShellUtils() {
+  }
 
+  /** Ffprobe command to run to get file information. */
   private static final String FFPROBE_COMMAND = "ffprobe -v quiet -print_format json -show_format -show_streams";
 
   public static FileInfo getResourceInfo(final String path) throws IOException {

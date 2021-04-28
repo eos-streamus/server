@@ -1,5 +1,6 @@
 package com.eos.streamus.controllers;
 
+import com.eos.streamus.dto.SongCollectionDTO;
 import com.eos.streamus.dto.TrackDTO;
 import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.Song;
@@ -21,14 +22,26 @@ import java.util.Optional;
 import static org.springframework.http.ResponseEntity.ok;
 
 public abstract class SongCollectionController implements CommonResponses {
-
+  /** {@link IDatabaseConnector} to use. */
   @Autowired
-  protected IDatabaseConnector databaseConnector;
+  private IDatabaseConnector databaseConnector;
 
   protected abstract SongCollectionDTOValidator getSongCollectionDTOValidator();
 
-  protected abstract JsonSongCollectionWriter jsonSongCollectionWriter(final SongCollection songCollection);
+  /**
+   * Get an instance of {@link JsonSongCollectionWriter} to use to write results.
+   *
+   * @param songCollection {@link SongCollection} to write.
+   * @return Created writer.
+   */
+  protected abstract JsonSongCollectionWriter jsonSongCollectionWriter(SongCollection songCollection);
 
+  /**
+   * Get a SongCollection by id.
+   *
+   * @param id Id of song collection.
+   * @return SongCollection data in JSON format.
+   */
   public ResponseEntity<JsonNode> getSongCollectionById(@PathVariable final int id) {
     try (Connection connection = databaseConnector.getConnection()) {
       return ok(jsonSongCollectionWriter(SongCollectionDAO.findById(id, connection)).getJson());
@@ -40,6 +53,13 @@ public abstract class SongCollectionController implements CommonResponses {
     }
   }
 
+  /**
+   * Add a song to a SongCollection.
+   *
+   * @param songCollectionId SongCollection to add Song to.
+   * @param songId           Id of Song to add.
+   * @return Updated SongCollection data in JSON format.
+   */
   public ResponseEntity<JsonNode> addSongToCollection(final int songCollectionId, final int songId) {
     try (Connection connection = databaseConnector.getConnection()) {
       SongCollection songCollection = SongCollectionDAO.findById(songCollectionId, connection);
@@ -54,10 +74,17 @@ public abstract class SongCollectionController implements CommonResponses {
     }
   }
 
-  public ResponseEntity<JsonNode> addOrMoveTrackInSongCollection(final int id, final TrackDTO trackData) {
+  /**
+   * Add or move a Track in a SongCollection.
+   *
+   * @param songCollectionId        Id of SongCollection.
+   * @param trackData Data of Track (new or existing)
+   * @return Updated SongCollection data in JSON.
+   */
+  public ResponseEntity<JsonNode> addOrMoveTrackInSongCollection(final int songCollectionId, final TrackDTO trackData) {
     try (Connection connection = databaseConnector.getConnection()) {
 
-      SongCollection songCollection = SongCollectionDAO.findById(id, connection);
+      SongCollection songCollection = SongCollectionDAO.findById(songCollectionId, connection);
 
       Song song = Song.findById(trackData.getSongId(), connection);
 
@@ -88,6 +115,12 @@ public abstract class SongCollectionController implements CommonResponses {
     }
   }
 
+  /**
+   * Delete a SongCollection by id.
+   *
+   * @param id Id of SongCollection to delete.
+   * @return Confirmation message.
+   */
   public ResponseEntity<String> deleteSongCollection(final int id) {
     try (Connection connection = databaseConnector.getConnection()) {
       SongCollectionDAO.findById(id, connection).delete(connection);
@@ -100,6 +133,13 @@ public abstract class SongCollectionController implements CommonResponses {
     }
   }
 
+  /**
+   * Remove a Song from a SongCollection.
+   *
+   * @param songCollectionId SongCollection id.
+   * @param songId           Song id.
+   * @return Updated SongCollection data in JSON.
+   */
   public ResponseEntity<JsonNode> deleteSongFromSongCollection(final int songCollectionId, final int songId) {
     try (Connection connection = databaseConnector.getConnection()) {
       SongCollection songCollection = SongCollectionDAO.findById(songCollectionId, connection);
@@ -123,14 +163,18 @@ public abstract class SongCollectionController implements CommonResponses {
     }
   }
 
-  protected abstract SongCollection createSpecificCollection(
-      com.eos.streamus.dto.SongCollectionDTO songCollectionData,
-      Connection connection) throws SQLException, NoResultException;
+  protected abstract SongCollection createSpecificCollection(SongCollectionDTO songCollectionData, Connection conn)
+      throws SQLException, NoResultException;
 
-  protected ResponseEntity<JsonNode> createSongCollection(
-      com.eos.streamus.dto.SongCollectionDTO songCollectionData,
-      BindingResult result
-  ) {
+  /**
+   * Create a SongCollection.
+   *
+   * @param songCollectionData Song collection data.
+   * @param result             To add validation errors to.
+   * @return Created SongCollection in JSON format.
+   */
+  protected ResponseEntity<JsonNode> createSongCollection(final SongCollectionDTO songCollectionData,
+                                                          final BindingResult result) {
     getSongCollectionDTOValidator().validate(songCollectionData, result);
     if (result.hasErrors()) {
       return badRequest(result.toString());

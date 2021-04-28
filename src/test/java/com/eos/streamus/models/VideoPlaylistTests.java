@@ -24,13 +24,14 @@ class VideoPlaylistTests extends DatabaseTests {
     try (Connection connection = databaseConnector.getConnection()) {
       DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
       java.sql.Date sqlDate = new java.sql.Date(dateFormat.parse("1970-08-01").getTime());
-      User user = new User(
+      User user = (User) new PersonBuilder(
           "John",
           "Doe",
-          sqlDate,
+          sqlDate
+      ).asUser(
           String.format("john.doe%d@email.com", getRandom().nextInt()),
           "johndoe"
-      );
+      ).build();
       user.save(connection);
 
       // Create

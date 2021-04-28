@@ -5,12 +5,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 abstract class JsonCollectionWriter extends JsonObjectWriter {
+  /** {@link Collection} to write. */
   private final Collection collection;
 
   protected JsonCollectionWriter(final Collection collection) {
     this.collection = collection;
   }
 
+  /** {@inheritDoc} */
   @Override
   protected JsonNode getSpecificJson(final ObjectNode objectNode) {
     objectNode.put("id", collection.getId());
@@ -20,6 +22,6 @@ abstract class JsonCollectionWriter extends JsonObjectWriter {
     return getSpecificCollectionJson(objectNode);
   }
 
-  protected abstract JsonNode getSpecificCollectionJson(final ObjectNode objectNode);
+  protected abstract JsonNode getSpecificCollectionJson(ObjectNode objectNode);
 
 }

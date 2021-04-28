@@ -28,49 +28,83 @@ import java.sql.SQLException;
 
 @Controller
 public class AlbumController extends SongCollectionController {
-
+  /** {@link AlbumDTOValidator} to use to validate incoming requests. */
   @Autowired
   private AlbumDTOValidator albumDTOValidator;
 
+  /**
+   * Get an album by id.
+   *
+   * @param id Id of album to get.
+   * @return Album in Json format.
+   */
   @GetMapping("/album/{id}")
   public ResponseEntity<JsonNode> getAlbumById(@PathVariable final int id) {
     return getSongCollectionById(id);
   }
 
+  /**
+   * Create an Album.
+   *
+   * @param albumDTO Album data.
+   * @param result   BindingResult for validation.
+   * @return Created album in Json format.
+   */
   @PostMapping("/albums")
-  public ResponseEntity<JsonNode> createAlbum(
-      @Valid @RequestBody final AlbumDTO albumDTO,
-      BindingResult result
-  ) {
+  public ResponseEntity<JsonNode> createAlbum(@Valid @RequestBody final AlbumDTO albumDTO,
+                                              final BindingResult result) {
     return createSongCollection(albumDTO, result);
   }
 
+  /**
+   * Add a song to an album.
+   *
+   * @param albumId Id of album to add song to.
+   * @param songId  Id of Song to add to album.
+   * @return Updated Album in JSON format.
+   */
   @PostMapping("/album/{albumId}/{songId}")
   public ResponseEntity<JsonNode> addSongToAlbum(@PathVariable final int albumId, @PathVariable final int songId) {
     return addSongToCollection(albumId, songId);
   }
 
-  @PutMapping("/album/{id}")
-  public ResponseEntity<JsonNode> addOrMoveTrackInAlbum(@PathVariable final int id,
+  /**
+   * Add or move a track in Album.
+   *
+   * @param albumId  Id of Album to add track to.
+   * @param trackDTO Data of track.
+   * @return Updated Album in JSON format.
+   */
+  @PutMapping("/album/{albumId}")
+  public ResponseEntity<JsonNode> addOrMoveTrackInAlbum(@PathVariable final int albumId,
                                                         @Valid @RequestBody final TrackDTO trackDTO) {
-    return addOrMoveTrackInSongCollection(id, trackDTO);
+    return addOrMoveTrackInSongCollection(albumId, trackDTO);
   }
 
+  /**
+   * Delete an album by id.
+   *
+   * @param id Id of album to delete.
+   * @return Confirmation message.
+   */
   @DeleteMapping("/album/{id}")
   public ResponseEntity<String> deleteAlbum(@PathVariable final int id) {
     return deleteSongCollection(id);
   }
 
+  /** @return {@link com.eos.streamus.dto.validators.SongCollectionDTOValidator}. */
   @Override
   protected SongCollectionDTOValidator getSongCollectionDTOValidator() {
     return albumDTOValidator;
   }
 
+  /** {@inheritDoc} */
   @Override
   protected JsonSongCollectionWriter jsonSongCollectionWriter(final SongCollection songCollection) {
     return new JsonAlbumWriter((Album) songCollection);
   }
 
+  /** {@inheritDoc} */
   @Override
   protected SongCollection createSpecificCollection(
       final com.eos.streamus.dto.SongCollectionDTO songCollectionDTO,

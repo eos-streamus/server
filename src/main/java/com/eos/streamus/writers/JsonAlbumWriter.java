@@ -9,12 +9,15 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class JsonAlbumWriter extends JsonSongCollectionWriter {
+  /** {@link Album} to write. */
   private final Album album;
+
   public JsonAlbumWriter(final Album album) {
     super(album);
     this.album = album;
   }
 
+  /** {@inheritDoc} */
   @Override
   protected JsonNode getSpecificCollectionJson(final ObjectNode objectNode) {
     super.getSpecificCollectionJson(objectNode);

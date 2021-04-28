@@ -28,20 +28,25 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.UUID;
 
 @RestController
 public class SongController implements CommonResponses {
+  /** Max Audio chunk size to stream (1GB). */
   private static final long MAX_AUDIO_CHUNK_SIZE = (long) 1024 * 1024;
 
+  /** Accepted Mime types for Audio files. */
   private static final String[] AUDIO_MIME_TYPES = {
       "audio/wav", "audio/mpeg", "audio/mp4", "audio/aac", "audio/aacp", "audio/ogg", "audio/webm", "audio/ogg",
       "audio/webm", "audio/flac", "audio/og"
   };
 
+  /** {@link IResourcePathResolver} to use. */
   @Autowired
   private IResourcePathResolver resourcePathResolver;
 
+  /** {@link IDatabaseConnector} to use. */
   @Autowired
   private IDatabaseConnector databaseConnector;
 
@@ -49,33 +54,25 @@ public class SongController implements CommonResponses {
    * Save a new {@link Song}.
    *
    * @param multipartFile Audio file of song to create.
-   * @param name Name of the song.
-   *
+   * @param name          Name of the song.
    * @return response (bad request, ok, internal server error).
    */
   @PostMapping("/song")
-  public ResponseEntity<JsonNode> postSong(@RequestParam("file") MultipartFile multipartFile,
-                                           @RequestParam("name") String name) {
+  public ResponseEntity<JsonNode> postSong(@RequestParam("file") final MultipartFile multipartFile,
+                                           @RequestParam("name") final String name) {
 
     if (multipartFile.getContentType() == null) {
       return badRequest("No specified mime type");
     }
 
-    boolean acceptableMimeType = false;
-    for (String type : AUDIO_MIME_TYPES) {
-      if (multipartFile.getContentType().equals(type)) {
-        acceptableMimeType = true;
-        break;
-      }
-    }
-    if (!acceptableMimeType) {
+    if (Arrays.stream(AUDIO_MIME_TYPES).noneMatch(type -> type.equals(multipartFile.getContentType()))) {
       return badRequest(String.format("Invalid mime type : %s", multipartFile.getContentType()));
     }
 
     String path = String.format(
         "%s%s.%s",
         resourcePathResolver.getAudioDir(),
-        UUID.randomUUID().toString(),
+        UUID.randomUUID(),
         FilenameUtils.getExtension(multipartFile.getOriginalFilename())
     );
 
@@ -102,9 +99,16 @@ public class SongController implements CommonResponses {
 
   }
 
+  /**
+   * Get a Song file to stream.
+   *
+   * @param headers HttpHeaders to get range from.
+   * @param id      Id of song.
+   * @return Stream ResourceRegion.
+   */
   @GetMapping("/song/{id}")
-  public ResponseEntity<ResourceRegion> getAudio(@RequestHeader HttpHeaders headers,
-                                                 @PathVariable("id") int id) {
+  public ResponseEntity<ResourceRegion> getAudio(@RequestHeader final HttpHeaders headers,
+                                                 @PathVariable("id") final int id) {
     try (Connection connection = databaseConnector.getConnection()) {
       return streamResource(Song.findById(id, connection), headers.getRange(), MAX_AUDIO_CHUNK_SIZE);
     } catch (NoResultException noResultException) {
@@ -115,6 +119,12 @@ public class SongController implements CommonResponses {
     }
   }
 
+  /**
+   * Delete a Song by id.
+   *
+   * @param id Id of Song to delete.
+   * @return Confirmation message.
+   */
   @DeleteMapping("/song/{id}")
   public ResponseEntity<String> deleteSong(@PathVariable("id") final int id) {
     try (Connection connection = databaseConnector.getConnection()) {

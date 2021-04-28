@@ -2,12 +2,16 @@ package com.eos.streamus.models;
 
 interface Entity {
 
+  /** @return Table name in database. */
   String tableName();
 
+  /** @return Primary key column name in database. */
   String primaryKeyName();
 
+  /** @return Creation function name in database. */
   String creationFunctionName();
 
+  /** @return Id of this Entity. */
   Integer getId();
 
   default String defaultToString() {

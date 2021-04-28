@@ -14,14 +14,17 @@ import java.sql.SQLException;
 @Component
 public class AlbumDTOValidator extends SongCollectionDTOValidator {
 
+  /** {@link IDatabaseConnector} to use. */
   @Autowired
   private IDatabaseConnector databaseConnector;
 
+  /** {@inheritDoc} */
   @Override
   public boolean supports(final Class<?> aClass) {
     return aClass.equals(AlbumDTO.class);
   }
 
+  /** {@inheritDoc} */
   @Override
   protected void validateSubclassProperties(final Object o, final Errors errors) {
     AlbumDTO albumDTO = (AlbumDTO) o;

@@ -1,10 +1,6 @@
 package com.eos.streamus.controllers;
 
-import com.eos.streamus.models.Album;
-import com.eos.streamus.models.Song;
-import com.eos.streamus.models.SongCollection;
-import com.eos.streamus.models.SongPlaylist;
-import com.eos.streamus.models.User;
+import com.eos.streamus.models.*;
 import com.eos.streamus.writers.JsonAlbumWriter;
 import com.eos.streamus.writers.JsonSongPlaylistWriter;
 import com.fasterxml.jackson.core.JsonFactory;
@@ -34,7 +30,11 @@ class SongCollectionTests extends JwtSetupControllerTests {
 
   @BeforeAll
   private void setup() throws SQLException, ParseException {
-    user = new User("John", "Doe", date("2000-01-01"), "john.doe@streamus.com", "johndoe");
+    user = (User) new PersonBuilder(
+        "John", "Doe", date("2000-01-01")
+    ).asUser(
+        "john.doe@streamus.com", "johndoe"
+    ).build();
     try (Connection connection = databaseConnector.getConnection()) {
       user.save(connection);
     }
@@ -123,8 +123,8 @@ class SongCollectionTests extends JwtSetupControllerTests {
       trackData.put("songId", trackToMove.getSong().getId());
       trackData.put("trackNumber", newTrackNumber);
       MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put(String.format("/album/%d", album.getId()))
-                                                                    .contentType(MediaType.APPLICATION_JSON)
-                                                                    .content(trackData.toPrettyString());
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(trackData.toPrettyString());
 
       MockHttpServletResponse response = perform(builder).andExpect(status().is(200)).andReturn().getResponse();
       JsonNode json = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
@@ -156,8 +156,8 @@ class SongCollectionTests extends JwtSetupControllerTests {
       trackData.put("songId", trackToMove.getSong().getId());
       trackData.put("trackNumber", newTrackNumber);
       MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put(String.format("/album/%d", album.getId()))
-                                                                    .contentType(MediaType.APPLICATION_JSON)
-                                                                    .content(trackData.toPrettyString());
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(trackData.toPrettyString());
 
       perform(builder).andExpect(status().is(400)).andReturn();
     }
@@ -182,8 +182,8 @@ class SongCollectionTests extends JwtSetupControllerTests {
       trackData.put("songId", trackToMove.getSong().getId());
       trackData.put("trackNumber", newTrackNumber);
       MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put(String.format("/album/%d", album.getId()))
-                                                                    .contentType(MediaType.APPLICATION_JSON)
-                                                                    .content(trackData.toPrettyString());
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(trackData.toPrettyString());
 
       perform(builder).andExpect(status().is(400)).andReturn();
     }
@@ -208,8 +208,8 @@ class SongCollectionTests extends JwtSetupControllerTests {
       trackData.put("songId", songToInsert.getId());
       trackData.put("trackNumber", newTrackNumber);
       MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put(String.format("/album/%d", album.getId()))
-                                                                    .contentType(MediaType.APPLICATION_JSON)
-                                                                    .content(trackData.toPrettyString());
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(trackData.toPrettyString());
 
       MockHttpServletResponse response = perform(builder).andExpect(status().is(200)).andReturn().getResponse();
       JsonNode json = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());

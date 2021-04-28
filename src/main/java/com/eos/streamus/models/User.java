@@ -3,65 +3,86 @@ package com.eos.streamus.models;
 import com.eos.streamus.exceptions.NoResultException;
 
 import java.sql.*;
+import java.util.Objects;
 
 public class User extends Person {
   //#region Static attributes
+  /** Table name in database. */
   private static final String TABLE_NAME = "StreamUsUser";
+  /** Email column in database. */
   protected static final String EMAIL_COLUMN = "email";
+  /** Username column in database. */
   protected static final String USERNAME_COLUMN = "username";
+  /** View name in database. */
   private static final String VIEW_NAME = "vUser";
+  /** Password table name in database. */
   private static final String PASSWORD_TABLE_NAME = "UserPassword";
+  /** Password table user id column in database. */
   private static final String PASSWORD_TABLE_USER_ID_COLUMN = "idUser";
+  /** Password table password column in database. */
   private static final String PASSWORD_TABLE_PASSWORD_COLUMN = "password";
   //#endregion Static attributes
 
   //#region Instance attributes
+  /** Email of the User. */
   private String email;
+  /** Username of the User. */
   private String username;
   //#endregion Instance attributes
 
   //#region Constructors
-  protected User(Integer id, String firstName, String lastName, Date dateOfBirth, // NOSONAR
-                 Timestamp createdAt, Timestamp updatedAt, String email, String username) {
-    super(id, firstName, lastName, dateOfBirth, createdAt, updatedAt);
-    this.email = email;
-    this.username = username;
-  }
-
-  public User(String firstName, String lastName, Date dateOfBirth, String email, String username) {
-    super(firstName, lastName, dateOfBirth);
-    this.email = email;
-    this.username = username;
+  User(final PersonBuilder builder) {
+    super(builder);
+    Objects.requireNonNull(builder.getEmail());
+    Objects.requireNonNull(builder.getUsername());
+    this.email = builder.getEmail();
+    this.username = builder.getUsername();
   }
   //#endregion Constructors
 
   //#region Getters and Setters
+
+  /** @return User's email. */
   public String getEmail() {
     return email;
   }
 
-  public void setEmail(String email) {
+  /**
+   * Set the User's email.
+   *
+   * @param email Email to set.
+   */
+  public void setEmail(final String email) {
     this.email = email;
   }
 
+  /** @return Username. */
   public String getUsername() {
     return username;
   }
 
-  public void setUsername(String username) {
+  /**
+   * Set the User's username.
+   *
+   * @param username Username to set.
+   */
+  public void setUsername(final String username) {
     this.username = username;
   }
 
+  /** {@inheritDoc} */
   @Override
   public String tableName() {
     return TABLE_NAME;
   }
 
+  /** {@inheritDoc} */
   @Override
   public String creationFunctionName() {
     return "createUser";
   }
 
+  /** {@inheritDoc} */
   @Override
   public String primaryKeyName() {
     return "idPerson";
@@ -69,8 +90,10 @@ public class User extends Person {
   //#endregion Getters and Setters
 
   //#region Database operations
+
+  /** {@inheritDoc} */
   @Override
-  public void save(Connection connection) throws SQLException {
+  public void save(final Connection connection) throws SQLException {
     if (this.getId() == null) {
       try (PreparedStatement preparedStatement = connection.prepareStatement(
           String.format(
@@ -78,11 +101,12 @@ public class User extends Person {
               creationFunctionName()
           )
       )) {
-        preparedStatement.setString(1, getFirstName());
-        preparedStatement.setString(2, getLastName());
-        preparedStatement.setDate(3, getDateOfBirth());
-        preparedStatement.setString(4, email);
-        preparedStatement.setString(5, username);
+        int columnNumber = 0;
+        preparedStatement.setString(++columnNumber, getFirstName());
+        preparedStatement.setString(++columnNumber, getLastName());
+        preparedStatement.setDate(++columnNumber, getDateOfBirth());
+        preparedStatement.setString(++columnNumber, email);
+        preparedStatement.setString(++columnNumber, username);
         try (ResultSet resultSet = preparedStatement.executeQuery()) {
           if (!resultSet.next()) {
             throw new SQLException("Could not execute statement");
@@ -100,15 +124,25 @@ public class User extends Person {
               primaryKeyName()
           )
       )) {
-        preparedStatement.setString(1, email);
-        preparedStatement.setString(2, username);
-        preparedStatement.setInt(3, getId());
+        int columnNumber = 0;
+        preparedStatement.setString(++columnNumber, email);
+        preparedStatement.setString(++columnNumber, username);
+        preparedStatement.setInt(++columnNumber, getId());
         preparedStatement.execute();
       }
     }
   }
 
-  public static User findById(Integer id, Connection connection) throws SQLException, NoResultException {
+  /**
+   * Find a User by id in the database.
+   *
+   * @param id         Id of the User to find.
+   * @param connection Database connection to use to perform the operation.
+   * @return Found User.
+   * @throws SQLException      If an error occurred while performing the operation.
+   * @throws NoResultException If no User by this id was found.
+   */
+  public static User findById(final Integer id, final Connection connection) throws SQLException, NoResultException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         String.format(
             "select * from %s where id = ?",
@@ -120,21 +154,30 @@ public class User extends Person {
         if (!resultSet.next()) {
           throw new NoResultException();
         }
-        return new User(
-            resultSet.getInt(ID_COLUMN),
-            resultSet.getString(FIRST_NAME_COLUMN),
+        return (User) new PersonBuilder(resultSet.getString(FIRST_NAME_COLUMN),
             resultSet.getString(LAST_NAME_COLUMN),
-            resultSet.getDate(DATE_OF_BIRTH_COLUMN),
-            resultSet.getTimestamp(CREATED_AT_COLUMN),
-            resultSet.getTimestamp(UPDATED_AT_COLUMN),
-            resultSet.getString(EMAIL_COLUMN),
-            resultSet.getString(USERNAME_COLUMN)
-        );
+            resultSet.getDate(DATE_OF_BIRTH_COLUMN))
+            .withId(resultSet.getInt(ID_COLUMN))
+            .withTimestamps(resultSet.getTimestamp(CREATED_AT_COLUMN),
+                resultSet.getTimestamp(UPDATED_AT_COLUMN))
+            .asUser(
+                resultSet.getString(EMAIL_COLUMN),
+                resultSet.getString(USERNAME_COLUMN)
+            )
+            .build();
       }
     }
   }
 
-  public static User findByEmail(final String email, Connection connection) throws SQLException {
+  /**
+   * Find a User by email in the database.
+   *
+   * @param email      Email of the User to find.
+   * @param connection Database connection to use to perform the operation.
+   * @return Found User.
+   * @throws SQLException If an error occurred while performing the operation.
+   */
+  public static User findByEmail(final String email, final Connection connection) throws SQLException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         String.format(
             "select * from %s where %s = ?",
@@ -145,23 +188,31 @@ public class User extends Person {
       preparedStatement.setString(1, email);
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
         if (resultSet.next()) {
-          return new User(
-              resultSet.getInt(ID_COLUMN),
-              resultSet.getString(FIRST_NAME_COLUMN),
+          return (User) new PersonBuilder(resultSet.getString(FIRST_NAME_COLUMN),
               resultSet.getString(LAST_NAME_COLUMN),
-              resultSet.getDate(DATE_OF_BIRTH_COLUMN),
-              resultSet.getTimestamp(CREATED_AT_COLUMN),
-              resultSet.getTimestamp(UPDATED_AT_COLUMN),
-              resultSet.getString(EMAIL_COLUMN),
-              resultSet.getString(USERNAME_COLUMN)
-          );
+              resultSet.getDate(DATE_OF_BIRTH_COLUMN))
+              .withId(resultSet.getInt(ID_COLUMN))
+              .withTimestamps(resultSet.getTimestamp(CREATED_AT_COLUMN),
+                  resultSet.getTimestamp(UPDATED_AT_COLUMN))
+              .asUser(
+                  resultSet.getString(EMAIL_COLUMN),
+                  resultSet.getString(USERNAME_COLUMN)
+              )
+              .build();
         }
         return null;
       }
     }
   }
 
-  public void upsertPassword(String password, Connection connection) throws SQLException {
+  /**
+   * Update or set the password of the User.
+   *
+   * @param password   Password to update or set.
+   * @param connection {@link Connection} to use to perform the operation.
+   * @throws SQLException If an error occurred while performing the database operation.
+   */
+  public void upsertPassword(final String password, final Connection connection) throws SQLException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         String.format(
             "INSERT INTO %s(%s, %s) VALUES (?, ?) ON CONFLICT (%s) DO UPDATE SET %s = excluded.%s;",
@@ -179,7 +230,15 @@ public class User extends Person {
     }
   }
 
-  public String getPassword(Connection connection) throws SQLException, NoResultException {
+  /**
+   * Get the password of the User.
+   *
+   * @param connection {@link Connection} to use to perform the operation.
+   * @return The password of the User.
+   * @throws SQLException      If an error occurred while performing the database operation.
+   * @throws NoResultException If the User has no saved password.
+   */
+  public String getPassword(final Connection connection) throws SQLException, NoResultException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         String.format(
             "select %s from %s where %s = ?",
@@ -201,13 +260,24 @@ public class User extends Person {
   //#endregion Database operations
 
   //#region Equals
+
+  /** @return hashCode of this User, which is the id. */
   @Override
   public int hashCode() {
     return getId();
   }
 
+  /**
+   * Returns whether the given Object is equal to this User.
+   * Will be equal if:
+   * - Equal by {@link Person}'s implementation.
+   * - Same email.
+   *
+   * @param o Object to compare
+   * @return True if all conditions are met.
+   */
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     return super.equals(o) && ((User) o).email.equals(email);
   }
   //#endregion Equals

@@ -16,12 +16,12 @@ class AdminTests extends DatabaseTests {
   @Test
   void testAdmin() throws SQLException, NoResultException {
     try (Connection connection = databaseConnector.getConnection()) {
-      Admin admin = new Admin(
-          "Test",
-          "Admin", valueOf("1990-01-01"),
+      Admin admin = (Admin) new PersonBuilder(
+          "Test", "Admin", valueOf("1990-01-01")
+      ).asAdmin(
           String.format("test%d@admin.com", getRandom().nextInt()),
           "test_admin"
-      );
+      ).build();
       admin.save(connection);
       assertNotNull(admin.getId());
       assertNotNull(admin.getCreatedAt());

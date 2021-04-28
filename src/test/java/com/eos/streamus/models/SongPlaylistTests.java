@@ -23,13 +23,14 @@ class SongPlaylistTests extends DatabaseTests {
     try (Connection connection = databaseConnector.getConnection()) {
       DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
       java.sql.Date sqlDate = new java.sql.Date(dateFormat.parse("1970-08-01").getTime());
-      User user = new User(
+      User user = (User) new PersonBuilder(
           "John",
           "Doe",
-          sqlDate,
+          sqlDate
+      ).asUser(
           String.format("john.doe%d@email.com", getRandom().nextInt()),
           "johndoe"
-      );
+      ).build();
       user.save(connection);
 
       // Create
@@ -67,7 +68,7 @@ class SongPlaylistTests extends DatabaseTests {
       List<Song> testSongs = new ArrayList<>(); // Used to keep track of songs to delete
       for (int i = 0; i < 10; i++) {
         Song song = new Song(String.format("test%d%d.mp3", new Date().getTime(), getRandom().nextInt()), randomString(),
-                             100);
+            100);
         song.save(connection);
         testSongs.add(song);
         songPlaylist.addSong(song);
@@ -82,7 +83,7 @@ class SongPlaylistTests extends DatabaseTests {
       songPlaylist.setName(randomString());
       for (int i = 0; i < 10; i++) {
         Song song = new Song(String.format("test%d%d.mp3", new Date().getTime(), getRandom().nextInt()), randomString(),
-                             100);
+            100);
         song.save(connection);
         testSongs.add(song);
         songPlaylist.addSong(song);
