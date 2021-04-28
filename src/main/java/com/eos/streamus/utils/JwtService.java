@@ -15,14 +15,10 @@ import java.util.UUID;
 
 @Service
 public final class JwtService {
-  /**
-   * Expiration time in minutes for token.
-   */
+  /** Expiration time in minutes for token. */
   private static final long TOKEN_EXPIRATION = 5L;
 
-  /**
-   * JWT secret.
-   */
+  /** JWT secret. */
   @Value("${jwt.secret}")
   private String key;
 
