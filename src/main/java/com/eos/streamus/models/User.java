@@ -7,44 +7,26 @@ import java.util.Objects;
 
 public class User extends Person {
   //#region Static attributes
-  /**
-   * Table name in database.
-   */
+  /** Table name in database. */
   private static final String TABLE_NAME = "StreamUsUser";
-  /**
-   * Email column in database.
-   */
+  /** Email column in database. */
   protected static final String EMAIL_COLUMN = "email";
-  /**
-   * Username column in database.
-   */
+  /** Username column in database. */
   protected static final String USERNAME_COLUMN = "username";
-  /**
-   * View name in database.
-   */
+  /** View name in database. */
   private static final String VIEW_NAME = "vUser";
-  /**
-   * Password table name in database.
-   */
+  /** Password table name in database. */
   private static final String PASSWORD_TABLE_NAME = "UserPassword";
-  /**
-   * Password table user id column in database.
-   */
+  /** Password table user id column in database. */
   private static final String PASSWORD_TABLE_USER_ID_COLUMN = "idUser";
-  /**
-   * Password table password column in database.
-   */
+  /** Password table password column in database. */
   private static final String PASSWORD_TABLE_PASSWORD_COLUMN = "password";
   //#endregion Static attributes
 
   //#region Instance attributes
-  /**
-   * Email of the User.
-   */
+  /** Email of the User. */
   private String email;
-  /**
-   * Username of the User.
-   */
+  /** Username of the User. */
   private String username;
   //#endregion Instance attributes
 
@@ -60,9 +42,7 @@ public class User extends Person {
 
   //#region Getters and Setters
 
-  /**
-   * @return User's email.
-   */
+  /** @return User's email. */
   public String getEmail() {
     return email;
   }
@@ -76,9 +56,7 @@ public class User extends Person {
     this.email = email;
   }
 
-  /**
-   * @return Username.
-   */
+  /** @return Username. */
   public String getUsername() {
     return username;
   }
@@ -283,9 +261,7 @@ public class User extends Person {
 
   //#region Equals
 
-  /**
-   * @return hashCode of this User, which is the id.
-   */
+  /** @return hashCode of this User, which is the id. */
   @Override
   public int hashCode() {
     return getId();
