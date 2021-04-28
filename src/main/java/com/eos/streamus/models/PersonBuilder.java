@@ -5,45 +5,25 @@ import java.sql.Timestamp;
 import java.util.Objects;
 
 public class PersonBuilder implements Builder<Person> {
-  /**
-   * First Name.
-   */
+  /** First Name. */
   private final String firstName;
-  /**
-   * Last Name.
-   */
+  /** Last Name. */
   private final String lastName;
-  /**
-   * Date of birth.
-   */
+  /** Date of birth. */
   private final Date dateOfBirth;
-  /**
-   * Id.
-   */
+  /** Id. */
   private Integer id;
-  /**
-   * Created at.
-   */
+  /** Created at. */
   private Timestamp createdAt;
-  /**
-   * Updated at.
-   */
+  /** Updated at. */
   private Timestamp updatedAt;
-  /**
-   * IsUser.
-   */
+  /** IsUser. */
   private boolean isUser;
-  /**
-   * Email.
-   */
+  /** Email. */
   private String email;
-  /**
-   * Username.
-   */
+  /** Username. */
   private String username;
-  /**
-   * Is Admin.
-   */
+  /** Is Admin. */
   private boolean isAdmin;
 
   public PersonBuilder(final String firstName, final String lastName, final Date dateOfBirth) {
@@ -119,9 +99,7 @@ public class PersonBuilder implements Builder<Person> {
     return this.asUser(email, username).asAdmin();
   }
 
-  /**
-   * @return Whether the builder has timestamps set.
-   */
+  /** @return Whether the builder has timestamps set. */
   public boolean hasTimestamps() {
     return createdAt != null && updatedAt != null;
   }
@@ -138,65 +116,47 @@ public class PersonBuilder implements Builder<Person> {
     return new Person(this);
   }
 
-  /**
-   * @return FirstName.
-   */
+  /** @return FirstName. */
   public String getFirstName() {
     return firstName;
   }
 
-  /**
-   * @return LastName.
-   */
+  /** @return LastName. */
   public String getLastName() {
     return lastName;
   }
 
-  /**
-   * @return DateOfBirth.
-   */
+  /** @return DateOfBirth. */
   public Date getDateOfBirth() {
     return dateOfBirth;
   }
 
-  /**
-   * @return Id.
-   */
+  /** @return Id. */
   public Integer getId() {
     return id;
   }
 
-  /**
-   * @return CreatedAt.
-   */
+  /** @return CreatedAt. */
   public Timestamp getCreatedAt() {
     return createdAt;
   }
 
-  /**
-   * @return UpdatedAt.
-   */
+  /** @return UpdatedAt. */
   public Timestamp getUpdatedAt() {
     return updatedAt;
   }
 
-  /**
-   * @return If Person to build is a User.
-   */
+  /** @return If Person to build is a User. */
   public boolean isUser() {
     return isUser;
   }
 
-  /**
-   * @return Email.
-   */
+  /** @return Email. */
   public String getEmail() {
     return email;
   }
 
-  /**
-   * @return Username.
-   */
+  /** @return Username. */
   public String getUsername() {
     return username;
   }
