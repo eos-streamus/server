@@ -29,9 +29,7 @@ import java.sql.SQLException;
 @RestController
 public class SongPlaylistController extends SongCollectionController {
 
-  /**
-   * {@link SongPlaylistDTOValidator} to use.
-   */
+  /** {@link SongPlaylistDTOValidator} to use. */
   @Autowired
   private SongPlaylistDTOValidator songPlaylistDTOValidator;
 
