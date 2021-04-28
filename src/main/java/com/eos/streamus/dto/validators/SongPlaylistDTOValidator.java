@@ -14,9 +14,7 @@ import java.sql.SQLException;
 @Component
 public class SongPlaylistDTOValidator extends SongCollectionDTOValidator {
 
-  /**
-   * {@link IDatabaseConnector} to use.
-   */
+  /** {@link IDatabaseConnector} to use. */
   @Autowired
   private IDatabaseConnector databaseConnector;
 
