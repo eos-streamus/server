@@ -12,21 +12,13 @@ import java.util.Objects;
 public abstract class Activity implements SavableDeletableEntity {
   public class UserActivity extends Pair<User, Boolean> implements SavableDeletable {
     //#region Static attributes
-    /**
-     * Name of the table in the database.
-     */
+    /** Name of the table in the database. */
     public static final String TABLE_NAME = "UserActivity";
-    /**
-     * User id column name.
-     */
+    /** User id column name. */
     public static final String USER_ID_COLUMN = "idUser";
-    /**
-     * Activity foreign key column name.
-     */
+    /** Activity foreign key column name. */
     public static final String ACTIVITY_ID_COLUMN = "idActivity";
-    /**
-     * Manages flag column name.
-     */
+    /** Manages flag column name. */
     public static final String MANAGES_COLUMN = "manages";
     //#endregion Static attributes
 
@@ -38,23 +30,17 @@ public abstract class Activity implements SavableDeletableEntity {
 
     //#region Getters and Setters
 
-    /**
-     * @return Containing {@link Activity}.
-     */
+    /** @return Containing {@link Activity}. */
     public Activity getActivity() {
       return Activity.this;
     }
 
-    /**
-     * @return The {@link com.eos.streamus.models.User} of the UserActivity.
-     */
+    /** @return The {@link com.eos.streamus.models.User} of the UserActivity. */
     public User getUser() {
       return this.getKey();
     }
 
-    /**
-     * @return If the {@link com.eos.streamus.models.User} is a manager of this {@link Activity}.
-     */
+    /** @return If the {@link com.eos.streamus.models.User} is a manager of this {@link Activity}. */
     public Boolean isManager() {
       return this.getValue();
     }
@@ -133,9 +119,7 @@ public abstract class Activity implements SavableDeletableEntity {
 
     //#region Equals
 
-    /**
-     * @return The hashcode of the {@link Activity}.
-     */
+    /** @return The hashcode of the {@link Activity}. */
     @Override
     public int hashCode() {
       return Objects.hash(Activity.this.id, getUser().getId());
@@ -171,48 +155,28 @@ public abstract class Activity implements SavableDeletableEntity {
 
   public class ActivityMessage implements SavableDeletableEntity {
     //#region Static attributes
-    /**
-     * Table name in database.
-     */
+    /** Table name in database. */
     private static final String TABLE_NAME = "ActivityMessage";
-    /**
-     * Primary key column name in database.
-     */
+    /** Primary key column name in database. */
     private static final String PRIMARY_KEY_NAME = "id";
-    /**
-     * Activity foreign key column name.
-     */
+    /** Activity foreign key column name. */
     private static final String ACTIVITY_ID_COLUMN = "idActivity";
-    /**
-     * {@link com.eos.streamus.models.User} foreign key column name.
-     */
+    /** {@link com.eos.streamus.models.User} foreign key column name. */
     private static final String USER_ID_COLUMN = "idUser";
-    /**
-     * "PostedAt" timestamp column name.
-     */
+    /** "PostedAt" timestamp column name. */
     private static final String POSTED_AT_COLUMN = "postedAt";
-    /**
-     * Message content column name.
-     */
+    /** Message content column name. */
     private static final String CONTENT_COLUMN = "content";
     //#endregion Static attributes
 
     //#region Instance attributes
-    /**
-     * Message primary key - id.
-     */
+    /** Message primary key - id. */
     private Integer id;
-    /**
-     * {@link com.eos.streamus.models.User} that posted the message.
-     */
+    /** {@link com.eos.streamus.models.User} that posted the message. */
     private final User user;
-    /**
-     * Message content.
-     */
+    /** Message content. */
     private final String content;
-    /**
-     * Message posted at timestamp.
-     */
+    /** Message posted at timestamp. */
     private Timestamp postedAt;
     //#endregion Instance attributes
 
@@ -232,38 +196,28 @@ public abstract class Activity implements SavableDeletableEntity {
 
     //#region Getters and Setters
 
-    /**
-     * @return Id of this message.
-     */
+    /** @return Id of this message. */
     @Override
     public Integer getId() {
       return id;
     }
 
-    /**
-     * @return {@link com.eos.streamus.models.User} that posted the message.
-     */
+    /** @return {@link com.eos.streamus.models.User} that posted the message. */
     public User getUser() {
       return user;
     }
 
-    /**
-     * @return Message content.
-     */
+    /** @return Message content. */
     public String getContent() {
       return content;
     }
 
-    /**
-     * @return {@link com.eos.streamus.models.Activity} this message was posted in.
-     */
+    /** @return {@link com.eos.streamus.models.Activity} this message was posted in. */
     public Activity getActivity() {
       return Activity.this;
     }
 
-    /**
-     * @return This message posted at timestamp.
-     */
+    /** @return This message posted at timestamp. */
     public Timestamp getPostedAt() {
       return postedAt;
     }
@@ -320,9 +274,7 @@ public abstract class Activity implements SavableDeletableEntity {
 
     //#region Equals
 
-    /**
-     * @return hashCode of this Activity, i.e. id.
-     */
+    /** @return hashCode of this Activity, i.e. id. */
     @Override
     public int hashCode() {
       return id;
@@ -358,28 +310,18 @@ public abstract class Activity implements SavableDeletableEntity {
   }
 
   //#region Static Attributes
-  /**
-   * Table name.
-   */
+  /** Table name. */
   public static final String TABLE_NAME = "Activity";
-  /**
-   * Primary key name.
-   */
+  /** Primary key name. */
   protected static final String PRIMARY_KEY_NAME = "id";
   //#endregion Static Attributes
 
   //#region Instance Attributes
-  /**
-   * Id of the activity.
-   */
+  /** Id of the activity. */
   private Integer id;
-  /**
-   * List of {@link com.eos.streamus.models.User} of this activity.
-   */
+  /** List of {@link com.eos.streamus.models.User} of this activity. */
   private final List<UserActivity> users = new ArrayList<>();
-  /**
-   * List of {@link com.eos.streamus.models.Activity.ActivityMessage} of this activity.
-   */
+  /** List of {@link com.eos.streamus.models.Activity.ActivityMessage} of this activity. */
   private final List<ActivityMessage> messages = new ArrayList<>();
   //#endregion Instance Attributes
 
@@ -447,16 +389,12 @@ public abstract class Activity implements SavableDeletableEntity {
     this.users.add(new UserActivity(user, isManager));
   }
 
-  /**
-   * @return List of {@link com.eos.streamus.models.User} of this Activity.
-   */
+  /** @return List of {@link com.eos.streamus.models.User} of this Activity. */
   public List<UserActivity> getUsers() {
     return new ArrayList<>(users);
   }
 
-  /**
-   * @return List of {@link com.eos.streamus.models.Activity.ActivityMessage} of this Activity.
-   */
+  /** @return List of {@link com.eos.streamus.models.Activity.ActivityMessage} of this Activity. */
   public List<ActivityMessage> getMessages() {
     return messages;
   }
@@ -535,9 +473,7 @@ public abstract class Activity implements SavableDeletableEntity {
 
   //#region Equals
 
-  /**
-   * @return Activity hashCode, which is its id.
-   */
+  /** @return Activity hashCode, which is its id. */
   @Override
   public int hashCode() {
     return id;
