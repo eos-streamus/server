@@ -16,6 +16,11 @@ import java.util.UUID;
 @Service
 public final class JwtService {
   /**
+   * Expiration time in minutes for token.
+   */
+  private static final long TOKEN_EXPIRATION = 5L;
+
+  /**
    * JWT secret.
    */
   @Value("${jwt.secret}")
@@ -28,7 +33,7 @@ public final class JwtService {
         .claim("email", user.getEmail())
         .setId(UUID.randomUUID().toString())
         .setIssuedAt(Date.from(Instant.now()))
-        .setExpiration(Date.from(Instant.now().plus(5l, ChronoUnit.MINUTES)))
+        .setExpiration(Date.from(Instant.now().plus(TOKEN_EXPIRATION, ChronoUnit.MINUTES)))
         .compact();
   }
 
