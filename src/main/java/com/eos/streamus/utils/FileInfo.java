@@ -3,21 +3,13 @@ package com.eos.streamus.utils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-/**
- * Class that contains FFProbe information about a file. For now, used only for duration.
- */
+/** Class that contains FFProbe information about a file. For now, used only for duration. */
 public class FileInfo {
-  /**
-   * Duration.
-   */
+  /** Duration. */
   private final int duration;
-  /**
-   * Has video track.
-   */
+  /** Has video track. */
   private boolean isVideo;
-  /**
-   * Has audio track.
-   */
+  /** Has audio track. */
   private boolean isAudio;
 
   FileInfo(final ObjectNode jsonData) {
@@ -31,30 +23,22 @@ public class FileInfo {
     }
   }
 
-  /**
-   * @return File duration.
-   */
+  /** @return File duration. */
   public final int getDuration() {
     return duration;
   }
 
-  /**
-   * @return If file has audio content.
-   */
+  /** @return If file has audio content. */
   public final boolean isAudio() {
     return isAudio;
   }
 
-  /**
-   * @return If file is a video.
-   */
+  /** @return If file is a video. */
   public final boolean isVideo() {
     return isVideo;
   }
 
-  /**
-   * @return If file is exclusively audio.
-   */
+  /** @return If file is exclusively audio. */
   public final boolean isAudioOnly() {
     return isAudio && !isVideo;
   }
