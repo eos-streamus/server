@@ -14,25 +14,15 @@ import java.util.*;
 public abstract class SongCollection extends Collection {
   public class Track extends Pair<Integer, Song> implements SavableDeletable {
     //#region Static attributes
-    /**
-     * Table name in database.
-     */
+    /** Table name in database. */
     public static final String TABLE_NAME = "SongCollectionSong";
-    /**
-     * Track number column in database.
-     */
+    /** Track number column in database. */
     public static final String TRACK_NUMBER_COLUMN = "trackNumber";
-    /**
-     * Id_song column in database.
-     */
+    /** Id_song column in database. */
     public static final String ID_SONG_COLUMN = "idSong";
-    /**
-     * Id_song collection column in database.
-     */
+    /** Id_song collection column in database. */
     public static final String ID_SONG_COLLECTION_COLUMN = "idSongCollection";
-    /**
-     * Creation function name in database.
-     */
+    /** Creation function name in database. */
     public static final String CREATION_FUNCTION_NAME = "addSongToSongCollection";
     //#endregion Static attributes
 
@@ -194,9 +184,7 @@ public abstract class SongCollection extends Collection {
   }
 
   //#region Instance attributes
-  /**
-   * List of tracks of this SongCollection.
-   */
+  /** List of tracks of this SongCollection. */
   private final List<Track> tracks = new ArrayList<>();
   //#endregion Instance attributes
 
@@ -216,9 +204,7 @@ public abstract class SongCollection extends Collection {
     return tracks;
   }
 
-  /**
-   * @return SongCollection-specific content.
-   */
+  /** @return SongCollection-specific content. */
   @Override
   protected List<Pair<Integer, Resource>> getSpecificContent() {
     List<Pair<Integer, Resource>> content = new ArrayList<>();
@@ -423,9 +409,7 @@ public abstract class SongCollection extends Collection {
 
   //#region Equals
 
-  /**
-   * @return HashCode of this instance, i.e. its id.
-   */
+  /** @return HashCode of this instance, i.e. its id. */
   @Override
   public int hashCode() {
     return getId();
