@@ -213,32 +213,44 @@ public class Series extends VideoCollection {
   }
 
   //#region Static attributes
-  /** Table name in the database. */
+  /**
+   * Table name in the database.
+   */
   public static final String TABLE_NAME = "Series";
-  /** Primary key name in the database. */
+  /**
+   * Primary key name in the database.
+   */
   public static final String PRIMARY_KEY_NAME = "idVideoCollection";
-  /** View name in the database. */
+  /**
+   * View name in the database.
+   */
   public static final String VIEW_NAME = "vSeries";
-  /** Creation function name in the database. */
+  /**
+   * Creation function name in the database.
+   */
   public static final String CREATION_FUNCTION_NAME = "createSeries";
-  /** Episode id view_column in the database. */
+  /**
+   * Episode id view_column in the database.
+   */
   public static final String EPISODE_ID_VIEW_COLUMN = "idEpisode";
-  /** Episode created at column in the database. */
+  /**
+   * Episode created at column in the database.
+   */
   public static final String EPISODE_CREATED_AT_COLUMN = "episodeCreatedAt";
-  /** Episode name column in the database. */
+  /**
+   * Episode name column in the database.
+   */
   public static final String EPISODE_NAME_COLUMN = "episodeName";
   //#endregion
 
   //#region Instance attributes
-  /** List of {@link Episode}s. */
+  /**
+   * List of {@link Episode}s.
+   */
   private final List<Episode> episodes = new ArrayList<>();
   //#endregion
 
   //#region Constructors
-  private Series(final Integer id, final String name, final Timestamp createdAt, final Timestamp updatedAt) {
-    super(id, name, createdAt, updatedAt);
-  }
-
   public Series(final String name) {
     super(name);
   }
@@ -286,7 +298,9 @@ public class Series extends VideoCollection {
     return content;
   }
 
-  /** @return Number of seasons. */
+  /**
+   * @return Number of seasons.
+   */
   public short getNumberOfSeasons() {
     List<Short> distinctSeasonNumbers = new ArrayList<>();
     for (Episode episode : episodes) {
@@ -362,11 +376,11 @@ public class Series extends VideoCollection {
   /**
    * Find a Series by id.
    *
-   * @param id Id of Series.
+   * @param id         Id of Series.
    * @param connection {@link Connection} to use to perform the operation.
-   * @throws SQLException If an error occurred while performing the database operation.
-   * @throws NoResultException if no Series by this id was found.
    * @return Found Series.
+   * @throws SQLException      If an error occurred while performing the database operation.
+   * @throws NoResultException if no Series by this id was found.
    */
   public static Series findById(final int id, final Connection connection) throws SQLException, NoResultException {
     try (PreparedStatement preparedStatement = connection
@@ -376,12 +390,10 @@ public class Series extends VideoCollection {
         if (!resultSet.next()) {
           throw new NoResultException();
         }
-        Series series = new Series(
-            resultSet.getInt(Collection.PRIMARY_KEY_NAME),
-            resultSet.getString(Collection.NAME_COLUMN),
-            resultSet.getTimestamp(Collection.CREATED_AT_COLUMN),
-            resultSet.getTimestamp(Collection.UPDATED_AT_COLUMN)
-        );
+        Series series = new Series(resultSet.getString(Collection.NAME_COLUMN));
+        series.setId(resultSet.getInt(Collection.PRIMARY_KEY_NAME));
+        series.setCreatedAt(resultSet.getTimestamp(Collection.CREATED_AT_COLUMN));
+        series.setUpdatedAt(resultSet.getTimestamp(Collection.UPDATED_AT_COLUMN));
 
         // Handle episodes
         int firstEpisodeNumber = resultSet.getInt(EPISODE_ID_VIEW_COLUMN);
@@ -414,7 +426,10 @@ public class Series extends VideoCollection {
   //#endregion Database operations
 
   //#region Equals
-  /** @return HashCode, i.e. id. */
+
+  /**
+   * @return HashCode, i.e. id.
+   */
   @Override
   public int hashCode() {
     return getId();

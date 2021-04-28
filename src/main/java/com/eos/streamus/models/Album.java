@@ -74,16 +74,11 @@ public class Album extends SongCollection {
   //#endregion Instance attributes
 
   //#region Constructors
-  private Album(final Integer id, final String name, final Date releaseDate,
-                final Timestamp createdAt, final Timestamp updatedAt) {
-    super(id, name, createdAt, updatedAt);
-    this.releaseDate = releaseDate;
-  }
-
   public Album(final String name, final Date releaseDate) {
     super(name);
     this.releaseDate = releaseDate;
   }
+  //#endregion Constructors
 
   /**
    * {@inheritDoc}
@@ -197,13 +192,10 @@ public class Album extends SongCollection {
         if (!resultSet.next()) {
           throw new NoResultException();
         }
-        album = new Album(
-            id,
-            resultSet.getString(Collection.NAME_COLUMN),
-            resultSet.getDate(RELEASE_DATE_COLUMN),
-            resultSet.getTimestamp(Collection.CREATED_AT_COLUMN),
-            resultSet.getTimestamp(Collection.UPDATED_AT_COLUMN)
-        );
+        album = new Album(resultSet.getString(Collection.NAME_COLUMN), resultSet.getDate(RELEASE_DATE_COLUMN));
+        album.setId(id);
+        album.setCreatedAt(resultSet.getTimestamp(Collection.CREATED_AT_COLUMN));
+        album.setUpdatedAt(resultSet.getTimestamp(Collection.UPDATED_AT_COLUMN));
         do {
           if (resultSet.getInt(VIEW_SONG_ID) != 0) {
             album.addTrack(album.new Track(

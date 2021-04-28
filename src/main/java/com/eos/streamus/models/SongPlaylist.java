@@ -28,12 +28,6 @@ public final class SongPlaylist extends SongCollection {
   //#endregion Instance attributes
 
   //#region Constructors
-  private SongPlaylist(final Integer id, final String name, final Timestamp createdAt,
-                       final Timestamp updatedAt, final User user) {
-    super(id, name, createdAt, updatedAt);
-    this.user = user;
-  }
-
   public SongPlaylist(final String name, final User user) {
     super(name);
     this.user = user;
@@ -92,11 +86,11 @@ public final class SongPlaylist extends SongCollection {
   /**
    * Finds a SongPlaylist by id in the database.
    *
-   * @param id Id of the SongPlaylist to find.
+   * @param id         Id of the SongPlaylist to find.
    * @param connection {@link Connection} to use to perform the operation.
-   * @throws NoResultException If no SongPlaylist by this id was found.
-   * @throws SQLException If an error occurred while performing the database operation.
    * @return Found SongPlaylist.
+   * @throws NoResultException If no SongPlaylist by this id was found.
+   * @throws SQLException      If an error occurred while performing the database operation.
    */
   public static SongPlaylist findById(final Integer id, final Connection connection)
       throws SQLException, NoResultException {
@@ -121,13 +115,10 @@ public final class SongPlaylist extends SongCollection {
         Integer userId = resultSet.getInt(USER_ID_COLUMN);
         User user = User.findById(userId, connection);
 
-        SongPlaylist songPlaylist = new SongPlaylist(
-            id,
-            name,
-            createdAt,
-            updatedAt,
-            user
-        );
+        SongPlaylist songPlaylist = new SongPlaylist(name, user);
+        songPlaylist.setId(id);
+        songPlaylist.setCreatedAt(createdAt);
+        songPlaylist.setUpdatedAt(updatedAt);
 
         // Songs
         int firstTrackNumber = resultSet.getInt(Track.TRACK_NUMBER_COLUMN);
@@ -168,6 +159,7 @@ public final class SongPlaylist extends SongCollection {
    * Will be equal if:
    * - All {@link SongCollection}'s equality conditions are met.
    * - Equal Owner {@link User}
+   *
    * @param o Object to compare
    * @return True if all conditions are met.
    */

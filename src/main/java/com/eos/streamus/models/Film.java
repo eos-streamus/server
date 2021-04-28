@@ -27,11 +27,6 @@ public class Film extends Video {
   //#endregion Static attributes
 
   //#region Constructors
-  private Film(final Integer id, final String path, final String name,
-               final Timestamp createdAt, final Integer duration) {
-    super(id, path, name, createdAt, duration);
-  }
-
   public Film(final String path, final String name, final Integer duration) {
     super(path, name, duration);
   }
@@ -69,11 +64,11 @@ public class Film extends Video {
   /**
    * Finds a Film by given id.
    *
-   * @param id Id of Film to find.
+   * @param id         Id of Film to find.
    * @param connection {@link Connection} to use to perform the operation.
-   * @throws SQLException If an error occurred while performing the database operation.
-   * @throws NoResultException If no film by given id was found.
    * @return Found Film.
+   * @throws SQLException      If an error occurred while performing the database operation.
+   * @throws NoResultException If no film by given id was found.
    */
   public static Film findById(final int id, final Connection connection) throws SQLException, NoResultException {
     try (PreparedStatement statement = connection.prepareStatement(
@@ -88,13 +83,14 @@ public class Film extends Video {
         if (!rs.next()) {
           throw new NoResultException();
         }
-        return new Film(
-            rs.getInt(Resource.ID_COLUMN),
+        Film film = new Film(
             rs.getString(Resource.PATH_COLUMN),
             rs.getString(Resource.NAME_COLUMN),
-            rs.getTimestamp(Resource.CREATED_AT_COLUMN),
             rs.getInt(Resource.DURATION_COLUMN)
         );
+        film.setId(rs.getInt(Resource.ID_COLUMN));
+        film.setCreatedAt(rs.getTimestamp(Resource.CREATED_AT_COLUMN));
+        return film;
       }
     }
   }
@@ -103,8 +99,8 @@ public class Film extends Video {
    * Fetches all Films from database.
    *
    * @param connection {@link Connection} to use to perform the operation.
-   * @throws SQLException If an error occurred while performing the database operation.
    * @return List of all Films.
+   * @throws SQLException If an error occurred while performing the database operation.
    */
   public static List<Film> all(final Connection connection) throws SQLException {
     List<Film> allFilms = new ArrayList<>();
@@ -113,15 +109,14 @@ public class Film extends Video {
     )) {
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
         while (resultSet.next()) {
-          allFilms.add(
-              new Film(
-                  resultSet.getInt(Resource.ID_COLUMN),
-                  resultSet.getString(Resource.PATH_COLUMN),
-                  resultSet.getString(Resource.NAME_COLUMN),
-                  resultSet.getTimestamp(Resource.CREATED_AT_COLUMN),
-                  resultSet.getInt(Resource.DURATION_COLUMN)
-              )
+          Film film = new Film(
+              resultSet.getString(Resource.PATH_COLUMN),
+              resultSet.getString(Resource.NAME_COLUMN),
+              resultSet.getInt(Resource.DURATION_COLUMN)
           );
+          film.setId(resultSet.getInt(Resource.ID_COLUMN));
+          film.setCreatedAt(resultSet.getTimestamp(Resource.CREATED_AT_COLUMN));
+          allFilms.add(film);
         }
       }
     }

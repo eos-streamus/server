@@ -170,12 +170,6 @@ public class VideoPlaylist extends VideoCollection {
   //#endregion Instance attributes
 
   //#region Constructors
-  VideoPlaylist(final Integer id, final String name, final Timestamp createdAt,
-                final Timestamp updatedAt, final User user) {
-    super(id, name, createdAt, updatedAt);
-    this.user = user;
-  }
-
   public VideoPlaylist(final String name, final User user) {
     super(name);
     this.user = user;
@@ -384,12 +378,12 @@ public class VideoPlaylist extends VideoCollection {
         User user = User.findById(userId, connection);
 
         VideoPlaylist videoPlaylist = new VideoPlaylist(
-            id,
             name,
-            createdAt,
-            updatedAt,
             user
         );
+        videoPlaylist.setId(id);
+        videoPlaylist.setCreatedAt(createdAt);
+        videoPlaylist.setUpdatedAt(updatedAt);
 
         // Videos
         int firstVideoNumber = resultSet.getInt(VideoPlaylistVideo.NUMBER_COLUMN);
