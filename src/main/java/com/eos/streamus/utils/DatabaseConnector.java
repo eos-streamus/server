@@ -12,39 +12,27 @@ import org.springframework.stereotype.Service;
 @Service
 @Scope(value = "singleton")
 public class DatabaseConnector implements IDatabaseConnector {
-  /**
-   * Jdbc url.
-   */
+  /** Jdbc url. */
   @Value("${jdbc.url}")
   private String url;
 
-  /**
-   * Jdbc host.
-   */
+  /** Jdbc host. */
   @Value("${jdbc.host}")
   private String host;
 
-  /**
-   * Jdbc port.
-   */
+  /** Jdbc port. */
   @Value("${jdbc.port}")
   private int port;
 
-  /**
-   * Jdbc databaseName.
-   */
+  /** Jdbc databaseName. */
   @Value("${jdbc.databaseName}")
   private String databaseName;
 
-  /**
-   * Database user.
-   */
+  /** Database user. */
   @Value("${database.user}")
   private String user;
 
-  /**
-   * Database password.
-   */
+  /** Database password. */
   @Value("${database.password}")
   private String password;
 
