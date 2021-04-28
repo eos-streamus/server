@@ -9,14 +9,10 @@ import org.springframework.validation.Validator;
 
 @Component
 public class UserDTOValidator implements Validator {
-  /**
-   * Minimum password length.
-   */
+  /** Minimum password length. */
   @Value("${minPasswordLength}")
   private int minPasswordLength;
-  /**
-   * Minimum username length.
-   */
+  /** Minimum username length. */
   @Value("${minUsernameLength}")
   private int minUsernameLength;
 
