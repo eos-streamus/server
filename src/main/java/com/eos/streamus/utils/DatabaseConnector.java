@@ -48,9 +48,7 @@ public class DatabaseConnector implements IDatabaseConnector {
   @Value("${database.password}")
   private String password;
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public Connection getConnection() throws SQLException {
     return DriverManager.getConnection(String.format("%s%s:%d/%s", url, host, port, databaseName), user, password);

@@ -15,9 +15,7 @@ public class JsonUserWriter extends JsonPersonWriter {
     this.user = user;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   protected JsonNode getSpecificJson(final ObjectNode objectNode) {
     super.getSpecificJson(objectNode);

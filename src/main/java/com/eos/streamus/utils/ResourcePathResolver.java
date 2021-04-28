@@ -15,17 +15,13 @@ public class ResourcePathResolver implements IResourcePathResolver {
   @Value("${resourcePath}")
   private String resourcePath;
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String getVideoDir() {
     return String.format("%s%s%s%s", resourcePath, File.separator, "video", File.separator);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String getAudioDir() {
     return String.format("%s%s%s%s", resourcePath, File.separator, "audio", File.separator);

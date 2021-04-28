@@ -14,9 +14,7 @@ abstract class JsonCollectionWriter extends JsonObjectWriter {
     this.collection = collection;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   protected JsonNode getSpecificJson(final ObjectNode objectNode) {
     objectNode.put("id", collection.getId());

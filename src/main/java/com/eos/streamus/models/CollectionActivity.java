@@ -87,9 +87,7 @@ public class CollectionActivity extends Activity {
 
   //#region Getters and Setters
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String creationFunctionName() {
     return null;
@@ -129,9 +127,7 @@ public class CollectionActivity extends Activity {
     return null;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void save(final Connection connection) throws SQLException {
     if (getId() == null) {

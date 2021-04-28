@@ -48,9 +48,7 @@ public abstract class Artist implements SavableDeletableEntity {
 
   //#region Getters and Setters
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public Integer getId() {
     return id;
@@ -79,17 +77,13 @@ public abstract class Artist implements SavableDeletableEntity {
     this.name = name;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String tableName() {
     return TABLE_NAME;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String primaryKeyName() {
     return PRIMARY_KEY_NAME;
@@ -102,9 +96,7 @@ public abstract class Artist implements SavableDeletableEntity {
 
   //#region Database operations
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void save(final Connection connection) throws SQLException {
     if (this.getId() == null) {
@@ -149,9 +141,7 @@ public abstract class Artist implements SavableDeletableEntity {
   //#endregion Database operations
 
   //#region String representations
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString() {
     return String.format(

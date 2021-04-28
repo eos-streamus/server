@@ -92,25 +92,19 @@ public class User extends Person {
     this.username = username;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String tableName() {
     return TABLE_NAME;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String creationFunctionName() {
     return "createUser";
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String primaryKeyName() {
     return "idPerson";
@@ -119,9 +113,7 @@ public class User extends Person {
 
   //#region Database operations
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void save(final Connection connection) throws SQLException {
     if (this.getId() == null) {

@@ -404,9 +404,7 @@ public abstract class Activity implements SavableDeletableEntity {
 
   //#region Getters and Setters
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public Integer getId() {
     return id;
@@ -421,17 +419,13 @@ public abstract class Activity implements SavableDeletableEntity {
     this.id = id;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String tableName() {
     return TABLE_NAME;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String primaryKeyName() {
     return PRIMARY_KEY_NAME;
@@ -470,9 +464,7 @@ public abstract class Activity implements SavableDeletableEntity {
 
   //#region Database operations
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void save(final Connection connection) throws SQLException {
     if (id == null) {
@@ -534,9 +526,7 @@ public abstract class Activity implements SavableDeletableEntity {
 
   //#region String representations
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString() {
     return defaultToString();

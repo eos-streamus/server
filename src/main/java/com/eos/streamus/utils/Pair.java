@@ -82,9 +82,7 @@ public class Pair<K, V> {
     return key.equals(pair.key) && value.equals(pair.value);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public String toString() {
     return String.format("<%s, %s>", key, value);
   }

@@ -18,9 +18,7 @@ public class JsonSeriesWriter extends JsonCollectionWriter {
     this.series = series;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   protected JsonNode getSpecificCollectionJson(final ObjectNode objectNode) {
     ArrayNode episodes = objectNode.putArray("episodes");

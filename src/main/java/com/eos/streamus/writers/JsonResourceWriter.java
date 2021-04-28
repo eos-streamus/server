@@ -14,9 +14,7 @@ abstract class JsonResourceWriter extends JsonObjectWriter {
     this.resource = resource;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   protected final JsonNode getSpecificJson(final ObjectNode objectNode) {
     objectNode.put("id", resource.getId());
@@ -25,9 +23,7 @@ abstract class JsonResourceWriter extends JsonObjectWriter {
     return addSpecificJsonAttributes(objectNode);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   protected abstract ObjectNode addSpecificJsonAttributes(ObjectNode objectNode);
 
 }

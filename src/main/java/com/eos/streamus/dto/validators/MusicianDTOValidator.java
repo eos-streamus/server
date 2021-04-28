@@ -16,17 +16,13 @@ public class MusicianDTOValidator implements Validator {
   @Autowired
   private PersonDTOValidator personDTOValidator;
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public boolean supports(final Class<?> aClass) {
     return aClass.equals(MusicianDTO.class);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void validate(@NonNull final Object o, @NonNull final Errors errors) {
     MusicianDTO musician = (MusicianDTO) o;

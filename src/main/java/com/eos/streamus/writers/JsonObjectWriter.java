@@ -4,9 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 abstract class JsonObjectWriter implements JsonWriter {
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public final JsonNode getJson() {
     final ObjectNode objectNode = new ObjectNode(new JsonWriterNodeFactory());

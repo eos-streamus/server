@@ -19,9 +19,7 @@ public class JsonAlbumWriter extends JsonSongCollectionWriter {
     this.album = album;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   protected JsonNode getSpecificCollectionJson(final ObjectNode objectNode) {
     super.getSpecificCollectionJson(objectNode);

@@ -30,9 +30,7 @@ public class JwtFilter implements Filter {
    */
   private static final int TOKEN_OFFSET = 7;
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse,
                        final FilterChain filterChain) throws IOException, ServletException {

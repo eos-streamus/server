@@ -70,9 +70,7 @@ public abstract class Resource implements SavableDeletableEntity {
 
   //#region Getters and Setters
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public Integer getId() {
     return this.id;
   }
@@ -150,17 +148,13 @@ public abstract class Resource implements SavableDeletableEntity {
     this.duration = duration;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String primaryKeyName() {
     return ID_COLUMN;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String tableName() {
     return TABLE_NAME;
@@ -170,9 +164,7 @@ public abstract class Resource implements SavableDeletableEntity {
   //#region Database operations
 
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void save(final Connection connection) throws SQLException {
     if (this.id == null) {
@@ -218,9 +210,7 @@ public abstract class Resource implements SavableDeletableEntity {
 
   //#region String representations
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString() {
     return defaultToString();

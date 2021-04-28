@@ -20,17 +20,13 @@ public class UserDTOValidator implements Validator {
   @Value("${minUsernameLength}")
   private int minUsernameLength;
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public boolean supports(final Class<?> aClass) {
     return aClass.equals(UserDTO.class);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void validate(@NonNull final Object o, @NonNull final Errors errors) {
     UserDTO userDTO = (UserDTO) o;

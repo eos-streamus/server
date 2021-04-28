@@ -109,25 +109,19 @@ public class SongPlaylistController extends SongCollectionController {
     return addSongToCollection(songPlaylistId, songId);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   protected SongCollectionDTOValidator getSongCollectionDTOValidator() {
     return songPlaylistDTOValidator;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   protected JsonSongCollectionWriter jsonSongCollectionWriter(final SongCollection songCollection) {
     return new JsonSongPlaylistWriter((SongPlaylist) songCollection);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   protected SongCollection createSpecificCollection(
       final com.eos.streamus.dto.SongCollectionDTO songCollectionDTO,

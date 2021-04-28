@@ -20,17 +20,13 @@ public class AlbumDTOValidator extends SongCollectionDTOValidator {
   @Autowired
   private IDatabaseConnector databaseConnector;
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public boolean supports(final Class<?> aClass) {
     return aClass.equals(AlbumDTO.class);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   protected void validateSubclassProperties(final Object o, final Errors errors) {
     AlbumDTO albumDTO = (AlbumDTO) o;

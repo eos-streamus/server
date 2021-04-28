@@ -126,9 +126,7 @@ public class PersonBuilder implements Builder<Person> {
     return createdAt != null && updatedAt != null;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public Person build() {
     if (this.isAdmin) {

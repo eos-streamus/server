@@ -11,17 +11,13 @@ import java.util.Date;
 @Component
 public class PersonDTOValidator implements Validator {
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public boolean supports(final Class<?> aClass) {
     return aClass.equals(PersonDTO.class);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void validate(@NonNull final Object o, @NonNull final Errors errors) {
     PersonDTO person = (PersonDTO) o;

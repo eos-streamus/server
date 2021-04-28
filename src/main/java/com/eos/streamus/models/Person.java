@@ -85,33 +85,25 @@ public class Person implements SavableDeletableEntity {
 
   //#region getters and setters
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String tableName() {
     return TABLE_NAME;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String primaryKeyName() {
     return ID_COLUMN;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String creationFunctionName() {
     return "createPerson";
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public Integer getId() {
     return id;
@@ -209,9 +201,7 @@ public class Person implements SavableDeletableEntity {
 
   //#region Database operations
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void save(final Connection connection) throws SQLException {
     if (this.id == null) {
@@ -292,9 +282,7 @@ public class Person implements SavableDeletableEntity {
 
   //#region String representations
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString() {
     return defaultToString();
@@ -303,9 +291,7 @@ public class Person implements SavableDeletableEntity {
 
   //#region Equals
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public int hashCode() {
     return id;

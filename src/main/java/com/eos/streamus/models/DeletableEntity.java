@@ -5,9 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public interface DeletableEntity extends Deletable, Entity {
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   default void delete(Connection connection) throws SQLException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         String.format(

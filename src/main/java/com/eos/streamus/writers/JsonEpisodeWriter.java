@@ -14,9 +14,7 @@ public class JsonEpisodeWriter extends JsonResourceWriter {
     this.episode = episode;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   protected ObjectNode addSpecificJsonAttributes(final ObjectNode objectNode) {
     return objectNode

@@ -16,9 +16,7 @@ public class JsonFilmListWriter extends JsonArrayWriter {
     this.films = films;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   protected JsonNode getSpecificArrayJson(final ArrayNode arrayNode) {
     for (Film film : films) {

@@ -16,9 +16,7 @@ public class JsonSongCollectionListWriter extends JsonArrayWriter {
     this.collections = collections;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   protected JsonNode getSpecificArrayJson(final ArrayNode arrayNode) {
     for (SongCollection collection : collections) {

@@ -85,9 +85,7 @@ public class ResourceActivity extends Activity {
     return collectionActivity;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String creationFunctionName() {
     return CREATION_FUNCTION_NAME;
@@ -133,17 +131,13 @@ public class ResourceActivity extends Activity {
     this.startedAt = new Timestamp(new Date().getTime());
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String tableName() {
     return TABLE_NAME;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String primaryKeyName() {
     return PRIMARY_KEY_NAME;
@@ -152,9 +146,7 @@ public class ResourceActivity extends Activity {
 
   //#region Database operations
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void save(final Connection connection) throws SQLException {
     if (getUsers().isEmpty() && collectionActivity == null) {

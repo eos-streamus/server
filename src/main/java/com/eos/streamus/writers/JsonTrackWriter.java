@@ -14,9 +14,7 @@ public class JsonTrackWriter extends JsonResourceWriter {
     this.track = track;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   protected ObjectNode addSpecificJsonAttributes(final ObjectNode objectNode) {
     objectNode.put("trackNumber", track.getKey());

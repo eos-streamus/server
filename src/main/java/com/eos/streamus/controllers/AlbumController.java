@@ -102,17 +102,13 @@ public class AlbumController extends SongCollectionController {
     return albumDTOValidator;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   protected JsonSongCollectionWriter jsonSongCollectionWriter(final SongCollection songCollection) {
     return new JsonAlbumWriter((Album) songCollection);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   protected SongCollection createSpecificCollection(
       final com.eos.streamus.dto.SongCollectionDTO songCollectionDTO,
