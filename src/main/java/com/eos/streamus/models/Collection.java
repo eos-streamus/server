@@ -8,44 +8,26 @@ import java.util.List;
 
 public abstract class Collection implements SavableDeletableEntity {
   //#region Static attributes
-  /**
-   * Table name in database.
-   */
+  /** Table name in database. */
   public static final String TABLE_NAME = "Collection";
-  /**
-   * Primary key name in database.
-   */
+  /** Primary key name in database. */
   protected static final String PRIMARY_KEY_NAME = "id";
-  /**
-   * Name column in database.
-   */
+  /** Name column in database. */
   protected static final String NAME_COLUMN = "name";
-  /**
-   * Created at column in database.
-   */
+  /** Created at column in database. */
   protected static final String CREATED_AT_COLUMN = "createdAt";
-  /**
-   * Updated at column in database.
-   */
+  /** Updated at column in database. */
   protected static final String UPDATED_AT_COLUMN = "updatedAt";
   //#endregion Static attributes
 
   //#region Instance attributes
-  /**
-   * Id of the Collection.
-   */
+  /** Id of the Collection. */
   private Integer id;
-  /**
-   * Name of the Collection.
-   */
+  /** Name of the Collection. */
   private String name;
-  /**
-   * Created at timestamp of this Collection.
-   */
+  /** Created at timestamp of this Collection. */
   private Timestamp createdAt;
-  /**
-   * Updated at timestamp of this Collection.
-   */
+  /** Updated at timestamp of this Collection. */
   private Timestamp updatedAt;
   //#endregion Instance attributes
 
@@ -91,9 +73,7 @@ public abstract class Collection implements SavableDeletableEntity {
     this.id = id;
   }
 
-  /**
-   * @return Name of this Collection.
-   */
+  /** @return Name of this Collection. */
   public String getName() {
     return name;
   }
@@ -107,9 +87,7 @@ public abstract class Collection implements SavableDeletableEntity {
     this.name = name;
   }
 
-  /**
-   * @return The created at timestamp of this Collection.
-   */
+  /** @return The created at timestamp of this Collection. */
   public Timestamp getCreatedAt() {
     return createdAt;
   }
@@ -123,9 +101,7 @@ public abstract class Collection implements SavableDeletableEntity {
     this.createdAt = createdAt;
   }
 
-  /**
-   * @return The updated at timestamp of this Collection.
-   */
+  /** @return The updated at timestamp of this Collection. */
   public Timestamp getUpdatedAt() {
     return updatedAt;
   }
