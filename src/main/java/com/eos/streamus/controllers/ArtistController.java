@@ -34,13 +34,25 @@ import java.util.List;
 
 @RestController
 public class ArtistController implements CommonResponses {
+  /**
+   * {@link IDatabaseConnector} to use.
+   */
   @Autowired
   private IDatabaseConnector databaseConnector;
+  /**
+   * {@link MusicianDTOValidator} to use.
+   */
   @Autowired
   private MusicianDTOValidator musicianDTOValidator;
+  /**
+   * {@link BandMemberDTOValidator} to use.
+   */
   @Autowired
   private BandMemberDTOValidator bandMemberDTOValidator;
 
+  /**
+   * @return All artists in Json format.
+   */
   @GetMapping("/artists")
   public ResponseEntity<JsonNode> allArtists() {
     List<Artist> allArtists;
@@ -56,8 +68,14 @@ public class ArtistController implements CommonResponses {
     return ResponseEntity.ok(new JsonArtistListWriter(allArtists).getJson());
   }
 
+  /**
+   * Get an artist by id.
+   *
+   * @param id Id of artist to get.
+   * @return Artist in Json format.
+   */
   @GetMapping("/artist/{id}")
-  public ResponseEntity<JsonNode> getArtist(@PathVariable int id) {
+  public ResponseEntity<JsonNode> getArtist(@PathVariable final int id) {
     try (Connection connection = databaseConnector.getConnection()) {
       Artist artist = ArtistDAO.findById(id, connection);
       artist.fetchAlbums(connection);
@@ -73,8 +91,14 @@ public class ArtistController implements CommonResponses {
     }
   }
 
+  /**
+   * Get an Artist's discography.
+   *
+   * @param id Id of Artist whose discography should be retrieved.
+   * @return Json formatted discography of artist.
+   */
   @GetMapping("/artist/{id}/discography")
-  public ResponseEntity<JsonNode> getArtistDiscography(@PathVariable int id) {
+  public ResponseEntity<JsonNode> getArtistDiscography(@PathVariable final int id) {
     try (Connection connection = databaseConnector.getConnection()) {
       Artist artist = ArtistDAO.findById(id, connection);
       artist.fetchAlbums(connection);
@@ -87,8 +111,14 @@ public class ArtistController implements CommonResponses {
     }
   }
 
+  /**
+   * Create a Band.
+   *
+   * @param bandData Band data.
+   * @return Json formatted created band.
+   */
   @PostMapping("/band")
-  public ResponseEntity<JsonNode> createBand(@Valid @RequestBody com.eos.streamus.dto.BandDTO bandData) {
+  public ResponseEntity<JsonNode> createBand(@Valid @RequestBody final com.eos.streamus.dto.BandDTO bandData) {
     try (Connection connection = databaseConnector.getConnection()) {
       Band band = new Band(bandData.getName());
       band.save(connection);
@@ -99,9 +129,16 @@ public class ArtistController implements CommonResponses {
     }
   }
 
+  /**
+   * Create a new Musician.
+   *
+   * @param data   Sent MusicianDTO.
+   * @param result BindingResult to store validation errors in.
+   * @return Created Musician data in Json format.
+   */
   @PostMapping("/musician")
-  public ResponseEntity<JsonNode> createMusician(@Valid @RequestBody com.eos.streamus.dto.MusicianDTO data,
-                                                 BindingResult result) {
+  public ResponseEntity<JsonNode> createMusician(@Valid @RequestBody final com.eos.streamus.dto.MusicianDTO data,
+                                                 final BindingResult result) {
     musicianDTOValidator.validate(data, result);
     if (result.hasErrors()) {
       return badRequest(result.toString());
@@ -137,10 +174,18 @@ public class ArtistController implements CommonResponses {
     }
   }
 
+  /**
+   * Create a new Band.Member.
+   *
+   * @param bandId Band to add Member to.
+   * @param member {@link BandMember} data.
+   * @param result BindingResult to store validation errors in.
+   * @return Band Member data in Json format.
+   */
   @PostMapping("/band/{bandId}/members")
-  public ResponseEntity<JsonNode> addMemberToBand(@PathVariable int bandId,
-                                                  @Valid @RequestBody BandMember member,
-                                                  BindingResult result) {
+  public ResponseEntity<JsonNode> addMemberToBand(@PathVariable final int bandId,
+                                                  @Valid @RequestBody final BandMember member,
+                                                  final BindingResult result) {
     bandMemberDTOValidator.validate(member, result);
     if (result.hasErrors()) {
       return badRequest(result.toString());
@@ -166,6 +211,12 @@ public class ArtistController implements CommonResponses {
 
   }
 
+  /**
+   * Delete an Artist by id.
+   *
+   * @param id Id of Artist to delete.
+   * @return Confirmation message.
+   */
   @DeleteMapping("/artist/{id}")
   public ResponseEntity<String> deleteArtist(@PathVariable final int id) {
     try (Connection connection = databaseConnector.getConnection()) {
@@ -179,8 +230,8 @@ public class ArtistController implements CommonResponses {
     }
   }
 
-  private Musician getMusicianFromBandMemberData(BandMember member,
-                                                 Connection connection) throws SQLException, NoResultException {
+  private Musician getMusicianFromBandMemberData(final BandMember member, final Connection connection)
+      throws SQLException, NoResultException {
     Musician musician;
     if (member.getMusicianId() != null) {
       musician = Musician.findById(member.getMusicianId(), connection);
