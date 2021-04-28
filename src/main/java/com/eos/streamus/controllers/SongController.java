@@ -100,6 +100,24 @@ public class SongController implements CommonResponses {
   }
 
   /**
+   * Get a Song by id.
+   *
+   * @param id Id of Song.
+   * @return Song data in JSON.
+   */
+  @GetMapping("/song/{id}")
+  public ResponseEntity<JsonNode> getFilm(@PathVariable("id") final int id) {
+    try (Connection connection = databaseConnector.getConnection()) {
+      return ResponseEntity.ok().body(new JsonSongWriter(Song.findById(id, connection)).getJson());
+    } catch (SQLException sqlException) {
+      logException(sqlException);
+      return internalServerError();
+    } catch (NoResultException noResultException) {
+      return notFound();
+    }
+  }
+
+  /**
    * Get a Song file to stream.
    *
    * @param headers HttpHeaders to get range from.
