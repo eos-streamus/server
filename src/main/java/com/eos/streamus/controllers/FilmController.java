@@ -33,31 +33,21 @@ import java.util.UUID;
 
 @RestController
 public class FilmController implements CommonResponses {
-  /**
-   * Max video chunk size (1GB).
-   */
+  /** Max video chunk size (1GB). */
   private static final long MAX_VIDEO_CHUNK_SIZE = (long) 1024 * 1024;
-  /**
-   * Allowed Video Mime types.
-   */
+  /** Allowed Video Mime types. */
   private static final String[] VIDEO_MIME_TYPES = {
       "video/x-flv", "video/mp4", "video/MP2T", "video/3gpp", "video/quicktime", "video/x-msvideo", "video/x-ms-wmv"
   };
 
-  /**
-   * {@link IResourcePathResolver} to use.
-   */
+  /** {@link IResourcePathResolver} to use. */
   @Autowired
   private IResourcePathResolver resourcePathResolver;
-  /**
-   * {@link IDatabaseConnector} to use.
-   */
+  /** {@link IDatabaseConnector} to use. */
   @Autowired
   private IDatabaseConnector databaseConnector;
 
-  /**
-   * @return All films in JSON data.
-   */
+  /** @return All films in JSON data. */
   @GetMapping("/films")
   public ResponseEntity<JsonNode> allFilms() {
     try (Connection connection = databaseConnector.getConnection()) {
