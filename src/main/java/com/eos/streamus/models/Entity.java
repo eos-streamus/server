@@ -5,13 +5,13 @@ interface Entity {
   /** @return Table name in database. */
   String tableName();
 
-  /** @return primary key column name. */
+  /** @return Primary key column name in database. */
   String primaryKeyName();
 
-  /** @return creation function name in database. */
+  /** @return Creation function name in database. */
   String creationFunctionName();
 
-  /** @return Id of entity in database. */
+  /** @return Id of this Entity. */
   Integer getId();
 
   /** @return default string representation of Entity. */

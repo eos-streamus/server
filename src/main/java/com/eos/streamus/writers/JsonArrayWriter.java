@@ -10,6 +10,12 @@ abstract class JsonArrayWriter implements JsonWriter {
     return getSpecificArrayJson(arrayNode);
   }
 
+  /**
+   * Add specific properties to given {@link ArrayNode}.
+   *
+   * @param arrayNode ArrayNode to update.
+   * @return Updated ArrayNode.
+   */
   protected abstract JsonNode getSpecificArrayJson(ArrayNode arrayNode);
 
 }

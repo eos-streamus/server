@@ -1,12 +1,6 @@
 package com.eos.streamus.models;
 
 import com.eos.streamus.StreamusTestConfiguration;
-import com.eos.streamus.models.Activity;
-import com.eos.streamus.models.Artist;
-import com.eos.streamus.models.Collection;
-import com.eos.streamus.models.Person;
-import com.eos.streamus.models.Resource;
-import com.eos.streamus.models.User;
 import com.eos.streamus.utils.IDatabaseConnector;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
@@ -54,12 +48,13 @@ abstract class DatabaseTests {
   }
 
   protected Person randomPerson() {
-    return new Person(randomString(), randomString(), randomDate());
+    return new PersonBuilder(randomString(), randomString(), randomDate()).build();
   }
 
   protected User randomUser() {
-    return new User(randomString(), randomString(), randomDate(), randomString() + "@" + randomString(),
-                    randomString());
+    return (User) new PersonBuilder(randomString(), randomString(), randomDate())
+        .asUser(randomString() + "@" + randomString(), randomString())
+        .build();
   }
 
   protected Random getRandom() {

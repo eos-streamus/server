@@ -1,13 +1,7 @@
 package com.eos.streamus.controllers;
 
 import com.eos.streamus.exceptions.NoResultException;
-import com.eos.streamus.models.Album;
-import com.eos.streamus.models.ArtistDAO;
-import com.eos.streamus.models.Band;
-import com.eos.streamus.models.Musician;
-import com.eos.streamus.models.Person;
-import com.eos.streamus.models.Song;
-import com.eos.streamus.models.SongCollection;
+import com.eos.streamus.models.*;
 import com.eos.streamus.writers.JsonAlbumListWriter;
 import com.eos.streamus.writers.JsonBandWriter;
 import com.eos.streamus.writers.JsonMusicianWriter;
@@ -39,7 +33,7 @@ class ArtistControllerTests extends JwtSetupControllerTests {
   @Test
   void gettingArtistsShouldReturnOkWithArray() throws Exception {
     MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/artists")
-                                                                  .contentType(MediaType.APPLICATION_JSON);
+        .contentType(MediaType.APPLICATION_JSON);
     MockHttpServletResponse response =
         perform(builder)
             .andExpect(status().is(200))
@@ -56,7 +50,7 @@ class ArtistControllerTests extends JwtSetupControllerTests {
       band.save(connection);
 
       MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(String.format("/artist/%d", band.getId()))
-                                                                    .contentType(MediaType.APPLICATION_JSON);
+          .contentType(MediaType.APPLICATION_JSON);
 
       MockHttpServletResponse response =
           perform(builder)
@@ -77,7 +71,7 @@ class ArtistControllerTests extends JwtSetupControllerTests {
       musician.save(connection);
 
       MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(String.format("/artist/%d", musician.getId()))
-                                                                    .contentType(MediaType.APPLICATION_JSON);
+          .contentType(MediaType.APPLICATION_JSON);
 
       MockHttpServletResponse response =
           perform(builder)
@@ -95,11 +89,16 @@ class ArtistControllerTests extends JwtSetupControllerTests {
   void gettingAnExistingPersonMusicianShouldReturnOkWithCorrectJson() throws Exception {
     try (Connection connection = databaseConnector.getConnection()) {
       Musician musician = new Musician(
-          new Person("John", "Doe", new Date(dateFormatter.parse("2000-01-01").getTime())));
+          new PersonBuilder(
+              "John",
+              "Doe",
+              new Date(dateFormatter.parse("2000-01-01").getTime())
+          ).build()
+      );
       musician.save(connection);
 
       MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(String.format("/artist/%d", musician.getId()))
-                                                                    .contentType(MediaType.APPLICATION_JSON);
+          .contentType(MediaType.APPLICATION_JSON);
 
       MockHttpServletResponse response =
           perform(builder)
@@ -132,7 +131,7 @@ class ArtistControllerTests extends JwtSetupControllerTests {
       band.save(connection);
 
       MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(String.format("/artist/%d", band.getId()))
-                                                                    .contentType(MediaType.APPLICATION_JSON);
+          .contentType(MediaType.APPLICATION_JSON);
 
       MockHttpServletResponse response =
           perform(builder)
@@ -172,7 +171,7 @@ class ArtistControllerTests extends JwtSetupControllerTests {
       band.fetchAlbums(connection);
 
       MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(String.format("/artist/%d", band.getId()))
-                                                                    .contentType(MediaType.APPLICATION_JSON);
+          .contentType(MediaType.APPLICATION_JSON);
 
       MockHttpServletResponse response =
           perform(builder)
@@ -248,7 +247,7 @@ class ArtistControllerTests extends JwtSetupControllerTests {
       musician.delete(connection);
 
       MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(String.format("/artist/%d", musician.getId()))
-                                                                    .contentType(MediaType.APPLICATION_JSON);
+          .contentType(MediaType.APPLICATION_JSON);
 
       perform(builder)
           .andExpect(status().is(404))
@@ -326,8 +325,8 @@ class ArtistControllerTests extends JwtSetupControllerTests {
     objectNode.put("name", "test musician");
 
     MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/musician")
-                                                                  .contentType(MediaType.APPLICATION_JSON)
-                                                                  .content(objectNode.toPrettyString());
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectNode.toPrettyString());
 
     MockHttpServletResponse response = perform(builder)
         .andExpect(status().is(200))
@@ -351,8 +350,8 @@ class ArtistControllerTests extends JwtSetupControllerTests {
     personObjectNode.put("dateOfBirth", "2000-01-01");
 
     MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/musician")
-                                                                  .contentType(MediaType.APPLICATION_JSON)
-                                                                  .content(objectNode.toPrettyString());
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectNode.toPrettyString());
 
     MockHttpServletResponse response = perform(builder)
         .andExpect(status().is(200))
@@ -377,8 +376,8 @@ class ArtistControllerTests extends JwtSetupControllerTests {
     personObjectNode.put("dateOfBirth", "2000-01-01");
 
     MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/musician")
-                                                                  .contentType(MediaType.APPLICATION_JSON)
-                                                                  .content(objectNode.toPrettyString());
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectNode.toPrettyString());
 
     MockHttpServletResponse response = perform(builder)
         .andExpect(status().is(200))
@@ -398,8 +397,8 @@ class ArtistControllerTests extends JwtSetupControllerTests {
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
 
     MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/musician")
-                                                                  .contentType(MediaType.APPLICATION_JSON)
-                                                                  .content(objectNode.toPrettyString());
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectNode.toPrettyString());
 
     perform(builder)
         .andExpect(status().is(400));
@@ -411,8 +410,8 @@ class ArtistControllerTests extends JwtSetupControllerTests {
     objectNode.put("name", "");
 
     MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/musician")
-                                                                  .contentType(MediaType.APPLICATION_JSON)
-                                                                  .content(objectNode.toPrettyString());
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectNode.toPrettyString());
 
     perform(builder)
         .andExpect(status().is(400));
@@ -427,8 +426,8 @@ class ArtistControllerTests extends JwtSetupControllerTests {
     personObjectNode.put("lastName", "Doe");
     personObjectNode.put("dateOfBirth", "2000-01-01");
     MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/musician")
-                                                                  .contentType(MediaType.APPLICATION_JSON)
-                                                                  .content(objectNode.toPrettyString());
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectNode.toPrettyString());
 
     perform(builder)
         .andExpect(status().is(400));
@@ -445,8 +444,8 @@ class ArtistControllerTests extends JwtSetupControllerTests {
     personObjectNode.put("lastName", "Doe");
     personObjectNode.put("dateOfBirth", "2000-01-01");
     MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/musician")
-                                                                  .contentType(MediaType.APPLICATION_JSON)
-                                                                  .content(objectNode.toPrettyString());
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectNode.toPrettyString());
 
     perform(builder)
         .andExpect(status().is(400));
@@ -459,8 +458,8 @@ class ArtistControllerTests extends JwtSetupControllerTests {
     personObjectNode.put("lastName", "");
     personObjectNode.put("dateOfBirth", "2000-01-01");
     builder = MockMvcRequestBuilders.post("/musician")
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .content(objectNode.toPrettyString());
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectNode.toPrettyString());
 
     perform(builder)
         .andExpect(status().is(400));
@@ -476,16 +475,16 @@ class ArtistControllerTests extends JwtSetupControllerTests {
     calendar.add(Calendar.DATE, 1);
     personObjectNode
         .put("dateOfBirth",
-             String.format(
-                 "%s-%s-%s",
-                 calendar.get(Calendar.YEAR),
-                 calendar.get(Calendar.MONTH) + 1,
-                 calendar.get(Calendar.DATE)
-             )
+            String.format(
+                "%s-%s-%s",
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH) + 1,
+                calendar.get(Calendar.DATE)
+            )
         );
     builder = MockMvcRequestBuilders.post("/musician")
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .content(objectNode.toPrettyString());
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectNode.toPrettyString());
 
     perform(builder)
         .andExpect(status().is(400));
@@ -497,8 +496,8 @@ class ArtistControllerTests extends JwtSetupControllerTests {
     personObjectNode.put("firstName", "John");
     personObjectNode.put("dateOfBirth", "2000-01-01");
     builder = MockMvcRequestBuilders.post("/musician")
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .content(objectNode.toPrettyString());
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectNode.toPrettyString());
 
     perform(builder)
         .andExpect(status().is(400));
@@ -599,7 +598,7 @@ class ArtistControllerTests extends JwtSetupControllerTests {
           .contentType(MediaType.APPLICATION_JSON)
           .content(bandMemberData.toPrettyString());
       MockHttpServletResponse response = perform(builder).andExpect(status().is(200)).andReturn()
-                                                         .getResponse();
+          .getResponse();
       JsonNode result = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString());
       band.fetchMembers(connection);
       assertEquals(new JsonBandWriter(band).getJson(), result);

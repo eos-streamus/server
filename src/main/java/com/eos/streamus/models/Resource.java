@@ -6,28 +6,28 @@ public abstract class Resource implements SavableDeletableEntity {
   //#region Static attributes
   /** Table name in database. */
   public static final String TABLE_NAME = "Resource";
-  /** id column name. */
+  /** Id column name in database. */
   protected static final String ID_COLUMN = "id";
-  /** path column name. */
+  /** Path column name in database. */
   public static final String PATH_COLUMN = "path";
-  /** name column name. */
+  /** Name column name in database. */
   protected static final String NAME_COLUMN = "name";
-  /** duration column name. */
+  /** Duration column name in database. */
   protected static final String DURATION_COLUMN = "duration";
-  /** createdAt column name. */
+  /** Created at column name in database. */
   protected static final String CREATED_AT_COLUMN = "createdAt";
   //#endregion Static attributes
 
   //#region Instance attributes
-  /** id of this instance. */
+  /** Id of the Resource. */
   private Integer id;
-  /** path of this instance. */
+  /** Path of the Resource. */
   private String path;
-  /** name of this instance. */
+  /** Name of the Resource. */
   private String name;
-  /** createdAt of this instance. */
+  /** CreatedAt of the Resource. */
   private Timestamp createdAt;
-  /** duration of this instance. */
+  /** Duration of the Resource. */
   private Integer duration;
   //#endregion Instance attributes
 
@@ -47,53 +47,84 @@ public abstract class Resource implements SavableDeletableEntity {
   //#endregion Constructors
 
   //#region Getters and Setters
-  public final Integer getId() {
+
+  /** {@inheritDoc} */
+  public Integer getId() {
     return this.id;
   }
 
-  protected final void setId(final Integer id) {
+  /**
+   * Set resource id.
+   *
+   * @param id id to set.
+   */
+  protected void setId(final Integer id) {
     this.id = id;
   }
 
-  public final String getPath() {
+  /** @return Path of resource. */
+  public String getPath() {
     return path;
   }
 
-  public final void setPath(final String path) {
+  /**
+   * Set path of resource.
+   *
+   * @param path Path to set.
+   */
+  public void setPath(final String path) {
     this.path = path;
   }
 
-  public final String getName() {
+  /** @return Name of resource. */
+  public String getName() {
     return name;
   }
 
-  public final void setName(final String name) {
+  /**
+   * Set name of resource.
+   *
+   * @param name Name to set.
+   */
+  public void setName(final String name) {
     this.name = name;
   }
 
-  public final Timestamp getCreatedAt() {
+  /** @return Created at timestamp. */
+  public Timestamp getCreatedAt() {
     return createdAt;
   }
 
-  public final void setCreatedAt(final Timestamp timestamp) {
+  /**
+   * Set resource created at timestamp.
+   *
+   * @param timestamp Timestamp to set.
+   */
+  public void setCreatedAt(final Timestamp timestamp) {
     this.createdAt = timestamp;
   }
 
-  public final Integer getDuration() {
+  /** @return Duration of the resource. */
+  public Integer getDuration() {
     return duration;
   }
 
-  public final void setDuration(final Integer duration) {
+  /**
+   * Set duration of resource.
+   *
+   * @param duration Duration to set.
+   */
+  public void setDuration(final Integer duration) {
     this.duration = duration;
   }
 
-  /** @return Primary key name. */
+  /** {@inheritDoc} */
   @Override
   public String primaryKeyName() {
     return ID_COLUMN;
   }
 
-  /** @return Table name. */
+  /** {@inheritDoc} */
   @Override
   public String tableName() {
     return TABLE_NAME;
@@ -102,12 +133,7 @@ public abstract class Resource implements SavableDeletableEntity {
 
   //#region Database operations
 
-  /**
-   * Save this resource to database.
-   *
-   * @param connection {@link Connection} to use to save.
-   * @throws SQLException if an error occurs.
-   */
+  /** {@inheritDoc} */
   @Override
   public void save(final Connection connection) throws SQLException {
     if (this.id == null) {
@@ -117,9 +143,10 @@ public abstract class Resource implements SavableDeletableEntity {
               creationFunctionName()
           )
       )) {
-        preparedStatement.setString(1, getPath());
-        preparedStatement.setString(2, getName());
-        preparedStatement.setInt(3, getDuration());
+        int columnNumber = 0;
+        preparedStatement.setString(++columnNumber, getPath());
+        preparedStatement.setString(++columnNumber, getName());
+        preparedStatement.setInt(++columnNumber, getDuration());
         try (ResultSet resultSet = preparedStatement.executeQuery()) {
           if (!resultSet.next()) {
             throw new SQLException("Could not execute statement");
@@ -139,10 +166,11 @@ public abstract class Resource implements SavableDeletableEntity {
               ID_COLUMN
           )
       )) {
-        preparedStatement.setString(1, path);
-        preparedStatement.setString(2, name);
-        preparedStatement.setLong(3, duration);
-        preparedStatement.setInt(4, id);
+        int columnNumber = 0;
+        preparedStatement.setString(++columnNumber, path);
+        preparedStatement.setString(++columnNumber, name);
+        preparedStatement.setLong(++columnNumber, duration);
+        preparedStatement.setInt(++columnNumber, id);
         preparedStatement.execute();
       }
     }
@@ -150,7 +178,8 @@ public abstract class Resource implements SavableDeletableEntity {
   //#endregion Database operations
 
   //#region String representations
-  /** @return String representation of this instance. */
+
+  /** {@inheritDoc} */
   @Override
   public String toString() {
     return defaultToString();
@@ -158,17 +187,26 @@ public abstract class Resource implements SavableDeletableEntity {
   //#endregion String representations
 
   //#region Equals
-  /** @return hashcode. */
+
+  /** @return instance hashcode, i.e. its id. */
   @Override
   public int hashCode() {
     return id;
   }
 
   /**
-   * Test if this instance is equal to given object.
+   * Returns whether the given object is equal to this Resource.
+   * Will be equal if:
+   * - Not null
+   * - Same class
+   * - Same id
+   * - Same path
+   * - Same name
+   * - Same duration
+   * - Same created at
    *
-   * @param o Object to test.
-   * @return If they are equal.
+   * @param o Object to compare.
+   * @return True if all conditions above are met.
    */
   @Override
   public boolean equals(final Object o) {
@@ -178,10 +216,10 @@ public abstract class Resource implements SavableDeletableEntity {
     Resource oResource = (Resource) o;
     return
         oResource.id.equals(id) &&
-        oResource.path.equals(path) &&
-        oResource.name.equals(name) &&
-        oResource.createdAt.equals(createdAt) &&
-        oResource.duration.equals(duration);
+            oResource.path.equals(path) &&
+            oResource.name.equals(name) &&
+            oResource.createdAt.equals(createdAt) &&
+            oResource.duration.equals(duration);
   }
   //#endregion Equals
 }

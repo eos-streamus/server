@@ -7,13 +7,14 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 abstract class JsonArtistWriter extends JsonObjectWriter {
-  /** Artist to write as Json. */
+  /** {@link Artist} to write. */
   private final Artist artist;
 
   JsonArtistWriter(final Artist artist) {
     this.artist = artist;
   }
 
+  /** {@inheritDoc} */
   @Override
   protected JsonNode getSpecificJson(final ObjectNode objectNode) {
     objectNode.put("id", artist.getId());
@@ -21,12 +22,18 @@ abstract class JsonArtistWriter extends JsonObjectWriter {
       objectNode.put("name", artist.getName());
     }
     ArrayNode albums = objectNode.putArray("albums");
-    for (Album album: artist.getAlbums()) {
+    for (Album album : artist.getAlbums()) {
       albums.add(album.getId());
     }
     return addSpecificArtistJson(objectNode);
   }
 
+  /**
+   * Write specific {@link Artist} attributes to given ObjectNode.
+   *
+   * @param objectNode ObjectNode to update.
+   * @return updated ObjectNode.
+   */
   protected abstract JsonNode addSpecificArtistJson(ObjectNode objectNode);
 
 }

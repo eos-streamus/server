@@ -11,8 +11,18 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public final class ArtistDAO {
-  private ArtistDAO() {}
+  private ArtistDAO() {
+  }
 
+  /**
+   * Finds a {@link Artist} by id.
+   *
+   * @param id         Id of {@link Artist} to find.
+   * @param connection {@link Connection} to use to perform the operation.
+   * @return Found {@link Artist}
+   * @throws NoResultException if no {@link Artist} by this id was found in database.
+   * @throws SQLException      If an error occurred while performing the database operation.
+   */
   public static Artist findById(final Integer id, final Connection connection) throws SQLException, NoResultException {
     try {
       return Musician.findById(id, connection);
@@ -22,6 +32,13 @@ public final class ArtistDAO {
     return Band.findById(id, connection);
   }
 
+  /**
+   * Fetches all {@link Artist} in database.
+   *
+   * @param connection {@link Connection} to use to perform the operation.
+   * @return Found {@link SongCollection}
+   * @throws SQLException If an error occurred while performing the database operation.
+   */
   public static List<Artist> all(final Connection connection) throws SQLException {
     List<Artist> artists = new ArrayList<>();
     try (PreparedStatement preparedStatement = connection.prepareStatement(

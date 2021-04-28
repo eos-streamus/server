@@ -6,6 +6,7 @@ import com.eos.streamus.dto.SongCollectionDTO;
 import com.eos.streamus.dto.TrackDTO;
 import com.eos.streamus.utils.IDatabaseConnector;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -16,13 +17,12 @@ import java.util.Comparator;
 
 @Component
 public abstract class SongCollectionDTOValidator implements Validator {
-
-  /** {@link com.eos.streamus.utils.IDatabaseConnector} to use. */
+  /** {@link IDatabaseConnector} to use to validate data. */
   @Autowired
   private IDatabaseConnector databaseConnector;
 
   @Override
-  public final void validate(final Object o, final Errors errors) {
+  public final void validate(@NonNull final Object o, @NonNull final Errors errors) {
     SongCollectionDTO songCollection = (SongCollectionDTO) o;
 
     if (songCollection.getName().isBlank()) {
@@ -39,11 +39,11 @@ public abstract class SongCollectionDTOValidator implements Validator {
           Song.findById(songCollection.getTracks().get(i).getSongId(), connection);
           if (
               (i == 0 && songCollection.getTracks().get(i).getTrackNumber() != 1) ||
-              (
-                  i > 0 &&
-                  songCollection.getTracks().get(i - 1).getTrackNumber() !=
-                  songCollection.getTracks().get(i).getTrackNumber() - 1
-              )
+                  (
+                      i > 0 &&
+                          songCollection.getTracks().get(i - 1).getTrackNumber() !=
+                              songCollection.getTracks().get(i).getTrackNumber() - 1
+                  )
           ) {
             errors.reject("Invalid track numbers");
           }

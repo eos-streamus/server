@@ -9,24 +9,24 @@ import java.sql.SQLException;
 
 public class Musician extends Artist {
   //#region Static attributes
-  /** Table name in database. */
+  /** Table name in the database. */
   private static final String TABLE_NAME = "Musician";
-  /** Artist id column name. */
+  /** Primary key name in the database. */
   private static final String PRIMARY_KEY_NAME = "idArtist";
-  /** Person id column name. */
+  /** Person id column name in the database. */
   private static final String PERSON_ID_COLUMN = "idPerson";
-  /** Creation function name in database. */
+  /** Creation function name in the database. */
   private static final String CREATION_FUNCTION_NAME = "createMusician";
-  /** View name. */
+  /** View name in the database. */
   private static final String VIEW_NAME = "vMusician";
-  /** Id column name in view. */
+  /** View id column name in the database. */
   private static final String VIEW_ID_COLUMN = "id";
-  /** Name column name in view. */
+  /** View name column name in the database. */
   private static final String VIEW_NAME_COLUMN = "name";
   //#endregion Static attributes
 
   //#region Instance attributes
-  /** Person (if exists) of this Musician. */
+  /** Musician {@link Person}. */
   private final Person person;
   //#endregion Instance attributes
 
@@ -69,20 +69,25 @@ public class Musician extends Artist {
   //#endregion Constructors
 
   //#region Getters and Setters
+
+  /** {@inheritDoc} */
   @Override
   public final String creationFunctionName() {
     return CREATION_FUNCTION_NAME;
   }
 
-  public final Person getPerson() {
+  /** @return Artist's {@link Person}. */
+  public Person getPerson() {
     return person;
   }
 
+  /** {@inheritDoc} */
   @Override
   public final String tableName() {
     return TABLE_NAME;
   }
 
+  /** {@inheritDoc} */
   @Override
   public final String primaryKeyName() {
     return PRIMARY_KEY_NAME;
@@ -90,8 +95,10 @@ public class Musician extends Artist {
   //#endregion Getters and Setters
 
   //#region Database operations
+
+  /** {@inheritDoc} */
   @Override
-  public final void save(final Connection connection) throws SQLException {
+  public void save(final Connection connection) throws SQLException {
     if (this.getId() == null) {
       try (PreparedStatement preparedStatement = connection.prepareStatement(
           String.format(
@@ -120,6 +127,15 @@ public class Musician extends Artist {
     }
   }
 
+  /**
+   * Finds a Musician by id.
+   *
+   * @param id         Id of the Musician to find.
+   * @param connection {@link Connection} to use to perform the operation.
+   * @return Found Musician.
+   * @throws SQLException      If an error occurred while performing the database operation.
+   * @throws NoResultException If no Musician by this id was found.
+   */
   public static Musician findById(final Integer id, final Connection connection)
       throws SQLException, NoResultException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
@@ -150,13 +166,24 @@ public class Musician extends Artist {
   //#endregion Database operations
 
   //#region Equals
+
+  /** @return HashCode of this Musician, i.e. its id. */
   @Override
   public final int hashCode() {
     return getId();
   }
 
+  /**
+   * Returns whether the given Object is equal.
+   * Will be equal if:
+   * - {@link Artist} equality conditions are met.
+   * - Same {@link Person} (both null or equal)
+   *
+   * @param obj Object to compare.
+   * @return True if all conditions are met.
+   */
   @Override
-  public final boolean equals(final Object obj) {
+  public boolean equals(final Object obj) {
     if (obj == null) {
       return false;
     }

@@ -5,10 +5,10 @@ import java.sql.SQLException;
 
 public interface Deletable {
   /**
-   * Delete this entity from database.
+   * Deletes this entity from the database.
    *
-   * @param connection {@link Connection} to use to delete.
-   * @throws SQLException if an error occurs during operation.
+   * @param connection {@link Connection} to use to perform the operation.
+   * @throws SQLException If an error occurred while performing the database operation.
    */
   void delete(Connection connection) throws SQLException;
 

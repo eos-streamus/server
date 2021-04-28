@@ -10,24 +10,24 @@ public abstract class Collection implements SavableDeletableEntity {
   //#region Static attributes
   /** Table name in database. */
   public static final String TABLE_NAME = "Collection";
-  /** id column name. */
+  /** Primary key name in database. */
   protected static final String PRIMARY_KEY_NAME = "id";
-  /** name column name. */
+  /** Name column in database. */
   protected static final String NAME_COLUMN = "name";
-  /** createdAt column name. */
+  /** Created at column in database. */
   protected static final String CREATED_AT_COLUMN = "createdAt";
-  /** updatedAt column name. */
+  /** Updated at column in database. */
   protected static final String UPDATED_AT_COLUMN = "updatedAt";
   //#endregion Static attributes
 
   //#region Instance attributes
-  /** Id of instance. */
+  /** Id of the Collection. */
   private Integer id;
-  /** Name of Collection. */
+  /** Name of the Collection. */
   private String name;
-  /** Creation timestamp of collection. */
+  /** Created at timestamp of this Collection. */
   private Timestamp createdAt;
-  /** Update timestamp of collection. */
+  /** Updated at timestamp of this Collection. */
   private Timestamp updatedAt;
   //#endregion Instance attributes
 
@@ -46,48 +46,72 @@ public abstract class Collection implements SavableDeletableEntity {
 
   //#region Getters and Setters
 
-  /** @return Name of table in database. */
+  /** {@inheritDoc} */
   @Override
   public String tableName() {
     return TABLE_NAME;
   }
 
-  /** @return Primary key column name. */
+  /** {@inheritDoc} */
   @Override
   public String primaryKeyName() {
     return PRIMARY_KEY_NAME;
   }
 
+  /** {@inheritDoc} */
   @Override
   public final Integer getId() {
     return id;
   }
 
-  public final void setId(final Integer id) {
+  /**
+   * Sets an id to this Collection.
+   *
+   * @param id Id to set.
+   */
+  public void setId(final Integer id) {
     this.id = id;
   }
 
-  public final String getName() {
+  /** @return Name of this Collection. */
+  public String getName() {
     return name;
   }
 
-  public final void setName(final String name) {
+  /**
+   * Set name of this Collection.
+   *
+   * @param name Name to set.
+   */
+  public void setName(final String name) {
     this.name = name;
   }
 
-  public final Timestamp getCreatedAt() {
+  /** @return The created at timestamp of this Collection. */
+  public Timestamp getCreatedAt() {
     return createdAt;
   }
 
-  public final void setCreatedAt(final Timestamp createdAt) {
+  /**
+   * Set the created at timestamp of this Collection.
+   *
+   * @param createdAt Created at to set.
+   */
+  public void setCreatedAt(final Timestamp createdAt) {
     this.createdAt = createdAt;
   }
 
-  public final Timestamp getUpdatedAt() {
+  /** @return The updated at timestamp of this Collection. */
+  public Timestamp getUpdatedAt() {
     return updatedAt;
   }
 
-  public final void setUpdatedAt(final Timestamp updatedAt) {
+  /**
+   * Set the updated at timestamp of this Collection.
+   *
+   * @param updatedAt Updated at to set.
+   */
+  public void setUpdatedAt(final Timestamp updatedAt) {
     this.updatedAt = updatedAt;
   }
 
@@ -103,12 +127,7 @@ public abstract class Collection implements SavableDeletableEntity {
 
   //#region Database operations
 
-  /**
-   * Save this collection to database.
-   *
-   * @param connection {@link Connection} to use to save.
-   * @throws SQLException If an error occurs.
-   */
+  /** {@inheritDoc} */
   @Override
   public void save(final Connection connection) throws SQLException {
     if (this.id == null) {
@@ -135,7 +154,7 @@ public abstract class Collection implements SavableDeletableEntity {
 
   //#region String representations
 
-  /** @return String representation of this Collection. */
+  /** {@inheritDoc} */
   @Override
   public String toString() {
     return defaultToString();
@@ -143,18 +162,23 @@ public abstract class Collection implements SavableDeletableEntity {
   //#endregion String representations
 
   //#region Equals
-
-  /** @return Hashcode of this instance. */
+  /** @return HashCode of this instance, i.e. its id. */
   @Override
   public int hashCode() {
     return id;
   }
 
   /**
-   * Tests equality.
-   *
-   * @param o object to test.
-   * @return If the object is equal to this instance.
+   * Returns whether the given object is equal to this Collection.
+   * Will be equal if:
+   * - Not null
+   * - Equal class
+   * - Equal id
+   * - Equal name
+   * - Equal created at
+   * - Equal updated at
+   * @param o Object to compare
+   * @return True if all conditions above are met.
    */
   @Override
   public boolean equals(final Object o) {
@@ -164,9 +188,9 @@ public abstract class Collection implements SavableDeletableEntity {
     Collection collection = (Collection) o;
     return
         collection.id.equals(id) &&
-        collection.name.equals(name) &&
-        collection.createdAt.equals(createdAt) &&
-        collection.updatedAt.equals(updatedAt);
+            collection.name.equals(name) &&
+            collection.createdAt.equals(createdAt) &&
+            collection.updatedAt.equals(updatedAt);
   }
   //#endregion Equals
 }

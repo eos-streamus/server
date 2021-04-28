@@ -9,30 +9,30 @@ import java.util.Date;
 
 public final class ResourceActivity extends Activity {
   //#region Static Attributes
-  /** Table name in database. */
+  /** Table name in the database. */
   public static final String TABLE_NAME = "ResourceActivity";
-  /** Activity id column name. */
+  /** Primary key name in the database. */
   public static final String PRIMARY_KEY_NAME = "idActivity";
-  /** Resource id column name. */
+  /** Resource id column name in the database. */
   public static final String RESOURCE_ID_COLUMN = "idResource";
-  /** Creation function name in database. */
+  /** Creation function name in the database. */
   public static final String CREATION_FUNCTION_NAME = "createResourceActivity";
-  /** Started at timestamp column name. */
+  /** Started at column name in the database. */
   public static final String STARTED_AT_COLUMN = "startedAt";
-  /** Paused at timestamp column name. */
+  /** Paused at column name in the database. */
   public static final String PAUSED_AT_COLUMN = "pausedAt";
-  /** CollectionActivity id column name. */
+  /** Collection activity id column name in the database. */
   public static final String COLLECTION_ACTIVITY_ID_COLUMN = "idCollectionActivity";
   //#endregion Static Attributes
 
   //#region Instance Attributes
-  /** {@link com.eos.streamus.models.Resource} of this Activity. */
+  /** {@link Resource} of this {@link Activity}. */
   private final Resource resource;
   /** Started at timestamp. */
   private Timestamp startedAt;
-  /** Paused at marker. */
+  /** Paused at second. */
   private int pausedAt;
-  /** Possible associated CollectionActivity. */
+  /** Potentially associated {@link CollectionActivity}. */
   private CollectionActivity collectionActivity;
   //#endregion Instance Attributes
 
@@ -55,31 +55,43 @@ public final class ResourceActivity extends Activity {
   //#endregion Constructors
 
   //#region Getters and Setters
+
+  /** @return Associated {@link CollectionActivity}. */
   public CollectionActivity getCollectionActivity() {
     return collectionActivity;
   }
 
+  /** {@inheritDoc} */
   @Override
   public String creationFunctionName() {
     return CREATION_FUNCTION_NAME;
   }
 
+  /** @return resource. */
   public Resource getResource() {
     return resource;
   }
 
+  /** @return startedAt. */
   public Timestamp getStartedAt() {
     return startedAt;
   }
 
+  /** @return pausedAt. */
   public int getPausedAt() {
     return pausedAt;
   }
 
+  /**
+   * Pause the activity.
+   *
+   * @param pausedAt time.
+   */
   public void setPausedAt(final int pausedAt) {
     this.pausedAt = pausedAt;
   }
 
+  /** Start the activity. */
   public void start() {
     if (this.getId() == null) {
       throw new NotPersistedException("ResourceActivity is started on save");
@@ -87,11 +99,13 @@ public final class ResourceActivity extends Activity {
     this.startedAt = new Timestamp(new Date().getTime());
   }
 
+  /** {@inheritDoc} */
   @Override
   public String tableName() {
     return TABLE_NAME;
   }
 
+  /** {@inheritDoc} */
   @Override
   public String primaryKeyName() {
     return PRIMARY_KEY_NAME;
@@ -99,6 +113,8 @@ public final class ResourceActivity extends Activity {
   //#endregion Getters and Setters
 
   //#region Database operations
+
+  /** {@inheritDoc} */
   @Override
   public void save(final Connection connection) throws SQLException {
     if (getUsers().isEmpty() && collectionActivity == null) {
@@ -112,6 +128,10 @@ public final class ResourceActivity extends Activity {
     super.save(connection);
   }
 
+  /**
+   * @param connection {@link Connection} to use to perform the operation.
+   * @throws SQLException If an error occurred while performing the database operation.
+   */
   private void saveNew(final Connection connection) throws SQLException {
     try (PreparedStatement preparedStatement =
              connection.prepareStatement(
@@ -123,12 +143,13 @@ public final class ResourceActivity extends Activity {
                  )
              )
     ) {
-      preparedStatement.setInt(1, resource.getId());
+      int columnNumber = 0;
+      preparedStatement.setInt(++columnNumber, resource.getId());
       if (!getUsers().isEmpty()) {
-        preparedStatement.setInt(2, getUsers().get(0).getUser().getId());
+        preparedStatement.setInt(++columnNumber, getUsers().get(0).getUser().getId());
       }
       if (collectionActivity != null) {
-        preparedStatement.setInt(getUsers().isEmpty() ? 2 : 3, collectionActivity.getId());
+        preparedStatement.setInt(++columnNumber, collectionActivity.getId());
       }
       try (ResultSet resultSet = preparedStatement.executeQuery()) {
         resultSet.next();
@@ -137,6 +158,12 @@ public final class ResourceActivity extends Activity {
     }
   }
 
+  /**
+   * Update in the database.
+   *
+   * @param connection {@link Connection} to use to perform the operation.
+   * @throws SQLException If an error occurred while performing the database operation.
+   */
   private void update(final Connection connection) throws SQLException {
     try (
         PreparedStatement preparedStatement = connection.prepareStatement(
@@ -150,18 +177,25 @@ public final class ResourceActivity extends Activity {
             )
         )
     ) {
-      preparedStatement.setTimestamp(1, startedAt);
-      preparedStatement.setInt(2, pausedAt);
+      int columnNumber = 0;
+      preparedStatement.setTimestamp(++columnNumber, startedAt);
+      preparedStatement.setInt(++columnNumber, pausedAt);
       if (collectionActivity != null) {
-        preparedStatement.setInt(3, collectionActivity.getId());
-        preparedStatement.setInt(4, getId());
-      } else {
-        preparedStatement.setInt(3, getId());
+        preparedStatement.setInt(++columnNumber, collectionActivity.getId());
       }
+      preparedStatement.setInt(++columnNumber, getId());
       preparedStatement.execute();
     }
   }
 
+  /**
+   * Finds a ResourceActivity by given id.
+   *
+   * @param id         Id of ResourceActivity to find.
+   * @param connection {@link Connection} to use to perform the operation.
+   * @return Found ResourceActivity.
+   * @throws SQLException If an error occurred while performing the database operation.
+   */
   public static ResourceActivity findById(final Integer id, final Connection connection)
       throws SQLException, NoResultException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
@@ -223,11 +257,24 @@ public final class ResourceActivity extends Activity {
   //#endregion Database operations
 
   //#region Equals
+
+  /** @return Hashcode, i.e. id. */
   @Override
   public int hashCode() {
     return getId();
   }
 
+  /**
+   * Returns whether the given Object is equal.
+   * Equal if:
+   * - {@link Activity} equality conditions are met.
+   * - Same startedAt (null or equal)
+   * - Same paused at
+   * - Equal resources
+   *
+   * @param obj Object to compare.
+   * @return True if all conditions are met.
+   */
   @Override
   public boolean equals(final Object obj) {
     if (!super.equals(obj)) {
@@ -236,13 +283,13 @@ public final class ResourceActivity extends Activity {
     ResourceActivity resourceActivity = (ResourceActivity) obj;
     if (
         startedAt == null && resourceActivity.startedAt != null ||
-        startedAt != null && resourceActivity.startedAt == null
+            startedAt != null && resourceActivity.startedAt == null
     ) {
       return false;
     }
     return resourceActivity.resource.equals(resource) &&
-           (resourceActivity.startedAt == null || resourceActivity.startedAt.equals(startedAt)) &&
-           resourceActivity.pausedAt == pausedAt;
+        (resourceActivity.startedAt == null || resourceActivity.startedAt.equals(startedAt)) &&
+        resourceActivity.pausedAt == pausedAt;
   }
   //#endregion Equals
 }

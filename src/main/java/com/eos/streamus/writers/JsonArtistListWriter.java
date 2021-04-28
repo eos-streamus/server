@@ -8,14 +8,15 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import java.util.List;
 
-public final class JsonArtistListWriter extends JsonArrayWriter {
-  /** List of {@link com.eos.streamus.models.Artist}s to write as Json. */
+public class JsonArtistListWriter extends JsonArrayWriter {
+  /** List of {@link Artist}s to write. */
   private final List<Artist> artists;
 
   public JsonArtistListWriter(final List<Artist> artists) {
     this.artists = artists;
   }
 
+  /** {@inheritDoc} */
   @Override
   protected JsonNode getSpecificArrayJson(final ArrayNode arrayNode) {
     for (Artist artist : artists) {

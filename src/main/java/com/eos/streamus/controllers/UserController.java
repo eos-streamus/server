@@ -5,6 +5,7 @@ import com.eos.streamus.dto.TokensDTO;
 import com.eos.streamus.dto.UserDTO;
 import com.eos.streamus.dto.validators.UserDTOValidator;
 import com.eos.streamus.exceptions.NoResultException;
+import com.eos.streamus.models.PersonBuilder;
 import com.eos.streamus.models.User;
 import com.eos.streamus.models.UserDAO;
 import com.eos.streamus.utils.IDatabaseConnector;
@@ -38,22 +39,29 @@ public final class UserController implements CommonResponses {
   /** User id claim name. */
   private static final String USER_ID = "userId";
 
-  /** {@link com.eos.streamus.utils.IDatabaseConnector} to use. */
+  /** {@link IDatabaseConnector} to use. */
   @Autowired
   private IDatabaseConnector databaseConnector;
 
-  /** {@link com.eos.streamus.dto.validators.UserDTOValidator} to use. */
+  /** {@link UserDTOValidator} to use. */
   @Autowired
   private UserDTOValidator userDTOValidator;
 
-  /** {@link org.springframework.security.crypto.password.PasswordEncoder} to use. */
+  /** {@link PasswordEncoder} to use. */
   @Autowired
   private PasswordEncoder passwordEncoder;
 
-  /** {@link com.eos.streamus.utils.JwtService} to use. */
+  /** {@link JwtService} to use. */
   @Autowired
   private JwtService jwtService;
 
+  /**
+   * Register a new User.
+   *
+   * @param userDTO User data.
+   * @param result  Validation BindingResult.
+   * @return Created User data in JSON.
+   */
   @PostMapping("/users")
   public ResponseEntity<JsonNode> register(@RequestBody @Valid final UserDTO userDTO, final BindingResult result) {
     if (result.hasErrors()) {
@@ -69,13 +77,14 @@ public final class UserController implements CommonResponses {
         return badRequest("Invalid email");
       }
 
-      User user = new User(
+      User user = (User) new PersonBuilder(
           userDTO.getFirstName(),
           userDTO.getLastName(),
-          Date.valueOf(userDTO.getDateOfBirth()),
+          Date.valueOf(userDTO.getDateOfBirth())
+      ).asUser(
           userDTO.getEmail(),
           userDTO.getUsername()
-      );
+      ).build();
       connection.setAutoCommit(false);
       String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
       user.save(connection);
@@ -88,6 +97,13 @@ public final class UserController implements CommonResponses {
     }
   }
 
+  /**
+   * Login a User.
+   *
+   * @param loginDTO Login credentials.
+   * @param result   BindingResult to validate credentials with.
+   * @return Token to use for future requests if successful login.
+   */
   @PostMapping("/login")
   public ResponseEntity<JsonNode> login(@RequestBody @Valid final LoginDTO loginDTO, final BindingResult result) {
     if (result.hasErrors()) {
@@ -138,6 +154,12 @@ public final class UserController implements CommonResponses {
     }
   }
 
+  /**
+   * Delete an User by id.
+   *
+   * @param id Id of User to delete.
+   * @return Confirmation message.
+   */
   @DeleteMapping("/user/{id}")
   public ResponseEntity<JsonNode> deleteUser(@PathVariable final int id) {
     try (Connection connection = databaseConnector.getConnection()) {
@@ -151,6 +173,14 @@ public final class UserController implements CommonResponses {
     }
   }
 
+  /**
+   * Update an User by id.
+   *
+   * @param id      Id of User to update.
+   * @param userDTO Updated User data.
+   * @param result  BindingResult to validate data with.
+   * @return Updated User data in JSON format.
+   */
   @PutMapping("/user/{id}")
   public ResponseEntity<JsonNode> updateUser(@PathVariable final int id,
                                              @RequestBody @Valid final UserDTO userDTO,

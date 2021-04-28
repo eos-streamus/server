@@ -14,15 +14,17 @@ import java.sql.SQLException;
 @Component
 public final class SongPlaylistDTOValidator extends SongCollectionDTOValidator {
 
-  /** {@link com.eos.streamus.utils.IDatabaseConnector} to use. */
+  /** {@link IDatabaseConnector} to use. */
   @Autowired
   private IDatabaseConnector databaseConnector;
 
+  /** {@inheritDoc} */
   @Override
   public boolean supports(final Class<?> aClass) {
     return aClass.equals(SongPlaylistDTO.class);
   }
 
+  /** {@inheritDoc} */
   @Override
   protected void validateSubclassProperties(final Object o, final Errors errors) {
     SongPlaylistDTO songPlaylistDTO = (SongPlaylistDTO) o;

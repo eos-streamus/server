@@ -12,26 +12,26 @@ import java.util.logging.Logger;
 
 public abstract class Artist implements SavableDeletableEntity {
   //#region Static attributes
-  /** Artist table name in database. */
+  /** Table name in the database. */
   public static final String TABLE_NAME = "Artist";
-  /** id column name in table. */
+  /** Primary key name in the database. */
   public static final String PRIMARY_KEY_NAME = "id";
-  /** name column name in table. */
+  /** Name column in the database. */
   public static final String NAME_COLUMN = "name";
-  /** AlbumArtist column name in table. */
+  /** Album artist table name in the database. */
   public static final String ALBUM_ARTIST_TABLE_NAME = "AlbumArtist";
-  /** AlbumArtist association table name. */
+  /** Album artist album id in the database. */
   public static final String ALBUM_ARTIST_ALBUM_ID = "idAlbum";
-  /** Artist id column name in AlbumArtist. */
+  /** Album artist artist id in the database. */
   public static final String ALBUM_ARTIST_ARTIST_ID = "idArtist";
   //#endregion Static attributes
 
   //#region Instance attributes
-  /** Id of Artist. */
+  /** Id of this Artist. */
   private Integer id;
-  /** Name of the Artist. */
+  /** Name of this Artist. */
   private String name;
-  /** List of albums of Artist. */
+  /** List of contributing {@link Album}s. */
   private final List<Album> albums = new ArrayList<>();
   //#endregion Instance attributes
 
@@ -47,30 +47,43 @@ public abstract class Artist implements SavableDeletableEntity {
   //#endregion Constructors
 
   //#region Getters and Setters
+
+  /** {@inheritDoc} */
   @Override
   public final Integer getId() {
     return id;
   }
 
-  protected final void setId(final Integer id) {
+  /**
+   * Set the Id of this Artist.
+   *
+   * @param id Id to set.
+   */
+  protected void setId(final Integer id) {
     this.id = id;
   }
 
-  public final String getName() {
+  /** @return Artist's name. */
+  public String getName() {
     return name;
   }
 
-  public final void setName(final String name) {
+  /**
+   * Set the name of this Artist.
+   *
+   * @param name Name of the Artist.
+   */
+  public void setName(final String name) {
     this.name = name;
   }
 
-  /** @return Table name in database. */
+  /** {@inheritDoc} */
   @Override
   public String tableName() {
     return TABLE_NAME;
   }
 
-  /** @return Primary key column name in database. */
+  /** {@inheritDoc} */
   @Override
   public String primaryKeyName() {
     return PRIMARY_KEY_NAME;
@@ -83,12 +96,7 @@ public abstract class Artist implements SavableDeletableEntity {
 
   //#region Database operations
 
-  /**
-   * Save this Artist in database.
-   *
-   * @param connection {@link Connection} to use to save.
-   * @throws SQLException if an error occurs.
-   */
+  /** {@inheritDoc} */
   @Override
   public void save(final Connection connection) throws SQLException {
     if (this.getId() == null) {
@@ -105,7 +113,13 @@ public abstract class Artist implements SavableDeletableEntity {
     }
   }
 
-  public final void fetchAlbums(final Connection connection) throws SQLException {
+  /**
+   * Fetches the Artist's {@link Album}s from the database.
+   *
+   * @param connection {@link Connection} to use to perform the operation.
+   * @throws SQLException If an error occurred while performing the database operation.
+   */
+  public void fetchAlbums(final Connection connection) throws SQLException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         String.format(
             "select * from %s where %s = ?", ALBUM_ARTIST_TABLE_NAME, ALBUM_ARTIST_ARTIST_ID
@@ -127,6 +141,7 @@ public abstract class Artist implements SavableDeletableEntity {
   //#endregion Database operations
 
   //#region String representations
+  /** {@inheritDoc} */
   @Override
   public final String toString() {
     return String.format(
@@ -139,17 +154,21 @@ public abstract class Artist implements SavableDeletableEntity {
   //#endregion
 
   //#region Equals
-
-  /** @return hashcode of instance. */
+  /** @return This Artist's hashCode, i.e. its id. */
   @Override
   public int hashCode() {
     return id;
   }
 
   /**
-   * Checks if this instance is equal to given one.
-   * @param obj Object to test.
-   * @return If the instances are equal.
+   * Returns whether the given Object is equal.
+   * Will be equal if:
+   * - Not null
+   * - Same class
+   * - Same name (equal or both null)
+   * - Same ids
+   * @param obj Object to compare.
+   * @return True if all conditions are met.
    */
   @Override
   public boolean equals(final Object obj) {

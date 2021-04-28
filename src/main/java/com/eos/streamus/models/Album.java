@@ -6,60 +6,57 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Album extends SongCollection {
+public final class Album extends SongCollection {
   //#region Static attributes
-  /** Creation function name in database. */
+  /** Creation_function_name in the database. */
   private static final String CREATION_FUNCTION_NAME = "createAlbum";
-  /** Table name in database. */
+  /** Table name in the database. */
   private static final String TABLE_NAME = "Album";
-  /** Primary key column name in table. */
+  /** Primary key name in the database. */
   private static final String PRIMARY_KEY_NAME = "idSongCollection";
-  /** Release date column name. */
+  /** Release date column in the database. */
   private static final String RELEASE_DATE_COLUMN = "releaseDate";
-  /** AlbumArtist association table name. */
+  /** Album artist table name in the database. */
   private static final String ALBUM_ARTIST_TABLE_NAME = "AlbumArtist";
-  /** Artist id column name in AlbumArtist. */
+  /** Album artist artist id column in the database. */
   private static final String ALBUM_ARTIST_ARTIST_ID_COLUMN = "idArtist";
-  /** Album id column name in AlbumArtist. */
+  /** Album artist album id column in the database. */
   private static final String ALBUM_ARTIST_ALBUM_ID_COLUMN = "idAlbum";
-  /** View name. */
+  /** View name in the database. */
   private static final String VIEW_NAME = "vAlbum";
-  /** Id column name in view. */
+  /** View id in the database. */
   private static final String VIEW_ID = "id";
-  /** Song id column name in view. */
+  /** View song id in the database. */
   private static final String VIEW_SONG_ID = "idSong";
-  /** Track number column name in view. */
+  /** Track number column in the database. */
   private static final String TRACK_NUMBER_COLUMN = "trackNumber";
-  /** Song name column name in view. */
+  /** View song name column in the database. */
   private static final String VIEW_SONG_NAME_COLUMN = "songName";
-  /** Song created at timestamp column name in view. */
+  /** Song created at column in the database. */
   private static final String SONG_CREATED_AT_COLUMN = "songCreatedAt";
   //#endregion Static attributes
 
   //#region Instance attributes
-  /** List of {@link Artist} of the Album. */
+  /** List of contributing {@link Artist}s of this Album. */
   private final List<Artist> artists = new ArrayList<>();
-  /** Release date of the Album. */
+  /** Release date of this Album. */
   private final Date releaseDate;
   //#endregion Instance attributes
 
   //#region Constructors
-  private Album(final Integer id, final String name, final Date releaseDate, final Timestamp createdAt,
-                final Timestamp updatedAt, final Track... tracks) {
-    super(id, name, createdAt, updatedAt, tracks);
+  public Album(final String name, final Date releaseDate) {
+    super(name);
     this.releaseDate = releaseDate;
   }
+  //#endregion Constructors
 
-  public Album(final String name, final Date releaseDate, final Track... tracks) {
-    super(name, tracks);
-    this.releaseDate = releaseDate;
-  }
-
+  /** {@inheritDoc} */
   @Override
   public final String creationFunctionName() {
     return CREATION_FUNCTION_NAME;
   }
 
+  /** {@inheritDoc} */
   @Override
   public final String tableName() {
     return TABLE_NAME;
@@ -69,9 +66,9 @@ public class Album extends SongCollection {
   //#region Accessors
 
   /**
-   * Add an {@link Artist} to this Album.
+   * Add an {@link Artist} as contributor to the Album.
    *
-   * @param artist Artist to add.
+   * @param artist {@link Artist} to add.
    */
   public void addArtist(final Artist artist) {
     if (artist == null) {
@@ -80,11 +77,12 @@ public class Album extends SongCollection {
     artists.add(artist);
   }
 
-  /** @return List of {@link Artist}s of this Album. */
+  /** @return List of contributing {@link Artist}s of this Album. */
   public List<Artist> getArtists() {
     return artists;
   }
 
+  /** {@inheritDoc} */
   @Override
   public final String primaryKeyName() {
     return PRIMARY_KEY_NAME;
@@ -92,8 +90,10 @@ public class Album extends SongCollection {
   //#endregion Accessors
 
   //#region Database operations
+
+  /** {@inheritDoc} */
   @Override
-  public final void save(final Connection connection) throws SQLException {
+  public void save(final Connection connection) throws SQLException {
     if (this.getId() == null) {
       try (PreparedStatement preparedStatement = connection.prepareStatement(
           String.format(
@@ -129,6 +129,15 @@ public class Album extends SongCollection {
     super.save(connection);
   }
 
+  /**
+   * Finds an Album by id in the database.
+   *
+   * @param id         Id of the Album to find.
+   * @param connection {@link Connection} to use to perform the operation.
+   * @return Found Album.
+   * @throws SQLException      If an error occurred while performing the database operation.
+   * @throws NoResultException If no Album was found
+   */
   public static Album findById(final Integer id, final Connection connection) throws SQLException, NoResultException {
     Album album;
     try (PreparedStatement preparedStatement = connection.prepareStatement(
@@ -143,25 +152,20 @@ public class Album extends SongCollection {
         if (!resultSet.next()) {
           throw new NoResultException();
         }
-        album = new Album(
-            id,
-            resultSet.getString(Collection.NAME_COLUMN),
-            resultSet.getDate(RELEASE_DATE_COLUMN),
-            resultSet.getTimestamp(Collection.CREATED_AT_COLUMN),
-            resultSet.getTimestamp(Collection.UPDATED_AT_COLUMN)
-        );
+        album = new Album(resultSet.getString(Collection.NAME_COLUMN), resultSet.getDate(RELEASE_DATE_COLUMN));
+        album.setId(id);
+        album.setCreatedAt(resultSet.getTimestamp(Collection.CREATED_AT_COLUMN));
+        album.setUpdatedAt(resultSet.getTimestamp(Collection.UPDATED_AT_COLUMN));
         do {
           if (resultSet.getInt(VIEW_SONG_ID) != 0) {
-            album.addTrack(album.new Track(
-                resultSet.getInt(TRACK_NUMBER_COLUMN),
-                new Song(
-                    resultSet.getInt(VIEW_SONG_ID),
-                    resultSet.getString(Resource.PATH_COLUMN),
-                    resultSet.getString(VIEW_SONG_NAME_COLUMN),
-                    resultSet.getTimestamp(SONG_CREATED_AT_COLUMN),
-                    resultSet.getInt(Resource.DURATION_COLUMN)
-                )
-            ));
+            Song song = new Song(
+                resultSet.getString(Resource.PATH_COLUMN),
+                resultSet.getString(VIEW_SONG_NAME_COLUMN),
+                resultSet.getInt(Resource.DURATION_COLUMN)
+            );
+            song.setId(resultSet.getInt(VIEW_SONG_ID));
+            song.setCreatedAt(resultSet.getTimestamp(SONG_CREATED_AT_COLUMN));
+            album.addTrack(album.new Track(resultSet.getInt(TRACK_NUMBER_COLUMN), song));
           }
         } while (resultSet.next());
       }
@@ -183,13 +187,25 @@ public class Album extends SongCollection {
   //#endregion Database operations
 
   //#region Equals
+
+  /** @return This Album's hashCode, i.e. its id. */
   @Override
   public final int hashCode() {
     return getId();
   }
 
+  /**
+   * Returns whether the given object is equal to this Album.
+   * Will be equal if:
+   * - All of {@link SongCollection}'s equality conditions are met
+   * - Same release data
+   * - Same {@link Artist}s
+   *
+   * @param o Object to compare
+   * @return True if all conditions are met.
+   */
   @Override
-  public final boolean equals(final Object o) {
+  public boolean equals(final Object o) {
     if (!super.equals(o)) {
       return false;
     }

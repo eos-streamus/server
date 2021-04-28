@@ -5,10 +5,10 @@ import java.sql.SQLException;
 
 public interface Savable {
   /**
-   * Save this entity to database.
+   * Saves this {@link Savable} to the database.
    *
-   * @param connection {@link Connection} to use to save.
-   * @throws SQLException if an error occurs during operation.
+   * @param connection {@link Connection} to use to perform the operation.
+   * @throws SQLException If an error occurred while performing the database operation.
    */
   void save(Connection connection) throws SQLException;
 

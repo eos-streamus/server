@@ -3,9 +3,9 @@ package com.eos.streamus.utils;
 import java.util.Objects;
 
 public class Pair<K, V> {
-  /** Key of pair. */
+  /** Key of Pair. */
   private K key;
-  /** Value of pair. */
+  /** Value of Pair. */
   private V value;
 
   public Pair(final K key, final V value) {
@@ -13,32 +13,50 @@ public class Pair<K, V> {
     this.value = value;
   }
 
-  public final K getKey() {
+  /** @return Key of Pair. */
+  public K getKey() {
     return key;
   }
 
-  public final V getValue() {
+  /** @return Value of Pair. */
+  public V getValue() {
     return value;
   }
 
-  public final void setKey(final K key) {
+  /**
+   * Set key of Pair.
+   *
+   * @param key Key to set.
+   */
+  public void setKey(final K key) {
     this.key = key;
   }
 
-  public final void setValue(final V value) {
+  /**
+   * Set Value of Pair.
+   *
+   * @param value Value to set.
+   */
+  public void setValue(final V value) {
     this.value = value;
   }
 
-  /** @return hashcode of this Pair. */
+  /** @return HashCode combined from key hashCode and value hashCode. */
   @Override
   public int hashCode() {
     return Objects.hash(key.hashCode(), value.hashCode());
   }
 
   /**
-   * Tests if other object is equal to this instance.
-   * @param obj Object test.
-   * @return If they are equal.
+   * Returns whether the given Object is equal.
+   * Equal if:
+   * - Not null
+   * - Same class
+   * - Same value (both null or equal)
+   * - Same key (both null or equal)
+   *
+   * @param obj Object to compare.
+   * @return True if all conditions are met.
    */
   public boolean equals(final Object obj) {
     if (obj == null || obj.getClass() != getClass()) {
@@ -54,7 +72,7 @@ public class Pair<K, V> {
     return key.equals(pair.key) && value.equals(pair.value);
   }
 
-  /** @return String representation of this pair. */
+  /** {@inheritDoc} */
   public String toString() {
     return String.format("<%s, %s>", key, value);
   }

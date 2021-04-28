@@ -4,14 +4,16 @@ import com.eos.streamus.models.User;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public final class JsonUserWriter extends JsonPersonWriter {
-  /** {@link com.eos.streamus.models.User} to write as Json. */
+public class JsonUserWriter extends JsonPersonWriter {
+  /** {@link User} to write. */
   private final User user;
+
   public JsonUserWriter(final User user) {
     super(user);
     this.user = user;
   }
 
+  /** {@inheritDoc} */
   @Override
   protected JsonNode getSpecificJson(final ObjectNode objectNode) {
     super.getSpecificJson(objectNode);

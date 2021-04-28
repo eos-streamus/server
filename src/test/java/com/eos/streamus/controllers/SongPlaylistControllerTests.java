@@ -1,5 +1,6 @@
 package com.eos.streamus.controllers;
 
+import com.eos.streamus.models.PersonBuilder;
 import com.eos.streamus.models.Song;
 import com.eos.streamus.models.User;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -19,13 +20,15 @@ class SongPlaylistControllerTests extends JwtSetupControllerTests {
   @Test
   void creatingASongPlaylistWithANonExistingUserShouldReturnBadRequest() throws Exception {
     try (Connection connection = databaseConnector.getConnection()) {
-      User user = new User(
-          "John",
-          "Doe",
-          date("2000-01-01"),
-          UUID.randomUUID().toString() + "@streamus.com",
-          UUID.randomUUID().toString()
-      );
+      User user = (User)
+          new PersonBuilder(
+              "John",
+              "Doe",
+              date("2000-01-01")
+          ).asUser(
+              UUID.randomUUID() + "@streamus.com",
+              UUID.randomUUID().toString()
+          ).build();
       user.save(connection);
       user.delete(connection);
       ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
@@ -33,8 +36,8 @@ class SongPlaylistControllerTests extends JwtSetupControllerTests {
       objectNode.put("userId", user.getId());
 
       MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/songplaylist")
-                                                                    .contentType(MediaType.APPLICATION_JSON)
-                                                                    .content(objectNode.toPrettyString());
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(objectNode.toPrettyString());
 
       perform(builder).andExpect(status().is(400));
     }
@@ -43,13 +46,15 @@ class SongPlaylistControllerTests extends JwtSetupControllerTests {
   @Test
   void creatingASongPlaylistWithNonContinuousTrackNumbersShouldReturnBadRequest() throws Exception {
     try (Connection connection = databaseConnector.getConnection()) {
-      User user = new User(
-          "John",
-          "Doe",
-          date("2000-01-01"),
-          UUID.randomUUID().toString() + "@streamus.com",
-          UUID.randomUUID().toString()
-      );
+      User user = (User)
+          new PersonBuilder(
+              "John",
+              "Doe",
+              date("2000-01-01")
+          ).asUser(
+              UUID.randomUUID() + "@streamus.com",
+              UUID.randomUUID().toString()
+          ).build();
       user.save(connection);
 
       Song song1 = new Song(UUID.randomUUID().toString(), "Test song 1", 27);
@@ -72,8 +77,8 @@ class SongPlaylistControllerTests extends JwtSetupControllerTests {
       song2Node.put("trackNumber", 3);
 
       MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/songplaylist")
-                                                                    .contentType(MediaType.APPLICATION_JSON)
-                                                                    .content(objectNode.toPrettyString());
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(objectNode.toPrettyString());
 
       perform(builder).andExpect(status().is(400));
     }
@@ -82,13 +87,15 @@ class SongPlaylistControllerTests extends JwtSetupControllerTests {
   @Test
   void creatingASongPlaylistWithNonExistingSongsShouldReturnBadRequest() throws Exception {
     try (Connection connection = databaseConnector.getConnection()) {
-      User user = new User(
-          "John",
-          "Doe",
-          date("2000-01-01"),
-          UUID.randomUUID().toString() + "@streamus.com",
-          UUID.randomUUID().toString()
-      );
+      User user = (User)
+          new PersonBuilder(
+              "John",
+              "Doe",
+              date("2000-01-01")
+          ).asUser(
+              UUID.randomUUID() + "@streamus.com",
+              UUID.randomUUID().toString()
+          ).build();
       user.save(connection);
 
       Song song1 = new Song(UUID.randomUUID().toString(), "Test song 1", 27);
@@ -106,8 +113,8 @@ class SongPlaylistControllerTests extends JwtSetupControllerTests {
       song1Node.put("trackNumber", 1);
 
       MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/songplaylist")
-                                                                    .contentType(MediaType.APPLICATION_JSON)
-                                                                    .content(objectNode.toPrettyString());
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(objectNode.toPrettyString());
 
       perform(builder).andExpect(status().is(400));
     }
@@ -116,13 +123,15 @@ class SongPlaylistControllerTests extends JwtSetupControllerTests {
   @Test
   void creatingASongPlaylistWithASingleTrackWithNumberGreaterThanOneShouldReturnBadRequest() throws Exception {
     try (Connection connection = databaseConnector.getConnection()) {
-      User user = new User(
-          "John",
-          "Doe",
-          date("2000-01-01"),
-          UUID.randomUUID().toString() + "@streamus.com",
-          UUID.randomUUID().toString()
-      );
+      User user = (User)
+          new PersonBuilder(
+              "John",
+              "Doe",
+              date("2000-01-01")
+          ).asUser(
+              UUID.randomUUID() + "@streamus.com",
+              UUID.randomUUID().toString()
+          ).build();
       user.save(connection);
 
       Song song1 = new Song(UUID.randomUUID().toString(), "Test song 1", 27);
@@ -140,8 +149,8 @@ class SongPlaylistControllerTests extends JwtSetupControllerTests {
       song1Node.put("trackNumber", 3);
 
       MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/songplaylist")
-                                                                    .contentType(MediaType.APPLICATION_JSON)
-                                                                    .content(objectNode.toPrettyString());
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(objectNode.toPrettyString());
 
       perform(builder).andExpect(status().is(400));
     }
@@ -150,13 +159,15 @@ class SongPlaylistControllerTests extends JwtSetupControllerTests {
   @Test
   void creatingASongPlaylistWithASingleTrackWithNumberLessThanOneShouldReturnBadRequest() throws Exception {
     try (Connection connection = databaseConnector.getConnection()) {
-      User user = new User(
-          "John",
-          "Doe",
-          date("2000-01-01"),
-          UUID.randomUUID().toString() + "@streamus.com",
-          UUID.randomUUID().toString()
-      );
+      User user = (User)
+          new PersonBuilder(
+              "John",
+              "Doe",
+              date("2000-01-01")
+          ).asUser(
+              UUID.randomUUID() + "@streamus.com",
+              UUID.randomUUID().toString()
+          ).build();
       user.save(connection);
 
       Song song1 = new Song(UUID.randomUUID().toString(), "Test song 1", 27);
@@ -174,8 +185,8 @@ class SongPlaylistControllerTests extends JwtSetupControllerTests {
       song1Node.put("trackNumber", 0);
 
       MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/songplaylist")
-                                                                    .contentType(MediaType.APPLICATION_JSON)
-                                                                    .content(objectNode.toPrettyString());
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(objectNode.toPrettyString());
 
       perform(builder).andExpect(status().is(400));
     }

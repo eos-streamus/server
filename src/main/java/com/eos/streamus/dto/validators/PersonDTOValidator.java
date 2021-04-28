@@ -1,6 +1,7 @@
 package com.eos.streamus.dto.validators;
 
 import com.eos.streamus.dto.PersonDTO;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -9,25 +10,16 @@ import java.util.Date;
 
 @Component
 public class PersonDTOValidator implements Validator {
-  /**
-   * Checks that a class is supported by this validator.
-   *
-   * @param aClass Class to test.
-   * @return If the class is supported.
-   */
+
+  /** {@inheritDoc} */
   @Override
   public boolean supports(final Class<?> aClass) {
     return aClass.equals(PersonDTO.class);
   }
 
-  /**
-   * Validate a given object.
-   *
-   * @param o Object to validate.
-   * @param errors Error list to add possible errors found to.
-   */
+  /** {@inheritDoc} */
   @Override
-  public void validate(final Object o, final Errors errors) {
+  public void validate(@NonNull final Object o, @NonNull final Errors errors) {
     PersonDTO person = (PersonDTO) o;
     if ((person.getFirstName() == null) ^ (person.getLastName() == null)) {
       errors.reject("<firstName> and <lastName> must either both be defined, or not");

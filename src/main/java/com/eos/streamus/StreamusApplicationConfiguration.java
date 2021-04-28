@@ -12,6 +12,7 @@ import javax.annotation.Nonnull;
 @SuppressWarnings("CheckStyle")
 @Configuration
 public class StreamusApplicationConfiguration {
+  /** @return {@link PasswordEncoder} to use. */
   @Bean
   public PasswordEncoder getPasswordEncoder() {
     return new BCryptPasswordEncoder();

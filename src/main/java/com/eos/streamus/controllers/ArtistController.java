@@ -1,12 +1,8 @@
 package com.eos.streamus.controllers;
 
 import com.eos.streamus.exceptions.NoResultException;
-import com.eos.streamus.models.Artist;
-import com.eos.streamus.models.ArtistDAO;
-import com.eos.streamus.models.Band;
-import com.eos.streamus.models.Musician;
-import com.eos.streamus.models.Person;
-import com.eos.streamus.dto.BandMemberDTO;
+import com.eos.streamus.models.*;
+import com.eos.streamus.dto.BandMember;
 import com.eos.streamus.dto.validators.BandMemberDTOValidator;
 import com.eos.streamus.dto.validators.MusicianDTOValidator;
 import com.eos.streamus.utils.IDatabaseConnector;
@@ -33,17 +29,18 @@ import java.sql.SQLException;
 import java.util.List;
 
 @RestController
-public final class ArtistController implements CommonResponses {
-  /** {@link com.eos.streamus.utils.IDatabaseConnector} to use. */
+public class ArtistController implements CommonResponses {
+  /** {@link IDatabaseConnector} to use. */
   @Autowired
   private IDatabaseConnector databaseConnector;
-  /** {@link com.eos.streamus.dto.validators.MusicianDTOValidator} to use. */
+  /** {@link MusicianDTOValidator} to use. */
   @Autowired
   private MusicianDTOValidator musicianDTOValidator;
-  /** {@link com.eos.streamus.dto.validators.BandMemberDTOValidator} to use. */
+  /** {@link BandMemberDTOValidator} to use. */
   @Autowired
   private BandMemberDTOValidator bandMemberDTOValidator;
 
+  /** @return All artists in Json format. */
   @GetMapping("/artists")
   public ResponseEntity<JsonNode> allArtists() {
     List<Artist> allArtists;
@@ -59,6 +56,12 @@ public final class ArtistController implements CommonResponses {
     return ResponseEntity.ok(new JsonArtistListWriter(allArtists).getJson());
   }
 
+  /**
+   * Get an artist by id.
+   *
+   * @param id Id of artist to get.
+   * @return Artist in Json format.
+   */
   @GetMapping("/artist/{id}")
   public ResponseEntity<JsonNode> getArtist(@PathVariable final int id) {
     try (Connection connection = databaseConnector.getConnection()) {
@@ -76,6 +79,12 @@ public final class ArtistController implements CommonResponses {
     }
   }
 
+  /**
+   * Get an Artist's discography.
+   *
+   * @param id Id of Artist whose discography should be retrieved.
+   * @return Json formatted discography of artist.
+   */
   @GetMapping("/artist/{id}/discography")
   public ResponseEntity<JsonNode> getArtistDiscography(@PathVariable final int id) {
     try (Connection connection = databaseConnector.getConnection()) {
@@ -90,6 +99,12 @@ public final class ArtistController implements CommonResponses {
     }
   }
 
+  /**
+   * Create a Band.
+   *
+   * @param bandData Band data.
+   * @return Json formatted created band.
+   */
   @PostMapping("/band")
   public ResponseEntity<JsonNode> createBand(@Valid @RequestBody final com.eos.streamus.dto.BandDTO bandData) {
     try (Connection connection = databaseConnector.getConnection()) {
@@ -102,6 +117,13 @@ public final class ArtistController implements CommonResponses {
     }
   }
 
+  /**
+   * Create a new Musician.
+   *
+   * @param data   Sent MusicianDTO.
+   * @param result BindingResult to store validation errors in.
+   * @return Created Musician data in Json format.
+   */
   @PostMapping("/musician")
   public ResponseEntity<JsonNode> createMusician(@Valid @RequestBody final com.eos.streamus.dto.MusicianDTO data,
                                                  final BindingResult result) {
@@ -118,11 +140,11 @@ public final class ArtistController implements CommonResponses {
         if (dataPerson.getId() != null) {
           person = Person.findById(dataPerson.getId(), connection);
         } else {
-          person = new Person(
+          person = new PersonBuilder(
               dataPerson.getFirstName(),
               dataPerson.getLastName(),
               dataPerson.getDateOfBirth() == null ? null : Date.valueOf(dataPerson.getDateOfBirth())
-          );
+          ).build();
           person.save(connection);
         }
         musician = data.getName() != null ? new Musician(data.getName(), person) : new Musician(person);
@@ -140,9 +162,17 @@ public final class ArtistController implements CommonResponses {
     }
   }
 
+  /**
+   * Create a new Band.Member.
+   *
+   * @param bandId Band to add Member to.
+   * @param member {@link BandMember} data.
+   * @param result BindingResult to store validation errors in.
+   * @return Band Member data in Json format.
+   */
   @PostMapping("/band/{bandId}/members")
   public ResponseEntity<JsonNode> addMemberToBand(@PathVariable final int bandId,
-                                                  @Valid @RequestBody final BandMemberDTO member,
+                                                  @Valid @RequestBody final BandMember member,
                                                   final BindingResult result) {
     bandMemberDTOValidator.validate(member, result);
     if (result.hasErrors()) {
@@ -169,6 +199,12 @@ public final class ArtistController implements CommonResponses {
 
   }
 
+  /**
+   * Delete an Artist by id.
+   *
+   * @param id Id of Artist to delete.
+   * @return Confirmation message.
+   */
   @DeleteMapping("/artist/{id}")
   public ResponseEntity<JsonNode> deleteArtist(@PathVariable final int id) {
     try (Connection connection = databaseConnector.getConnection()) {
@@ -182,8 +218,8 @@ public final class ArtistController implements CommonResponses {
     }
   }
 
-  private Musician getMusicianFromBandMemberData(final BandMemberDTO member,
-                                                 final Connection connection) throws SQLException, NoResultException {
+  private Musician getMusicianFromBandMemberData(final BandMember member, final Connection connection)
+      throws SQLException, NoResultException {
     Musician musician;
     if (member.getMusicianId() != null) {
       musician = Musician.findById(member.getMusicianId(), connection);
@@ -203,9 +239,11 @@ public final class ArtistController implements CommonResponses {
       } else {
         com.eos.streamus.dto.PersonDTO personDTO = member.getMusician().getPerson();
         Person person = new Person(
-            personDTO.getFirstName(),
-            personDTO.getLastName(),
-            Date.valueOf(personDTO.getDateOfBirth())
+            new PersonBuilder(
+                personDTO.getFirstName(),
+                personDTO.getLastName(),
+                Date.valueOf(personDTO.getDateOfBirth())
+            )
         );
         musician = member.getMusician().getName() == null ?
             new Musician(person)

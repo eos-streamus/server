@@ -1,7 +1,5 @@
 package com.eos.streamus.models;
 
-import java.sql.Timestamp;
-
 public abstract class VideoCollection extends Collection {
   //#region Static attributes
   /** Table name in database. */
@@ -11,23 +9,20 @@ public abstract class VideoCollection extends Collection {
   //#endregion Static attributes
 
   //#region Constructors
-  protected VideoCollection(final Integer id, final String name, final Timestamp createdAt, final Timestamp updatedAt) {
-    super(id, name, createdAt, updatedAt);
-  }
-
   protected VideoCollection(final String name) {
     super(name);
   }
   //#endregion Constructors
 
   //#region Getters and Setters
-  /** @return Table name. */
+
+  /** {@inheritDoc} */
   @Override
   public String tableName() {
     return TABLE_NAME;
   }
 
-  /** @return Primary key name. */
+  /** {@inheritDoc} */
   @Override
   public String primaryKeyName() {
     return PRIMARY_KEY_NAME;

@@ -8,16 +8,18 @@ import java.io.File;
 
 @Service
 @Scope(value = "singleton")
-public final class ResourcePathResolver implements IResourcePathResolver {
-  /** Base resource path to be used by application. */
+public class ResourcePathResolver implements IResourcePathResolver {
+  /** Resource storage path. */
   @Value("${resourcePath}")
   private String resourcePath;
 
+  /** {@inheritDoc} */
   @Override
   public String getVideoDir() {
     return String.format("%s%s%s%s", resourcePath, File.separator, "video", File.separator);
   }
 
+  /** {@inheritDoc} */
   @Override
   public String getAudioDir() {
     return String.format("%s%s%s%s", resourcePath, File.separator, "audio", File.separator);

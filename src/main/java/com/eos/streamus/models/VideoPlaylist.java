@@ -7,19 +7,30 @@ import com.eos.streamus.utils.Pair;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public final class VideoPlaylist extends VideoCollection {
   public final class VideoPlaylistVideo extends Pair<Integer, Video> implements SavableDeletable {
     //#region Static attributes
-    /** Table name in database. */
+    /**
+     * Table name in database.
+     */
     public static final String TABLE_NAME = "VideoPlaylistVideo";
-    /** Primary key column name. */
+    /**
+     * Id video column in database.
+     */
     public static final String ID_VIDEO_COLUMN = "idVideo";
-    /** VideoPlaylist id column name. */
+    /**
+     * Id video playlist video column in database.
+     */
     public static final String ID_VIDEO_PLAYLIST_VIDEO_COLUMN = "idVideoPlaylist";
-    /** Number column name. */
+    /**
+     * Number column in database.
+     */
     public static final String NUMBER_COLUMN = "number";
-    /** Creation function name in database. */
+    /**
+     * Creation function name in database.
+     */
     public static final String CREATION_FUNCTION_NAME = "addVideoToPlaylist";
     //#endregion Static attributes
 
@@ -30,6 +41,8 @@ public final class VideoPlaylist extends VideoCollection {
     //#endregion Constructors
 
     //#region Database operations
+
+    /** {@inheritDoc} */
     @Override
     public void delete(final Connection connection) throws SQLException {
       try (PreparedStatement preparedStatement = connection.prepareStatement(
@@ -48,6 +61,7 @@ public final class VideoPlaylist extends VideoCollection {
       }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void save(final Connection connection) throws SQLException {
       try (PreparedStatement preparedStatement = connection.prepareStatement(
@@ -67,26 +81,43 @@ public final class VideoPlaylist extends VideoCollection {
     //#endregion Database operations
 
     //#region String representations
+
+    /** {@inheritDoc} */
     @Override
     public String toString() {
       return String.format("%s[%s= %d, %s= %d, %s= %d]",
-                           getClass().getName(),
-                           ID_VIDEO_PLAYLIST_VIDEO_COLUMN,
-                           VideoPlaylist.this.getId(),
-                           ID_VIDEO_COLUMN,
-                           this.getValue().getId(),
-                           NUMBER_COLUMN,
-                           getKey()
+          getClass().getName(),
+          ID_VIDEO_PLAYLIST_VIDEO_COLUMN,
+          VideoPlaylist.this.getId(),
+          ID_VIDEO_COLUMN,
+          this.getValue().getId(),
+          NUMBER_COLUMN,
+          getKey()
       );
     }
     //#endregion String representations
 
     //#region Equals
+
+    /**
+     * @return HashCode of this VideoPlaylistVideo, combined from video number and Video hashCode.
+     */
     @Override
     public int hashCode() {
-      return getKey() * 31 + getValue().hashCode();
+      return Objects.hash(getKey(), getValue().hashCode());
     }
 
+    /**
+     * Returns whether the given object is equal to this VideoPlaylistVideo.
+     * Will be equal if:
+     * - Not null
+     * - Equal class
+     * - Same number
+     * - Same video
+     *
+     * @param o Object to compare.
+     * @return True if given Object is equal to this VideoPlaylistVideo.
+     */
     @Override
     public boolean equals(final Object o) {
       if (o == null || o.getClass() != getClass()) {
@@ -99,32 +130,26 @@ public final class VideoPlaylist extends VideoCollection {
   }
 
   //#region Static attributes
-  /** Creation function name in database. */
-  private static final String CREATION_FUNCTION_NAME = "createVideoPlaylist";
   /** Table name in database. */
   private static final String TABLE_NAME = "VideoPlaylist";
-  /** Primary key column name. */
+  /** Primary key name in database. */
   private static final String PRIMARY_KEY_NAME = "idVideoCollection";
-  /** View name. */
-  private static final String VIEW_NAME = "VVideoPlaylist";
-  /** User id column name. */
+  /** User id column in database. */
   private static final String USER_ID_COLUMN = "idUser";
+  /** View name in database. */
+  private static final String VIEW_NAME = "VVideoPlaylist";
+  /** Creation function name in database. */
+  private static final String CREATION_FUNCTION_NAME = "createVideoPlaylist";
   //#endregion Static attributes
 
   //#region Instance attributes
-  /** Owner of this playlist. */
+  /** Creator {@link User} of this VideoPlaylist. */
   private final User user;
-  /** List of videos in this playlist. */
+  /** List of VideoPlaylistVideos of this playlist. */
   private final List<VideoPlaylistVideo> videos = new ArrayList<>();
   //#endregion Instance attributes
 
   //#region Constructors
-  VideoPlaylist(final Integer id, final String name, final Timestamp createdAt,
-                final Timestamp updatedAt, final User user) {
-    super(id, name, createdAt, updatedAt);
-    this.user = user;
-  }
-
   public VideoPlaylist(final String name, final User user) {
     super(name);
     this.user = user;
@@ -132,21 +157,26 @@ public final class VideoPlaylist extends VideoCollection {
   //#endregion Constructors
 
   //#region Accessors
+
+  /** {@inheritDoc} */
   @Override
   public String tableName() {
     return TABLE_NAME;
   }
 
+  /** {@inheritDoc} */
   @Override
   public String creationFunctionName() {
     return CREATION_FUNCTION_NAME;
   }
 
+  /** {@inheritDoc} */
   @Override
   public String primaryKeyName() {
     return PRIMARY_KEY_NAME;
   }
 
+  /** @return VideoPlaylist specific content of this Collection. */
   @Override
   protected List<Pair<Integer, Resource>> getSpecificContent() {
     List<Pair<Integer, Resource>> content = new ArrayList<>();
@@ -156,10 +186,16 @@ public final class VideoPlaylist extends VideoCollection {
     return content;
   }
 
+  /** @return {@link VideoPlaylistVideo} of this playlist. */
   public List<VideoPlaylistVideo> getVideos() {
     return videos;
   }
 
+  /**
+   * Add a Video to this playlist.
+   *
+   * @param video Video to add.
+   */
   public void addVideo(final Video video) {
     Integer newVideoNumber = 0;
     for (VideoPlaylistVideo videoPlaylistVideo : videos) {
@@ -170,12 +206,19 @@ public final class VideoPlaylist extends VideoCollection {
     videos.add(new VideoPlaylistVideo(newVideoNumber + 1, video));
   }
 
+  /**
+   * Add a {@link VideoPlaylistVideo} to this playlist.
+   *
+   * @param video {@link VideoPlaylistVideo} to add.
+   */
   public void addVideo(final VideoPlaylistVideo video) {
     videos.add(video);
   }
   //#endregion Accessors
 
   //#region Database operations
+
+  /** {@inheritDoc} */
   @Override
   public void save(final Connection connection) throws SQLException {
     if (this.getId() == null) {
@@ -270,8 +313,17 @@ public final class VideoPlaylist extends VideoCollection {
     return loadedVideos;
   }
 
-  public static VideoPlaylist findById(final Integer id,
-                                       final Connection connection) throws SQLException, NoResultException {
+  /**
+   * Finds a VideoPlaylist by id in the database.
+   *
+   * @param id         Id of VideoPlaylist to find.
+   * @param connection {@link Connection} to use to perform the operation.
+   * @return Found VideoPlaylist
+   * @throws SQLException      If an error occurred while performing the database operation.
+   * @throws NoResultException If no VideoPlaylist by this id was found.
+   */
+  public static VideoPlaylist findById(final Integer id, final Connection connection)
+      throws SQLException, NoResultException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
         String.format(
             "select * from %s where %s = ?;",
@@ -294,12 +346,12 @@ public final class VideoPlaylist extends VideoCollection {
         User user = User.findById(userId, connection);
 
         VideoPlaylist videoPlaylist = new VideoPlaylist(
-            id,
             name,
-            createdAt,
-            updatedAt,
             user
         );
+        videoPlaylist.setId(id);
+        videoPlaylist.setCreatedAt(createdAt);
+        videoPlaylist.setUpdatedAt(updatedAt);
 
         // Videos
         int firstVideoNumber = resultSet.getInt(VideoPlaylistVideo.NUMBER_COLUMN);
@@ -326,11 +378,22 @@ public final class VideoPlaylist extends VideoCollection {
   //#endregion Database operations
 
   //#region Equals
+  /** @return This VideoPlaylists hashCode, i.e. its id. */
   @Override
   public int hashCode() {
     return getId();
   }
 
+  /**
+   * Returns whether the given Object is equal to this VideoPlaylist.
+   * Will be equal if:
+   * - Not null
+   * - Same class
+   * - VideoCollection::equals is verified
+   * - Same videos
+   * @param o Object to compare
+   * @return True if all conditions above are verified.
+   */
   @Override
   public boolean equals(final Object o) {
     if (!super.equals(o)) {

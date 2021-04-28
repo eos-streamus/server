@@ -6,7 +6,7 @@ public abstract class Video extends Resource {
   //#region Static attributes
   /** Table name in database. */
   private static final String TABLE_NAME = "Video";
-  /** Primary key column name. */
+  /** Primary key column name in database. */
   private static final String PRIMARY_KEY_NAME = "idResource";
   //#endregion Static attributes
 
@@ -22,13 +22,14 @@ public abstract class Video extends Resource {
   //#endregion Constructors_
 
   //#region Getters and Setters
-  /** @return Table name. */
+
+  /** {@inheritDoc} */
   @Override
   public String tableName() {
     return TABLE_NAME;
   }
 
-  /** @return Primary key name. */
+  /** {@inheritDoc} */
   @Override
   public String primaryKeyName() {
     return PRIMARY_KEY_NAME;

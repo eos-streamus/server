@@ -11,31 +11,32 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Scope(value = "singleton")
-public final class DatabaseConnector implements IDatabaseConnector {
-  /** Database url. */
+public class DatabaseConnector implements IDatabaseConnector {
+  /** Jdbc url. */
   @Value("${jdbc.url}")
   private String url;
 
-  /** Database host. */
+  /** Jdbc host. */
   @Value("${jdbc.host}")
   private String host;
 
-  /** Database application port. */
+  /** Jdbc port. */
   @Value("${jdbc.port}")
   private int port;
 
-  /** Database name. */
+  /** Jdbc databaseName. */
   @Value("${jdbc.databaseName}")
   private String databaseName;
 
-  /** Database connection user. */
+  /** Database user. */
   @Value("${database.user}")
   private String user;
 
-  /** Database connection password. */
+  /** Database password. */
   @Value("${database.password}")
   private String password;
 
+  /** {@inheritDoc} */
   @Override
   public Connection getConnection() throws SQLException {
     return DriverManager.getConnection(String.format("%s%s:%d/%s", url, host, port, databaseName), user, password);

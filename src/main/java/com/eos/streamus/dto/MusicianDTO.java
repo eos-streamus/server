@@ -1,21 +1,24 @@
 package com.eos.streamus.dto;
 
 public final class MusicianDTO {
-  /** Musician id. */
+  /** Id of Musician. */
   private Integer id;
-  /** Musician name. */
+  /** Name of Musician. */
   private String name;
-  /** Musician person. */
+  /** Person data of Musician. */
   private PersonDTO person;
 
+  /** @return Id of Musician. */
   public Integer getId() {
     return id;
   }
 
+  /** @return Name of Musician. */
   public String getName() {
     return name;
   }
 
+  /** @return {@link PersonDTO} of Musician. */
   public PersonDTO getPerson() {
     return person;
   }

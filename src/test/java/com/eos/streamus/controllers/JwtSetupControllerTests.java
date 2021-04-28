@@ -2,6 +2,7 @@ package com.eos.streamus.controllers;
 
 import com.eos.streamus.dto.TokensDTO;
 import com.eos.streamus.filters.JwtFilter;
+import com.eos.streamus.models.PersonBuilder;
 import com.eos.streamus.models.User;
 import com.eos.streamus.utils.JwtService;
 import org.junit.jupiter.api.BeforeAll;
@@ -43,7 +44,8 @@ abstract class JwtSetupControllerTests extends ControllerTests {
   @BeforeAll
   void createAndLoginUser() throws SQLException, ParseException {
     try (Connection connection = databaseConnector.getConnection()) {
-      User user = new User("John", "Doe", date("2000-01-01"), "john.doe@gmail.com", "john_doe");
+      User user = (User) new PersonBuilder("John", "Doe", date("2000-01-01"))
+          .asUser("john.doe@gmail.com", "john_doe").build();
       user.save(connection);
       token = jwtService.createToken(user);
     }

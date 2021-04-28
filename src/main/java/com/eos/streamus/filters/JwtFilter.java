@@ -22,10 +22,14 @@ import java.util.Optional;
 @Component
 public final class JwtFilter implements Filter {
 
-  /** {@link com.eos.streamus.utils.JwtService} to use to generate tokens. */
+  /** {@link com.eos.streamus.utils.JwtService} to use. */
   @Autowired
   private JwtService jwtService;
 
+  /** Token offset in bearer String. */
+  private static final int TOKEN_OFFSET = 7;
+
+  /** {@inheritDoc} */
   @Override
   public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse,
                        final FilterChain filterChain) throws IOException, ServletException {

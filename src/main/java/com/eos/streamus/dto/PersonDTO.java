@@ -3,7 +3,7 @@ package com.eos.streamus.dto;
 import javax.validation.constraints.NotNull;
 
 public class PersonDTO {
-  /** Id of person. */
+  /** Id of Person. */
   private Integer id;
 
   /** First name of Person. */
@@ -14,22 +14,26 @@ public class PersonDTO {
   @NotNull
   private String lastName;
 
-  /** Date of birth of person as String (should be in format yyyy-MM-dd). */
+  /** Date of birth of Person. */
   private String dateOfBirth;
 
-  public final Integer getId() {
+  /** @return Id of Person. */
+  public Integer getId() {
     return id;
   }
 
-  public final String getFirstName() {
+  /** @return First name of Person. */
+  public String getFirstName() {
     return firstName;
   }
 
-  public final String getLastName() {
+  /** @return Last name of person. */
+  public String getLastName() {
     return lastName;
   }
 
-  public final String getDateOfBirth() {
+  /** @return Date of birth of Person. */
+  public String getDateOfBirth() {
     return dateOfBirth;
   }
 

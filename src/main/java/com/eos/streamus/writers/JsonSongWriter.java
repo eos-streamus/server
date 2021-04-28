@@ -8,6 +8,7 @@ public final class JsonSongWriter extends JsonResourceWriter {
     super(resource);
   }
 
+  /** {@inheritDoc} */
   @Override
   protected ObjectNode addSpecificJsonAttributes(final ObjectNode objectNode) {
     return objectNode;

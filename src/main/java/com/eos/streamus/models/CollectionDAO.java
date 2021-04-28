@@ -6,8 +6,18 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public final class CollectionDAO {
-  private CollectionDAO() {}
+  private CollectionDAO() {
+  }
 
+  /**
+   * Finds a {@link Collection} by id.
+   *
+   * @param id         Id of {@link Collection} to find.
+   * @param connection {@link Connection} to use to perform the operation.
+   * @return Found {@link Collection}
+   * @throws NoResultException if no {@link Collection} by this id was found in database.
+   * @throws SQLException      If an error occurred while performing the database operation.
+   */
   public static Collection findById(final Integer id, final Connection connection)
       throws SQLException, NoResultException {
     Collection collection = null;

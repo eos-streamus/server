@@ -3,10 +3,11 @@ package com.eos.streamus.dto;
 import javax.validation.constraints.NotNull;
 
 public final class SongPlaylistDTO extends SongCollectionDTO {
-  /** User id. */
+  /** Owner User id. */
   @NotNull
   private Integer userId;
 
+  /** @return Owner User id. */
   public Integer getUserId() {
     return userId;
   }

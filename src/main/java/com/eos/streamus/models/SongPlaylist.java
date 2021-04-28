@@ -8,44 +8,43 @@ import java.util.List;
 
 public final class SongPlaylist extends SongCollection {
   //#region Static attributes
-  /** Creation function name. */
+  /** Creation function name in the database. */
   private static final String CREATION_FUNCTION_NAME = "createSongPlaylist";
-  /** View name. */
+  /** View name in the database. */
   private static final String VIEW_NAME = "vSongPlaylist";
-  /** User id column name. */
+  /** User id column in the database. */
   private static final String USER_ID_COLUMN = "idUser";
   //#endregion Static attributes
 
   //#region Instance attributes
-  /** User this playlist is owned by. */
+  /** Owner {@link User} of this SongPlaylist. */
   private final User user;
   //#endregion Instance attributes
 
-  //#region Constructor
-  private SongPlaylist(final Integer id, final String name, final Timestamp createdAt,
-                       final Timestamp updatedAt, final User user, final Track... tracks) {
-    super(id, name, createdAt, updatedAt, tracks);
-    this.user = user;
-  }
-
-  public SongPlaylist(final String name, final User user, final Track... tracks) {
-    super(name, tracks);
+  //#region Constructors
+  public SongPlaylist(final String name, final User user) {
+    super(name);
     this.user = user;
   }
   //#endregion Constructors
 
   //#region Getters and Setters
+
+  /** {@inheritDoc} */
   @Override
   public String creationFunctionName() {
     return CREATION_FUNCTION_NAME;
   }
 
+  /** @return {@link User} that owns this SongPlaylist. */
   public User getUser() {
     return user;
   }
   //#endregion Getters and Setters
 
   //#region Database operations
+
+  /** {@inheritDoc} */
   @Override
   public void save(final Connection connection) throws SQLException {
     if (this.getId() == null) {
@@ -72,6 +71,15 @@ public final class SongPlaylist extends SongCollection {
     }
   }
 
+  /**
+   * Finds a SongPlaylist by id in the database.
+   *
+   * @param id         Id of the SongPlaylist to find.
+   * @param connection {@link Connection} to use to perform the operation.
+   * @return Found SongPlaylist.
+   * @throws NoResultException If no SongPlaylist by this id was found.
+   * @throws SQLException      If an error occurred while performing the database operation.
+   */
   public static SongPlaylist findById(final Integer id, final Connection connection)
       throws SQLException, NoResultException {
     try (PreparedStatement preparedStatement = connection.prepareStatement(
@@ -95,13 +103,10 @@ public final class SongPlaylist extends SongCollection {
         Integer userId = resultSet.getInt(USER_ID_COLUMN);
         User user = User.findById(userId, connection);
 
-        SongPlaylist songPlaylist = new SongPlaylist(
-            id,
-            name,
-            createdAt,
-            updatedAt,
-            user
-        );
+        SongPlaylist songPlaylist = new SongPlaylist(name, user);
+        songPlaylist.setId(id);
+        songPlaylist.setCreatedAt(createdAt);
+        songPlaylist.setUpdatedAt(updatedAt);
 
         // Songs
         int firstTrackNumber = resultSet.getInt(Track.TRACK_NUMBER_COLUMN);
@@ -150,11 +155,22 @@ public final class SongPlaylist extends SongCollection {
   //#endregion Database operations
 
   //#region Equals
+
+  /** @return HashCode of this SongPlaylist, i.e. its id. */
   @Override
   public int hashCode() {
     return getId();
   }
 
+  /**
+   * Returns whether the given Object is equal to this SongPlaylist.
+   * Will be equal if:
+   * - All {@link SongCollection}'s equality conditions are met.
+   * - Equal Owner {@link User}
+   *
+   * @param o Object to compare
+   * @return True if all conditions are met.
+   */
   @Override
   public boolean equals(final Object o) {
     if (o == null) {

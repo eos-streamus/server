@@ -19,8 +19,7 @@ class ActivityTests extends DatabaseTests {
       Song song = new Song(randomString(), randomString(), 100);
       song.save(connection);
 
-      User user = new User(randomString(), randomString(), randomDate(), randomString() + "@" + randomString(),
-                           randomString());
+      User user = randomUser();
       user.save(connection);
 
       ResourceActivity resourceActivity = new ResourceActivity(song, user);
@@ -49,31 +48,31 @@ class ActivityTests extends DatabaseTests {
     try (Connection connection = databaseConnector.getConnection()) {
       Series theExpanse = new Series("The Expanse");
       short season1 = 1;
-      theExpanse.new Episode(randomString(), "Dulcinea", 2700, season1);
-      theExpanse.new Episode(randomString(), "The Big Empty", 2700, season1);
-      theExpanse.new Episode(randomString(), "Remember the Cant", 2700, season1);
-      theExpanse.new Episode(randomString(), "CQB (Close Quarter Battle)", 2700, season1);
-      theExpanse.new Episode(randomString(), "Back to the Butcher", 2700, season1);
-      theExpanse.new Episode(randomString(), "Rock Bottom", 2700, season1);
-      theExpanse.new Episode(randomString(), "Windmills", 2700, season1);
-      theExpanse.new Episode(randomString(), "Salvage", 2700, season1);
-      theExpanse.new Episode(randomString(), "Critical Mass", 2700, season1);
-      theExpanse.new Episode(randomString(), "Leviathan Wakes", 2700, season1);
+      theExpanse.new EpisodeBuilder(randomString(), "Dulcinea", 2700, season1).build();
+      theExpanse.new EpisodeBuilder(randomString(), "The Big Empty", 2700, season1).build();
+      theExpanse.new EpisodeBuilder(randomString(), "Remember the Cant", 2700, season1).build();
+      theExpanse.new EpisodeBuilder(randomString(), "CQB (Close Quarter Battle)", 2700, season1).build();
+      theExpanse.new EpisodeBuilder(randomString(), "Back to the Butcher", 2700, season1).build();
+      theExpanse.new EpisodeBuilder(randomString(), "Rock Bottom", 2700, season1).build();
+      theExpanse.new EpisodeBuilder(randomString(), "Windmills", 2700, season1).build();
+      theExpanse.new EpisodeBuilder(randomString(), "Salvage", 2700, season1).build();
+      theExpanse.new EpisodeBuilder(randomString(), "Critical Mass", 2700, season1).build();
+      theExpanse.new EpisodeBuilder(randomString(), "Leviathan Wakes", 2700, season1).build();
 
       short season2 = 2;
-      theExpanse.new Episode(randomString(), "Safe", 2700, season2);
-      theExpanse.new Episode(randomString(), "Doors & Corners", 2700, season2);
-      theExpanse.new Episode(randomString(), "Static", 2700, season2);
-      theExpanse.new Episode(randomString(), "Godspeed", 2700, season2);
-      theExpanse.new Episode(randomString(), "Home", 2700, season2);
-      theExpanse.new Episode(randomString(), "Paradigm Shift", 2700, season2);
-      theExpanse.new Episode(randomString(), "The Seventh Man", 2700, season2);
-      theExpanse.new Episode(randomString(), "Pyre", 2700, season2);
-      theExpanse.new Episode(randomString(), "The Weeping Somnambulist", 2700, season2);
-      theExpanse.new Episode(randomString(), "Cascade", 2700, season2);
-      theExpanse.new Episode(randomString(), "Here There be Dragons", 2700, season2);
-      theExpanse.new Episode(randomString(), "The Monster and the Rocket", 2700, season2);
-      theExpanse.new Episode(randomString(), "Caliban's War", 2700, season2);
+      theExpanse.new EpisodeBuilder(randomString(), "Safe", 2700, season2).build();
+      theExpanse.new EpisodeBuilder(randomString(), "Doors & Corners", 2700, season2).build();
+      theExpanse.new EpisodeBuilder(randomString(), "Static", 2700, season2).build();
+      theExpanse.new EpisodeBuilder(randomString(), "Godspeed", 2700, season2).build();
+      theExpanse.new EpisodeBuilder(randomString(), "Home", 2700, season2).build();
+      theExpanse.new EpisodeBuilder(randomString(), "Paradigm Shift", 2700, season2).build();
+      theExpanse.new EpisodeBuilder(randomString(), "The Seventh Man", 2700, season2).build();
+      theExpanse.new EpisodeBuilder(randomString(), "Pyre", 2700, season2).build();
+      theExpanse.new EpisodeBuilder(randomString(), "The Weeping Somnambulist", 2700, season2).build();
+      theExpanse.new EpisodeBuilder(randomString(), "Cascade", 2700, season2).build();
+      theExpanse.new EpisodeBuilder(randomString(), "Here There be Dragons", 2700, season2).build();
+      theExpanse.new EpisodeBuilder(randomString(), "The Monster and the Rocket", 2700, season2).build();
+      theExpanse.new EpisodeBuilder(randomString(), "Caliban's War", 2700, season2).build();
 
       theExpanse.save(connection);
 
