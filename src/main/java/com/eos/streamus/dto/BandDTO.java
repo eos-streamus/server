@@ -4,16 +4,12 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 public class BandDTO {
-  /**
-   * Name of the Band.
-   */
+  /** Name of the Band. */
   @NotNull
   @Size(min = 1)
   private String name;
 
-  /**
-   * @return Name of the Band
-   */
+  /** @return Name of the Band */
   public String getName() {
     return name;
   }
