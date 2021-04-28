@@ -9,40 +9,24 @@ import java.sql.SQLException;
 
 public class Musician extends Artist {
   //#region Static attributes
-  /**
-   * Table name in the database.
-   */
+  /** Table name in the database. */
   private static final String TABLE_NAME = "Musician";
-  /**
-   * Primary key name in the database.
-   */
+  /** Primary key name in the database. */
   private static final String PRIMARY_KEY_NAME = "idArtist";
-  /**
-   * Person id column name in the database.
-   */
+  /** Person id column name in the database. */
   private static final String PERSON_ID_COLUMN = "idPerson";
-  /**
-   * Creation function name in the database.
-   */
+  /** Creation function name in the database. */
   private static final String CREATION_FUNCTION_NAME = "createMusician";
-  /**
-   * View name in the database.
-   */
+  /** View name in the database. */
   private static final String VIEW_NAME = "vMusician";
-  /**
-   * View id column name in the database.
-   */
+  /** View id column name in the database. */
   private static final String VIEW_ID_COLUMN = "id";
-  /**
-   * View name column name in the database.
-   */
+  /** View name column name in the database. */
   private static final String VIEW_NAME_COLUMN = "name";
   //#endregion Static attributes
 
   //#region Instance attributes
-  /**
-   * Musician {@link Person}.
-   */
+  /** Musician {@link Person}. */
   private final Person person;
   //#endregion Instance attributes
 
@@ -92,9 +76,7 @@ public class Musician extends Artist {
     return CREATION_FUNCTION_NAME;
   }
 
-  /**
-   * @return Artist's {@link Person}.
-   */
+  /** @return Artist's {@link Person}. */
   public Person getPerson() {
     return person;
   }
@@ -185,9 +167,7 @@ public class Musician extends Artist {
 
   //#region Equals
 
-  /**
-   * @return HashCode of this Musician, i.e. its id.
-   */
+  /** @return HashCode of this Musician, i.e. its id. */
   @Override
   public int hashCode() {
     return getId();
