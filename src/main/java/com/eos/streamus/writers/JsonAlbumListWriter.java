@@ -7,6 +7,9 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import java.util.List;
 
 public class JsonAlbumListWriter extends JsonArrayWriter {
+  /**
+   * List of {@link Album}s to write.
+   */
   private final List<Album> albums;
 
   public JsonAlbumListWriter(final List<Album> albums) {
