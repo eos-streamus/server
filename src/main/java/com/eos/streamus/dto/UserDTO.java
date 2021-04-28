@@ -5,41 +5,29 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
 public class UserDTO extends PersonDTO {
-  /**
-   * Email of User.
-   */
+  /** Email of User. */
   @NotNull
   @Email
   private String email;
 
-  /**
-   * Username of User.
-   */
+  /** Username of User. */
   @NotNull
   private String username;
 
-  /**
-   * Password of User.
-   */
+  /** Password of User. */
   @NotNull
   private String password;
 
-  /**
-   * Potential updated password.
-   */
+  /** Potential updated password. */
   private String updatedPassword;
 
-  /**
-   * @return Updated password.
-   */
+  /** @return Updated password. */
   @Nullable
   public String getUpdatedPassword() {
     return updatedPassword;
   }
 
-  /**
-   * @return Email of User.
-   */
+  /** @return Email of User. */
   public String getEmail() {
     return email;
   }
@@ -53,9 +41,7 @@ public class UserDTO extends PersonDTO {
     this.email = email;
   }
 
-  /**
-   * @return Username of User.
-   */
+  /** @return Username of User. */
   @NotNull
   public String getUsername() {
     return username;
@@ -70,9 +56,7 @@ public class UserDTO extends PersonDTO {
     this.username = username;
   }
 
-  /**
-   * @return User password.
-   */
+  /** @return User password. */
   public String getPassword() {
     return password;
   }
