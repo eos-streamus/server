@@ -15,7 +15,7 @@ public class JsonMusicianWriter extends JsonArtistWriter {
 
   /** {@inheritDoc} */
   @Override
-  protected JsonNode addSpecificArtistJson(final ObjectNode objectNode) {
+  protected final JsonNode addSpecificArtistJson(final ObjectNode objectNode) {
     if (musician.getPerson() != null) {
       objectNode.set("person", new JsonPersonWriter(musician.getPerson()).getJson());
     }

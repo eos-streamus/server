@@ -60,7 +60,7 @@ public abstract class Collection implements SavableDeletableEntity {
 
   /** {@inheritDoc} */
   @Override
-  public Integer getId() {
+  public final Integer getId() {
     return id;
   }
 

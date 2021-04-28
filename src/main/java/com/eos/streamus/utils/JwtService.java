@@ -1,5 +1,7 @@
 package com.eos.streamus.utils;
 
+import com.eos.streamus.dto.TokensDTO;
+import com.eos.streamus.models.Admin;
 import com.eos.streamus.models.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -15,29 +17,44 @@ import java.util.UUID;
 
 @Service
 public final class JwtService {
-  /** Expiration time in minutes for token. */
-  private static final long TOKEN_EXPIRATION = 5L;
+  /** Validity of a generated session Json Web Token. */
+  @Value("${jwt.session.validityTimeInMinutes}")
+  private Integer jwtSessionValidityMinutes;
 
-  /** JWT secret. */
+  /** Validity of a generated refresh JWT. */
+  @Value("${jwt.refresh.validityTimeInHours}")
+  private Integer jwtRefreshValidityHours;
+
+  /** Secret key for encoding JWTs. */
   @Value("${jwt.secret}")
   private String key;
 
-  public String createToken(final User user) {
-    return Jwts.builder()
-        .signWith(Keys.hmacShaKeyFor(key.getBytes()))
-        .claim("userId", user.getId())
-        .claim("email", user.getEmail())
-        .setId(UUID.randomUUID().toString())
-        .setIssuedAt(Date.from(Instant.now()))
-        .setExpiration(Date.from(Instant.now().plus(TOKEN_EXPIRATION, ChronoUnit.MINUTES)))
-        .compact();
+  public TokensDTO createToken(final User user) {
+    return new TokensDTO(
+        Jwts.builder()
+            .signWith(Keys.hmacShaKeyFor(key.getBytes()))
+            .claim("userId", user.getId())
+            .setId(UUID.randomUUID().toString())
+            .setIssuedAt(Date.from(Instant.now()))
+            .setExpiration(Date.from(Instant.now().plus(jwtRefreshValidityHours, ChronoUnit.HOURS)))
+            .compact(),
+        Jwts.builder()
+            .signWith(Keys.hmacShaKeyFor(key.getBytes()))
+            .claim("userId", user.getId())
+            .claim("email", user.getEmail())
+            .claim("isAdmin", user instanceof Admin)
+            .setId(UUID.randomUUID().toString())
+            .setIssuedAt(Date.from(Instant.now()))
+            .setExpiration(Date.from(Instant.now().plus(jwtSessionValidityMinutes, ChronoUnit.MINUTES)))
+            .compact()
+    );
   }
 
   public Jws<Claims> decode(final String jwtToken) {
     return Jwts.parserBuilder()
-        .setSigningKey(Keys.hmacShaKeyFor(key.getBytes()))
-        .build()
-        .parseClaimsJws(jwtToken);
+               .setSigningKey(Keys.hmacShaKeyFor(key.getBytes()))
+               .build()
+               .parseClaimsJws(jwtToken);
   }
 
 }

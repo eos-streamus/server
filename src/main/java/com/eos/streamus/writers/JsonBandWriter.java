@@ -41,7 +41,7 @@ public class JsonBandWriter extends JsonArtistWriter {
 
   /** {@inheritDoc} */
   @Override
-  protected JsonNode addSpecificArtistJson(final ObjectNode objectNode) {
+  protected final JsonNode addSpecificArtistJson(final ObjectNode objectNode) {
     ArrayNode members = objectNode.putArray("members");
 
     for (Band.Member member : band.getMembers()) {

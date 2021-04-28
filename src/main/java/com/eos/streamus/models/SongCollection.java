@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 import java.util.*;
 
 public abstract class SongCollection extends Collection {
-  public class Track extends Pair<Integer, Song> implements SavableDeletable {
+  public final class Track extends Pair<Integer, Song> implements SavableDeletable {
     //#region Static attributes
     /** Table name in database. */
     public static final String TABLE_NAME = "SongCollectionSong";
@@ -200,7 +200,7 @@ public abstract class SongCollection extends Collection {
 
   /** @return SongCollection-specific content. */
   @Override
-  protected List<Pair<Integer, Resource>> getSpecificContent() {
+  protected final List<Pair<Integer, Resource>> getSpecificContent() {
     List<Pair<Integer, Resource>> content = new ArrayList<>();
     for (Track track : tracks) {
       content.add(new Pair<>(track.getKey(), track.getValue()));

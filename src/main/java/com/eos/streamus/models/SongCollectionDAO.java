@@ -27,4 +27,5 @@ public final class SongCollectionDAO {
     }
     return Album.findById(id, connection);
   }
+
 }

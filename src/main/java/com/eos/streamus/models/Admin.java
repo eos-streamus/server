@@ -4,7 +4,7 @@ import com.eos.streamus.exceptions.NoResultException;
 
 import java.sql.*;
 
-public class Admin extends User {
+public final class Admin extends User {
   //#region Static Attributes
   /** Table name in database. */
   private static final String TABLE_NAME = "Admin";
@@ -111,5 +111,36 @@ public class Admin extends User {
       }
     }
   }
+
+  public static Admin findByEmail(final String email, final Connection connection) throws SQLException {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(
+        String.format(
+            "select * from %s where %s = ?",
+            VIEW_NAME,
+            EMAIL_COLUMN
+        )
+    )) {
+      preparedStatement.setString(1, email);
+      try (ResultSet resultSet = preparedStatement.executeQuery()) {
+        if (resultSet.next()) {
+          return (Admin) new PersonBuilder(
+              resultSet.getString(FIRST_NAME_COLUMN),
+              resultSet.getString(LAST_NAME_COLUMN),
+              resultSet.getDate(DATE_OF_BIRTH_COLUMN)
+          ).withId(
+              resultSet.getInt(ID_COLUMN)
+          ).withTimestamps(
+              resultSet.getTimestamp(CREATED_AT_COLUMN),
+              resultSet.getTimestamp(UPDATED_AT_COLUMN)
+          ).asAdmin(
+              resultSet.getString(EMAIL_COLUMN),
+              resultSet.getString(USERNAME_COLUMN)
+          ).build();
+        }
+        return null;
+      }
+    }
+  }
+
   //#endregion Database Operations
 }

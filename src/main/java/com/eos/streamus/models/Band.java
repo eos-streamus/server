@@ -175,7 +175,7 @@ public class Band extends Artist {
 
     /** {@inheritDoc} */
     @Override
-    public String toString() {
+    public final String toString() {
       return String.format(
           "%s[%s= %d, %s= %d, %s= %s, %s= %s]",
           getClass().getName(),
@@ -273,19 +273,19 @@ public class Band extends Artist {
 
   /** {@inheritDoc} */
   @Override
-  public String tableName() {
+  public final String tableName() {
     return TABLE_NAME;
   }
 
   /** {@inheritDoc} */
   @Override
-  public String primaryKeyName() {
+  public final String primaryKeyName() {
     return PRIMARY_KEY_NAME;
   }
 
   /** {@inheritDoc} */
   @Override
-  public String creationFunctionName() {
+  public final String creationFunctionName() {
     return CREATION_FUNCTION_NAME;
   }
 
@@ -425,7 +425,7 @@ public class Band extends Artist {
 
   /** @return Band's hashcode, i.e. its id. */
   @Override
-  public int hashCode() {
+  public final int hashCode() {
     return getId();
   }
 

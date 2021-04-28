@@ -19,7 +19,7 @@ public abstract class Video extends Resource {
   protected Video(final String path, final String name, final Integer duration) {
     super(path, name, duration);
   }
-  //#endregion Constructors
+  //#endregion Constructors_
 
   //#region Getters and Setters
 

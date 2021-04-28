@@ -50,7 +50,7 @@ public abstract class Artist implements SavableDeletableEntity {
 
   /** {@inheritDoc} */
   @Override
-  public Integer getId() {
+  public final Integer getId() {
     return id;
   }
 
@@ -143,7 +143,7 @@ public abstract class Artist implements SavableDeletableEntity {
   //#region String representations
   /** {@inheritDoc} */
   @Override
-  public String toString() {
+  public final String toString() {
     return String.format(
         "%s[%s=%d]",
         getClass().getName(),

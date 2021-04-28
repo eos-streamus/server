@@ -21,20 +21,22 @@ import java.util.logging.Logger;
 
 interface CommonResponses {
 
+  default ResponseEntity<JsonNode> simpleOk(final String message) {
+    ObjectNode response = new ObjectNode(new ControllerObjectNodeFactory());
+    response.put("message", message);
+    return ResponseEntity.ok(response);
+  }
+
   default ResponseEntity<JsonNode> badRequest(final String reason) {
-    ObjectNode errorResponse = new ObjectNode(new ErrorObjectNodeFactory());
+    ObjectNode errorResponse = new ObjectNode(new ControllerObjectNodeFactory());
     errorResponse.put("reason", reason);
     return ResponseEntity.badRequest().body(errorResponse);
   }
 
   default ResponseEntity<JsonNode> internalServerError() {
-    ObjectNode errorResponse = new ObjectNode(new ErrorObjectNodeFactory());
+    ObjectNode errorResponse = new ObjectNode(new ControllerObjectNodeFactory());
     errorResponse.put("reason", "Something went wrong");
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-  }
-
-  default ResponseEntity<String> internalServerErrorString() {
-    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong");
   }
 
   default ResponseEntity<ResourceRegion> streamResource(final Resource resource,
@@ -72,16 +74,16 @@ interface CommonResponses {
     return ResponseEntity.notFound().build();
   }
 
-  default ResponseEntity<String> deleteFileAndResource(final Resource resource,
-                                                       final Connection connection) throws SQLException {
+  default ResponseEntity<JsonNode> deleteFileAndResource(final Resource resource,
+                                                         final Connection connection) throws SQLException {
     try {
       Files.delete(FileSystems.getDefault().getPath(resource.getPath()));
     } catch (IOException e) {
       logException(e);
-      return internalServerErrorString();
+      return internalServerError();
     }
     resource.delete(connection);
-    return ResponseEntity.ok("Resource deleted");
+    return simpleOk("Resource deleted");
   }
 
 }

@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class VideoPlaylist extends VideoCollection {
-  public class VideoPlaylistVideo extends Pair<Integer, Video> implements SavableDeletable {
+public final class VideoPlaylist extends VideoCollection {
+  public final class VideoPlaylistVideo extends Pair<Integer, Video> implements SavableDeletable {
     //#region Static attributes
     /**
      * Table name in database.

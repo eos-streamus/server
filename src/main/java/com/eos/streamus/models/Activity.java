@@ -153,7 +153,7 @@ public abstract class Activity implements SavableDeletableEntity {
     //#endregion Equals
   }
 
-  public class ActivityMessage implements SavableDeletableEntity {
+  public final class ActivityMessage implements SavableDeletableEntity {
     //#region Static attributes
     /** Table name in database. */
     private static final String TABLE_NAME = "ActivityMessage";

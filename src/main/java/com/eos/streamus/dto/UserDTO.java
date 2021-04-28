@@ -4,7 +4,7 @@ import javax.annotation.Nullable;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
-public class UserDTO extends PersonDTO {
+public final class UserDTO extends PersonDTO {
   /** Email of User. */
   @NotNull
   @Email

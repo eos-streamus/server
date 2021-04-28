@@ -1,6 +1,6 @@
 package com.eos.streamus.dto;
 
-public class TrackDTO {
+public final class TrackDTO {
   /** Track number. */
   private int trackNumber;
   /** {@link com.eos.streamus.models.Song} id. */

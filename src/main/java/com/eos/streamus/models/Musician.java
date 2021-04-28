@@ -72,7 +72,7 @@ public class Musician extends Artist {
 
   /** {@inheritDoc} */
   @Override
-  public String creationFunctionName() {
+  public final String creationFunctionName() {
     return CREATION_FUNCTION_NAME;
   }
 
@@ -83,13 +83,13 @@ public class Musician extends Artist {
 
   /** {@inheritDoc} */
   @Override
-  public String tableName() {
+  public final String tableName() {
     return TABLE_NAME;
   }
 
   /** {@inheritDoc} */
   @Override
-  public String primaryKeyName() {
+  public final String primaryKeyName() {
     return PRIMARY_KEY_NAME;
   }
   //#endregion Getters and Setters
@@ -169,7 +169,7 @@ public class Musician extends Artist {
 
   /** @return HashCode of this Musician, i.e. its id. */
   @Override
-  public int hashCode() {
+  public final int hashCode() {
     return getId();
   }
 

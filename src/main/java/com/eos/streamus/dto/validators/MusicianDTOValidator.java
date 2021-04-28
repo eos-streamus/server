@@ -8,7 +8,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 @Component
-public class MusicianDTOValidator implements Validator {
+public final class MusicianDTOValidator implements Validator {
 
   /** {@link PersonDTOValidator} to use to validate Musican {@link com.eos.streamus.models.Person} data. */
   @Autowired

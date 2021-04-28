@@ -3,6 +3,8 @@ package com.eos.streamus.models;
 import com.eos.streamus.exceptions.NoResultException;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class SongPlaylist extends SongCollection {
   //#region Static attributes
@@ -126,6 +128,28 @@ public final class SongPlaylist extends SongCollection {
         }
         return songPlaylist;
       }
+    }
+  }
+
+  public static List<SongPlaylist> all(final Connection connection) throws SQLException {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(
+        String.format(
+            "select distinct %s from %s",
+            "idSongCollection",
+            "songplaylist"
+        )
+    )) {
+      List<SongPlaylist> playlists = new ArrayList<>();
+      try (ResultSet resultSet = preparedStatement.executeQuery()) {
+        while (resultSet.next()) {
+          try {
+            playlists.add(findById(resultSet.getInt(1), connection));
+          } catch (NoResultException e) {
+            // Won't happen
+          }
+        }
+      }
+      return playlists;
     }
   }
   //#endregion Database operations

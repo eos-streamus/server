@@ -12,7 +12,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 @Component
-public class AlbumDTOValidator extends SongCollectionDTOValidator {
+public final class AlbumDTOValidator extends SongCollectionDTOValidator {
 
   /** {@link IDatabaseConnector} to use. */
   @Autowired

@@ -27,7 +27,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 @Controller
-public class AlbumController extends SongCollectionController {
+public final class AlbumController extends SongCollectionController {
   /** {@link AlbumDTOValidator} to use to validate incoming requests. */
   @Autowired
   private AlbumDTOValidator albumDTOValidator;
@@ -88,7 +88,7 @@ public class AlbumController extends SongCollectionController {
    * @return Confirmation message.
    */
   @DeleteMapping("/album/{id}")
-  public ResponseEntity<String> deleteAlbum(@PathVariable final int id) {
+  public ResponseEntity<JsonNode> deleteAlbum(@PathVariable final int id) {
     return deleteSongCollection(id);
   }
 

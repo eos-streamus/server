@@ -4,7 +4,7 @@ import com.eos.streamus.exceptions.NoResultException;
 
 import java.sql.*;
 
-public class Song extends Resource implements SavableDeletableEntity {
+public final class Song extends Resource implements SavableDeletableEntity {
   //#region Static attributes
   /** Table name in database. */
   private static final String TABLE_NAME = "Song";

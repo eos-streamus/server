@@ -6,7 +6,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Album extends SongCollection {
+public final class Album extends SongCollection {
   //#region Static attributes
   /** Creation_function_name in the database. */
   private static final String CREATION_FUNCTION_NAME = "createAlbum";

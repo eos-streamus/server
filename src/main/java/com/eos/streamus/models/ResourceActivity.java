@@ -7,7 +7,7 @@ import com.eos.streamus.exceptions.NotPersistedException;
 import java.sql.*;
 import java.util.Date;
 
-public class ResourceActivity extends Activity {
+public final class ResourceActivity extends Activity {
   //#region Static Attributes
   /** Table name in the database. */
   public static final String TABLE_NAME = "ResourceActivity";
@@ -218,6 +218,40 @@ public class ResourceActivity extends Activity {
         resourceActivity.setPausedAt(resultSet.getInt(PAUSED_AT_COLUMN));
         resourceActivity.fetchUserActivities(connection);
         resourceActivity.fetchActivityMessages(connection);
+        return resourceActivity;
+      }
+    }
+  }
+
+  public static ResourceActivity findByUserAndResourceIds(final Integer userId, final Integer resourceId,
+                                                          final Connection connection)
+      throws SQLException, NoResultException {
+    try (PreparedStatement preparedStatement = connection.prepareStatement(
+        String.format(
+            "select * from %s inner join %s on %s.%s = %s.%s where %s = ? and %s = ? order by %s desc",
+            TABLE_NAME,
+            UserActivity.TABLE_NAME,
+            TABLE_NAME,
+            PRIMARY_KEY_NAME,
+            UserActivity.TABLE_NAME,
+            UserActivity.ACTIVITY_ID_COLUMN,
+            RESOURCE_ID_COLUMN,
+            UserActivity.USER_ID_COLUMN,
+            STARTED_AT_COLUMN
+        )
+    )) {
+      preparedStatement.setInt(1, resourceId);
+      preparedStatement.setInt(2, userId);
+      try (ResultSet resultSet = preparedStatement.executeQuery()) {
+        if (!resultSet.next()) {
+          return null;
+        }
+        ResourceActivity resourceActivity = new ResourceActivity(
+            resultSet.getInt(PRIMARY_KEY_NAME),
+            ResourceDAO.findById(resultSet.getInt(RESOURCE_ID_COLUMN), connection),
+            resultSet.getTimestamp(STARTED_AT_COLUMN)
+        );
+        resourceActivity.setPausedAt(resultSet.getInt(PAUSED_AT_COLUMN));
         return resourceActivity;
       }
     }

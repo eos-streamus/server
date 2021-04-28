@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import javax.servlet.http.Cookie;
 import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -103,7 +104,8 @@ class FilmControllerTests extends JwtSetupControllerTests {
       // Get Film
       MockHttpServletRequestBuilder builder =
           MockMvcRequestBuilders
-              .get(String.format("/film/%d/stream", film.getId()));
+              .get(String.format("/film/%d/stream", film.getId()))
+              .cookie(new Cookie("streamusSessionToken", getToken().getSessionToken()));
 
       perform(builder)
           .andExpect(status().is(206))
@@ -130,12 +132,12 @@ class FilmControllerTests extends JwtSetupControllerTests {
       // Get Film
       MockHttpServletRequestBuilder builder =
           MockMvcRequestBuilders
-              .get(String.format("/film/%d/stream", film.getId()));
+              .get(String.format("/film/%d/stream", film.getId()))
+              .cookie(new Cookie("streamusSessionToken", getToken().getSessionToken()));
 
       perform(builder)
           .andExpect(status().is(404))
           .andReturn();
-
     }
   }
   //#endregion Get film

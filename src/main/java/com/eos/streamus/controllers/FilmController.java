@@ -33,7 +33,7 @@ import java.util.UUID;
 
 @RestController
 public class FilmController implements CommonResponses {
-  /** Max video chunk size (1GB). */
+  /** Max Video chunk size to return at a time during stream. */
   private static final long MAX_VIDEO_CHUNK_SIZE = (long) 1024 * 1024;
   /** Allowed Video Mime types. */
   private static final String[] VIDEO_MIME_TYPES = {
@@ -153,12 +153,12 @@ public class FilmController implements CommonResponses {
    * @return Confirmation message.
    */
   @DeleteMapping("/film/{id}")
-  public ResponseEntity<String> deleteFilm(@PathVariable final int id) {
+  public ResponseEntity<JsonNode> deleteFilm(@PathVariable final int id) {
     try (Connection connection = databaseConnector.getConnection()) {
       return deleteFileAndResource(Film.findById(id, connection), connection);
     } catch (SQLException sqlException) {
       logException(sqlException);
-      return internalServerErrorString();
+      return internalServerError();
     } catch (NoResultException noResultException) {
       return notFound();
     }

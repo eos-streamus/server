@@ -14,7 +14,7 @@ public class JsonEpisodeWriter extends JsonResourceWriter {
 
   /** {@inheritDoc} */
   @Override
-  protected ObjectNode addSpecificJsonAttributes(final ObjectNode objectNode) {
+  protected final ObjectNode addSpecificJsonAttributes(final ObjectNode objectNode) {
     return objectNode
         .put("idSeries", episode.getSeries().getId())
         .put("seasonNumber", episode.getSeasonNumber())

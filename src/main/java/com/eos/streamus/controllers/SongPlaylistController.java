@@ -27,7 +27,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 @RestController
-public class SongPlaylistController extends SongCollectionController {
+public final class SongPlaylistController extends SongCollectionController {
 
   /** {@link SongPlaylistDTOValidator} to use. */
   @Autowired
@@ -64,7 +64,7 @@ public class SongPlaylistController extends SongCollectionController {
    * @return Confirmation message.
    */
   @DeleteMapping("/songplaylist/{id}")
-  public ResponseEntity<String> deleteSongPlaylist(@PathVariable final int id) {
+  public ResponseEntity<JsonNode> deleteSongPlaylist(@PathVariable final int id) {
     return deleteSongCollection(id);
   }
 

@@ -33,7 +33,7 @@ import java.util.UUID;
 
 @RestController
 public class SongController implements CommonResponses {
-  /** Max Audio chunk size to stream (1GB). */
+  /** Maximum Audio byte chunk size to stream at a time. */
   private static final long MAX_AUDIO_CHUNK_SIZE = (long) 1024 * 1024;
 
   /** Accepted Mime types for Audio files. */
@@ -100,13 +100,31 @@ public class SongController implements CommonResponses {
   }
 
   /**
+   * Get a Song by id.
+   *
+   * @param id Id of Song.
+   * @return Song data in JSON.
+   */
+  @GetMapping("/song/{id}")
+  public ResponseEntity<JsonNode> getFilm(@PathVariable("id") final int id) {
+    try (Connection connection = databaseConnector.getConnection()) {
+      return ResponseEntity.ok().body(new JsonSongWriter(Song.findById(id, connection)).getJson());
+    } catch (SQLException sqlException) {
+      logException(sqlException);
+      return internalServerError();
+    } catch (NoResultException noResultException) {
+      return notFound();
+    }
+  }
+
+  /**
    * Get a Song file to stream.
    *
    * @param headers HttpHeaders to get range from.
    * @param id      Id of song.
    * @return Stream ResourceRegion.
    */
-  @GetMapping("/song/{id}")
+  @GetMapping("/song/{id}/stream")
   public ResponseEntity<ResourceRegion> getAudio(@RequestHeader final HttpHeaders headers,
                                                  @PathVariable("id") final int id) {
     try (Connection connection = databaseConnector.getConnection()) {
@@ -126,12 +144,12 @@ public class SongController implements CommonResponses {
    * @return Confirmation message.
    */
   @DeleteMapping("/song/{id}")
-  public ResponseEntity<String> deleteSong(@PathVariable("id") final int id) {
+  public ResponseEntity<JsonNode> deleteSong(@PathVariable("id") final int id) {
     try (Connection connection = databaseConnector.getConnection()) {
       return deleteFileAndResource(Song.findById(id, connection), connection);
     } catch (SQLException sqlException) {
       logException(sqlException);
-      return internalServerErrorString();
+      return internalServerError();
     } catch (NoResultException noResultException) {
       return notFound();
     }

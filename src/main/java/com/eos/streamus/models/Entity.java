@@ -14,6 +14,7 @@ interface Entity {
   /** @return Id of this Entity. */
   Integer getId();
 
+  /** @return default string representation of Entity. */
   default String defaultToString() {
     return String.format(
         "%s[%s=%d]",
