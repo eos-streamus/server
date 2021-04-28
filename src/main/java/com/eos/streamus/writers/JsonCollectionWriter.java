@@ -5,9 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 abstract class JsonCollectionWriter extends JsonObjectWriter {
-  /**
-   * {@link Collection} to write.
-   */
+  /** {@link Collection} to write. */
   private final Collection collection;
 
   protected JsonCollectionWriter(final Collection collection) {

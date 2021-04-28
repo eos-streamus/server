@@ -5,9 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 abstract class JsonResourceWriter extends JsonObjectWriter {
-  /**
-   * {@link Resource} to write.
-   */
+  /** {@link Resource} to write. */
   private final Resource resource;
 
   JsonResourceWriter(final Resource resource) {

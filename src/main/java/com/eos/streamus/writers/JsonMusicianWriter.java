@@ -5,9 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class JsonMusicianWriter extends JsonArtistWriter {
-  /**
-   * {@link Musician} to write.
-   */
+  /** {@link Musician} to write. */
   private final Musician musician;
 
   public JsonMusicianWriter(final Musician musician) {

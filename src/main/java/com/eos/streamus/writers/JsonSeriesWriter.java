@@ -8,9 +8,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class JsonSeriesWriter extends JsonCollectionWriter {
-  /**
-   * {@link Series} to write.
-   */
+  /** {@link Series} to write. */
   private final Series series;
 
   protected JsonSeriesWriter(final Series series) {

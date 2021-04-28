@@ -5,9 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class JsonSongPlaylistWriter extends JsonSongCollectionWriter {
-  /**
-   * {@link SongPlaylist} to write.
-   */
+  /** {@link SongPlaylist} to write. */
   private final SongPlaylist songPlaylist;
 
   public JsonSongPlaylistWriter(final SongPlaylist songPlaylist) {
