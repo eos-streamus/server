@@ -9,52 +9,30 @@ import java.util.Date;
 
 public class ResourceActivity extends Activity {
   //#region Static Attributes
-  /**
-   * Table name in the database.
-   */
+  /** Table name in the database. */
   public static final String TABLE_NAME = "ResourceActivity";
-  /**
-   * Primary key name in the database.
-   */
+  /** Primary key name in the database. */
   public static final String PRIMARY_KEY_NAME = "idActivity";
-  /**
-   * Resource id column name in the database.
-   */
+  /** Resource id column name in the database. */
   public static final String RESOURCE_ID_COLUMN = "idResource";
-  /**
-   * Creation function name in the database.
-   */
+  /** Creation function name in the database. */
   public static final String CREATION_FUNCTION_NAME = "createResourceActivity";
-  /**
-   * Started at column name in the database.
-   */
+  /** Started at column name in the database. */
   public static final String STARTED_AT_COLUMN = "startedAt";
-  /**
-   * Paused at column name in the database.
-   */
+  /** Paused at column name in the database. */
   public static final String PAUSED_AT_COLUMN = "pausedAt";
-  /**
-   * Collection activity id column name in the database.
-   */
+  /** Collection activity id column name in the database. */
   public static final String COLLECTION_ACTIVITY_ID_COLUMN = "idCollectionActivity";
   //#endregion Static Attributes
 
   //#region Instance Attributes
-  /**
-   * {@link Resource} of this {@link Activity}.
-   */
+  /** {@link Resource} of this {@link Activity}. */
   private final Resource resource;
-  /**
-   * Started at timestamp.
-   */
+  /** Started at timestamp. */
   private Timestamp startedAt;
-  /**
-   * Paused at second.
-   */
+  /** Paused at second. */
   private int pausedAt;
-  /**
-   * Potentially associated {@link CollectionActivity}.
-   */
+  /** Potentially associated {@link CollectionActivity}. */
   private CollectionActivity collectionActivity;
   //#endregion Instance Attributes
 
@@ -78,9 +56,7 @@ public class ResourceActivity extends Activity {
 
   //#region Getters and Setters
 
-  /**
-   * @return Associated {@link CollectionActivity}.
-   */
+  /** @return Associated {@link CollectionActivity}. */
   public CollectionActivity getCollectionActivity() {
     return collectionActivity;
   }
@@ -91,23 +67,17 @@ public class ResourceActivity extends Activity {
     return CREATION_FUNCTION_NAME;
   }
 
-  /**
-   * @return resource.
-   */
+  /** @return resource. */
   public Resource getResource() {
     return resource;
   }
 
-  /**
-   * @return startedAt.
-   */
+  /** @return startedAt. */
   public Timestamp getStartedAt() {
     return startedAt;
   }
 
-  /**
-   * @return pausedAt.
-   */
+  /** @return pausedAt. */
   public int getPausedAt() {
     return pausedAt;
   }
@@ -121,9 +91,7 @@ public class ResourceActivity extends Activity {
     this.pausedAt = pausedAt;
   }
 
-  /**
-   * Start the activity.
-   */
+  /** Start the activity. */
   public void start() {
     if (this.getId() == null) {
       throw new NotPersistedException("ResourceActivity is started on save");
@@ -258,9 +226,7 @@ public class ResourceActivity extends Activity {
 
   //#region Equals
 
-  /**
-   * @return Hashcode, i.e. id.
-   */
+  /** @return Hashcode, i.e. id. */
   @Override
   public int hashCode() {
     return getId();
