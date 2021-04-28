@@ -11,7 +11,7 @@ import org.springframework.validation.Validator;
 public class MusicianDTOValidator implements Validator {
 
   /**
-   * {@link PersonDTOValidator} to use to validate Musican {@link com.eos.streamus.models.Person}.
+   * {@link PersonDTOValidator} to use to validate Musican {@link com.eos.streamus.models.Person} data.
    */
   @Autowired
   private PersonDTOValidator personDTOValidator;
