@@ -9,9 +9,7 @@ import org.springframework.validation.Validator;
 
 @Component
 public class BandMemberDTOValidator implements Validator {
-  /**
-   * {@link MusicianDTOValidator} to use to validate band members.
-   */
+  /** {@link MusicianDTOValidator} to use to validate band members. */
   @Autowired
   private MusicianDTOValidator musicianDTOValidator;
 
