@@ -6,7 +6,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
-public final class StreamusApplicationConfiguration {
+public class StreamusApplicationConfiguration {
+  /** @return {@link PasswordEncoder} to use. */
   @Bean
   public PasswordEncoder getPasswordEncoder() {
     return new BCryptPasswordEncoder();
