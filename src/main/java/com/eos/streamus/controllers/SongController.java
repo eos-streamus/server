@@ -33,28 +33,20 @@ import java.util.UUID;
 
 @RestController
 public class SongController implements CommonResponses {
-  /**
-   * Max Audio chunk size to stream (1GB).
-   */
+  /** Max Audio chunk size to stream (1GB). */
   private static final long MAX_AUDIO_CHUNK_SIZE = (long) 1024 * 1024;
 
-  /**
-   * Accepted Mime types for Audio files.
-   */
+  /** Accepted Mime types for Audio files. */
   private static final String[] AUDIO_MIME_TYPES = {
       "audio/wav", "audio/mpeg", "audio/mp4", "audio/aac", "audio/aacp", "audio/ogg", "audio/webm", "audio/ogg",
       "audio/webm", "audio/flac", "audio/og"
   };
 
-  /**
-   * {@link IResourcePathResolver} to use.
-   */
+  /** {@link IResourcePathResolver} to use. */
   @Autowired
   private IResourcePathResolver resourcePathResolver;
 
-  /**
-   * {@link IDatabaseConnector} to use.
-   */
+  /** {@link IDatabaseConnector} to use. */
   @Autowired
   private IDatabaseConnector databaseConnector;
 
