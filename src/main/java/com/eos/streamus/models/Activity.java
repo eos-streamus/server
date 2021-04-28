@@ -85,9 +85,7 @@ public abstract class Activity implements SavableDeletableEntity {
       }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void delete(final Connection connection) throws SQLException {
       if (isNotPersisted(connection)) {
@@ -270,25 +268,19 @@ public abstract class Activity implements SavableDeletableEntity {
       return postedAt;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String tableName() {
       return TABLE_NAME;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String primaryKeyName() {
       return PRIMARY_KEY_NAME;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String creationFunctionName() {
       return null;
@@ -297,9 +289,7 @@ public abstract class Activity implements SavableDeletableEntity {
 
     //#region Database operations
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void save(final Connection connection) throws SQLException {
       if (this.id == null) {

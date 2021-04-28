@@ -113,9 +113,7 @@ public class Band extends Artist {
       }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void delete(final Connection connection) throws SQLException {
       try (PreparedStatement preparedStatement = connection.prepareStatement(String.format(
@@ -129,9 +127,7 @@ public class Band extends Artist {
       }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void save(final Connection connection) throws SQLException {
       if (Band.this.getId() == null) {
@@ -197,9 +193,7 @@ public class Band extends Artist {
 
     //#region String representations
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
       return String.format(

@@ -12,33 +12,19 @@ import java.util.stream.Collectors;
 
 public class Series extends VideoCollection {
   public final class EpisodeBuilder implements Builder<Episode> {
-    /**
-     * Path.
-     */
+    /** Path. */
     private final String path;
-    /**
-     * Name.
-     */
+    /** Name. */
     private final String name;
-    /**
-     * Duration.
-     */
+    /** Duration. */
     private final Integer duration;
-    /**
-     * SeasonNumber.
-     */
+    /** SeasonNumber. */
     private final short seasonNumber;
-    /**
-     * Id.
-     */
+    /** Id. */
     private Integer id;
-    /**
-     * Created at.
-     */
+    /** Created at. */
     private Timestamp createdAt;
-    /**
-     * Episode number.
-     */
+    /** Episode number. */
     private short episodeNumber;
 
     public EpisodeBuilder(final String path, final String name, final Integer duration, final short seasonNumber) {
@@ -87,44 +73,26 @@ public class Series extends VideoCollection {
 
   public final class Episode extends Video {
     //#region Static attributes
-    /**
-     * Table name in the database.
-     */
+    /** Table name in the database. */
     public static final String TABLE_NAME = "Episode";
-    /**
-     * Primary key name in the database.
-     */
+    /** Primary key name in the database. */
     public static final String PRIMARY_KEY_NAME = "idVideo";
-    /**
-     * Season number column name in the database.
-     */
+    /** Season number column name in the database. */
     public static final String SEASON_NUMBER_COLUMN = "seasonNumber";
-    /**
-     * Episode number column name in the database.
-     */
+    /** Episode number column name in the database. */
     public static final String EPISODE_NUMBER_COLUMN = "episodeNumber";
-    /**
-     * Creation function name in the database.
-     */
+    /** Creation function name in the database. */
     public static final String CREATION_FUNCTION_NAME = "createEpisode";
-    /**
-     * View name in the database.
-     */
+    /** View name in the database. */
     public static final String VIEW_NAME = "vEpisode";
-    /**
-     * Series id column name in the database.
-     */
+    /** Series id column name in the database. */
     public static final String SERIES_ID_COLUMN = "idSeries";
     //#endregion Static attributes
 
     //#region Instance attributes
-    /**
-     * Season number.
-     */
+    /** Season number. */
     private final short seasonNumber;
-    /**
-     * Episode number.
-     */
+    /** Episode number. */
     private final short episodeNumber;
     //#endregion Instance attributes
 
@@ -144,46 +112,34 @@ public class Series extends VideoCollection {
 
     //#region Getters and Setters
 
-    /**
-     * @return SeasonNumber.
-     */
+    /** @return SeasonNumber. */
     public short getSeasonNumber() {
       return seasonNumber;
     }
 
-    /**
-     * @return EpisodeNumber.
-     */
+    /** @return EpisodeNumber. */
     public short getEpisodeNumber() {
       return episodeNumber;
     }
 
-    /**
-     * @return Series.
-     */
+    /** @return Series. */
     public Series getSeries() {
       return Series.this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String tableName() {
       return TABLE_NAME;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String primaryKeyName() {
       return PRIMARY_KEY_NAME;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String creationFunctionName() {
       return CREATION_FUNCTION_NAME;
@@ -192,9 +148,7 @@ public class Series extends VideoCollection {
 
     //#region Database operations
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void save(final Connection connection) throws SQLException {
       if (Series.this.getId() == null) {
@@ -225,9 +179,7 @@ public class Series extends VideoCollection {
 
     //#region String representations
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
       return String.format(
@@ -245,9 +197,7 @@ public class Series extends VideoCollection {
 
     //#region Equals
 
-    /**
-     * @return Hashcode, i.e. id.
-     */
+    /** @return Hashcode, i.e. id. */
     @Override
     public int hashCode() {
       return getId();
@@ -278,40 +228,24 @@ public class Series extends VideoCollection {
   }
 
   //#region Static attributes
-  /**
-   * Table name in the database.
-   */
+  /** Table name in the database. */
   public static final String TABLE_NAME = "Series";
-  /**
-   * Primary key name in the database.
-   */
+  /** Primary key name in the database. */
   public static final String PRIMARY_KEY_NAME = "idVideoCollection";
-  /**
-   * View name in the database.
-   */
+  /** View name in the database. */
   public static final String VIEW_NAME = "vSeries";
-  /**
-   * Creation function name in the database.
-   */
+  /** Creation function name in the database. */
   public static final String CREATION_FUNCTION_NAME = "createSeries";
-  /**
-   * Episode id view_column in the database.
-   */
+  /** Episode id view_column in the database. */
   public static final String EPISODE_ID_VIEW_COLUMN = "idEpisode";
-  /**
-   * Episode created at column in the database.
-   */
+  /** Episode created at column in the database. */
   public static final String EPISODE_CREATED_AT_COLUMN = "episodeCreatedAt";
-  /**
-   * Episode name column in the database.
-   */
+  /** Episode name column in the database. */
   public static final String EPISODE_NAME_COLUMN = "episodeName";
   //#endregion
 
   //#region Instance attributes
-  /**
-   * List of {@link Episode}s.
-   */
+  /** List of {@link Episode}s. */
   private final List<Episode> episodes = new ArrayList<>();
   //#endregion
 
@@ -323,33 +257,25 @@ public class Series extends VideoCollection {
 
   //#region Getters and Setters
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String tableName() {
     return TABLE_NAME;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String creationFunctionName() {
     return CREATION_FUNCTION_NAME;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String primaryKeyName() {
     return PRIMARY_KEY_NAME;
   }
 
-  /**
-   * @return Series-specific content.
-   */
+  /** @return Series-specific content. */
   @Override
   protected List<Pair<Integer, Resource>> getSpecificContent() {
     List<Pair<Integer, Resource>> content = new ArrayList<>();
@@ -363,9 +289,7 @@ public class Series extends VideoCollection {
     return content;
   }
 
-  /**
-   * @return Number of seasons.
-   */
+  /** @return Number of seasons. */
   public short getNumberOfSeasons() {
     List<Short> distinctSeasonNumbers = new ArrayList<>();
     for (Episode episode : episodes) {
@@ -404,9 +328,7 @@ public class Series extends VideoCollection {
 
   //#region Database operations
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void save(final Connection connection) throws SQLException {
     if (this.getId() == null) {
@@ -490,9 +412,7 @@ public class Series extends VideoCollection {
 
   //#region Equals
 
-  /**
-   * @return HashCode, i.e. id.
-   */
+  /** @return HashCode, i.e. id. */
   @Override
   public int hashCode() {
     return getId();

@@ -70,9 +70,7 @@ public abstract class SongCollection extends Collection {
 
     //#region Database operations
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void save(final Connection connection) throws SQLException {
       if (this.getKey() == null) {
         try (PreparedStatement songPreparedStatement = connection.prepareStatement(
@@ -128,9 +126,7 @@ public abstract class SongCollection extends Collection {
       }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void delete(final Connection connection) throws SQLException {
       try (PreparedStatement preparedStatement = connection.prepareStatement(
@@ -150,9 +146,7 @@ public abstract class SongCollection extends Collection {
 
     //#region String representations
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
       return String.format(

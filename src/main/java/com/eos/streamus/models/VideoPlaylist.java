@@ -42,9 +42,7 @@ public class VideoPlaylist extends VideoCollection {
 
     //#region Database operations
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void delete(final Connection connection) throws SQLException {
       try (PreparedStatement preparedStatement = connection.prepareStatement(
@@ -63,9 +61,7 @@ public class VideoPlaylist extends VideoCollection {
       }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void save(final Connection connection) throws SQLException {
       try (PreparedStatement preparedStatement = connection.prepareStatement(
@@ -86,9 +82,7 @@ public class VideoPlaylist extends VideoCollection {
 
     //#region String representations
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
       return String.format("%s[%s= %d, %s= %d, %s= %d]",
