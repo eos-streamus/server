@@ -9,6 +9,8 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.Validator;
 
+import javax.validation.constraints.Email;
+
 import static com.eos.streamus.utils.Constants.EMAIL_REGEX;
 
 @Component
