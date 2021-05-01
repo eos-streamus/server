@@ -9,10 +9,6 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.Validator;
 
-import javax.validation.constraints.Email;
-
-import static com.eos.streamus.utils.Constants.EMAIL_REGEX;
-
 @Component
 public class UserDTOValidator implements Validator {
   /** Minimum password length. */
@@ -33,17 +29,11 @@ public class UserDTOValidator implements Validator {
   public void validate(@NonNull final Object o, @NonNull final Errors errorsObject) {
     BindingResult errors = (BindingResult) errorsObject;
     UserDTO userDTO = (UserDTO) o;
-
-    if (userDTO.getEmail().trim().isBlank()) {
-      errors.addError(new ObjectError("email", "Email is empty"));
-    } else if (!userDTO.getEmail().matches(EMAIL_REGEX)) {
-      errors.addError(new ObjectError("email", "Invalid email address"));
-    }
-
     if (userDTO.getUsername().isBlank()) {
-      errors.addError(new ObjectError("username", "Username is empty"));
-    } else if (userDTO.getUsername().trim().length() < minUsernameLength) {
-      errors.addError(new ObjectError("username", "Username not long enough"));
+      errors.reject("Username is empty");
+    }
+    if (userDTO.getUsername().trim().length() < minUsernameLength) {
+      errors.reject("Username not long enough");
     }
 
     checkDateOfBirth(userDTO, errors);
@@ -55,6 +45,13 @@ public class UserDTOValidator implements Validator {
 
     if (userDTO.getLastName() == null || userDTO.getLastName().isBlank()) {
       errors.addError(new ObjectError("lastName", "Last name must be defined"));
+    }
+
+    if (userDTO.getUsername().isBlank()) {
+      errors.reject("Username cannot be empty");
+    }
+    if (userDTO.getUsername().trim().length() < minUsernameLength) {
+      errors.reject("Username not long enough");
     }
   }
 
