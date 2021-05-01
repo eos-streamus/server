@@ -7,7 +7,6 @@ import javax.validation.constraints.NotNull;
 public final class UserDTO extends PersonDTO {
   /** Email of User. */
   @NotNull
-  @Email
   private String email;
 
   /** Username of User. */
