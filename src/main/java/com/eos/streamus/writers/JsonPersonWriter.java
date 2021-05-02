@@ -20,13 +20,12 @@ public class JsonPersonWriter extends JsonObjectWriter {
   protected JsonNode getSpecificJson(final ObjectNode objectNode) {
     DateFormat timestampFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    objectNode.put("id", person.getId())
+    return objectNode.put("id", person.getId())
         .put("firstName", person.getFirstName())
-        .put("lastName", person.getLastName());
-    objectNode.put("dateOfBirth", person.getDateOfBirth() == null ? null : dateFormat.format(person.getDateOfBirth()));
-    objectNode.put("createdAt", timestampFormat.format(person.getCreatedAt()));
-    objectNode.put("updatedAt", timestampFormat.format(person.getUpdatedAt()));
-    return objectNode;
+        .put("lastName", person.getLastName())
+        .put("dateOfBirth", person.getDateOfBirth() == null ? null : dateFormat.format(person.getDateOfBirth()))
+        .put("createdAt", timestampFormat.format(person.getCreatedAt()))
+        .put("updatedAt", timestampFormat.format(person.getUpdatedAt()));
   }
 
 }
