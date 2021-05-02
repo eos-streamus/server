@@ -18,6 +18,10 @@ public class UserDTOValidator implements Validator {
   /** Minimum username length. */
   @Value("${minUsernameLength}")
   private int minUsernameLength;
+  /** Date of birth field name. */
+  private static final String DATE_OF_BIRTH = "dateOfBirth";
+  /** Password. */
+  private static final String PASSWORD = "password";
 
   /** {@inheritDoc} */
   @Override
@@ -31,7 +35,6 @@ public class UserDTOValidator implements Validator {
     BindingResult errors = (BindingResult) errorsObject;
     UserDTO userDTO = (UserDTO) o;
     if (!EmailValidator.getInstance().isValid(userDTO.getEmail())) {
-      System.out.println(userDTO.getEmail() + " doesnt match regex");
       errors.addError(new ObjectError("email", "Invalid email address"));
     }
     if (userDTO.getUsername().isBlank()) {
@@ -56,28 +59,28 @@ public class UserDTOValidator implements Validator {
     if (userDTO.getDateOfBirth() != null) {
       try {
         if (java.sql.Date.valueOf(userDTO.getDateOfBirth()).after(new java.sql.Date(System.currentTimeMillis()))) {
-          errors.addError(new ObjectError("dateOfBirth", "Date of birth cannot be in the future"));
+          errors.addError(new ObjectError(DATE_OF_BIRTH, "Date of birth cannot be in the future"));
         }
       } catch (IllegalArgumentException illegalArgumentException) {
-        errors.addError(new ObjectError("dateOfBirth", "Invalid date format"));
+        errors.addError(new ObjectError(DATE_OF_BIRTH, "Invalid date format"));
       }
     } else {
-      errors.addError(new ObjectError("dateOfBirth", "Please specify a date of birth"));
+      errors.addError(new ObjectError(DATE_OF_BIRTH, "Please specify a date of birth"));
     }
   }
 
   private void checkPassword(final UserDTO userDTO, final BindingResult errors) {
     if (userDTO.getPassword().isBlank()) {
-      errors.addError(new ObjectError("password", "Password cannot be empty"));
+      errors.addError(new ObjectError(PASSWORD, "Password cannot be empty"));
     } else if (userDTO.getPassword().trim().length() < minPasswordLength) {
-      errors.addError(new ObjectError("password", "Password not long enough"));
+      errors.addError(new ObjectError(PASSWORD, "Password not long enough"));
     }
 
     if (userDTO.getUpdatedPassword() != null) {
       if (userDTO.getUpdatedPassword().isBlank()) {
-        errors.addError(new ObjectError("password", "Password cannot be empty"));
+        errors.addError(new ObjectError("updatedPassword", "New password cannot be empty"));
       } else if (userDTO.getUpdatedPassword().trim().length() < minPasswordLength) {
-        errors.addError(new ObjectError("password", "Password not long enough"));
+        errors.addError(new ObjectError("updatedPassword", "New password not long enough"));
       }
     }
   }
