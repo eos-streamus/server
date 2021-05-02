@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class JsonSongCollectionWriter extends JsonCollectionWriter {
+public abstract class JsonSongCollectionWriter extends JsonCollectionWriter {
   /** {@link com.eos.streamus.models.SongCollection} to write. */
   private final SongCollection songCollection;
 
@@ -26,7 +26,15 @@ public class JsonSongCollectionWriter extends JsonCollectionWriter {
     for (SongCollection.Track track : songCollection.getTracks()) {
       tracks.add(new JsonTrackWriter(track).getJson());
     }
-    return objectNode;
+    return getSpecificSongCollectionJson(objectNode);
   }
+
+  /**
+   * Add Specific {@link SongCollection} data to result ObjectNode.
+   *
+   * @param objectNode ObjectNode to write to.
+   * @return The updated ObjectNode.
+   */
+  protected abstract ObjectNode getSpecificSongCollectionJson(ObjectNode objectNode);
 
 }

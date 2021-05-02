@@ -4,7 +4,6 @@ import com.eos.streamus.models.Album;
 import com.eos.streamus.models.Artist;
 import com.eos.streamus.models.Band;
 import com.eos.streamus.models.Musician;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -19,8 +18,7 @@ public class JsonAlbumWriter extends JsonSongCollectionWriter {
 
   /** {@inheritDoc} */
   @Override
-  protected JsonNode getSpecificCollectionJson(final ObjectNode objectNode) {
-    super.getSpecificCollectionJson(objectNode);
+  protected ObjectNode getSpecificSongCollectionJson(final ObjectNode objectNode) {
     ArrayNode artists = objectNode.putArray("artists");
     for (Artist artist : album.getArtists()) {
       if (artist instanceof Band) {

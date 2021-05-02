@@ -16,8 +16,7 @@ public class JsonCollectionActivityWriter extends JsonObjectWriter {
   /** {@inheritDoc} */
   @Override
   protected JsonNode getSpecificJson(final ObjectNode objectNode) {
-    objectNode.put("id", collectionActivity.getId());
-    objectNode.put("collectionId", collectionActivity.getCollection().getId());
+    objectNode.put("id", collectionActivity.getId()).put("collectionId", collectionActivity.getCollection().getId());
     ArrayNode resourceActivities = objectNode.putArray("resourceActivities");
     for (var entry : collectionActivity.getContent()) {
       ObjectNode resourceActivityNode = new ObjectNode(new JsonWriterNodeFactory());

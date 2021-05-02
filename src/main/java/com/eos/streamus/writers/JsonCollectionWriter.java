@@ -15,11 +15,11 @@ abstract class JsonCollectionWriter extends JsonObjectWriter {
   /** {@inheritDoc} */
   @Override
   protected JsonNode getSpecificJson(final ObjectNode objectNode) {
-    objectNode.put("id", collection.getId());
-    objectNode.put("name", collection.getName());
-    objectNode.put("createdAt", collection.getCreatedAt().getTime());
-    objectNode.put("updatedAt", collection.getUpdatedAt().getTime());
-    return getSpecificCollectionJson(objectNode);
+    return getSpecificCollectionJson(objectNode.put("id", collection.getId())
+        .put("name", collection.getName())
+        .put("createdAt", collection.getCreatedAt().getTime())
+        .put("updatedAt", collection.getUpdatedAt().getTime())
+    );
   }
 
   protected abstract JsonNode getSpecificCollectionJson(ObjectNode objectNode);

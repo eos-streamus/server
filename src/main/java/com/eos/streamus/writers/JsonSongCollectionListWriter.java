@@ -18,7 +18,7 @@ public class JsonSongCollectionListWriter extends JsonArrayWriter {
   @Override
   protected JsonNode getSpecificArrayJson(final ArrayNode arrayNode) {
     for (SongCollection collection : collections) {
-      arrayNode.add(new JsonSongCollectionWriter(collection).getJson());
+      arrayNode.add(JsonSongCollectionWriterFactory.getWriterFor(collection).getJson());
     }
     return arrayNode;
   }

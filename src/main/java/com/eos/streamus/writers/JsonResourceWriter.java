@@ -15,10 +15,9 @@ abstract class JsonResourceWriter extends JsonObjectWriter {
   /** {@inheritDoc} */
   @Override
   protected final JsonNode getSpecificJson(final ObjectNode objectNode) {
-    objectNode.put("id", resource.getId());
-    objectNode.put("name", resource.getName());
-    objectNode.put("duration", resource.getDuration());
-    return addSpecificJsonAttributes(objectNode);
+    return addSpecificJsonAttributes(objectNode.put("id", resource.getId())
+        .put("name", resource.getName())
+        .put("duration", resource.getDuration()));
   }
 
   /** {@inheritDoc} */
