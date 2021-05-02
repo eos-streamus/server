@@ -18,13 +18,14 @@ public class JsonPersonWriter extends JsonObjectWriter {
   /** {@inheritDoc} */
   @Override
   protected JsonNode getSpecificJson(final ObjectNode objectNode) {
-    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    DateFormat timestampFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     objectNode.put("id", person.getId())
         .put("firstName", person.getFirstName())
         .put("lastName", person.getLastName());
-    objectNode.put("dateOfBirth", person.getDateOfBirth() == null ? null : person.getDateOfBirth().getTime());
-    objectNode.put("createdAt", dateFormat.format(person.getCreatedAt()));
-    objectNode.put("updatedAt", dateFormat.format(person.getUpdatedAt()));
+    objectNode.put("dateOfBirth", person.getDateOfBirth() == null ? null : dateFormat.format(person.getDateOfBirth()));
+    objectNode.put("createdAt", timestampFormat.format(person.getCreatedAt()));
+    objectNode.put("updatedAt", timestampFormat.format(person.getUpdatedAt()));
     return objectNode;
   }
 
