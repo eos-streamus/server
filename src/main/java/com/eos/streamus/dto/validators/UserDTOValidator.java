@@ -1,6 +1,7 @@
 package com.eos.streamus.dto.validators;
 
 import com.eos.streamus.dto.UserDTO;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
@@ -29,11 +30,14 @@ public class UserDTOValidator implements Validator {
   public void validate(@NonNull final Object o, @NonNull final Errors errorsObject) {
     BindingResult errors = (BindingResult) errorsObject;
     UserDTO userDTO = (UserDTO) o;
-    if (userDTO.getUsername().isBlank()) {
-      errors.reject("Username is empty");
+    if (!EmailValidator.getInstance().isValid(userDTO.getEmail())) {
+      System.out.println(userDTO.getEmail() + " doesnt match regex");
+      errors.addError(new ObjectError("email", "Invalid email address"));
     }
-    if (userDTO.getUsername().trim().length() < minUsernameLength) {
-      errors.reject("Username not long enough");
+    if (userDTO.getUsername().isBlank()) {
+      errors.addError(new ObjectError("username", "Username cannot be empty"));
+    } else if (userDTO.getUsername().trim().length() < minUsernameLength) {
+      errors.addError(new ObjectError("username", "Username not long enough"));
     }
 
     checkDateOfBirth(userDTO, errors);
@@ -45,13 +49,6 @@ public class UserDTOValidator implements Validator {
 
     if (userDTO.getLastName() == null || userDTO.getLastName().isBlank()) {
       errors.addError(new ObjectError("lastName", "Last name must be defined"));
-    }
-
-    if (userDTO.getUsername().isBlank()) {
-      errors.reject("Username cannot be empty");
-    }
-    if (userDTO.getUsername().trim().length() < minUsernameLength) {
-      errors.reject("Username not long enough");
     }
   }
 
@@ -65,7 +62,7 @@ public class UserDTOValidator implements Validator {
         errors.addError(new ObjectError("dateOfBirth", "Invalid date format"));
       }
     } else {
-      errors.reject("Birth dates must be defined");
+      errors.addError(new ObjectError("dateOfBirth", "Please specify a date of birth"));
     }
   }
 
