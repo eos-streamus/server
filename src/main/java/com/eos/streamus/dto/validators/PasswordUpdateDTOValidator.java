@@ -3,11 +3,13 @@ package com.eos.streamus.dto.validators;
 import com.eos.streamus.dto.PasswordUpdateDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.Validator;
 
+@Component
 public class PasswordUpdateDTOValidator implements Validator {
   /** Password. */
   private static final String PASSWORD = "password";
