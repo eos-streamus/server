@@ -75,14 +75,6 @@ public class UserDTOValidator implements Validator {
     } else if (userDTO.getPassword().trim().length() < minPasswordLength) {
       errors.addError(new ObjectError(PASSWORD, "Password not long enough"));
     }
-
-    if (userDTO.getUpdatedPassword() != null) {
-      if (userDTO.getUpdatedPassword().isBlank()) {
-        errors.addError(new ObjectError("updatedPassword", "New password cannot be empty"));
-      } else if (userDTO.getUpdatedPassword().trim().length() < minPasswordLength) {
-        errors.addError(new ObjectError("updatedPassword", "New password not long enough"));
-      }
-    }
   }
 
 }

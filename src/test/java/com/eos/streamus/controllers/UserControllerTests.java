@@ -409,7 +409,7 @@ class UserControllerTests extends ControllerTests {
   }
 
   @Test
-  void updatingAUserProfileWithNewPasswordShouldWork() throws Exception {
+  void updatingPasswordShouldWork() throws Exception {
     User user;
     String password;
     try (Connection connection = databaseConnector.getConnection()) {
@@ -419,13 +419,8 @@ class UserControllerTests extends ControllerTests {
       password = randomStringOfLength(minPasswordLength);
       user.upsertPassword(passwordEncoder.encode(password), connection);
     }
-    MockHttpServletRequestBuilder builder = put("/user/" + user.getId());
+    MockHttpServletRequestBuilder builder = post(String.format("/user/%d/password", user.getId()));
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
-    objectNode.put("email", user.getEmail());
-    objectNode.put("username", randomStringOfLength(minUsernameLength));
-    objectNode.put("firstName", "John");
-    objectNode.put("lastName", "Doe");
-    objectNode.put("dateOfBirth", "2000-01-01");
     objectNode.put("password", password);
     String newPassword = randomStringOfLength(minPasswordLength);
     objectNode.put("updatedPassword", newPassword);
@@ -441,10 +436,7 @@ class UserControllerTests extends ControllerTests {
     builder = post("/login")
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectNode.toPrettyString());
-    MockHttpServletResponse response = perform(builder).andExpect(status().is(200)).andReturn().getResponse();
-    final String sessionToken = new ObjectMapper(new JsonFactory()).readTree(response.getContentAsString())
-                                                             .get("sessionToken").asText();
-    jwtService.decode(sessionToken);
+    perform(builder).andExpect(status().is(200)).andReturn().getResponse();
   }
 
   @Test
@@ -537,15 +529,10 @@ class UserControllerTests extends ControllerTests {
     }
 
     ObjectNode objectNode = new ObjectNode(new TestJsonFactory());
-    objectNode.put("email", user.getEmail());
-    objectNode.put("username", user.getUsername());
-    objectNode.put("firstName", user.getFirstName());
-    objectNode.put("lastName", user.getLastName());
-    objectNode.put("dateOfBirth", "2000-01-01");
     objectNode.put("password", password);
     objectNode.put("updatedPassword", randomStringOfLength(minPasswordLength - 1));
 
-    MockHttpServletRequestBuilder builder = put("/user/" + user.getId());
+    MockHttpServletRequestBuilder builder = post(String.format("/user/%d/password", user.getId()));
     builder.contentType(MediaType.APPLICATION_JSON);
     builder.content(objectNode.toPrettyString());
     perform(builder).andExpect(status().is(400)).andReturn();

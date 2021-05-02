@@ -17,6 +17,7 @@
     <bean id="bandMemberValidator" class="com.eos.streamus.dto.validators.BandMemberDTOValidator"/>
     <bean id="songPlaylistValidator" class="com.eos.streamus.dto.validators.SongPlaylistDTOValidator"/>
     <bean id="userDTOValidator" class="com.eos.streamus.dto.validators.UserDTOValidator"/>
+    <bean id="passwordUpdateDTOValidator" class="com.eos.streamus.dto.validators.PasswordUpdateDTOValidator"/>
     <bean id="jwtUtils" class="com.eos.streamus.utils.JwtService"/>
     <bean id="jwtFilter" class="com.eos.streamus.filters.JwtFilter"/>
     <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>

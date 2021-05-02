@@ -215,9 +215,6 @@ public final class UserController implements CommonResponses {
       user.setDateOfBirth(Date.valueOf(userDTO.getDateOfBirth()));
       user.setUsername(userDTO.getUsername());
       user.save(connection);
-      if (userDTO.getUpdatedPassword() != null) {
-        user.upsertPassword(passwordEncoder.encode(userDTO.getUpdatedPassword()), connection);
-      }
       return ResponseEntity.ok(new JsonUserWriter(user).getJson());
     } catch (SQLException sqlException) {
       logException(sqlException);
