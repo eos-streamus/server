@@ -1,16 +1,8 @@
 package com.eos.streamus.controllers;
 
-import com.eos.streamus.StreamusTestConfiguration;
-import com.eos.streamus.filters.JwtFilter;
-import com.eos.streamus.models.Activity;
-import com.eos.streamus.models.Artist;
-import com.eos.streamus.models.Collection;
-import com.eos.streamus.models.Person;
-import com.eos.streamus.models.Resource;
-import com.eos.streamus.models.User;
+import com.eos.streamus.models.*;
 import com.eos.streamus.utils.IDatabaseConnector;
 import com.eos.streamus.utils.IResourcePathResolver;
-import com.eos.streamus.utils.JwtService;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterAll;
@@ -39,7 +31,7 @@ import java.text.SimpleDateFormat;
 
 @WebMvcTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ContextConfiguration(classes = StreamusTestConfiguration.class)
+@ContextConfiguration(locations={"file:src/test/resources/test-context.xml"})
 @AutoConfigureMockMvc
 abstract class ControllerTests {
   static class TestJsonFactory extends JsonNodeFactory {

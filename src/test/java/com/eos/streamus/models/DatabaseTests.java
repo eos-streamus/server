@@ -1,6 +1,5 @@
 package com.eos.streamus.models;
 
-import com.eos.streamus.StreamusTestConfiguration;
 import com.eos.streamus.utils.IDatabaseConnector;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
@@ -24,7 +23,7 @@ import static java.sql.Date.valueOf;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @SpringBootTest
-@ContextConfiguration(classes = StreamusTestConfiguration.class)
+@ContextConfiguration(locations={"file:src/test/resources/test-context.xml"})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 abstract class DatabaseTests {
 

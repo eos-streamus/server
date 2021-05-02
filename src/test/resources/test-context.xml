@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id="databaseConnector" class="com.eos.streamus.utils.TestDatabaseConnector"/>
+    <bean id="resourcePathResolver" class="com.eos.streamus.utils.TestResourcePathResolver"/>
+    <bean id="songController" class="com.eos.streamus.controllers.SongController"/>
+    <bean id="filmController" class="com.eos.streamus.controllers.FilmController"/>
+    <bean id="artistController" class="com.eos.streamus.controllers.ArtistController"/>
+    <bean id="albumController" class="com.eos.streamus.controllers.AlbumController"/>
+    <bean id="userController" class="com.eos.streamus.controllers.UserController"/>
+    <bean id="songPlaylistController" class="com.eos.streamus.controllers.SongPlaylistController"/>
+    <bean id="albumValidator" class="com.eos.streamus.dto.validators.AlbumDTOValidator"/>
+    <bean id="musicianValidator" class="com.eos.streamus.dto.validators.MusicianDTOValidator"/>
+    <bean id="personValidator" class="com.eos.streamus.dto.validators.PersonDTOValidator"/>
+    <bean id="personDTOValidator" class="com.eos.streamus.dto.validators.PersonDTOValidator"/>
+    <bean id="bandMemberValidator" class="com.eos.streamus.dto.validators.BandMemberDTOValidator"/>
+    <bean id="songPlaylistValidator" class="com.eos.streamus.dto.validators.SongPlaylistDTOValidator"/>
+    <bean id="userDTOValidator" class="com.eos.streamus.dto.validators.UserDTOValidator"/>
+    <bean id="jwtUtils" class="com.eos.streamus.utils.JwtService"/>
+    <bean id="jwtFilter" class="com.eos.streamus.filters.JwtFilter"/>
+    <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+</beans>
