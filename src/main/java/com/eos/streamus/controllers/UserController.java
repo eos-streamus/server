@@ -1,8 +1,10 @@
 package com.eos.streamus.controllers;
 
 import com.eos.streamus.dto.LoginDTO;
+import com.eos.streamus.dto.PasswordUpdateDTO;
 import com.eos.streamus.dto.TokensDTO;
 import com.eos.streamus.dto.UserDTO;
+import com.eos.streamus.dto.validators.PasswordUpdateDTOValidator;
 import com.eos.streamus.dto.validators.UserDTOValidator;
 import com.eos.streamus.exceptions.NoResultException;
 import com.eos.streamus.models.PersonBuilder;
@@ -46,6 +48,10 @@ public final class UserController implements CommonResponses {
   /** {@link UserDTOValidator} to use. */
   @Autowired
   private UserDTOValidator userDTOValidator;
+
+  /** {@link PasswordUpdateDTOValidator} to use. */
+  @Autowired
+  private PasswordUpdateDTOValidator passwordUpdateDTOValidator;
 
   /** {@link PasswordEncoder} to use. */
   @Autowired
@@ -155,7 +161,7 @@ public final class UserController implements CommonResponses {
   }
 
   /**
-   * Delete an User by id.
+   * Delete a User by id.
    *
    * @param id Id of User to delete.
    * @return Confirmation message.
@@ -174,7 +180,7 @@ public final class UserController implements CommonResponses {
   }
 
   /**
-   * Update an User by id.
+   * Update a User by id.
    *
    * @param id      Id of User to update.
    * @param userDTO Updated User data.
@@ -221,4 +227,40 @@ public final class UserController implements CommonResponses {
     }
   }
 
+  /**
+   * Update a User password by id.
+   *
+   * @param id                Id of User whose password to update.
+   * @param passwordUpdateDTO Password update data.
+   * @param result            BindingResult to validate data with.
+   * @return Updated User data in JSON format.
+   */
+  @PostMapping("/user/{id}/password")
+  public ResponseEntity<JsonNode> updatePassword(@PathVariable final int id,
+                                                 @RequestBody @Valid final PasswordUpdateDTO passwordUpdateDTO,
+                                                 final BindingResult result) {
+
+    if (result.hasErrors()) {
+      return badRequest(result.toString());
+    }
+    passwordUpdateDTOValidator.validate(passwordUpdateDTO, result);
+    if (result.hasErrors()) {
+      return badRequest(result.toString());
+    }
+
+    try (Connection connection = databaseConnector.getConnection()) {
+      User user = User.findById(id, connection);
+      String currentPassword = user.getPassword(connection);
+      if (!passwordEncoder.matches(passwordUpdateDTO.getPassword(), currentPassword)) {
+        return badRequest("Invalid password");
+      }
+      user.upsertPassword(passwordEncoder.encode(passwordUpdateDTO.getUpdatedPassword()), connection);
+      return ResponseEntity.ok(new JsonUserWriter(user).getJson());
+    } catch (SQLException sqlException) {
+      logException(sqlException);
+      return internalServerError();
+    } catch (NoResultException noResultException) {
+      return notFound();
+    }
+  }
 }
